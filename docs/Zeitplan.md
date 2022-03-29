@@ -1,5 +1,5 @@
 # Zeitplan
-
+**Deadline: 20.06.2022**
 ```mermaid
 gantt
     title Zeitplan Budget Binder
@@ -19,11 +19,11 @@ gantt
         RestAPI bauen                               :2022-05-16, 2022-05-20
         Test der API                                :2022-05-16, 2022-05-20
     section Frontend
-        Web Frontend                                :2022-05-02, 2022-06-24
-        Desktop Frontend                            :2022-05-02, 2022-06-24
-        Android Frontend                            :2022-05-02, 2022-06-24
-        iOS Frontend                                :2022-05-02, 2022-06-24
-        Frontend User Tests                         :2022-05-02, 2022-06-24
+        Web Frontend                                :2022-05-02, 2022-06-20
+        Desktop Frontend                            :2022-05-02, 2022-06-20
+        Android Frontend                            :2022-05-02, 2022-06-20
+        iOS Frontend                                :2022-05-02, 2022-06-20
+        Frontend User Tests                         :2022-05-02, 2022-06-20
     section Dokumentation
-        Dokumentieren                               :2022-06-01, 2022-06-24
+        Dokumentieren                               :2022-06-01, 2022-06-20
 ```
