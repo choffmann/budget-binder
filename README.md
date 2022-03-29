@@ -1,12 +1,10 @@
 # Budget-Binder :money_with_wings:
-**Ein Projekt der Hochschule Flensburg im Rahmen der Projektarbeit** <br>
-_von: Pascal Friedrichsen, Dominik Heckner, Fabian Petersen, Cedrik Hoffmann_ <br>
-:octocat: **[@MrHemanik](https://github.com/MrHemanik), [@Creditore](https://github.com/Creditore), [@akatranlp](https://github.com/akatranlp), [@choffmann](https://github.com/choffmann)**
+**Project at the Department of Computer Science of the University Flensburg from:** <br>
+**[@MrHemanik](https://github.com/MrHemanik), [@Creditore](https://github.com/Creditore), [@akatranlp](https://github.com/akatranlp), [@choffmann](https://github.com/choffmann)**
 
-## Projektbeschreibung
-Mit Budget Binder lassen sich deine Finanzen ganz einfach Managen. Siehe deine Einnahmen und Ausgaben übersichtlich auf einem Blick um somit überblick über dein Geld zu behalten. 
+Use Budget Binder to manage your money, easily. Simply track your monthly spending. Write down your recurring income and expenses and set a budget, you would like to save. The App is available on all of your favorite devices.
 
-## Dokumente
+## Documents
 - [Abstract](docs/Abstract.md)
-- [Lastenheft](docs/Lastenheft.md)
-- [Zeitplan](docs/Zeitplan.md)
+- [Specifications](docs/Lastenheft.md)
+- [Schedule](docs/Zeitplan.md)
