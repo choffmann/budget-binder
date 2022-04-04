@@ -8,10 +8,10 @@ import de.hsfl.budgetBinder.common.HelloWorld
 
 @Composable
 fun ApplicationView() {
-    val obj = HelloWorld()
+    val model = HelloWorld()
     MaterialTheme {
         Column {
-            Text(obj.msg)
+            Text(model.msg)
         }
     }
 }
