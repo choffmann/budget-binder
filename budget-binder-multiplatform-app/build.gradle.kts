@@ -17,6 +17,13 @@ kotlin {
         browser()
         binaries.executable()
     }
+    ios {
+        binaries {
+            framework {
+                baseName = "budget-binder-common"
+            }
+        }
+    }
 
     sourceSets {
         val commonJvm by creating {
@@ -59,11 +66,14 @@ kotlin {
 
         val jsMain by getting {
             dependencies {
+                implementation(project(":budget-binder-common"))
                 implementation(compose.web.core)
                 implementation(compose.runtime)
                 implementation(compose.web.svg)
             }
         }
+
+        val iosMain by getting
     }
 }
 

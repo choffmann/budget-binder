@@ -15,11 +15,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import de.hsfl.budgetBinder.common.HelloWorld
+import de.hsfl.budgetBinder.common.Platform
 
 
 @Composable
 fun ApplicationView() {
-    val model = HelloWorld()
     MaterialTheme {
         Box(modifier = Modifier
                 .background(MaterialTheme.colors.surface)
@@ -30,13 +30,15 @@ fun ApplicationView() {
                     .fillMaxWidth()
                     .fillMaxHeight()
                     .wrapContentSize(Alignment.Center)
-                    .clip(shape = RoundedCornerShape(16.dp))
             ) {
-                Text(model.msg,
+                Text(HelloWorld().msg,
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.h4,
                     fontWeight = FontWeight.Bold
                 )
+                Text("from ${Platform().platform}",
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.subtitle1)
             }
         }
     }
