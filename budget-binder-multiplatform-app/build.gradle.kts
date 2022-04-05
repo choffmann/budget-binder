@@ -6,12 +6,17 @@ plugins {
 
 repositories {
     google()
+    mavenCentral()
     maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
 }
 
 kotlin {
     android("android")
     jvm("desktop")
+    js(IR) {
+        browser()
+        binaries.executable()
+    }
 
     sourceSets {
         val commonJvm by creating {
@@ -51,12 +56,15 @@ kotlin {
                 implementation("org.kodein.di:kodein-di-framework-android-x:7.9.0")
             }
         }
-    }
-}
 
-repositories {
-    mavenCentral()
-    google()
+        val jsMain by getting {
+            dependencies {
+                implementation(compose.web.core)
+                implementation(compose.runtime)
+                implementation(compose.web.svg)
+            }
+        }
+    }
 }
 
 android {
@@ -102,5 +110,12 @@ compose.desktop {
             packageName = "jvm"
             packageVersion = "1.0.0"
         }
+    }
+}
+
+afterEvaluate {
+    rootProject.extensions.configure<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension> {
+        versions.webpackDevServer.version = "4.0.0"
+        versions.webpackCli.version = "4.9.0"
     }
 }
