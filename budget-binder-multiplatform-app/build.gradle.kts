@@ -17,7 +17,6 @@ kotlin {
         val commonJvm by creating {
             dependencies {
                 implementation(project(":budget-binder-common"))
-                implementation("androidx.activity:activity-compose:1.4.0")
                 implementation(compose.foundation)
                 implementation(compose.material)
                 api(compose.preview)

@@ -3,6 +3,7 @@ package de.hsfl.budgetBinder.android
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.runtime.Composable
 import de.hsfl.budgetBinder.compose.ApplicationView
 
 class MainActivity: ComponentActivity() {
@@ -13,8 +14,4 @@ class MainActivity: ComponentActivity() {
             ApplicationView()
         }
     }
-}
-
-fun test() {
-
 }
