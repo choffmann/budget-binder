@@ -35,14 +35,16 @@ fun ApplicationView(image: Painter) {
                     painter = image,
                     contentDescription = null,
                     modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentSize(Alignment.Center)
                         .clickable(onClick = {
                             showText.value = !showText.value
                         })
                 )
                 AnimatedVisibility(
                     visible = showText.value,
-                    enter = fadeIn(),
-                    exit = fadeOut()
+                    enter = expandVertically(),
+                    exit = shrinkVertically()
                 ) {
                     Column(
                         modifier = Modifier
@@ -50,20 +52,17 @@ fun ApplicationView(image: Painter) {
                             .fillMaxWidth()
                             .wrapContentSize(Alignment.Center)
                     ) {
-                        if (showText.value) {
-
-                            Text(
-                                HelloWorld().msg,
-                                textAlign = TextAlign.Center,
-                                style = MaterialTheme.typography.h4,
-                                fontWeight = FontWeight.Bold
-                            )
-                            Text(
-                                "from ${Platform().platform}",
-                                textAlign = TextAlign.Center,
-                                style = MaterialTheme.typography.subtitle1
-                            )
-                        }
+                        Text(
+                            HelloWorld().msg,
+                            textAlign = TextAlign.Center,
+                            style = MaterialTheme.typography.h4,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(
+                            "from ${Platform().platform}",
+                            textAlign = TextAlign.Center,
+                            style = MaterialTheme.typography.subtitle1
+                        )
                     }
                 }
             }
