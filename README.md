@@ -14,7 +14,9 @@ GRADLE_VERSION = 7.2
 KOTLIN_VERSION  = 1.6.10
 COMPOSE_VERSION = 1.1.1
 ```
+
 ## Documents
 - [Abstract](docs/Abstract.md)
 - [Specifications](docs/Lastenheft.md)
 - [Schedule](docs/Zeitplan.md)
+- [Progress](docs/Progress.md)
