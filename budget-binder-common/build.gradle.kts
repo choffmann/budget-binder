@@ -17,7 +17,7 @@ kotlin {
         iosSimulatorArm64()
     ).forEach {
         it.binaries.framework {
-            baseName = "budget-binder-common"
+            baseName = "budgetBinderCommon"
         }
     }
 

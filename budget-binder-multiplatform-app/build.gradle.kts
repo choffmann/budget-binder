@@ -20,7 +20,7 @@ kotlin {
     ios {
         binaries {
             framework {
-                baseName = "budget-binder-common"
+                baseName = "budgetBinderCommon"
             }
         }
     }
@@ -73,7 +73,11 @@ kotlin {
             }
         }
 
-        val iosMain by getting
+        val iosMain by getting {
+            dependencies {
+                implementation(project(":budget-binder-common"))
+            }
+        }
     }
 }
 

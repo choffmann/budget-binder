@@ -24,7 +24,7 @@ buildscript {
     }
     dependencies {
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10")
-        classpath("com.android.tools.build:gradle:7.0.4")
+        classpath("com.android.tools.build:gradle:4.0.1")
         // DO NOT UPDATE 'com.android.tools.lint:lint'! Keep it by version 30.0.3
         classpath("com.android.tools.lint:lint:30.0.3")
     }
