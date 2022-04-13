@@ -2,6 +2,7 @@ plugins {
     kotlin("multiplatform")
     id("com.android.application")
     id("org.jetbrains.compose") version "1.1.1"
+
 }
 
 repositories {
@@ -26,9 +27,20 @@ kotlin {
     }*/
 
     sourceSets {
-        val jvmMain by creating {
+        val commonMain by getting {
             dependencies {
                 implementation(project(":budget-binder-common"))
+
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
+
+                implementation("io.ktor:ktor-client-core:1.6.4")
+                implementation("io.ktor:ktor-client-serialization:1.6.4")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
+            }
+        }
+
+        val jvmMain by creating {
+            dependencies {
                 implementation(compose.foundation)
                 implementation(compose.material)
                 api(compose.preview)
@@ -66,7 +78,6 @@ kotlin {
 
         val jsMain by getting {
             dependencies {
-                implementation(project(":budget-binder-common"))
                 implementation(compose.web.core)
                 implementation(compose.runtime)
                 implementation(compose.web.svg)
