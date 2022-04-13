@@ -26,7 +26,7 @@ kotlin {
     }
 
     sourceSets {
-        val commonJvm by creating {
+        val jvmMain by creating {
             dependencies {
                 implementation(project(":budget-binder-common"))
                 implementation(compose.foundation)
@@ -36,7 +36,7 @@ kotlin {
         }
 
         val desktopMain by getting {
-            dependsOn(commonJvm)
+            dependsOn(jvmMain)
             dependencies {
                 implementation(compose.foundation)
                 implementation(compose.material)
@@ -45,7 +45,7 @@ kotlin {
         }
 
         val androidMain by getting {
-            dependsOn(commonJvm)
+            dependsOn(jvmMain)
             dependencies {
                 implementation(compose.foundation)
                 implementation(compose.material)
