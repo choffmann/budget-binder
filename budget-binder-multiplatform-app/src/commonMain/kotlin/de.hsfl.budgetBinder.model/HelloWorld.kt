@@ -1,3 +1,3 @@
-package de.hsfl.budgetBinder.common
+package de.hsfl.budgetBinder.model
 
 data class HelloWorld(val msg: String = "Hello World!")

@@ -3,7 +3,7 @@ package de.hsfl.budgetBinder.compose
 import androidx.compose.runtime.Composable
 import org.jetbrains.compose.web.dom.Div
 import org.jetbrains.compose.web.dom.Text
-import de.hsfl.budgetBinder.common.*
+import de.hsfl.budgetBinder.model.*
 
 @Composable
 fun ApplicationView() {

@@ -17,13 +17,13 @@ kotlin {
         browser()
         binaries.executable()
     }
-    ios {
+    /*ios {
         binaries {
             framework {
                 baseName = "budget-binder-common"
             }
         }
-    }
+    }*/
 
     sourceSets {
         val jvmMain by creating {
@@ -73,7 +73,7 @@ kotlin {
             }
         }
 
-        val iosMain by getting
+        //val iosMain by getting
     }
 }
 

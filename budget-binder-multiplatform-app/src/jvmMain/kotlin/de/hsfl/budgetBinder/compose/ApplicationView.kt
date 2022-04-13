@@ -16,8 +16,8 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import de.hsfl.budgetBinder.common.HelloWorld
-import de.hsfl.budgetBinder.common.Platform
+import de.hsfl.budgetBinder.model.HelloWorld
+import de.hsfl.budgetBinder.model.Platform
 
 @Composable
 fun ApplicationView(image: Painter) {
