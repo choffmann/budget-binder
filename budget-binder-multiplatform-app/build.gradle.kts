@@ -41,6 +41,7 @@ kotlin {
 
         val jvmMain by creating {
             dependencies {
+                implementation("io.ktor:ktor-client-java:1.6.4")
                 implementation(compose.foundation)
                 implementation(compose.material)
                 api(compose.preview)
@@ -78,6 +79,7 @@ kotlin {
 
         val jsMain by getting {
             dependencies {
+                implementation("io.ktor:ktor-client-js:1.6.4")
                 implementation(compose.web.core)
                 implementation(compose.runtime)
                 implementation(compose.web.svg)
