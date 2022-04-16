@@ -4,6 +4,7 @@ plugins {
     application
     kotlin("jvm")
     kotlin("plugin.serialization") version "1.6.20"
+    id("com.github.johnrengelman.shadow") version "7.0.0"
 }
 
 group = "de.hsfl.budgetBinder"
@@ -11,7 +12,7 @@ version = "1.0-SNAPSHOT"
 
 application {
     // applicationDefaultJvmArgs = listOf("-Dio.ktor.development=true")
-    mainClass.set("MainKt")
+    mainClass.set("de.hsfl.budgetBinder.server.MainKt")
 }
 
 repositories {
@@ -39,6 +40,14 @@ dependencies {
     // implementation("org.jetbrains.exposed:exposed-jdbc:0.34.1")
     // implementation("org.xerial:sqlite-jdbc:3.30.1")
     // implementation("org.mindrot:jbcrypt:0.4")
+}
+
+tasks {
+    shadowJar {
+        manifest {
+            attributes(Pair("Main-Class", "io.ktor.server.netty.EngineMain"))
+        }
+    }
 }
 
 tasks.withType<KotlinCompile> {
