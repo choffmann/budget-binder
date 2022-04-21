@@ -11,10 +11,9 @@ import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import kotlinx.coroutines.runBlocking
-import java.lang.Integer.parseInt
 
 fun main() = runBlocking<Unit> {
-    val port = parseInt(System.getenv("PORT") ?: "8080")
+    val port = Integer.parseInt(System.getenv("PORT") ?: "8080")
     val host = System.getenv("HOST") ?: "0.0.0.0"
 
     /*
