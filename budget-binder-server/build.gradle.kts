@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     application
     kotlin("jvm")
@@ -23,28 +25,29 @@ dependencies {
     implementation(project(":budget-binder-common"))
     implementation(kotlin("stdlib"))
 
-    // implementation("org.kodein.di:kodein-di:7.8.0")
-    // implementation("org.kodein.di:kodein-di-framework-ktor-server-jvm:7.8.0")
+    // implementation("org.kodein.di:kodein-di-jvm:7.10.0")
+    // implementation("org.kodein.di:kodein-di-framework-ktor-server-jvm:7.10.0")
 
-    val ktor_version= "2.0.0"
+    val ktorVersion = "2.0.0"
+    val exposedVersion = "0.38.1"
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1")
 
-    implementation("io.ktor:ktor-server-core:$ktor_version")
-    implementation("io.ktor:ktor-server-auth:$ktor_version")
-    implementation("io.ktor:ktor-server-auth-jwt:$ktor_version")
-    implementation("io.ktor:ktor-server-content-negotiation:$ktor_version")
-    implementation("io.ktor:ktor-server-cors:$ktor_version")
-    implementation("io.ktor:ktor-serialization-kotlinx-json:$ktor_version")
-    // implementation("io.ktor:ktor-server-websockets:$ktor_version")
-    implementation("io.ktor:ktor-server-netty:$ktor_version")
+    implementation("io.ktor:ktor-server-core:$ktorVersion")
+    implementation("io.ktor:ktor-server-auth:$ktorVersion")
+    implementation("io.ktor:ktor-server-auth-jwt:$ktorVersion")
+    implementation("io.ktor:ktor-server-content-negotiation:$ktorVersion")
+    implementation("io.ktor:ktor-server-cors:$ktorVersion")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
+    // implementation("io.ktor:ktor-server-websockets:ktorVersion")
+    implementation("io.ktor:ktor-server-netty:$ktorVersion")
     implementation("ch.qos.logback:logback-classic:1.2.11")
-    testImplementation("io.ktor:ktor-server-tests:$ktor_version")
+    testImplementation("io.ktor:ktor-server-tests:$ktorVersion")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:1.6.21")
 
-    // implementation("org.jetbrains.exposed:exposed-core:0.34.1")
-    // implementation("org.jetbrains.exposed:exposed-dao:0.34.1")
-    // implementation("org.jetbrains.exposed:exposed-jdbc:0.34.1")
-    // implementation("org.xerial:sqlite-jdbc:3.30.1")
+    implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
+    implementation("org.jetbrains.exposed:exposed-dao:$exposedVersion")
+    implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
+    implementation("org.xerial:sqlite-jdbc:3.36.0.3")
     // implementation("org.mindrot:jbcrypt:0.4")
 }
 
@@ -54,4 +57,8 @@ tasks {
             attributes(Pair("Main-Class", "io.ktor.server.netty.EngineMain"))
         }
     }
+}
+
+tasks.withType<KotlinCompile> {
+    kotlinOptions.jvmTarget = JavaVersion.VERSION_11.toString()
 }
