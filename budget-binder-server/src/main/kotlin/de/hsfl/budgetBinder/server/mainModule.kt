@@ -1,13 +1,14 @@
 package de.hsfl.budgetBinder.server
 
-
+import de.hsfl.budgetBinder.common.APIResponse
 import de.hsfl.budgetBinder.server.models.Roles
-
+import de.hsfl.budgetBinder.server.routes.authRoutes
 import de.hsfl.budgetBinder.server.routes.userRoutes
 import de.hsfl.budgetBinder.server.services.UserService
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.features.*
+import io.ktor.http.*
 import io.ktor.response.*
 import io.ktor.routing.*
 import io.ktor.serialization.*
@@ -55,12 +56,22 @@ fun Application.module() {
         json()
     }
 
+    install(StatusPages) {
+        exception<Throwable> { cause ->
+            call.respond(HttpStatusCode.InternalServerError,
+                APIResponse<String>(null, "Internal Server Error", false)
+            )
+            throw cause
+        }
+    }
+
     di {
         bindSingleton { UserService() }
     }
 
     // install all Modules
     userRoutes()
+    authRoutes()
 
     routing {
         get("/") {
