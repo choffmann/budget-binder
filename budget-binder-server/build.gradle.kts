@@ -11,10 +11,10 @@ group = "de.hsfl.budgetBinder"
 version = "1.0-SNAPSHOT"
 
 application {
-    // applicationDefaultJvmArgs = listOf("-Dio.ktor.development=true")
     mainClass.set("de.hsfl.budgetBinder.server.MainKt")
 
-    applicationDefaultJvmArgs = listOf("-Dio.ktor.development=true")
+    val dev = System.getenv("DEV") != null
+    applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$dev")
 }
 
 repositories {
