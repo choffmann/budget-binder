@@ -13,8 +13,10 @@ COPY --from=build /home/gradle/src/budget-binder-server/build/libs/*.jar /app/kt
 ENV \
 HOST=0.0.0.0 \
 PORT=8080 \
+JWT_ACCESS_SECRET="" \
+JWT_REFRESH_SECRET="" \
 ROOT_USER_EMAIL="root@admin.com" \
-ROOT_USER_PASSWORD = "changeme" \
+ROOT_USER_PASSWORD="changeme" \
 USE_SQLITE=True \
 SQLITE_PATH="/app/data" \
 DB_TYPE="MYSQL | POSTGRESQL" \

@@ -14,7 +14,7 @@ import org.kodein.di.ktor.closestDI
 
 
 fun Route.userByIdRoute() {
-    authenticate("auth-basic-admin") {
+    authenticate("auth-jwt") {
         get("/user/{id}") {
             val id = call.parameters["id"]?.toIntOrNull()
 
