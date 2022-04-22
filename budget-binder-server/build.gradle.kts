@@ -55,7 +55,7 @@ dependencies {
     implementation("org.xerial:sqlite-jdbc:3.36.0.3")
     implementation("mysql:mysql-connector-java:8.0.28")
     implementation("org.postgresql:postgresql:42.3.4")
-    // implementation("org.mindrot:jbcrypt:0.4")
+    implementation("org.mindrot:jbcrypt:0.4")
 }
 
 tasks {

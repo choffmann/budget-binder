@@ -9,6 +9,7 @@ import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.dao.exceptions.EntityNotFoundException
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.mindrot.jbcrypt.BCrypt
 
 fun main() = runBlocking<Unit> {
     val port = Integer.parseInt(System.getenv("PORT") ?: "8080")
@@ -65,7 +66,7 @@ fun main() = runBlocking<Unit> {
                 it[name] = "Administrator"
                 it[firstName] = "root"
                 it[email] = rootUserEmail
-                it[passwordHash] = rootUserPassword
+                it[passwordHash] = BCrypt.hashpw(rootUserPassword, BCrypt.gensalt())
                 it[role] = Roles.ADMIN
             }
             root = UserEntity[1]
