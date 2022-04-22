@@ -1,5 +1,7 @@
 package de.hsfl.budgetBinder.server
 
+import de.hsfl.budgetBinder.server.models.Roles
+import de.hsfl.budgetBinder.server.models.UserEntity
 import de.hsfl.budgetBinder.server.models.Users
 import de.hsfl.budgetBinder.server.routes.userRoutes
 import io.ktor.server.application.*
@@ -22,21 +24,53 @@ fun main() = runBlocking<Unit> {
     val port = Integer.parseInt(System.getenv("PORT") ?: "8080")
     val host = System.getenv("HOST") ?: "0.0.0.0"
 
-    // Database.connect("jdbc:mysql://localhost:3306/test", driver = "com.mysql.cj.jdbc.Driver",
-    //      user = "root", password = "your_pwd")
-    // Gradle
-    // implementation("mysql:mysql-connector-java:8.0.2")
+    if (System.getenv("USE_SQLITE") == "True") {
+        // Database.connect("jdbc:sqlite:file:test?mode=memory&cache=shared", "org.sqlite.JDBC")
+        val path = (System.getenv("SQLITE_PATH") ?: (System.getProperty("user.dir") + "/data")) + "/data.db"
+        Database.connect("jdbc:sqlite:$path", "org.sqlite.JDBC")
+    } else {
+        // Database.connect("jdbc:mysql://localhost:3306/test", driver = "com.mysql.cj.jdbc.Driver",
+        //      user = "root", password = "your_pwd")
 
+        val dbType = System.getenv("DB_TYPE")
+        val dbServer = System.getenv("DB_SERVER")
+        val dbPort = System.getenv("DB_PORT")
+        val dbDatabaseName = System.getenv("DB_DATABASE_NAME")
+        val dbUser = System.getenv("DB_USER")
+        val dbPassword = System.getenv("DB_PASSWORD")
 
-    // Database.connect("jdbc:sqlite:file:test?mode=memory&cache=shared", "org.sqlite.JDBC")
-    // implementation("org.xerial:sqlite-jdbc:3.30.1")
-    Database.connect("jdbc:sqlite:data.db", "org.sqlite.JDBC")
+        val url: String
+        val driver: String
+        when (dbType) {
+            "MYSQL" -> {
+                url = "jdbc:mysql://$dbServer:$dbPort/$dbDatabaseName"
+                driver = "com.mysql.cj.jdbc.Driver"
+            }
+            "POSTGRESQL" -> {
+                url = "jdbc:pgsql://$dbServer:$dbPort/$dbDatabaseName"
+                driver = "com.impossibl.postgres.jdbc.PGDriver"
+            }
+            else -> {
+                throw Exception("No DATABASE Type given")
+            }
+        }
+
+        Database.connect(url, driver, user = dbUser, password = dbPassword)
+    }
 
     transaction {
         // Logging for DEV purposes
         addLogger(StdOutSqlLogger)
 
         SchemaUtils.create(Users)
+        /*
+        UserEntity.new {
+            firstName = "Fabian"
+            name = "Petersen"
+            passwordHash = "test"
+            role = Roles.ADMIN
+            email = "fabian@nf-petersen.de"
+        } */
     }
     /*
     * configure = {
@@ -78,6 +112,15 @@ fun Application.module() {
     routing {
         get("/") {
             call.respondText("Hello World!")
+        }
+    }
+
+    routing {
+        get("/path") {
+            val user = transaction {
+                UserEntity.all().toList().random()
+            }
+            call.respondText(user.email)
         }
     }
 }
