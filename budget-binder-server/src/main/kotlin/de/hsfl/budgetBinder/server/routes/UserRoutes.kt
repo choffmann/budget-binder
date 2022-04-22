@@ -1,10 +1,10 @@
 package de.hsfl.budgetBinder.server.routes
 
 import de.hsfl.budgetBinder.common.Post
-import io.ktor.server.application.*
-import io.ktor.server.auth.*
-import io.ktor.server.response.*
-import io.ktor.server.routing.*
+import io.ktor.application.*
+import io.ktor.auth.*
+import io.ktor.response.*
+import io.ktor.routing.*
 
 
 fun Route.userByIdRoute() {

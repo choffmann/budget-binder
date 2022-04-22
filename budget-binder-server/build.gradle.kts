@@ -25,19 +25,23 @@ dependencies {
     implementation(project(":budget-binder-common"))
     implementation(kotlin("stdlib"))
 
-    // implementation("org.kodein.di:kodein-di-jvm:7.10.0")
-    // implementation("org.kodein.di:kodein-di-framework-ktor-server-jvm:7.10.0")
+    // implementation("org.kodein.di:kodein-di:7.8.0")
+    implementation("org.kodein.di:kodein-di-framework-ktor-server-jvm:7.10.0")
 
-    val ktorVersion = "2.0.0"
+    // Stay @1.6.8 as long as kodein has not updated their packages for new ktor
+    val ktorVersion = "1.6.8" // ""2.0.0"
     val exposedVersion = "0.38.1"
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1")
 
     implementation("io.ktor:ktor-server-core:$ktorVersion")
-    implementation("io.ktor:ktor-server-auth:$ktorVersion")
-    implementation("io.ktor:ktor-server-auth-jwt:$ktorVersion")
-    implementation("io.ktor:ktor-server-content-negotiation:$ktorVersion")
-    implementation("io.ktor:ktor-server-cors:$ktorVersion")
-    implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
+    // implementation("io.ktor:ktor-server-auth:$ktorVersion")
+    implementation("io.ktor:ktor-auth:$ktorVersion")
+    //implementation("io.ktor:ktor-server-auth-jwt:$ktorVersion")
+    //implementation("io.ktor:ktor-server-content-negotiation:$ktorVersion")
+    //implementation("io.ktor:ktor-server-cors:$ktorVersion")
+    implementation("io.ktor:ktor-serialization:$ktorVersion")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
+    // implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
     // implementation("io.ktor:ktor-server-websockets:ktorVersion")
     implementation("io.ktor:ktor-server-netty:$ktorVersion")
     implementation("ch.qos.logback:logback-classic:1.2.11")
