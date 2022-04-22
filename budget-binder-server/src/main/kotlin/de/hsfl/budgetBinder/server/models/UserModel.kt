@@ -16,7 +16,7 @@ object Users: IntIdTable() {
     val firstName = varchar("first_name", 50)
     val name = varchar("name", 50)
     val email = varchar("email", 50).uniqueIndex()
-    val passwordHash = varchar("password_hash", 128)
+    val passwordHash = char("password_hash", 60)
     val role = enumeration<Roles>("role")
 }
 
