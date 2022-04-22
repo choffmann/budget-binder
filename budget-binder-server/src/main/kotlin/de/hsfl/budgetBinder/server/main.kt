@@ -85,7 +85,7 @@ fun main() = runBlocking<Unit> {
     *   responseWriteTimeoutSeconds = 10
     * }
     * */
-    embeddedServer(Netty, port = port, watchPaths = listOf("classes", "resources"), host = host) {
+    embeddedServer(Netty, port = port, watchPaths = listOf("build/classes", "build/resources"), host = host) {
         module()
     }.start(wait = true)
 }
