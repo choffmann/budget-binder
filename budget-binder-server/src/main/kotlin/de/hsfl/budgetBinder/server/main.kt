@@ -3,21 +3,11 @@ package de.hsfl.budgetBinder.server
 import de.hsfl.budgetBinder.server.models.Roles
 import de.hsfl.budgetBinder.server.models.UserEntity
 import de.hsfl.budgetBinder.server.models.Users
-import de.hsfl.budgetBinder.server.routes.userRoutes
-import io.ktor.server.application.*
-import io.ktor.server.plugins.cors.*
-import io.ktor.server.auth.*
-import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
-import io.ktor.server.plugins.contentnegotiation.*
-import io.ktor.server.response.*
-import io.ktor.server.routing.*
 import kotlinx.coroutines.runBlocking
-import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.StdOutSqlLogger
-import org.jetbrains.exposed.sql.addLogger
+import org.jetbrains.exposed.dao.exceptions.EntityNotFoundException
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 
 fun main() = runBlocking<Unit> {
@@ -63,14 +53,25 @@ fun main() = runBlocking<Unit> {
         addLogger(StdOutSqlLogger)
 
         SchemaUtils.create(Users)
-        /*
-        UserEntity.new {
-            firstName = "Fabian"
-            name = "Petersen"
-            passwordHash = "test"
-            role = Roles.ADMIN
-            email = "fabian@nf-petersen.de"
-        } */
+
+        var root: UserEntity
+        try {
+            root = UserEntity[1]
+        } catch (_: EntityNotFoundException) {
+            val rootUserEmail = System.getenv("ROOT_USER_EMAIL")
+            val rootUserPassword = System.getenv("ROOT_USER_PASSWORD")
+            Users.insert {
+                it[id] = 1
+                it[name] = "Administrator"
+                it[firstName] = "root"
+                it[email] = rootUserEmail
+                it[passwordHash] = rootUserPassword
+                it[role] = Roles.ADMIN
+            }
+            root = UserEntity[1]
+        }
+        if (root.role != Roles.ADMIN)
+            throw Exception("First User is not the Root user")
     }
     /*
     * configure = {
@@ -87,40 +88,4 @@ fun main() = runBlocking<Unit> {
     embeddedServer(Netty, port = port, watchPaths = listOf("classes", "resources"), host = host) {
         module()
     }.start(wait = true)
-}
-
-fun Application.module() {
-    install(CORS) {
-        anyHost()
-    }
-    install(Authentication) {
-        basic("auth-basic") {
-            realm = "Budget Binder Server"
-            validate {
-                UserIdPrincipal(it.name)
-            }
-        }
-    }
-
-    install(ContentNegotiation) {
-        json()
-    }
-
-    // install all Modules
-    userRoutes()
-
-    routing {
-        get("/") {
-            call.respondText("Hello World!")
-        }
-    }
-
-    routing {
-        get("/path") {
-            val user = transaction {
-                UserEntity.all().toList().random()
-            }
-            call.respondText(user.email)
-        }
-    }
 }
