@@ -56,12 +56,15 @@ fun Application.module() {
                 .withAudience(audience)
                 .withIssuer(issuer)
                 .withClaimPresence("userid")
+                .withClaimPresence("token_version")
                 .build())
 
             validate {
                 val id = it.payload.getClaim("userid").asInt()
+                val tokenVersion = it.payload.getClaim("token_version").asInt()
                 val userService: UserService by closestDI().instance()
-                userService.findUserByID(id)
+                val user = userService.findUserByID(id)
+                if (user?.tokenVersion == tokenVersion) user else null
             }
         }
     }

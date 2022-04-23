@@ -5,6 +5,7 @@ import com.auth0.jwt.algorithms.Algorithm
 import de.hsfl.budgetBinder.common.APIResponse
 import de.hsfl.budgetBinder.common.Post
 import de.hsfl.budgetBinder.server.models.UserEntity
+import de.hsfl.budgetBinder.server.services.UserService
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.http.*
@@ -13,19 +14,22 @@ import io.ktor.routing.*
 import io.ktor.util.date.*
 import io.netty.handler.codec.http.cookie.CookieHeaderNames.SAMESITE
 import io.netty.handler.codec.http.cookie.CookieHeaderNames.SameSite
+import org.kodein.di.instance
+import org.kodein.di.ktor.closestDI
 import java.util.*
 
-fun createAccessToken(id: Int): String {
+fun createAccessToken(id: Int, tokenVersion: Int): String {
     val secret = System.getenv("JWT_ACCESS_SECRET")
-    return createJWTToken(id, secret, Date(System.currentTimeMillis() + 1000 * 60 * 15))
+    val minutes = System.getenv("JWT_ACCESS_MINUTES")?.toIntOrNull() ?: 15
+    return createJWTToken(id, tokenVersion, secret, Date(System.currentTimeMillis() + 1000 * 60 * minutes))
 }
 
-fun createRefreshToken(id: Int): String {
+fun createRefreshToken(id: Int, tokenVersion: Int, timestamp: Long): String {
     val secret = System.getenv("JWT_REFRESH_SECRET")
-    return createJWTToken(id, secret, Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 7))
+    return createJWTToken(id, tokenVersion, secret, Date(timestamp))
 }
 
-fun createJWTToken(id: Int, secret: String, expiresAt: Date): String {
+fun createJWTToken(id: Int, tokenVersion: Int, secret: String, expiresAt: Date): String {
     val issuer = System.getenv("JWT_ISSUER") ?: "http://0.0.0.0:8080/"
     val audience = System.getenv("JWT_AUDIENCE") ?: "http://0.0.0.0:8080/"
 
@@ -33,19 +37,20 @@ fun createJWTToken(id: Int, secret: String, expiresAt: Date): String {
         .withAudience(audience)
         .withIssuer(issuer)
         .withClaim("userid", id)
+        .withClaim("token_version", tokenVersion)
         .withIssuedAt(Date(System.currentTimeMillis()))
         .withExpiresAt(expiresAt)
         .sign(Algorithm.HMAC256(secret))
 }
 
-fun createRefreshCookie(token: String): Cookie {
+fun createRefreshCookie(token: String, timestamp: Long): Cookie {
     val secure = System.getenv("DEV") != "True"
     val sameSiteValue = if (secure) SameSite.None.toString() else SameSite.Lax.toString()
 
     return Cookie(
         "jwt",
         token,
-        expires = GMTDate(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 7),
+        expires = GMTDate(timestamp),
         path = "/refresh_token",
         httpOnly = true,
         secure = secure,
@@ -58,10 +63,13 @@ fun Route.login() {
         post("/login") {
             val user = call.principal<UserEntity>()!!
 
-            val token = createAccessToken(user.id.value)
-            val refreshToken = createRefreshToken(user.id.value)
+            val token = createAccessToken(user.id.value, user.tokenVersion)
 
-            call.response.cookies.append(createRefreshCookie(refreshToken))
+            val days = System.getenv("JWT_REFRESH_DAYS")?.toIntOrNull() ?: 7
+            val timestamp = System.currentTimeMillis() + 1000 * 60 * 60 * 24 * days
+            val refreshToken = createRefreshToken(user.id.value, user.tokenVersion, timestamp)
+
+            call.response.cookies.append(createRefreshCookie(refreshToken, timestamp))
             call.respond(APIResponse(hashMapOf("token" to token)))
         }
     }
@@ -85,14 +93,31 @@ fun Route.refreshCookie() {
         val token = JWT.require(Algorithm.HMAC256(secret))
             .withAudience(audience)
             .withIssuer(issuer)
+            .withClaimPresence("userid")
+            .withClaimPresence("token_version")
             .build().verify(tokenToCheck)
 
         val id = token.getClaim("userid").asInt()
+        val tokenVersion = token.getClaim("token_version").asInt()
+        val userService: UserService by closestDI().instance()
+        val user = userService.findUserByID(id)
 
-        val accessToken = createAccessToken(id)
-        val refreshToken = createRefreshToken(id)
+        if (user?.tokenVersion != tokenVersion) {
+            call.respond(
+                HttpStatusCode.Unauthorized,
+                APIResponse<String>(null, "Token Version is different", false)
+            )
+            return@get
+        }
 
-        call.response.cookies.append(createRefreshCookie(refreshToken))
+        val accessToken = createAccessToken(id, tokenVersion)
+
+        val days = System.getenv("JWT_REFRESH_DAYS")?.toIntOrNull() ?: 7
+        val timestamp = System.currentTimeMillis() + 1000 * 60 * 60 * 24 * days
+
+        val refreshToken = createRefreshToken(id, tokenVersion, timestamp)
+
+        call.response.cookies.append(createRefreshCookie(refreshToken, timestamp))
         call.respond(APIResponse(hashMapOf("token" to accessToken)))
     }
 }

@@ -17,6 +17,7 @@ object Users: IntIdTable() {
     val name = varchar("name", 50)
     val email = varchar("email", 50).uniqueIndex()
     val passwordHash = char("password_hash", 60)
+    val tokenVersion = integer("token_version").default(1)
     val role = enumeration<Roles>("role")
 }
 
@@ -27,6 +28,7 @@ class UserEntity(id: EntityID<Int>) : IntEntity(id), Principal {
     var name by Users.name
     var email by Users.email
     var passwordHash by Users.passwordHash
+    var tokenVersion by Users.tokenVersion
     var role by Users.role
 
     fun toDto(): User {

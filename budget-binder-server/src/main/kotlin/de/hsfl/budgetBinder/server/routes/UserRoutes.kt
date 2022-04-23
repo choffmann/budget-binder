@@ -12,10 +12,17 @@ import io.ktor.routing.*
 import org.kodein.di.instance
 import org.kodein.di.ktor.closestDI
 
+fun Route.meRoute() {
+    authenticate("auth-jwt") {
+        get("/users/me") {
+            call.respond(APIResponse(call.principal<UserEntity>()!!.toDto()))
+        }
+    }
+}
 
 fun Route.userByIdRoute() {
     authenticate("auth-jwt") {
-        get("/user/{id}") {
+        get("/users/{id}") {
             val id = call.parameters["id"]?.toIntOrNull()
 
             if (id == null) {
@@ -44,6 +51,7 @@ fun Route.userByIdRoute() {
 // install all previous Routes
 fun Application.userRoutes() {
     routing {
+        meRoute()
         userByIdRoute()
     }
 }

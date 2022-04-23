@@ -13,7 +13,9 @@ HOST=0.0.0.0
 PORT=8080
 FRONTEND_ADDRESS="" required
 JWT_ACCESS_SECRET="" required
+JWT_ACCESS_MINUTES=15
 JWT_REFRESH_SECRET="" required
+JWT_REFRESH_DAYS=7
 ROOT_USER_EMAIL="" required
 ROOT_USER_PASSWORD="" required
 DB_TYPE="MYSQL | POSTGRESQL | SQLITE" required
@@ -58,6 +60,7 @@ Use docker:
 ```bash
 docker run -it -p 8080:8080 -v ~/data:app/data \
 -e DB_TYPE=SQLITE \
+-e FRONTEND_ADDRESS= \
 -e JWT_ACCESS_SECRET= \
 -e JWT_REFRESH_SECRET= \
 -e ROOT_USER_EMAIL= \
