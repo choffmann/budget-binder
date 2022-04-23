@@ -11,6 +11,7 @@ The following Environment Variables are possible:
 DEV=""
 HOST=0.0.0.0
 PORT=8080
+FRONTEND_ADDRESS="" required
 JWT_ACCESS_SECRET="" required
 JWT_REFRESH_SECRET="" required
 ROOT_USER_EMAIL="" required

@@ -22,7 +22,17 @@ import org.kodein.di.ktor.di
 
 fun Application.module() {
     install(CORS) {
-        anyHost()
+        val clientHost = System.getenv("FRONTEND_ADDRESS").split("://")
+        host(clientHost[1], schemes = listOf(clientHost[0]))
+        allowCredentials = true
+        header(HttpHeaders.Authorization)
+        header(HttpHeaders.ContentType)
+        method(HttpMethod.Put)
+        method(HttpMethod.Options)
+        method(HttpMethod.Patch)
+        method(HttpMethod.Delete)
+        method(HttpMethod.Post)
+        allowNonSimpleContentTypes = true
     }
     install(XForwardedHeaderSupport)
 
