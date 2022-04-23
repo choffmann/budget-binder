@@ -26,7 +26,7 @@ dependencies {
     implementation(kotlin("stdlib"))
 
     // implementation("org.kodein.di:kodein-di:7.8.0")
-    implementation("org.kodein.di:kodein-di-framework-ktor-server-jvm:7.10.0")
+    implementation("org.kodein.di:kodein-di-framework-ktor-server-jvm:7.11.0")
 
     // Stay @1.6.8 as long as kodein has not updated their packages for new ktor
     val ktorVersion = "1.6.8" // ""2.0.0"

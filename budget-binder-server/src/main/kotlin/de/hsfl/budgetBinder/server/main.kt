@@ -15,39 +15,40 @@ fun main() = runBlocking<Unit> {
     val port = Integer.parseInt(System.getenv("PORT") ?: "8080")
     val host = System.getenv("HOST") ?: "0.0.0.0"
 
-    if (System.getenv("USE_SQLITE") == "True") {
-        // Database.connect("jdbc:sqlite:file:test?mode=memory&cache=shared", "org.sqlite.JDBC")
-        val path = (System.getenv("SQLITE_PATH") ?: (System.getProperty("user.dir") + "/data")) + "/data.db"
-        Database.connect("jdbc:sqlite:$path", "org.sqlite.JDBC")
-    } else {
-        // Database.connect("jdbc:mysql://localhost:3306/test", driver = "com.mysql.cj.jdbc.Driver",
-        //      user = "root", password = "your_pwd")
 
-        val dbType = System.getenv("DB_TYPE")
-        val dbServer = System.getenv("DB_SERVER")
-        val dbPort = System.getenv("DB_PORT")
-        val dbDatabaseName = System.getenv("DB_DATABASE_NAME")
-        val dbUser = System.getenv("DB_USER")
-        val dbPassword = System.getenv("DB_PASSWORD")
+    val dbType = System.getenv("DB_TYPE")
+    val dbServer = System.getenv("DB_SERVER")
+    val dbPort = System.getenv("DB_PORT")
+    val dbDatabaseName = System.getenv("DB_DATABASE_NAME")
+    val dbUser = System.getenv("DB_USER") ?: ""
+    val dbPassword = System.getenv("DB_PASSWORD") ?: ""
 
-        val url: String
-        val driver: String
-        when (dbType) {
-            "MYSQL" -> {
-                url = "jdbc:mysql://$dbServer:$dbPort/$dbDatabaseName"
-                driver = "com.mysql.cj.jdbc.Driver"
-            }
-            "POSTGRESQL" -> {
-                url = "jdbc:pgsql://$dbServer:$dbPort/$dbDatabaseName"
-                driver = "com.impossibl.postgres.jdbc.PGDriver"
-            }
-            else -> {
-                throw Exception("No DATABASE Type given")
-            }
+    val url: String
+    val driver: String
+    when (dbType) {
+        "SQLITE" -> {
+            // Database.connect("jdbc:sqlite:file:test?mode=memory&cache=shared", "org.sqlite.JDBC")
+            val path = (System.getenv("SQLITE_PATH") ?: (System.getProperty("user.dir") + "/data")) + "/data.db"
+            url = "jdbc:sqlite:$path"
+            driver = "org.sqlite.JDBC"
         }
-
-        Database.connect(url, driver, user = dbUser, password = dbPassword)
+        "MYSQL" -> {
+            // Database.connect("jdbc:mysql://localhost:3306/test", driver = "com.mysql.cj.jdbc.Driver",
+            //      user = "root", password = "your_pwd")
+            url = "jdbc:mysql://$dbServer:$dbPort/$dbDatabaseName"
+            driver = "com.mysql.cj.jdbc.Driver"
+        }
+        "POSTGRESQL" -> {
+            url = "jdbc:pgsql://$dbServer:$dbPort/$dbDatabaseName"
+            driver = "com.impossibl.postgres.jdbc.PGDriver"
+        }
+        else -> {
+            throw Exception("No DATABASE Type given")
+        }
     }
+
+    Database.connect(url, driver, user = dbUser, password = dbPassword)
+
 
     transaction {
         // Logging for DEV purposes
