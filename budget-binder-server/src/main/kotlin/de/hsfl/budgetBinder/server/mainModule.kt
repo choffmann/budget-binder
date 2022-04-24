@@ -1,10 +1,10 @@
 package de.hsfl.budgetBinder.server
 
-import com.auth0.jwt.JWT
-import com.auth0.jwt.algorithms.Algorithm
 import de.hsfl.budgetBinder.common.APIResponse
+import de.hsfl.budgetBinder.server.models.Roles
 import de.hsfl.budgetBinder.server.routes.authRoutes
 import de.hsfl.budgetBinder.server.routes.userRoutes
+import de.hsfl.budgetBinder.server.services.JWTService
 import de.hsfl.budgetBinder.server.services.UserService
 import io.ktor.application.*
 import io.ktor.auth.*
@@ -21,6 +21,12 @@ import org.kodein.di.ktor.di
 
 
 fun Application.module() {
+
+    di {
+        bindSingleton { UserService() }
+        bindSingleton { JWTService() }
+    }
+
     install(CORS) {
         val clientHost = System.getenv("FRONTEND_ADDRESS").split("://")
         host(clientHost[1], schemes = listOf(clientHost[0]))
@@ -47,17 +53,9 @@ fun Application.module() {
         }
 
         jwt("auth-jwt") {
-            val secret = System.getenv("JWT_ACCESS_SECRET")
-            val issuer = System.getenv("JWT_ISSUER") ?: "http://0.0.0.0:8080/"
-            val audience = System.getenv("JWT_AUDIENCE") ?: "http://0.0.0.0:8080/"
-            realm = System.getenv("JWT_SECRET") ?: "Access to all"
-            verifier(JWT
-                .require(Algorithm.HMAC256(secret))
-                .withAudience(audience)
-                .withIssuer(issuer)
-                .withClaimPresence("userid")
-                .withClaimPresence("token_version")
-                .build())
+            val jwtService: JWTService by closestDI().instance()
+            realm = "Access to all your stuff"
+            verifier(jwtService.getAccessTokenVerifier())
 
             validate {
                 val id = it.payload.getClaim("userid").asInt()
@@ -75,15 +73,12 @@ fun Application.module() {
 
     install(StatusPages) {
         exception<Throwable> { cause ->
-            call.respond(HttpStatusCode.InternalServerError,
+            call.respond(
+                HttpStatusCode.InternalServerError,
                 APIResponse<String>(null, "Internal Server Error", false)
             )
             throw cause
         }
-    }
-
-    di {
-        bindSingleton { UserService() }
     }
 
     // install all Modules

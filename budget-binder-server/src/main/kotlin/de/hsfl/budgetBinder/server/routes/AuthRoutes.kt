@@ -1,10 +1,9 @@
 package de.hsfl.budgetBinder.server.routes
 
-import com.auth0.jwt.JWT
-import com.auth0.jwt.algorithms.Algorithm
 import de.hsfl.budgetBinder.common.APIResponse
 import de.hsfl.budgetBinder.common.Post
 import de.hsfl.budgetBinder.server.models.UserEntity
+import de.hsfl.budgetBinder.server.services.JWTService
 import de.hsfl.budgetBinder.server.services.UserService
 import io.ktor.application.*
 import io.ktor.auth.*
@@ -16,32 +15,6 @@ import io.netty.handler.codec.http.cookie.CookieHeaderNames.SAMESITE
 import io.netty.handler.codec.http.cookie.CookieHeaderNames.SameSite
 import org.kodein.di.instance
 import org.kodein.di.ktor.closestDI
-import java.util.*
-
-fun createAccessToken(id: Int, tokenVersion: Int): String {
-    val secret = System.getenv("JWT_ACCESS_SECRET")
-    val minutes = System.getenv("JWT_ACCESS_MINUTES")?.toIntOrNull() ?: 15
-    return createJWTToken(id, tokenVersion, secret, Date(System.currentTimeMillis() + 1000 * 60 * minutes))
-}
-
-fun createRefreshToken(id: Int, tokenVersion: Int, timestamp: Long): String {
-    val secret = System.getenv("JWT_REFRESH_SECRET")
-    return createJWTToken(id, tokenVersion, secret, Date(timestamp))
-}
-
-fun createJWTToken(id: Int, tokenVersion: Int, secret: String, expiresAt: Date): String {
-    val issuer = System.getenv("JWT_ISSUER") ?: "http://0.0.0.0:8080/"
-    val audience = System.getenv("JWT_AUDIENCE") ?: "http://0.0.0.0:8080/"
-
-    return JWT.create()
-        .withAudience(audience)
-        .withIssuer(issuer)
-        .withClaim("userid", id)
-        .withClaim("token_version", tokenVersion)
-        .withIssuedAt(Date(System.currentTimeMillis()))
-        .withExpiresAt(expiresAt)
-        .sign(Algorithm.HMAC256(secret))
-}
 
 fun createRefreshCookie(token: String, timestamp: Long): Cookie {
     val secure = System.getenv("DEV") != "True"
@@ -63,13 +36,16 @@ fun Route.login() {
         post("/login") {
             val user = call.principal<UserEntity>()!!
 
-            val token = createAccessToken(user.id.value, user.tokenVersion)
+            val jwtService: JWTService by closestDI().instance()
+            val token = jwtService.createAccessToken(user.id.value, user.tokenVersion)
+            val refreshToken = jwtService.createRefreshToken(user.id.value, user.tokenVersion)
 
-            val days = System.getenv("JWT_REFRESH_DAYS")?.toIntOrNull() ?: 7
-            val timestamp = System.currentTimeMillis() + 1000 * 60 * 60 * 24 * days
-            val refreshToken = createRefreshToken(user.id.value, user.tokenVersion, timestamp)
-
-            call.response.cookies.append(createRefreshCookie(refreshToken, timestamp))
+            call.response.cookies.append(
+                createRefreshCookie(
+                    refreshToken,
+                    System.currentTimeMillis() + jwtService.getRefreshTokenValidationTime()
+                )
+            )
             call.respond(APIResponse(hashMapOf("token" to token)))
         }
     }
@@ -86,16 +62,8 @@ fun Route.refreshCookie() {
             )
             return@get
         }
-        val secret = System.getenv("JWT_REFRESH_SECRET")
-        val issuer = System.getenv("JWT_ISSUER") ?: "http://0.0.0.0:8080/"
-        val audience = System.getenv("JWT_AUDIENCE") ?: "http://0.0.0.0:8080/"
-
-        val token = JWT.require(Algorithm.HMAC256(secret))
-            .withAudience(audience)
-            .withIssuer(issuer)
-            .withClaimPresence("userid")
-            .withClaimPresence("token_version")
-            .build().verify(tokenToCheck)
+        val jwtService: JWTService by closestDI().instance()
+        val token = jwtService.getRefreshTokenVerifier().verify(tokenToCheck)
 
         val id = token.getClaim("userid").asInt()
         val tokenVersion = token.getClaim("token_version").asInt()
@@ -110,14 +78,16 @@ fun Route.refreshCookie() {
             return@get
         }
 
-        val accessToken = createAccessToken(id, tokenVersion)
+        val accessToken = jwtService.createAccessToken(id, tokenVersion)
 
-        val days = System.getenv("JWT_REFRESH_DAYS")?.toIntOrNull() ?: 7
-        val timestamp = System.currentTimeMillis() + 1000 * 60 * 60 * 24 * days
+        val refreshToken = jwtService.createRefreshToken(id, tokenVersion)
 
-        val refreshToken = createRefreshToken(id, tokenVersion, timestamp)
-
-        call.response.cookies.append(createRefreshCookie(refreshToken, timestamp))
+        call.response.cookies.append(
+            createRefreshCookie(
+                refreshToken,
+                System.currentTimeMillis() + jwtService.getRefreshTokenValidationTime()
+            )
+        )
         call.respond(APIResponse(hashMapOf("token" to accessToken)))
     }
 }
