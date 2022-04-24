@@ -21,7 +21,7 @@ fun Route.meRoute() {
 }
 
 fun Route.userByIdRoute() {
-    authenticate("auth-jwt") {
+    authenticate("auth-jwt-admin") {
         get("/users/{id}") {
             val id = call.parameters["id"]?.toIntOrNull()
 

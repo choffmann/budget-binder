@@ -65,6 +65,20 @@ fun Application.module() {
                 if (user?.tokenVersion == tokenVersion) user else null
             }
         }
+
+        jwt("auth-jwt-admin") {
+            val jwtService: JWTService by closestDI().instance()
+            realm = "Access to all your stuff"
+            verifier(jwtService.getAccessTokenVerifier())
+
+            validate {
+                val id = it.payload.getClaim("userid").asInt()
+                val tokenVersion = it.payload.getClaim("token_version").asInt()
+                val userService: UserService by closestDI().instance()
+                val user = userService.findUserByID(id)
+                if (user?.tokenVersion == tokenVersion && user?.role == Roles.ADMIN) user else null
+            }
+        }
     }
 
     install(ContentNegotiation) {
