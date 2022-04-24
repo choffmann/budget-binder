@@ -1,7 +1,8 @@
 package de.hsfl.budgetBinder.server.routes
 
 import de.hsfl.budgetBinder.common.APIResponse
-import de.hsfl.budgetBinder.common.Post
+import de.hsfl.budgetBinder.common.AuthToken
+import de.hsfl.budgetBinder.common.ErrorModel
 import de.hsfl.budgetBinder.server.models.UserEntity
 import de.hsfl.budgetBinder.server.services.JWTService
 import de.hsfl.budgetBinder.server.services.UserService
@@ -46,7 +47,7 @@ fun Route.login() {
                     System.currentTimeMillis() + jwtService.getRefreshTokenValidationTime()
                 )
             )
-            call.respond(APIResponse(hashMapOf("token" to token)))
+            call.respond(APIResponse(data = AuthToken(token = token)))
         }
     }
 }
@@ -58,7 +59,8 @@ fun Route.refreshCookie() {
         if (tokenToCheck == null) {
             call.respond(
                 HttpStatusCode.Unauthorized,
-                APIResponse<Post>(null, "No Refresh Cookie", false)
+
+                APIResponse("error", ErrorModel(error = true, message = "No Refresh Cookie"), false)
             )
             return@get
         }
@@ -73,7 +75,7 @@ fun Route.refreshCookie() {
         if (user?.tokenVersion != tokenVersion) {
             call.respond(
                 HttpStatusCode.Unauthorized,
-                APIResponse<String>(null, "Token Version is different", false)
+                APIResponse("error", ErrorModel(error = true, message = "Token Version is different"), false)
             )
             return@get
         }
@@ -88,7 +90,7 @@ fun Route.refreshCookie() {
                 System.currentTimeMillis() + jwtService.getRefreshTokenValidationTime()
             )
         )
-        call.respond(APIResponse(hashMapOf("token" to accessToken)))
+        call.respond(APIResponse(data = AuthToken(token = accessToken)))
     }
 }
 

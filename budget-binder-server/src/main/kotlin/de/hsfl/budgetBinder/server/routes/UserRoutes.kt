@@ -1,7 +1,7 @@
 package de.hsfl.budgetBinder.server.routes
 
 import de.hsfl.budgetBinder.common.APIResponse
-import de.hsfl.budgetBinder.common.Post
+import de.hsfl.budgetBinder.common.ErrorModel
 import de.hsfl.budgetBinder.server.models.UserEntity
 import de.hsfl.budgetBinder.server.services.UserService
 import io.ktor.application.*
@@ -28,7 +28,7 @@ fun Route.userByIdRoute() {
             if (id == null) {
                 call.respond(
                     HttpStatusCode.BadRequest,
-                    APIResponse<Post>(null, "path parameter is not a number", false)
+                    APIResponse("error", ErrorModel(error = true, message = "path parameter is not a number"), false)
                 )
                 return@get
             }
@@ -39,16 +39,13 @@ fun Route.userByIdRoute() {
             if (user == null) {
                 call.respond(
                     HttpStatusCode.NotFound,
-                    APIResponse<Post>(null, "User not found", false)
+                    APIResponse("error", ErrorModel(error = true, message = "User not found"), false)
                 )
                 return@get
             }
 
-            val email = call.principal<UserEntity>()!!.email
             call.respond(
-                APIResponse(
-                    Post(id = 1, userId = 1, title = email, body = user.email)
-                )
+                APIResponse(data = user.toDto())
             )
         }
     }

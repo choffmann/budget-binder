@@ -1,6 +1,7 @@
 package de.hsfl.budgetBinder.server
 
 import de.hsfl.budgetBinder.common.APIResponse
+import de.hsfl.budgetBinder.common.ErrorModel
 import de.hsfl.budgetBinder.server.models.Roles
 import de.hsfl.budgetBinder.server.routes.authRoutes
 import de.hsfl.budgetBinder.server.routes.userRoutes
@@ -89,7 +90,7 @@ fun Application.module() {
         exception<Throwable> { cause ->
             call.respond(
                 HttpStatusCode.InternalServerError,
-                APIResponse<String>(null, "Internal Server Error", false)
+                APIResponse("error", ErrorModel(error = true, message = "Internal Server Error"), false)
             )
             throw cause
         }

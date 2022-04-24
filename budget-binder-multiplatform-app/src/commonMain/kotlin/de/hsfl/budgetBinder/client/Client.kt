@@ -1,6 +1,5 @@
 package de.hsfl.budgetBinder.client
 
-import de.hsfl.budgetBinder.common.Post
 import de.hsfl.budgetBinder.common.User
 import io.ktor.client.*
 import io.ktor.client.features.json.*
@@ -16,9 +15,5 @@ class Client {
 
     suspend fun getUsers(): List<User> {
         return client.get("https://jsonplaceholder.typicode.com/users")
-    }
-
-    suspend fun getPosts(): List<Post> {
-        return client.get("https://jsonplaceholder.typicode.com/posts")
     }
 }
