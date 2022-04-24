@@ -1,4 +1,5 @@
 package de.hsfl.budgetBinder.common
+
 import kotlinx.serialization.Serializable
 
 @Serializable

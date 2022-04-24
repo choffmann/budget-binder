@@ -26,8 +26,10 @@ fun Route.userByIdRoute() {
             val id = call.parameters["id"]?.toIntOrNull()
 
             if (id == null) {
-                call.respond(HttpStatusCode.BadRequest,
-                    APIResponse<Post>(null,"path parameter is not a number", false))
+                call.respond(
+                    HttpStatusCode.BadRequest,
+                    APIResponse<Post>(null, "path parameter is not a number", false)
+                )
                 return@get
             }
 
@@ -35,15 +37,19 @@ fun Route.userByIdRoute() {
             val user = userService.findUserByID(id)
 
             if (user == null) {
-                call.respond(HttpStatusCode.NotFound,
-                    APIResponse<Post>(null,"User not found", false))
+                call.respond(
+                    HttpStatusCode.NotFound,
+                    APIResponse<Post>(null, "User not found", false)
+                )
                 return@get
             }
 
             val email = call.principal<UserEntity>()!!.email
-            call.respond(APIResponse(
-                Post(id = 1, userId = 1, title = email, body = user.email)
-            ))
+            call.respond(
+                APIResponse(
+                    Post(id = 1, userId = 1, title = email, body = user.email)
+                )
+            )
         }
     }
 }

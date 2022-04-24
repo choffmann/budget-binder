@@ -11,8 +11,8 @@ class UserService {
     }
 
     fun findUserByEmailAndPassword(email: String, password: String): UserEntity? = transaction {
-        UserEntity.find { Users.email eq email }.firstOrNull()?.let {
-            user -> if (BCrypt.checkpw(password, user.passwordHash)) user else null
+        UserEntity.find { Users.email eq email }.firstOrNull()?.let { user ->
+            if (BCrypt.checkpw(password, user.passwordHash)) user else null
         }
     }
 

@@ -14,7 +14,6 @@ class JWTService {
     private val refreshTokenValidationTime =
         1000 * 60 * 60 * 24 * (System.getenv("JWT_REFRESH_DAYS")?.toIntOrNull() ?: 7)
 
-
     private val accessTokenVerifier = JWT
         .require(Algorithm.HMAC256(accessTokenSecret))
         .withAudience(audience)
