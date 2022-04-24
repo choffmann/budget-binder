@@ -73,4 +73,4 @@ Or you build the jar on your machine:
 - with :budget-binder-server:shadowJar
 - copy the `budget-binder-server/build/libs/budget-binder-server-1.0-SNAPSHOT-all.jar` on the server
 - set up the env-variables from the top
-- run it with `java -jar /app/ktor-docker-server.jar`
+- run it with `java -jar budget-binder-server-1.0-SNAPSHOT-all.jar`
