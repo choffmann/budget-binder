@@ -17,6 +17,7 @@ import io.ktor.util.date.*
 import io.netty.handler.codec.http.cookie.CookieHeaderNames.SAMESITE
 import io.netty.handler.codec.http.cookie.CookieHeaderNames.SameSite
 import org.jetbrains.exposed.exceptions.ExposedSQLException
+import org.jetbrains.exposed.sql.transactions.transaction
 import org.kodein.di.instance
 import org.kodein.di.ktor.closestDI
 
@@ -38,7 +39,7 @@ fun createRefreshCookie(token: String, timestamp: Long): Cookie {
 fun Route.login() {
     authenticate("auth-form") {
         post("/login") {
-            val user = call.principal<UserEntity>()!!
+            val user: UserEntity = call.principal()!!
 
             val jwtService: JWTService by closestDI().instance()
             val token = jwtService.createAccessToken(user.id.value, user.tokenVersion)
@@ -51,6 +52,24 @@ fun Route.login() {
                 )
             )
             call.respond(APIResponse(data = AuthToken(token = token)))
+        }
+    }
+}
+
+fun Route.logout() {
+    authenticate("auth-jwt") {
+        get("/logout") {
+            val logoutAll = call.request.queryParameters["all"].toBoolean()
+            val user: UserEntity = call.principal()!!
+
+            if (logoutAll) {
+                transaction {
+                    user.tokenVersion++
+                }
+            }
+
+            call.response.cookies.appendExpired("jwt", path = "/refresh_token")
+            call.respond(HttpStatusCode.OK)
         }
     }
 }
@@ -128,6 +147,7 @@ fun Route.register() {
 fun Application.authRoutes() {
     routing {
         login()
+        logout()
         refreshCookie()
         register()
     }
