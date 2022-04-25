@@ -2,49 +2,40 @@ package de.hsfl.budgetBinder.compose
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
-import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
+import de.hsfl.budgetBinder.ApplicationFlow
+import de.hsfl.budgetBinder.UIState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import androidx.compose.ui.Modifier
-import de.hsfl.budgetBinder.data.client.Client
-import de.hsfl.budgetBinder.data.repository.AuthRepositoryImplementation
-import de.hsfl.budgetBinder.data.repository.UserRepositoryImplementation
-import de.hsfl.budgetBinder.domain.use_case.auth_user.LoginUseCase
-import de.hsfl.budgetBinder.domain.use_case.get_user.UserUseCase
-import de.hsfl.budgetBinder.presentation.UserState
-import de.hsfl.budgetBinder.presentation.UserViewModel
+import de.hsfl.budgetBinder.client.Client
 
 @Composable
 fun UserView() {
     val scope = CoroutineScope(Dispatchers.Unconfined + SupervisorJob())
-    val client = Client()
-    val userViewModel = UserViewModel(
-        // TODO: Optimize with KODEIN DI
-        LoginUseCase(AuthRepositoryImplementation(client)),
-        UserUseCase(UserRepositoryImplementation(client)),
-        scope
-    )
-    val uiState by userViewModel.state.collectAsState(scope)
+    val applicationFlow = ApplicationFlow(Client(), scope)
+    val uiState by applicationFlow.uiState.collectAsState(scope)
     MaterialTheme {
         Box(modifier = Modifier.fillMaxSize())
         Column {
-
             when (uiState) {
-                is UserState.Success -> {
-                    Text((uiState as UserState.Success).user.toString())
+                is UIState.Path -> {
+                    Text((uiState as UIState.Path).data)
                 }
-                is UserState.Error -> {
-                    Text((uiState as UserState.Error).error)
+                is UIState.Error -> {
+                    Text((uiState as UIState.Error).error.toString())
                 }
-                is UserState.Loading -> {
-                    CircularProgressIndicator()
+                is UIState.User -> {
+                    Text((uiState as UIState.User).user.toString())
+                }
+                else -> {
+                    Text("Something is not correct!")
                 }
             }
-            Button(onClick = { userViewModel.getMyUser() }) {
+            Button(onClick = { applicationFlow.update() }) {
                 Text("Update")
             }
         }
