@@ -17,6 +17,10 @@ class UserService {
         }
     }
 
+    fun getAllUsers(): List<UserEntity> = transaction {
+        UserEntity.all().toList()
+    }
+
     fun findUserByID(id: Int): UserEntity? = transaction {
         UserEntity.findById(id)
     }

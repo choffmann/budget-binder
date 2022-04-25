@@ -20,6 +20,17 @@ fun Route.meRoute() {
     }
 }
 
+fun Route.allUsersRoute() {
+    authenticate("auth-jwt-admin") {
+        get("/users"){
+            val userService: UserService by closestDI().instance()
+            call.respond(
+                APIResponse(userService.getAllUsers().map { it.toDto() })
+            )
+        }
+    }
+}
+
 fun Route.userByIdRoute() {
     authenticate("auth-jwt-admin") {
         get("/users/{id}") {
@@ -55,6 +66,7 @@ fun Route.userByIdRoute() {
 fun Application.userRoutes() {
     routing {
         meRoute()
+        allUsersRoute()
         userByIdRoute()
     }
 }
