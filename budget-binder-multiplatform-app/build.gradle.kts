@@ -31,17 +31,21 @@ kotlin {
             dependencies {
                 implementation(project(":budget-binder-common"))
 
-                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
-
-                implementation("io.ktor:ktor-client-core:1.6.4")
-                implementation("io.ktor:ktor-client-serialization:1.6.4")
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
+                val ktor_version = "2.0.0"
+                implementation("io.ktor:ktor-client-core:$ktor_version")
+                implementation("io.ktor:ktor-client-serialization:$ktor_version")
+                implementation("io.ktor:ktor-client-core:$ktor_version")
+                implementation("io.ktor:ktor-client-auth:$ktor_version")
+                implementation("io.ktor:ktor-client-logging:$ktor_version")
+                implementation("io.ktor:ktor-client-content-negotiation:$ktor_version")
+                implementation("io.ktor:ktor-serialization-kotlinx-json:$ktor_version")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1")
             }
         }
 
         val jvmMain by creating {
             dependencies {
-                implementation("io.ktor:ktor-client-java:1.6.4")
+                implementation("io.ktor:ktor-client-java:2.0.0")
                 implementation(compose.foundation)
                 implementation(compose.material)
                 api(compose.preview)
@@ -70,7 +74,7 @@ kotlin {
                 implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.4.1")
                 implementation("androidx.activity:activity-compose:1.4.0")
 
-                implementation("io.ktor:ktor-client-android:1.6.4")
+                implementation("io.ktor:ktor-client-android:2.0.0")
 
                 implementation("org.kodein.di:kodein-di:7.9.0")
                 implementation("org.kodein.di:kodein-di-framework-android-x:7.9.0")
@@ -79,7 +83,7 @@ kotlin {
 
         val jsMain by getting {
             dependencies {
-                implementation("io.ktor:ktor-client-js:1.6.4")
+                implementation("io.ktor:ktor-client-js:2.0.0")
                 implementation(compose.web.core)
                 implementation(compose.runtime)
                 implementation(compose.web.svg)
