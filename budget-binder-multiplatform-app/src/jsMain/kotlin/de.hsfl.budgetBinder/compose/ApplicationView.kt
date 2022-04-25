@@ -34,8 +34,8 @@ fun ApplicationView() {
             }
         ) {
             Text("from ${Platform().platform}")
-            if(uiState is UIState.Success) {
-                Text((uiState as UIState.Success).users[0].name)
+            if(uiState is UIState.User) {
+                Text((uiState as UIState.User).user.toString())
             }
         }
     }
