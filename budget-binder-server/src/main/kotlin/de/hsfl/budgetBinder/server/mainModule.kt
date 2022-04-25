@@ -19,6 +19,7 @@ import io.ktor.util.*
 import org.kodein.di.*
 import org.kodein.di.ktor.closestDI
 import org.kodein.di.ktor.di
+import org.slf4j.event.Level
 
 
 fun Application.module() {
@@ -26,6 +27,10 @@ fun Application.module() {
     di {
         bindSingleton { UserService() }
         bindSingleton { JWTService() }
+    }
+
+    install(CallLogging) {
+        level = if (System.getenv("DEV") == "True") Level.DEBUG else Level.INFO
     }
 
     install(CORS) {
