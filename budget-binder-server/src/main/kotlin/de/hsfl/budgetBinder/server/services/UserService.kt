@@ -1,5 +1,6 @@
 package de.hsfl.budgetBinder.server.services
 
+import de.hsfl.budgetBinder.common.User
 import de.hsfl.budgetBinder.server.models.UserEntity
 import de.hsfl.budgetBinder.server.models.Users
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -18,5 +19,14 @@ class UserService {
 
     fun findUserByID(id: Int): UserEntity? = transaction {
         UserEntity.findById(id)
+    }
+
+    fun insertNewUser(userIn: User.In): UserEntity = transaction {
+        UserEntity.new {
+            firstName = userIn.firstName
+            name = userIn.name
+            email = userIn.email
+            passwordHash = BCrypt.hashpw(userIn.password, BCrypt.gensalt())
+        }
     }
 }

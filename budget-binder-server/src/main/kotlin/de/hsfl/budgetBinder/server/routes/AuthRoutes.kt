@@ -3,17 +3,20 @@ package de.hsfl.budgetBinder.server.routes
 import de.hsfl.budgetBinder.common.APIResponse
 import de.hsfl.budgetBinder.common.AuthToken
 import de.hsfl.budgetBinder.common.ErrorModel
+import de.hsfl.budgetBinder.common.User
 import de.hsfl.budgetBinder.server.models.UserEntity
 import de.hsfl.budgetBinder.server.services.JWTService
 import de.hsfl.budgetBinder.server.services.UserService
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.http.*
+import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
 import io.ktor.util.date.*
 import io.netty.handler.codec.http.cookie.CookieHeaderNames.SAMESITE
 import io.netty.handler.codec.http.cookie.CookieHeaderNames.SameSite
+import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.kodein.di.instance
 import org.kodein.di.ktor.closestDI
 
@@ -94,10 +97,38 @@ fun Route.refreshCookie() {
     }
 }
 
+fun Route.register() {
+    post("/register") {
+        val userIn: User.In
+        try {
+            userIn = call.receive()
+        } catch (_: ContentTransformationException) {
+            call.respond(
+                status = HttpStatusCode.BadRequest,
+                APIResponse("error", ErrorModel(true, "not the right format"), false)
+            )
+            return@post
+        }
+        val userService: UserService by closestDI().instance()
+        val user: UserEntity
+        try {
+            user = userService.insertNewUser(userIn)
+        } catch (_: ExposedSQLException) {
+            call.respond(
+                status = HttpStatusCode.BadRequest,
+                APIResponse("error", ErrorModel(true, "Email already assigned"), false)
+            )
+            return@post
+        }
+        call.respond(APIResponse(user.toDto()))
+    }
+}
+
 // install all previous Routes
 fun Application.authRoutes() {
     routing {
         login()
         refreshCookie()
+        register()
     }
 }

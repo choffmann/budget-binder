@@ -18,7 +18,7 @@ object Users : IntIdTable() {
     val email = varchar("email", 50).uniqueIndex()
     val passwordHash = char("password_hash", 60)
     val tokenVersion = integer("token_version").default(1)
-    val role = enumeration<Roles>("role")
+    val role = enumeration<Roles>("role").default(Roles.USER)
 }
 
 class UserEntity(id: EntityID<Int>) : IntEntity(id), Principal {
