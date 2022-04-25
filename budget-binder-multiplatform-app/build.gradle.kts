@@ -27,11 +27,11 @@ kotlin {
     }*/
 
     sourceSets {
-        val ktor_version = "2.0.1"
         val commonMain by getting {
             dependencies {
                 implementation(project(":budget-binder-common"))
 
+                val ktor_version = "2.0.0"
                 implementation("io.ktor:ktor-client-core:$ktor_version")
                 implementation("io.ktor:ktor-client-serialization:$ktor_version")
                 implementation("io.ktor:ktor-client-core:$ktor_version")
@@ -45,7 +45,7 @@ kotlin {
 
         val jvmMain by creating {
             dependencies {
-                implementation("io.ktor:ktor-client-java:$ktor_version")
+                implementation("io.ktor:ktor-client-java:2.0.0")
                 implementation(compose.foundation)
                 implementation(compose.material)
                 api(compose.preview)
@@ -74,7 +74,7 @@ kotlin {
                 implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.4.1")
                 implementation("androidx.activity:activity-compose:1.4.0")
 
-                implementation("io.ktor:ktor-client-android:$ktor_version")
+                implementation("io.ktor:ktor-client-android:2.0.0")
 
                 implementation("org.kodein.di:kodein-di:7.9.0")
                 implementation("org.kodein.di:kodein-di-framework-android-x:7.9.0")
@@ -83,7 +83,7 @@ kotlin {
 
         val jsMain by getting {
             dependencies {
-                implementation("io.ktor:ktor-client-js:$ktor_version")
+                implementation("io.ktor:ktor-client-js:2.0.0")
                 implementation(compose.web.core)
                 implementation(compose.runtime)
                 implementation(compose.web.svg)
