@@ -50,6 +50,6 @@ class UserEntity(id: EntityID<Int>) : IntEntity(id), Principal {
     var role by Users.role
 
     fun toDto(): User {
-        return User(id.value, firstName, name, email, role.toDto())
+        return User(id.value, firstName, name, email, role.toDto(), active)
     }
 }
