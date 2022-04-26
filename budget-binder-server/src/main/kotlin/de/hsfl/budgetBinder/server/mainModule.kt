@@ -67,8 +67,9 @@ fun Application.module() {
                 val id = it.payload.getClaim("userid").asInt()
                 val tokenVersion = it.payload.getClaim("token_version").asInt()
                 val userService: UserService by closestDI().instance()
-                val user = userService.findUserByID(id)
-                if (user?.tokenVersion == tokenVersion) user else null
+                userService.findUserByID(id)?.let { user ->
+                    if (user.active && user.tokenVersion == tokenVersion) user else null
+                }
             }
         }
 
@@ -81,8 +82,9 @@ fun Application.module() {
                 val id = it.payload.getClaim("userid").asInt()
                 val tokenVersion = it.payload.getClaim("token_version").asInt()
                 val userService: UserService by closestDI().instance()
-                val user = userService.findUserByID(id)
-                if (user?.tokenVersion == tokenVersion && user?.role == Roles.ADMIN) user else null
+                userService.findUserByID(id)?.let { user ->
+                    if (user.active && user.tokenVersion == tokenVersion && user.role == Roles.ADMIN) user else null
+                }
             }
         }
     }

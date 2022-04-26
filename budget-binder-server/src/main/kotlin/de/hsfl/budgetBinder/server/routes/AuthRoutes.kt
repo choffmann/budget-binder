@@ -17,7 +17,6 @@ import io.ktor.util.date.*
 import io.netty.handler.codec.http.cookie.CookieHeaderNames.SAMESITE
 import io.netty.handler.codec.http.cookie.CookieHeaderNames.SameSite
 import org.jetbrains.exposed.exceptions.ExposedSQLException
-import org.jetbrains.exposed.sql.transactions.transaction
 import org.kodein.di.instance
 import org.kodein.di.ktor.closestDI
 
@@ -63,9 +62,8 @@ fun Route.logout() {
             val user: UserEntity = call.principal()!!
 
             if (logoutAll) {
-                transaction {
-                    user.tokenVersion++
-                }
+                val userService: UserService by closestDI().instance()
+                userService.logoutAllClients(user)
             }
 
             call.response.cookies.appendExpired("jwt", path = "/refresh_token")
@@ -118,10 +116,8 @@ fun Route.refreshCookie() {
 
 fun Route.register() {
     post("/register") {
-        val userIn: User.In
-        try {
-            userIn = call.receive()
-        } catch (_: ContentTransformationException) {
+        val userIn: User.In? = call.receiveOrNull()
+        if (userIn == null) {
             call.respond(
                 status = HttpStatusCode.BadRequest,
                 APIResponse("error", ErrorModel(true, "not the right format"), false)

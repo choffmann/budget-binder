@@ -9,7 +9,23 @@ import org.jetbrains.exposed.dao.id.IntIdTable
 
 enum class Roles {
     USER,
-    ADMIN
+    ADMIN;
+
+    fun toDto(): User.Roles {
+        return when (this) {
+            USER -> User.Roles.USER
+            ADMIN -> User.Roles.ADMIN
+        }
+    }
+
+    companion object {
+        fun fromDto(role: User.Roles): Roles {
+            return when (role) {
+                User.Roles.USER -> USER
+                User.Roles.ADMIN -> ADMIN
+            }
+        }
+    }
 }
 
 object Users : IntIdTable() {
@@ -18,6 +34,7 @@ object Users : IntIdTable() {
     val email = varchar("email", 50).uniqueIndex()
     val passwordHash = char("password_hash", 60)
     val tokenVersion = integer("token_version").default(1)
+    val active = bool("active").default(true)
     val role = enumeration<Roles>("role").default(Roles.USER)
 }
 
@@ -29,9 +46,10 @@ class UserEntity(id: EntityID<Int>) : IntEntity(id), Principal {
     var email by Users.email
     var passwordHash by Users.passwordHash
     var tokenVersion by Users.tokenVersion
+    var active by Users.active
     var role by Users.role
 
     fun toDto(): User {
-        return User(id.value, firstName, name, email)
+        return User(id.value, firstName, name, email, role.toDto())
     }
 }
