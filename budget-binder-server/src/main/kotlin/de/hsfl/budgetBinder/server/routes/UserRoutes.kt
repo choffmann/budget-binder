@@ -17,10 +17,10 @@ import org.kodein.di.ktor.closestDI
 fun Route.meRoute() {
     authenticate("auth-jwt") {
         route("/users/me") {
-            get("") {
+            get {
                 call.respond(APIResponse(call.principal<UserEntity>()!!.toDto()))
             }
-            put("") {
+            put {
                 val user = call.principal<UserEntity>()!!
                 val userPut: User.Put? = call.receiveOrNull()
                 if (userPut == null) {
@@ -38,6 +38,13 @@ fun Route.meRoute() {
                 call.respond(
                     APIResponse(userService.changeUser(user, userPut).toDto())
                 )
+            }
+            delete {
+                val user = call.principal<UserEntity>()!!
+                val userService: UserService by closestDI().instance()
+                val response = APIResponse(user.toDto())
+                userService.deleteUser(user)
+                call.respond(response)
             }
         }
     }
@@ -57,13 +64,17 @@ fun Route.allUsersRoute() {
 fun Route.userByIdRoute() {
     authenticate("auth-jwt-admin") {
         route("/users/{id}") {
-            get("") {
+            get {
                 val id = call.parameters["id"]?.toIntOrNull()
 
                 if (id == null) {
                     call.respond(
                         HttpStatusCode.BadRequest,
-                        APIResponse("error", ErrorModel(error = true, message = "path parameter is not a number"), false)
+                        APIResponse(
+                            "error",
+                            ErrorModel(error = true, message = "path parameter is not a number"),
+                            false
+                        )
                     )
                     return@get
                 }
@@ -84,7 +95,7 @@ fun Route.userByIdRoute() {
                 )
             }
         }
-        put("") {
+        put {
             val id = call.parameters["id"]?.toIntOrNull()
 
             if (id == null) {
@@ -120,6 +131,31 @@ fun Route.userByIdRoute() {
             call.respond(
                 APIResponse(data = updatedUser.toDto())
             )
+        }
+        delete {
+            val id = call.parameters["id"]?.toIntOrNull()
+
+            if (id == null) {
+                call.respond(
+                    HttpStatusCode.BadRequest,
+                    APIResponse("error", ErrorModel(error = true, message = "path parameter is not a number"), false)
+                )
+                return@delete
+            }
+
+            val userService: UserService by closestDI().instance()
+            val user = userService.findUserByID(id)
+
+            if (user == null) {
+                call.respond(
+                    HttpStatusCode.NotFound,
+                    APIResponse("error", ErrorModel(error = true, message = "User not found"), false)
+                )
+                return@delete
+            }
+            val response = APIResponse(user.toDto())
+            userService.deleteUser(user)
+            call.respond(response)
         }
     }
 }

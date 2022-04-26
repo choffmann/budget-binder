@@ -60,4 +60,8 @@ class UserService {
             passwordHash = BCrypt.hashpw(userIn.password, BCrypt.gensalt())
         }
     }
+
+    fun deleteUser(user: UserEntity): Unit = transaction {
+        user.delete()
+    }
 }
