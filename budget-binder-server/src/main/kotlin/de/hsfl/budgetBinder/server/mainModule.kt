@@ -140,7 +140,7 @@ fun Application.module() {
                             <script>
                                 window.onload = () => {
                                     window.ui = SwaggerUIBundle({
-                                        url: 'https://api02.fpcloud.de/openapi.json',
+                                        url: '/openapi.json',
                                         dom_id: '#swagger-ui',
                                     });
                                 };
