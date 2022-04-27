@@ -47,6 +47,7 @@ dependencies {
     implementation("io.ktor:ktor-server-netty:$ktorVersion")
     implementation("ch.qos.logback:logback-classic:1.2.11")
     testImplementation("io.ktor:ktor-server-tests:$ktorVersion")
+    implementation("io.ktor:ktor-html-builder:$ktorVersion")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:1.6.21")
 
     implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")

@@ -11,15 +11,19 @@ import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.auth.jwt.*
 import io.ktor.features.*
+import io.ktor.html.*
 import io.ktor.http.*
 import io.ktor.response.*
 import io.ktor.routing.*
 import io.ktor.serialization.*
 import io.ktor.util.*
+import kotlinx.html.*
 import org.kodein.di.*
 import org.kodein.di.ktor.closestDI
 import org.kodein.di.ktor.di
 import org.slf4j.event.Level
+import java.io.File
+import java.net.URL
 
 
 fun Application.module() {
@@ -110,6 +114,41 @@ fun Application.module() {
     routing {
         get("/") {
             call.respondText(call.request.headers.toMap().toString())
+        }
+        get("/openapi.json") {
+            val classLoader = javaClass.classLoader
+            val url: URL = classLoader.getResource("openapi.json")!!
+            val file = File(url.toURI())
+            call.respondFile(file)
+        }
+        get("/docs") {
+            call.respondHtml {
+                head {
+                    meta(charset = "utf-8")
+                    meta("viewport","width=device-width, initial-scale=1")
+                    meta("description", "SwaggerIU")
+                    title("SwaggerUI")
+                    link(href = "https://unpkg.com/swagger-ui-dist@4.5.0/swagger-ui.css", rel = "stylesheet")
+                }
+                body {
+                    div {
+                        id = "swagger-ui"
+                    }
+                    unsafe {
+                        +"""
+                            <script src="https://unpkg.com/swagger-ui-dist@4.5.0/swagger-ui-bundle.js" crossorigin></script>
+                            <script>
+                                window.onload = () => {
+                                    window.ui = SwaggerUIBundle({
+                                        url: 'https://api02.fpcloud.de/openapi.json',
+                                        dom_id: '#swagger-ui',
+                                    });
+                                };
+                            </script>
+                        """.trimIndent()
+                    }
+                }
+            }
         }
     }
 

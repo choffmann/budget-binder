@@ -1,0 +1,112 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "description": "Budget-Binder-Server API",
+    "title": "Budget-Binder-Server API",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "summary": "GET "
+      }
+    },
+    "/login": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Login",
+        "requestBody": {
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/Login"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Access-Token"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not-Authorized"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Login": {
+        "title": "Login",
+        "required": [
+          "username",
+          "password"
+        ],
+        "type": "object",
+        "properties": {
+          "username": {
+            "title": "Username",
+            "type": "string"
+          },
+          "password": {
+            "title": "Password",
+            "type": "string"
+          }
+        }
+      },
+      "Access-Token": {
+        "title": "Access-Token",
+        "required": [
+          "success"
+        ],
+        "type": "object",
+        "properties": {
+          "data": {
+            "title": "Data",
+            "type": "object",
+            "properties": {
+              "token": {
+                "title": "Token",
+                "type": "string"
+              }
+            }
+          },
+          "error": {
+            "title": "Error",
+            "type": "object",
+            "properties": {
+              "error": {
+                "title": "Error",
+                "type": "boolean"
+              },
+              "message": {
+                "title": "Message",
+                "type": "string"
+              }
+            }
+          },
+          "success": {
+            "title": "Success",
+            "type": "boolean"
+          }
+        }
+      }
+    }
+  }
+}
