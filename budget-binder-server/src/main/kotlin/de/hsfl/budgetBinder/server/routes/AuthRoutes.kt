@@ -16,7 +16,6 @@ import io.ktor.routing.*
 import io.ktor.util.date.*
 import io.netty.handler.codec.http.cookie.CookieHeaderNames.SAMESITE
 import io.netty.handler.codec.http.cookie.CookieHeaderNames.SameSite
-import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.kodein.di.instance
 import org.kodein.di.ktor.closestDI
 
@@ -50,7 +49,7 @@ fun Route.login() {
                     System.currentTimeMillis() + jwtService.getRefreshTokenValidationTime()
                 )
             )
-            call.respond(APIResponse(data = AuthToken(token = token)))
+            call.respond(APIResponse(data = AuthToken(token = token), success = true))
         }
     }
 }
@@ -80,7 +79,7 @@ fun Route.refreshCookie() {
             call.respond(
                 HttpStatusCode.Unauthorized,
 
-                APIResponse("error", ErrorModel(error = true, message = "No Refresh Cookie"), false)
+                APIResponse<AuthToken>(ErrorModel("No Refresh Cookie"))
             )
             return@get
         }
@@ -95,7 +94,7 @@ fun Route.refreshCookie() {
         if (user?.tokenVersion != tokenVersion) {
             call.respond(
                 HttpStatusCode.Unauthorized,
-                APIResponse("error", ErrorModel(error = true, message = "Token Version is different"), false)
+                APIResponse<AuthToken>(ErrorModel("Token Version is different"))
             )
             return@get
         }
@@ -116,26 +115,15 @@ fun Route.refreshCookie() {
 
 fun Route.register() {
     post("/register") {
-        val userIn: User.In? = call.receiveOrNull()
-        if (userIn == null) {
-            call.respond(
-                status = HttpStatusCode.BadRequest,
-                APIResponse("error", ErrorModel(true, "not the right format"), false)
-            )
-            return@post
-        }
         val userService: UserService by closestDI().instance()
-        val user: UserEntity
-        try {
-            user = userService.insertNewUser(userIn)
-        } catch (_: ExposedSQLException) {
-            call.respond(
-                status = HttpStatusCode.BadRequest,
-                APIResponse("error", ErrorModel(true, "Email already assigned"), false)
-            )
-            return@post
-        }
-        call.respond(APIResponse(user.toDto()))
+
+        val (status, response) = call.receiveOrNull<User.In>()?.let { userIn ->
+            userService.insertNewUserOrNull(userIn)?.let { user ->
+                HttpStatusCode.OK to APIResponse(data = user.toDto(), success = true)
+            } ?: (HttpStatusCode.OK to APIResponse(ErrorModel("Email already assigned")))
+        } ?: (HttpStatusCode.BadRequest to APIResponse(ErrorModel("not the right format")))
+
+        call.respond(status, response)
     }
 }
 

@@ -4,6 +4,7 @@ import de.hsfl.budgetBinder.common.User
 import de.hsfl.budgetBinder.server.models.Roles
 import de.hsfl.budgetBinder.server.models.UserEntity
 import de.hsfl.budgetBinder.server.models.Users
+import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.Op
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -52,12 +53,16 @@ class UserService {
         user.tokenVersion++
     }
 
-    fun insertNewUser(userIn: User.In): UserEntity = transaction {
-        UserEntity.new {
-            firstName = userIn.firstName
-            name = userIn.name
-            email = userIn.email
-            passwordHash = BCrypt.hashpw(userIn.password, BCrypt.gensalt())
+    fun insertNewUserOrNull(userIn: User.In): UserEntity? = transaction {
+        try {
+            UserEntity.new {
+                firstName = userIn.firstName
+                name = userIn.name
+                email = userIn.email
+                passwordHash = BCrypt.hashpw(userIn.password, BCrypt.gensalt())
+            }
+        } catch (_: ExposedSQLException) {
+            null
         }
     }
 

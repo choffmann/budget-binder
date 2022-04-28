@@ -101,7 +101,7 @@ fun Application.module() {
         exception<Throwable> { cause ->
             call.respond(
                 HttpStatusCode.InternalServerError,
-                APIResponse("error", ErrorModel(error = true, message = "Internal Server Error"), false)
+                APIResponse<String>(ErrorModel("Internal Server Error"))
             )
             throw cause
         }
@@ -125,7 +125,7 @@ fun Application.module() {
             call.respondHtml {
                 head {
                     meta(charset = "utf-8")
-                    meta("viewport","width=device-width, initial-scale=1")
+                    meta("viewport", "width=device-width, initial-scale=1")
                     meta("description", "SwaggerIU")
                     title("SwaggerUI")
                     link(href = "https://unpkg.com/swagger-ui-dist@4.5.0/swagger-ui.css", rel = "stylesheet")
