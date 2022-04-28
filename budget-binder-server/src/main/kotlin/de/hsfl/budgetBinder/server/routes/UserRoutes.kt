@@ -23,9 +23,11 @@ fun Route.meRoute() {
                 val user = call.principal<UserEntity>()!!
                 val userService: UserService by closestDI().instance()
 
-                call.respond(call.receiveOrNull<User.Put>()?.let { userPut ->
+                val response = call.receiveOrNull<User.Put>()?.let { userPut ->
                     APIResponse(data = userService.changeUser(user, userPut).toDto(), success = true)
-                } ?: APIResponse(ErrorModel("not the right Parameters provided")))
+                } ?: APIResponse(ErrorModel("not the right Parameters provided"))
+
+                call.respond(response)
             }
             delete {
                 val user = call.principal<UserEntity>()!!
@@ -65,35 +67,34 @@ fun Route.userByIdRoute() {
             get {
                 val userService: UserService by closestDI().instance()
 
-                call.respond(getUserByIDOrErrorResponse(userService, call.parameters["id"]?.toIntOrNull()) { user ->
+                val response = getUserByIDOrErrorResponse(userService, call.parameters["id"]?.toIntOrNull()) { user ->
                     APIResponse(data = user.toDto(), success = true)
-                })
+                }
+                call.respond(response)
             }
         }
         put {
             val userService: UserService by closestDI().instance()
 
-            call.respond(getUserByIDOrErrorResponse(userService, call.parameters["id"]?.toIntOrNull()) { user ->
+            val response = getUserByIDOrErrorResponse(userService, call.parameters["id"]?.toIntOrNull()) { user ->
                 call.receiveOrNull<User.AdminPut>()?.let { userAdminPut ->
                     APIResponse(
                         data = userService.changeAdminUser(user, userAdminPut).toDto(),
                         success = true
                     )
                 } ?: APIResponse(ErrorModel("Send Object false"))
-            })
+            }
+            call.respond(response)
         }
         delete {
             val userService: UserService by closestDI().instance()
 
-            call.respond(getUserByIDOrErrorResponse(
-                userService,
-                call.parameters["id"]?.toIntOrNull()
-            ) { user ->
+            val response = getUserByIDOrErrorResponse(userService, call.parameters["id"]?.toIntOrNull()) { user ->
                 val response = APIResponse(data = user.toDto(), success = true)
                 userService.deleteUser(user)
                 response
-            })
-
+            }
+            call.respond(response)
         }
     }
 }
