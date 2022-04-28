@@ -7,7 +7,6 @@ import de.hsfl.budgetBinder.server.models.UserEntity
 import de.hsfl.budgetBinder.server.services.UserService
 import io.ktor.application.*
 import io.ktor.auth.*
-import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
@@ -24,14 +23,9 @@ fun Route.meRoute() {
                 val user = call.principal<UserEntity>()!!
                 val userService: UserService by closestDI().instance()
 
-                val (status, response) = call.receiveOrNull<User.Put>()?.let { userPut ->
-                    HttpStatusCode.OK to APIResponse(
-                        data = userService.changeUser(user, userPut).toDto(),
-                        success = true
-                    )
-                } ?: (HttpStatusCode.BadRequest to APIResponse(ErrorModel("not the right Parameters provided")))
-
-                call.respond(status, response)
+                call.respond(call.receiveOrNull<User.Put>()?.let { userPut ->
+                    APIResponse(data = userService.changeUser(user, userPut).toDto(), success = true)
+                } ?: APIResponse(ErrorModel("not the right Parameters provided")))
             }
             delete {
                 val user = call.principal<UserEntity>()!!
@@ -48,9 +42,7 @@ fun Route.allUsersRoute() {
     authenticate("auth-jwt-admin") {
         get("/users") {
             val userService: UserService by closestDI().instance()
-            call.respond(
-                APIResponse(data = userService.getAllUsers().map { it.toDto() }, success = true)
-            )
+            call.respond(APIResponse(data = userService.getAllUsers().map { it.toDto() }, success = true))
         }
     }
 }
@@ -58,13 +50,13 @@ fun Route.allUsersRoute() {
 private suspend fun getUserByIDOrErrorResponse(
     userService: UserService,
     id: Int?,
-    callback: suspend (user: UserEntity) -> Pair<HttpStatusCode, APIResponse<User>>
-): Pair<HttpStatusCode, APIResponse<User>> {
+    callback: suspend (user: UserEntity) -> APIResponse<User>
+): APIResponse<User> {
     return id?.let {
         userService.findUserByID(it)?.let { user ->
             callback(user)
-        } ?: (HttpStatusCode.NotFound to APIResponse(ErrorModel("User not found")))
-    } ?: (HttpStatusCode.BadRequest to APIResponse(ErrorModel("path parameter is not a number")))
+        } ?: APIResponse(ErrorModel("User not found"))
+    } ?: APIResponse(ErrorModel("path parameter is not a number"))
 }
 
 fun Route.userByIdRoute() {
@@ -73,43 +65,35 @@ fun Route.userByIdRoute() {
             get {
                 val userService: UserService by closestDI().instance()
 
-                val (status, response) = getUserByIDOrErrorResponse(
-                    userService,
-                    call.parameters["id"]?.toIntOrNull()
-                ) { user ->
-                    HttpStatusCode.OK to APIResponse(data = user.toDto(), success = true)
-                }
-                call.respond(status, response)
+                call.respond(getUserByIDOrErrorResponse(userService, call.parameters["id"]?.toIntOrNull()) { user ->
+                    APIResponse(data = user.toDto(), success = true)
+                })
             }
         }
         put {
             val userService: UserService by closestDI().instance()
 
-            val (status, response) = getUserByIDOrErrorResponse(
-                userService,
-                call.parameters["id"]?.toIntOrNull()
-            ) { user ->
+            call.respond(getUserByIDOrErrorResponse(userService, call.parameters["id"]?.toIntOrNull()) { user ->
                 call.receiveOrNull<User.AdminPut>()?.let { userAdminPut ->
-                    HttpStatusCode.OK to APIResponse(
+                    APIResponse(
                         data = userService.changeAdminUser(user, userAdminPut).toDto(),
                         success = true
                     )
-                } ?: (HttpStatusCode.NotFound to APIResponse(ErrorModel("Send Object false")))
-            }
-            call.respond(status, response)
+                } ?: APIResponse(ErrorModel("Send Object false"))
+            })
         }
         delete {
             val userService: UserService by closestDI().instance()
 
-            val (status, response) = getUserByIDOrErrorResponse(
+            call.respond(getUserByIDOrErrorResponse(
                 userService,
                 call.parameters["id"]?.toIntOrNull()
             ) { user ->
                 val response = APIResponse(data = user.toDto(), success = true)
                 userService.deleteUser(user)
-                HttpStatusCode.OK to response
-            }
-            call.respond(status, response)
+                response
+            })
+
         }
     }
 }

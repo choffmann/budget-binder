@@ -78,7 +78,6 @@ fun Route.refreshCookie() {
         if (tokenToCheck == null) {
             call.respond(
                 HttpStatusCode.Unauthorized,
-
                 APIResponse<AuthToken>(ErrorModel("No Refresh Cookie"))
             )
             return@get
@@ -109,7 +108,7 @@ fun Route.refreshCookie() {
                 System.currentTimeMillis() + jwtService.getRefreshTokenValidationTime()
             )
         )
-        call.respond(APIResponse(data = AuthToken(token = accessToken)))
+        call.respond(APIResponse(data = AuthToken(token = accessToken), success = true))
     }
 }
 
@@ -117,13 +116,11 @@ fun Route.register() {
     post("/register") {
         val userService: UserService by closestDI().instance()
 
-        val (status, response) = call.receiveOrNull<User.In>()?.let { userIn ->
+        call.respond(call.receiveOrNull<User.In>()?.let { userIn ->
             userService.insertNewUserOrNull(userIn)?.let { user ->
-                HttpStatusCode.OK to APIResponse(data = user.toDto(), success = true)
-            } ?: (HttpStatusCode.OK to APIResponse(ErrorModel("Email already assigned")))
-        } ?: (HttpStatusCode.BadRequest to APIResponse(ErrorModel("not the right format")))
-
-        call.respond(status, response)
+                APIResponse(data = user.toDto(), success = true)
+            } ?: APIResponse(ErrorModel("Email already assigned"))
+        } ?: APIResponse(ErrorModel("not the right format")))
     }
 }
 
