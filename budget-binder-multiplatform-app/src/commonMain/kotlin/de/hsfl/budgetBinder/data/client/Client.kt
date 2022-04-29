@@ -17,16 +17,6 @@ import io.ktor.client.request.forms.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 
-// Define API Interfaces
-interface ApiClient {
-    // '/login'
-    suspend fun login(username: String, password: String)
-    // '/users/me'
-    suspend fun getMyUser(): APIResponse<User>
-    // '/path'
-    suspend fun path(): String
-}
-
 class Client: ApiClient {
     private val client = HttpClient {
         install(ContentNegotiation) {
@@ -34,9 +24,6 @@ class Client: ApiClient {
         }
         install(Auth) {
             bearer {
-                loadTokens {
-                    BearerTokens("", "")
-                }
                 refreshTokens {
                     val refreshToken: APIResponse<AuthToken> =
                         client.get("/refresh_token") {
@@ -57,16 +44,21 @@ class Client: ApiClient {
         }
     }
 
-    override suspend fun login(username: String, password: String) {
-        client.submitForm(
+    override suspend fun login(username: String, password: String): BearerTokens {
+        val response: APIResponse<AuthToken> = client.submitForm(
             url = "/login", formParameters = Parameters.build {
                 append("username", username)
                 append("password", password)
             }, encodeInQuery = false
-        )
+        ).body()
+        return BearerTokens(response.data.token, "")
     }
 
-    override suspend fun getMyUser(): APIResponse<User> {
+    override suspend fun refreshToken(): BearerTokens {
+        TODO("NOT IMPLEMENTED")
+    }
+
+    override suspend fun getMyUser(): User {
         return client.get("/users/me").body()
     }
 

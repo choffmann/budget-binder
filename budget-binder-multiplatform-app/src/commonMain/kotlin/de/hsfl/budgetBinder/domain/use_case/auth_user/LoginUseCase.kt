@@ -1,7 +1,8 @@
 package de.hsfl.budgetBinder.domain.use_case.auth_user
 
-import de.hsfl.budgetBinder.common.DataResponse
+import de.hsfl.budgetBinder.common.Resource
 import de.hsfl.budgetBinder.domain.repository.AuthRepository
+import io.ktor.client.plugins.auth.providers.*
 import io.ktor.utils.io.errors.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -9,15 +10,15 @@ import kotlinx.coroutines.flow.flow
 class LoginUseCase(
     private val repository: AuthRepository
 ) {
-    operator fun invoke(username: String, password: String): Flow<DataResponse<Boolean>> = flow {
+    operator fun invoke(username: String, password: String): Flow<Resource<BearerTokens>> = flow {
         try {
-            emit(DataResponse.Loading())
-            repository.authorize(username, password)
-            emit(DataResponse.Success(true))
+            emit(Resource.Loading())
+            val response = repository.authorize(username, password)
+            emit(Resource.Success(response))
         } catch (e: IOException) {
-            emit(DataResponse.Error("Couldn't reach the server"))
+            emit(Resource.Error("Couldn't reach the server"))
         } catch (e: Throwable) {
-            emit(DataResponse.Error(e.message.toString()))
+            emit(Resource.Error(e.message.toString()))
         }
     }
 }

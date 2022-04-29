@@ -5,37 +5,44 @@ import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
-import de.hsfl.budgetBinder.ApplicationFlow
-import de.hsfl.budgetBinder.UIState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import androidx.compose.ui.Modifier
-import de.hsfl.budgetBinder.client.Client
+import de.hsfl.budgetBinder.data.client.Client
+import de.hsfl.budgetBinder.data.repository.AuthRepositoryImplementation
+import de.hsfl.budgetBinder.data.repository.UserRepositoryImplementation
+import de.hsfl.budgetBinder.domain.use_case.auth_user.LoginUseCase
+import de.hsfl.budgetBinder.domain.use_case.get_user.UserUseCase
+import de.hsfl.budgetBinder.presentation.UserViewModel
 
 @Composable
 fun UserView() {
     val scope = CoroutineScope(Dispatchers.Unconfined + SupervisorJob())
-    val applicationFlow = ApplicationFlow(Client(), scope)
-    val uiState by applicationFlow.uiState.collectAsState(scope)
+    val userViewModel = UserViewModel(
+        // TODO: Optimize with KODEIN DI
+        LoginUseCase(
+            AuthRepositoryImplementation(Client())
+        ),
+        UserUseCase(
+            UserRepositoryImplementation(Client())
+        ),
+        scope
+    )
+    val uiState = userViewModel.state.value
     MaterialTheme {
         Box(modifier = Modifier.fillMaxSize())
         Column {
-            when (uiState) {
-                is UIState.Path -> {
-                    Text((uiState as UIState.Path).data)
-                }
-                is UIState.Error -> {
-                    Text((uiState as UIState.Error).error.toString())
-                }
-                is UIState.User -> {
-                    Text((uiState as UIState.User).user.toString())
-                }
-                else -> {
-                    Text("Something is not correct!")
-                }
+            uiState.user?.let { user ->
+                Text(user.toString())
             }
-            Button(onClick = { applicationFlow.update() }) {
+            if(uiState.error.isNotBlank()) {
+                Text(uiState.error)
+            }
+            if(uiState.isLoading) {
+                Text("Loading...")
+            }
+            Button(onClick = { userViewModel.getMyUser() }) {
                 Text("Update")
             }
         }
