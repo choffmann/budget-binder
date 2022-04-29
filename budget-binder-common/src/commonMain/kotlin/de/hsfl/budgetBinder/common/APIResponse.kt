@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class APIResponse<T>(
-    val error: ErrorModel? = null,
-    val data: T? = null,
-    val success: Boolean = false
+    val data: T,
+    val error: ErrorModel = ErrorModel(error = false),
+    val success: Boolean = true
 )
