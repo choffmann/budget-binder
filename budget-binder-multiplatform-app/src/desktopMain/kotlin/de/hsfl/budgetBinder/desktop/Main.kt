@@ -4,7 +4,6 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import de.hsfl.budgetBinder.compose.UserView
 
-
 fun main() = application {
     Window(onCloseRequest = ::exitApplication) {
         //HelloWorldView(painterResource("svg/hello_world.svg"))
