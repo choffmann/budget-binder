@@ -42,7 +42,9 @@ class Client: ApiClient {
                         client.get("/refresh_token") {
                             markAsRefreshTokenRequest()
                         }.body()
-                    BearerTokens(refreshToken.data.token, "")
+                    refreshToken.data?.let {
+                        BearerTokens(it.token, "")
+                    }
                 }
             }
         }
