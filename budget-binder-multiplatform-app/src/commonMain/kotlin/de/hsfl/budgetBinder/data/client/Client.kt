@@ -1,10 +1,12 @@
-package de.hsfl.budgetBinder.client
+package de.hsfl.budgetBinder.data.client
 
 import de.hsfl.budgetBinder.common.APIResponse
 import de.hsfl.budgetBinder.common.AuthToken
+import de.hsfl.budgetBinder.common.Constants
 import de.hsfl.budgetBinder.common.User
 import io.ktor.client.*
 import io.ktor.client.call.*
+import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.auth.*
 import io.ktor.client.plugins.auth.providers.*
@@ -15,8 +17,7 @@ import io.ktor.client.request.forms.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 
-class Client {
-    private val bearerTokenStorage = mutableListOf<BearerTokens>()
+class Client: ApiClient {
     private val client = HttpClient {
         install(ContentNegotiation) {
             json()
@@ -25,12 +26,10 @@ class Client {
             bearer {
                 refreshTokens {
                     val refreshToken: APIResponse<AuthToken> =
-                        client.get("http://localhost:8080/refresh_token") {
+                        client.get("/refresh_token") {
                             markAsRefreshTokenRequest()
                         }.body()
-                    // cookie -> refresh_token
-                    bearerTokenStorage.add(BearerTokens(refreshToken.data.token, ""))
-                    bearerTokenStorage.last()
+                    BearerTokens(refreshToken.data.token, "")
                 }
             }
         }
@@ -39,18 +38,31 @@ class Client {
             level = LogLevel.HEADERS
         }
         install(HttpCookies)
+
+        defaultRequest {
+            url(Constants.BASE_URL)
+        }
     }
 
-    suspend fun authorize(username: String, password: String) {
-        client.submitForm(
-            url = "http://localhost:8080/login", formParameters = Parameters.build {
+    override suspend fun login(username: String, password: String): BearerTokens {
+        val response: APIResponse<AuthToken> = client.submitForm(
+            url = "/login", formParameters = Parameters.build {
                 append("username", username)
                 append("password", password)
             }, encodeInQuery = false
-        )
+        ).body()
+        return BearerTokens(response.data.token, "")
     }
 
-    suspend fun getMyUserInfo(): APIResponse<User> {
-        return client.get("http://localhost:8080/users/me").body()
+    override suspend fun refreshToken(): BearerTokens {
+        TODO("NOT IMPLEMENTED")
+    }
+
+    override suspend fun getMyUser(): User {
+        return client.get("/users/me").body()
+    }
+
+    override suspend fun path(): String {
+        return client.get("/path").body()
     }
 }
