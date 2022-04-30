@@ -23,5 +23,6 @@ val di = DI {
 
 @Composable
 fun App() = withDI(di) {
-    UserView()
+    LoginView()
+    //UserView()
 }

@@ -10,7 +10,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import androidx.compose.ui.Modifier
-import de.hsfl.budgetBinder.domain.use_case.auth_user.LoginUseCase
 import de.hsfl.budgetBinder.domain.use_case.get_user.UserUseCase
 import de.hsfl.budgetBinder.presentation.UserState
 import de.hsfl.budgetBinder.presentation.UserViewModel
@@ -22,15 +21,13 @@ fun UserView() {
     val scope = CoroutineScope(Dispatchers.Unconfined + SupervisorJob())
 
     val di = localDI()
-    val loginUseCase: LoginUseCase by di.instance()
     val userUseCase: UserUseCase by di.instance()
-    val userViewModel = UserViewModel(loginUseCase, userUseCase, scope)
+    val viewModel = UserViewModel(userUseCase,scope)
 
-    val uiState by userViewModel.state.collectAsState(scope)
+    val uiState by viewModel.state.collectAsState(scope)
     MaterialTheme {
         Box(modifier = Modifier.fillMaxSize())
         Column {
-
             when (uiState) {
                 is UserState.Success -> {
                     Text((uiState as UserState.Success).user.toString())
@@ -42,7 +39,7 @@ fun UserView() {
                     CircularProgressIndicator()
                 }
             }
-            Button(onClick = { userViewModel.getMyUser() }) {
+            Button(onClick = { viewModel.getMyUser() }) {
                 Text("Update")
             }
         }

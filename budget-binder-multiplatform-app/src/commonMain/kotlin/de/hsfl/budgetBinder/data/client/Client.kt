@@ -60,12 +60,13 @@ class Client: ApiClient {
     }
 
     override suspend fun login(username: String, password: String) {
-        client.submitForm(
+        val response: APIResponse<AuthToken> = client.submitForm(
             url = "/login", formParameters = Parameters.build {
                 append("username", username)
                 append("password", password)
             }, encodeInQuery = false
-        )
+        ).body()
+        println("Client::login $response")
     }
 
     override suspend fun getMyUser(): APIResponse<User> {
