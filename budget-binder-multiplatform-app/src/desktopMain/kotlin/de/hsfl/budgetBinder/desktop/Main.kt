@@ -10,10 +10,11 @@ import de.hsfl.budgetBinder.domain.use_case.auth_user.LoginUseCase
 import de.hsfl.budgetBinder.domain.use_case.get_user.UserUseCase
 import org.kodein.di.DI
 import org.kodein.di.bindSingleton
+import org.kodein.di.eagerSingleton
 import org.kodein.di.instance
 
 val di = DI {
-    bindSingleton { Client() }
+    eagerSingleton { Client() }
 
     bindSingleton { AuthRepositoryImplementation(instance()) }
     bindSingleton { UserRepositoryImplementation(instance()) }
