@@ -10,24 +10,20 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import androidx.compose.ui.Modifier
-import de.hsfl.budgetBinder.data.client.Client
-import de.hsfl.budgetBinder.data.repository.AuthRepositoryImplementation
-import de.hsfl.budgetBinder.data.repository.UserRepositoryImplementation
 import de.hsfl.budgetBinder.domain.use_case.auth_user.LoginUseCase
 import de.hsfl.budgetBinder.domain.use_case.get_user.UserUseCase
 import de.hsfl.budgetBinder.presentation.UserState
 import de.hsfl.budgetBinder.presentation.UserViewModel
+import org.kodein.di.DI
+import org.kodein.di.instance
 
 @Composable
-fun UserView() {
+fun UserView(di: DI) {
     val scope = CoroutineScope(Dispatchers.Unconfined + SupervisorJob())
-    val client = Client()
-    val userViewModel = UserViewModel(
-        // TODO: Optimize with KODEIN DI
-        LoginUseCase(AuthRepositoryImplementation(client)),
-        UserUseCase(UserRepositoryImplementation(client)),
-        scope
-    )
+    val loginUseCase: LoginUseCase by di.instance()
+    val userUseCase: UserUseCase by di.instance()
+    val userViewModel = UserViewModel(loginUseCase, userUseCase, scope)
+
     val uiState by userViewModel.state.collectAsState(scope)
     MaterialTheme {
         Box(modifier = Modifier.fillMaxSize())

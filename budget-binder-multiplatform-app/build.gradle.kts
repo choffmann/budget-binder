@@ -40,6 +40,9 @@ kotlin {
                 implementation("io.ktor:ktor-client-content-negotiation:$ktor_version")
                 implementation("io.ktor:ktor-serialization-kotlinx-json:$ktor_version")
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1")
+
+                implementation("org.kodein.di:kodein-di:7.11.0")
+                implementation("org.kodein.di:kodein-di-framework-compose:7.11.0")
             }
         }
 
@@ -75,9 +78,6 @@ kotlin {
                 implementation("androidx.activity:activity-compose:1.4.0")
 
                 implementation("io.ktor:ktor-client-android:$ktor_version")
-
-                implementation("org.kodein.di:kodein-di:7.9.0")
-                implementation("org.kodein.di:kodein-di-framework-android-x:7.9.0")
             }
         }
 
