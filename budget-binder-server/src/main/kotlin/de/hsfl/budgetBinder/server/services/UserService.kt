@@ -1,7 +1,6 @@
 package de.hsfl.budgetBinder.server.services
 
 import de.hsfl.budgetBinder.common.User
-import de.hsfl.budgetBinder.server.models.Roles
 import de.hsfl.budgetBinder.server.models.UserEntity
 import de.hsfl.budgetBinder.server.models.Users
 import org.jetbrains.exposed.exceptions.ExposedSQLException
@@ -21,20 +20,8 @@ class UserService {
         }
     }
 
-    fun getAllUsers(): List<UserEntity> = transaction {
-        UserEntity.all().toList()
-    }
-
     fun findUserByID(id: Int): UserEntity? = transaction {
         UserEntity.findById(id)
-    }
-
-    fun changeAdminUser(user: UserEntity, userAdminPut: User.AdminPut): UserEntity = transaction {
-        if (userAdminPut.active != null)
-            user.active = userAdminPut.active!!
-        if (userAdminPut.role != null)
-            user.role = Roles.fromDto(userAdminPut.role!!)
-        user
     }
 
     fun changeUser(user: UserEntity, userPut: User.Put): UserEntity = transaction {

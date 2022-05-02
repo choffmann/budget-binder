@@ -8,13 +8,8 @@ data class User(
     val firstName: String,
     val name: String,
     val email: String,
-    val role: Roles,
     val active: Boolean
 ) {
-    enum class Roles {
-        USER,
-        ADMIN
-    }
 
     @Serializable
     data class In(val firstName: String, val name: String, val email: String, val password: String)
@@ -26,7 +21,4 @@ data class User(
         val active: Boolean? = null,
         val password: String? = null
     )
-
-    @Serializable
-    data class AdminPut(val active: Boolean? = null, val role: Roles? = null)
 }

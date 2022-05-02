@@ -40,70 +40,9 @@ fun Route.meRoute() {
     }
 }
 
-fun Route.allUsersRoute() {
-    authenticate("auth-jwt-admin") {
-        get("/users") {
-            val userService: UserService by closestDI().instance()
-            call.respond(APIResponse(data = userService.getAllUsers().map { it.toDto() }, success = true))
-        }
-    }
-}
-
-private suspend fun getUserByIDOrErrorResponse(
-    userService: UserService,
-    id: Int?,
-    callback: suspend (user: UserEntity) -> APIResponse<User>
-): APIResponse<User> {
-    return id?.let {
-        userService.findUserByID(it)?.let { user ->
-            callback(user)
-        } ?: APIResponse(ErrorModel("User not found"))
-    } ?: APIResponse(ErrorModel("path parameter is not a number"))
-}
-
-fun Route.userByIdRoute() {
-    authenticate("auth-jwt-admin") {
-        route("/users/{id}") {
-            get {
-                val userService: UserService by closestDI().instance()
-
-                val response = getUserByIDOrErrorResponse(userService, call.parameters["id"]?.toIntOrNull()) { user ->
-                    APIResponse(data = user.toDto(), success = true)
-                }
-                call.respond(response)
-            }
-        }
-        put {
-            val userService: UserService by closestDI().instance()
-
-            val response = getUserByIDOrErrorResponse(userService, call.parameters["id"]?.toIntOrNull()) { user ->
-                call.receiveOrNull<User.AdminPut>()?.let { userAdminPut ->
-                    APIResponse(
-                        data = userService.changeAdminUser(user, userAdminPut).toDto(),
-                        success = true
-                    )
-                } ?: APIResponse(ErrorModel("Send Object false"))
-            }
-            call.respond(response)
-        }
-        delete {
-            val userService: UserService by closestDI().instance()
-
-            val response = getUserByIDOrErrorResponse(userService, call.parameters["id"]?.toIntOrNull()) { user ->
-                val response = APIResponse(data = user.toDto(), success = true)
-                userService.deleteUser(user)
-                response
-            }
-            call.respond(response)
-        }
-    }
-}
-
 // install all previous Routes
 fun Application.userRoutes() {
     routing {
         meRoute()
-        allUsersRoute()
-        userByIdRoute()
     }
 }

@@ -2,7 +2,6 @@ package de.hsfl.budgetBinder.server
 
 import de.hsfl.budgetBinder.common.APIResponse
 import de.hsfl.budgetBinder.common.ErrorModel
-import de.hsfl.budgetBinder.server.models.Roles
 import de.hsfl.budgetBinder.server.routes.authRoutes
 import de.hsfl.budgetBinder.server.routes.userRoutes
 import de.hsfl.budgetBinder.server.services.JWTService
@@ -73,21 +72,6 @@ fun Application.module() {
                 val userService: UserService by closestDI().instance()
                 userService.findUserByID(id)?.let { user ->
                     if (user.active && user.tokenVersion == tokenVersion) user else null
-                }
-            }
-        }
-
-        jwt("auth-jwt-admin") {
-            val jwtService: JWTService by closestDI().instance()
-            realm = "Access to all your stuff"
-            verifier(jwtService.getAccessTokenVerifier())
-
-            validate {
-                val id = it.payload.getClaim("userid").asInt()
-                val tokenVersion = it.payload.getClaim("token_version").asInt()
-                val userService: UserService by closestDI().instance()
-                userService.findUserByID(id)?.let { user ->
-                    if (user.active && user.tokenVersion == tokenVersion && user.role == Roles.ADMIN) user else null
                 }
             }
         }
