@@ -25,14 +25,18 @@ class UserService {
     }
 
     fun changeUser(user: UserEntity, userPut: User.Put): UserEntity = transaction {
-        if (userPut.name != null)
-            user.name = userPut.name!!
-        if (userPut.firstName != null)
-            user.firstName = userPut.firstName!!
-        if (userPut.password != null)
-            user.passwordHash = BCrypt.hashpw(userPut.password, BCrypt.gensalt())
-        if (userPut.active != null)
-            user.active = userPut.active!!
+        userPut.name?.let {
+            user.name = it
+        }
+        userPut.firstName?.let {
+            user.firstName = it
+        }
+        userPut.password?.let {
+            user.passwordHash = BCrypt.hashpw(it, BCrypt.gensalt())
+        }
+        userPut.active?.let {
+            user.active = it
+        }
         user
     }
 
