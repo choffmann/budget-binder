@@ -6,8 +6,8 @@ import com.auth0.jwt.interfaces.JWTVerifier
 import java.util.*
 
 class JWTService {
-    private val accessTokenSecret = System.getenv("JWT_ACCESS_SECRET")
-    private val refreshTokenSecret = System.getenv("JWT_REFRESH_SECRET")
+    private val accessTokenSecret = System.getenv("JWT_ACCESS_SECRET") ?: throw Exception("No Access-Token Secret set")
+    private val refreshTokenSecret = System.getenv("JWT_REFRESH_SECRET") ?: throw Exception("No Access-Token Secret set")
     private val issuer = System.getenv("JWT_ISSUER") ?: "http://0.0.0.0:8080/"
     private val audience = System.getenv("JWT_AUDIENCE") ?: "http://0.0.0.0:8080/"
     private val accessTokenValidationTime = 1000 * 60 * (System.getenv("JWT_ACCESS_MINUTES")?.toIntOrNull() ?: 15)
