@@ -2,8 +2,8 @@ package de.hsfl.budgetBinder.server
 
 import de.hsfl.budgetBinder.common.APIResponse
 import de.hsfl.budgetBinder.common.ErrorModel
-import de.hsfl.budgetBinder.server.models.Roles
 import de.hsfl.budgetBinder.server.routes.authRoutes
+import de.hsfl.budgetBinder.server.routes.baseRoutes
 import de.hsfl.budgetBinder.server.routes.userRoutes
 import de.hsfl.budgetBinder.server.services.JWTService
 import de.hsfl.budgetBinder.server.services.UserService
@@ -13,14 +13,11 @@ import io.ktor.auth.jwt.*
 import io.ktor.features.*
 import io.ktor.http.*
 import io.ktor.response.*
-import io.ktor.routing.*
 import io.ktor.serialization.*
-import io.ktor.util.*
 import org.kodein.di.*
 import org.kodein.di.ktor.closestDI
 import org.kodein.di.ktor.di
 import org.slf4j.event.Level
-
 
 fun Application.module() {
 
@@ -67,22 +64,9 @@ fun Application.module() {
                 val id = it.payload.getClaim("userid").asInt()
                 val tokenVersion = it.payload.getClaim("token_version").asInt()
                 val userService: UserService by closestDI().instance()
-                val user = userService.findUserByID(id)
-                if (user?.tokenVersion == tokenVersion) user else null
-            }
-        }
-
-        jwt("auth-jwt-admin") {
-            val jwtService: JWTService by closestDI().instance()
-            realm = "Access to all your stuff"
-            verifier(jwtService.getAccessTokenVerifier())
-
-            validate {
-                val id = it.payload.getClaim("userid").asInt()
-                val tokenVersion = it.payload.getClaim("token_version").asInt()
-                val userService: UserService by closestDI().instance()
-                val user = userService.findUserByID(id)
-                if (user?.tokenVersion == tokenVersion && user?.role == Roles.ADMIN) user else null
+                userService.findUserByID(id)?.let { user ->
+                    if (user.active && user.tokenVersion == tokenVersion) user else null
+                }
             }
         }
     }
@@ -95,27 +79,14 @@ fun Application.module() {
         exception<Throwable> { cause ->
             call.respond(
                 HttpStatusCode.InternalServerError,
-                APIResponse("error", ErrorModel(error = true, message = "Internal Server Error"), false)
+                APIResponse<String>(ErrorModel("Internal Server Error"))
             )
             throw cause
         }
     }
 
     // install all Modules
+    baseRoutes()
     userRoutes()
     authRoutes()
-
-    routing {
-        get("/") {
-            call.respondText(call.request.headers.toMap().toString())
-        }
-    }
-
-    routing {
-        get("/path") {
-            val userService: UserService by closestDI().instance()
-            val user = userService.getRandomUser()
-            call.respondText(user.email)
-        }
-    }
 }

@@ -1,7 +1,6 @@
 package de.hsfl.budgetBinder.server.services
 
 import de.hsfl.budgetBinder.common.User
-import de.hsfl.budgetBinder.server.models.Roles
 import de.hsfl.budgetBinder.server.models.UserEntity
 import de.hsfl.budgetBinder.server.models.Users
 import org.jetbrains.exposed.exceptions.ExposedSQLException
@@ -21,31 +20,23 @@ class UserService {
         }
     }
 
-    fun getAllUsers(): List<UserEntity> = transaction {
-        UserEntity.all().toList()
-    }
-
     fun findUserByID(id: Int): UserEntity? = transaction {
         UserEntity.findById(id)
     }
 
-    fun changeAdminUser(user: UserEntity, userAdminPut: User.AdminPut): UserEntity = transaction {
-        if (userAdminPut.active != null)
-            user.active = userAdminPut.active!!
-        if (userAdminPut.role != null)
-            user.role = Roles.fromDto(userAdminPut.role!!)
-        user
-    }
-
     fun changeUser(user: UserEntity, userPut: User.Put): UserEntity = transaction {
-        if (userPut.name != null)
-            user.name = userPut.name!!
-        if (userPut.firstName != null)
-            user.firstName = userPut.firstName!!
-        if (userPut.password != null)
-            user.passwordHash = BCrypt.hashpw(userPut.password, BCrypt.gensalt())
-        if (userPut.active != null)
-            user.active = userPut.active!!
+        userPut.name?.let {
+            user.name = it
+        }
+        userPut.firstName?.let {
+            user.firstName = it
+        }
+        userPut.password?.let {
+            user.passwordHash = BCrypt.hashpw(it, BCrypt.gensalt())
+        }
+        userPut.active?.let {
+            user.active = it
+        }
         user
     }
 
