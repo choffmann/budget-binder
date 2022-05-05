@@ -2,11 +2,12 @@ package de.hsfl.budgetBinder.server.routes
 
 import de.hsfl.budgetBinder.common.APIResponse
 import de.hsfl.budgetBinder.common.ErrorModel
+import de.hsfl.budgetBinder.common.User
 import de.hsfl.budgetBinder.server.models.UserEntity
 import de.hsfl.budgetBinder.server.services.UserService
 import io.ktor.application.*
 import io.ktor.auth.*
-import io.ktor.http.*
+import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
 import org.kodein.di.instance
@@ -14,39 +15,27 @@ import org.kodein.di.ktor.closestDI
 
 fun Route.meRoute() {
     authenticate("auth-jwt") {
-        get("/users/me") {
-            call.respond(APIResponse(call.principal<UserEntity>()!!.toDto()))
-        }
-    }
-}
-
-fun Route.userByIdRoute() {
-    authenticate("auth-jwt-admin") {
-        get("/users/{id}") {
-            val id = call.parameters["id"]?.toIntOrNull()
-
-            if (id == null) {
-                call.respond(
-                    HttpStatusCode.BadRequest,
-                    APIResponse("error", ErrorModel(error = true, message = "path parameter is not a number"), false)
-                )
-                return@get
+        route("/users/me") {
+            get {
+                call.respond(APIResponse(data = call.principal<UserEntity>()!!.toDto(), success = true))
             }
+            put {
+                val user = call.principal<UserEntity>()!!
+                val userService: UserService by closestDI().instance()
 
-            val userService: UserService by closestDI().instance()
-            val user = userService.findUserByID(id)
+                val response = call.receiveOrNull<User.Put>()?.let { userPut ->
+                    APIResponse(data = userService.changeUser(user, userPut).toDto(), success = true)
+                } ?: APIResponse(ErrorModel("not the right Parameters provided"))
 
-            if (user == null) {
-                call.respond(
-                    HttpStatusCode.NotFound,
-                    APIResponse("error", ErrorModel(error = true, message = "User not found"), false)
-                )
-                return@get
+                call.respond(response)
             }
-
-            call.respond(
-                APIResponse(data = user.toDto())
-            )
+            delete {
+                val user = call.principal<UserEntity>()!!
+                val userService: UserService by closestDI().instance()
+                val response = APIResponse(data = user.toDto(), success = true)
+                userService.deleteUser(user)
+                call.respond(response)
+            }
         }
     }
 }
@@ -55,6 +44,5 @@ fun Route.userByIdRoute() {
 fun Application.userRoutes() {
     routing {
         meRoute()
-        userByIdRoute()
     }
 }

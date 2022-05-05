@@ -3,12 +3,14 @@ package de.hsfl.budgetBinder.server.routes
 import de.hsfl.budgetBinder.common.APIResponse
 import de.hsfl.budgetBinder.common.AuthToken
 import de.hsfl.budgetBinder.common.ErrorModel
+import de.hsfl.budgetBinder.common.User
 import de.hsfl.budgetBinder.server.models.UserEntity
 import de.hsfl.budgetBinder.server.services.JWTService
 import de.hsfl.budgetBinder.server.services.UserService
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.http.*
+import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
 import io.ktor.util.date.*
@@ -35,7 +37,7 @@ fun createRefreshCookie(token: String, timestamp: Long): Cookie {
 fun Route.login() {
     authenticate("auth-form") {
         post("/login") {
-            val user = call.principal<UserEntity>()!!
+            val user: UserEntity = call.principal()!!
 
             val jwtService: JWTService by closestDI().instance()
             val token = jwtService.createAccessToken(user.id.value, user.tokenVersion)
@@ -47,50 +49,63 @@ fun Route.login() {
                     System.currentTimeMillis() + jwtService.getRefreshTokenValidationTime()
                 )
             )
-            call.respond(APIResponse(data = AuthToken(token = token)))
+            call.respond(APIResponse(data = AuthToken(token = token), success = true))
+        }
+    }
+}
+
+fun Route.logout() {
+    authenticate("auth-jwt") {
+        get("/logout") {
+            val logoutAll = call.request.queryParameters["all"].toBoolean()
+            val user: UserEntity = call.principal()!!
+
+            if (logoutAll) {
+                val userService: UserService by closestDI().instance()
+                userService.logoutAllClients(user)
+            }
+
+            call.response.cookies.appendExpired("jwt", path = "/refresh_token")
+            call.respond(HttpStatusCode.OK)
         }
     }
 }
 
 fun Route.refreshCookie() {
     get("/refresh_token") {
-        val tokenToCheck = call.request.cookies["jwt"]
-
-        if (tokenToCheck == null) {
-            call.respond(
-                HttpStatusCode.Unauthorized,
-
-                APIResponse("error", ErrorModel(error = true, message = "No Refresh Cookie"), false)
-            )
-            return@get
-        }
         val jwtService: JWTService by closestDI().instance()
-        val token = jwtService.getRefreshTokenVerifier().verify(tokenToCheck)
-
-        val id = token.getClaim("userid").asInt()
-        val tokenVersion = token.getClaim("token_version").asInt()
         val userService: UserService by closestDI().instance()
-        val user = userService.findUserByID(id)
 
-        if (user?.tokenVersion != tokenVersion) {
-            call.respond(
-                HttpStatusCode.Unauthorized,
-                APIResponse("error", ErrorModel(error = true, message = "Token Version is different"), false)
-            )
-            return@get
-        }
+        val (status, response) = call.request.cookies["jwt"]?.let { tokenToCheck ->
+            val token = jwtService.getRefreshTokenVerifier().verify(tokenToCheck)
+            val id = token.getClaim("userid").asInt()
+            val tokenVersion = token.getClaim("token_version").asInt()
+            userService.findUserByID(id)?.let { user ->
+                val accessToken = jwtService.createAccessToken(user.id.value, tokenVersion)
+                val refreshToken = jwtService.createRefreshToken(user.id.value, tokenVersion)
+                call.response.cookies.append(
+                    createRefreshCookie(
+                        refreshToken,
+                        System.currentTimeMillis() + jwtService.getRefreshTokenValidationTime()
+                    )
+                )
+                HttpStatusCode.OK to APIResponse(data = AuthToken(token = accessToken), success = true)
+            } ?: (HttpStatusCode.Unauthorized to APIResponse(ErrorModel("Token Version is different")))
+        } ?: (HttpStatusCode.Unauthorized to APIResponse(ErrorModel("No Refresh Cookie")))
+        call.respond(status, response)
+    }
+}
 
-        val accessToken = jwtService.createAccessToken(id, tokenVersion)
+fun Route.register() {
+    post("/register") {
+        val userService: UserService by closestDI().instance()
 
-        val refreshToken = jwtService.createRefreshToken(id, tokenVersion)
-
-        call.response.cookies.append(
-            createRefreshCookie(
-                refreshToken,
-                System.currentTimeMillis() + jwtService.getRefreshTokenValidationTime()
-            )
-        )
-        call.respond(APIResponse(data = AuthToken(token = accessToken)))
+        val response = call.receiveOrNull<User.In>()?.let { userIn ->
+            userService.insertNewUserOrNull(userIn)?.let { user ->
+                APIResponse(data = user.toDto(), success = true)
+            } ?: APIResponse(ErrorModel("Email already assigned"))
+        } ?: APIResponse(ErrorModel("not the right format"))
+        call.respond(response)
     }
 }
 
@@ -98,6 +113,8 @@ fun Route.refreshCookie() {
 fun Application.authRoutes() {
     routing {
         login()
+        logout()
         refreshCookie()
+        register()
     }
 }

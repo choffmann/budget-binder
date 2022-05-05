@@ -1,7 +1,7 @@
 plugins {
     kotlin("multiplatform")
     id("com.android.application")
-    id("org.jetbrains.compose") version "1.1.1"
+    id("org.jetbrains.compose") version "1.2.0-alpha01-dev679"
 
 }
 
@@ -27,21 +27,28 @@ kotlin {
     }*/
 
     sourceSets {
+        val ktor_version = "2.0.1"
         val commonMain by getting {
             dependencies {
                 implementation(project(":budget-binder-common"))
 
-                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
+                implementation("io.ktor:ktor-client-core:$ktor_version")
+                implementation("io.ktor:ktor-client-serialization:$ktor_version")
+                implementation("io.ktor:ktor-client-core:$ktor_version")
+                implementation("io.ktor:ktor-client-auth:$ktor_version")
+                implementation("io.ktor:ktor-client-logging:$ktor_version")
+                implementation("io.ktor:ktor-client-content-negotiation:$ktor_version")
+                implementation("io.ktor:ktor-serialization-kotlinx-json:$ktor_version")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1")
 
-                implementation("io.ktor:ktor-client-core:1.6.4")
-                implementation("io.ktor:ktor-client-serialization:1.6.4")
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
+                implementation("org.kodein.di:kodein-di:7.11.0")
+                implementation("org.kodein.di:kodein-di-framework-compose:7.11.0")
             }
         }
 
         val jvmMain by creating {
             dependencies {
-                implementation("io.ktor:ktor-client-java:1.6.4")
+                implementation("io.ktor:ktor-client-java:$ktor_version")
                 implementation(compose.foundation)
                 implementation(compose.material)
                 api(compose.preview)
@@ -70,16 +77,13 @@ kotlin {
                 implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.4.1")
                 implementation("androidx.activity:activity-compose:1.4.0")
 
-                implementation("io.ktor:ktor-client-android:1.6.4")
-
-                implementation("org.kodein.di:kodein-di:7.9.0")
-                implementation("org.kodein.di:kodein-di-framework-android-x:7.9.0")
+                implementation("io.ktor:ktor-client-android:$ktor_version")
             }
         }
 
         val jsMain by getting {
             dependencies {
-                implementation("io.ktor:ktor-client-js:1.6.4")
+                implementation("io.ktor:ktor-client-js:$ktor_version")
                 implementation(compose.web.core)
                 implementation(compose.runtime)
                 implementation(compose.web.svg)

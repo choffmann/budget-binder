@@ -1,15 +1,11 @@
 package de.hsfl.budgetBinder.server
 
-import de.hsfl.budgetBinder.server.models.Roles
-import de.hsfl.budgetBinder.server.models.UserEntity
 import de.hsfl.budgetBinder.server.models.Users
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import kotlinx.coroutines.runBlocking
-import org.jetbrains.exposed.dao.exceptions.EntityNotFoundException
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.mindrot.jbcrypt.BCrypt
 
 fun main() = runBlocking<Unit> {
     val port = Integer.parseInt(System.getenv("PORT") ?: "8080")
@@ -55,25 +51,6 @@ fun main() = runBlocking<Unit> {
         addLogger(StdOutSqlLogger)
 
         SchemaUtils.create(Users)
-
-        var root: UserEntity
-        try {
-            root = UserEntity[1]
-        } catch (_: EntityNotFoundException) {
-            val rootUserEmail = System.getenv("ROOT_USER_EMAIL")
-            val rootUserPassword = System.getenv("ROOT_USER_PASSWORD")
-            Users.insert {
-                it[id] = 1
-                it[name] = "Administrator"
-                it[firstName] = "root"
-                it[email] = rootUserEmail
-                it[passwordHash] = BCrypt.hashpw(rootUserPassword, BCrypt.gensalt())
-                it[role] = Roles.ADMIN
-            }
-            root = UserEntity[1]
-        }
-        if (root.role != Roles.ADMIN)
-            throw Exception("First User is not the Root user")
     }
     /*
     * configure = {

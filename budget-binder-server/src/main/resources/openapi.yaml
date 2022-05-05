@@ -1,0 +1,187 @@
+openapi: 3.0.3
+info:
+  description: Budget-Binder-Server API
+  title: Budget-Binder-Server API
+  version: 0.1.0
+paths:
+  /:
+    get:
+      responses:
+        200:
+          description: OK
+      summary: 'GET '
+  /login:
+    post:
+      tags:
+        - Auth
+      summary: Login a User
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Login'
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Access-Token'
+        401:
+          description: Not-Authorized
+  /register:
+    post:
+      tags:
+        - Auth
+      summary: Register a User
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        401:
+          description: Not-Authorized
+
+  /users:
+    get:
+      tags:
+        - Users
+      summary: Get All Users
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - success
+                properties:
+                  data:
+                    title: UserList
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/User'
+                  success:
+                    type: boolean
+                  error:
+                    $ref: '#/components/schemas/ErrorModel'
+        401:
+          description: Not-Authorized
+      security:
+        - LoginBearer: [ ]
+
+  /users/{id}:
+    get:
+      tags:
+        - Users
+      summary: Get User
+      parameters:
+        - name: id
+          in: path
+          description: ID of a user
+          required: true
+          schema:
+            type: integer
+
+
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        401:
+          description: Not-Authorized
+      security:
+        - LoginBearer: [ ]
+
+components:
+  schemas:
+    ErrorModel:
+      title: ErrorModel
+      properties:
+        message:
+          title: Message
+          type: string
+    Login:
+      title: Login
+      required:
+        - username
+        - password
+      type: object
+      properties:
+        username:
+          title: Username
+          type: string
+        password:
+          title: Password
+          type: string
+    Access-Token:
+      title: Access-Token
+      required:
+        - success
+      type: object
+      properties:
+        data:
+          title: Data
+          type: object
+          properties:
+            token:
+              title: Token
+              type: string
+        error:
+          $ref: '#/components/schemas/ErrorModel'
+        success:
+          title: Success
+          type: boolean
+    User:
+      title: User
+      required:
+        - id
+        - firstName
+        - name
+        - email
+        - password
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        firstName:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+          writeOnly: true
+    UserResponse:
+      title: User Response
+      required:
+        - success
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/User'
+        error:
+          $ref: '#/components/schemas/ErrorModel'
+        success:
+          title: Success
+          type: boolean
+  securitySchemes:
+    LoginBearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
