@@ -1,7 +1,7 @@
 plugins {
     kotlin("multiplatform")
     id("com.android.application")
-    id("org.jetbrains.compose") version "1.1.1"
+    id("org.jetbrains.compose") version "1.2.0-alpha01-dev679"
 
 }
 
