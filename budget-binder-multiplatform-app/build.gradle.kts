@@ -18,6 +18,15 @@ kotlin {
         browser()
         binaries.executable()
     }
+    linuxX64 {
+        binaries.executable()
+    }
+    macosX64 {
+        binaries.executable()
+    }
+    mingwX64 {
+        binaries.executable()
+    }
     /*ios {
         binaries {
             framework {
@@ -42,13 +51,13 @@ kotlin {
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1")
 
                 implementation("org.kodein.di:kodein-di:7.11.0")
-                implementation("org.kodein.di:kodein-di-framework-compose:7.11.0")
             }
         }
 
         val jvmMain by creating {
             dependencies {
                 implementation("io.ktor:ktor-client-java:$ktor_version")
+                implementation("org.kodein.di:kodein-di-framework-compose:7.11.0")
                 implementation(compose.foundation)
                 implementation(compose.material)
                 api(compose.preview)
@@ -134,7 +143,9 @@ compose.desktop {
         mainClass = "de.hsfl.budgetBinder.desktop.MainKt"
         nativeDistributions {
             targetFormats(org.jetbrains.compose.desktop.application.dsl.TargetFormat.Dmg, org.jetbrains.compose.desktop.application.dsl.TargetFormat.Msi, org.jetbrains.compose.desktop.application.dsl.TargetFormat.Deb)
-            packageName = "jvm"
+            packageName = "Budget Binder"
+            description = "Budget Binder"
+            version = "1.0-SNAPSHOT"
             packageVersion = "1.0.0"
         }
     }
