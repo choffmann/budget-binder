@@ -289,15 +289,15 @@ components:
     Color:
       type: string
       enum:
-        - black
-        - white
-        - red
-        - green
-        - blue
+        - BLACK
+        - WHITE
+        - RED
+        - GREEN
+        - BLUE
     Image:
       type: string
       enum:
-        - shopping
+        - SHOPPING
 
   securitySchemes:
     LoginBearer:
