@@ -136,10 +136,18 @@ compose.desktop {
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             includeAllModules = true
-            packageName = "Budget Binder"
-            description = "Budget Binder"
+            packageName = "budget-binder"
             version = "1.0-SNAPSHOT"
             packageVersion = "1.0.0"
+            macOS {
+                iconFile.set(project.file("src/desktopMain/resources/icon.icns"))
+            }
+            linux {
+                iconFile.set(project.file("src/desktopMain/resources/icon.png"))
+            }
+            windows {
+                iconFile.set(project.file("src/desktopMain/resources/icon.ico"))
+            }
         }
     }
 }
