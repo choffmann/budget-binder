@@ -1,9 +1,9 @@
-FROM gradle:7-jdk11 AS build
+FROM gradle:7-jdk17 AS build
 COPY --chown=gradle:gradle . /home/gradle/src
 WORKDIR /home/gradle/src/budget-binder-server
 RUN gradle shadowJar --no-daemon
 
-FROM openjdk:11
+FROM openjdk:17
 RUN mkdir -p /app/data
 WORKDIR /app
 
