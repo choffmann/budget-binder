@@ -29,10 +29,10 @@ class CategoryEntity(id: EntityID<Int>) : IntEntity(id) {
     var created by Categories.created
     var ended by Categories.ended
 
-    val user by UserEntity referencedOn Categories.user
+    var user by UserEntity referencedOn Categories.user
     val entries by EntryEntity referrersOn Entries.category
 
     fun toDto(): Category {
-        return Category(name, color, image, budget, user.id.value)
+        return Category(name, color, image, budget)
     }
 }

@@ -11,7 +11,7 @@ import java.time.LocalDateTime
 object Entries : IntIdTable() {
     val name = varchar("name", 50)
     val amount = float("amount")
-    val repeat = bool("repeat")
+    val repeat = bool("repeat").default(false)
     val created = datetime("created").default(LocalDateTime.now())
     val ended = datetime("ended").nullable()
 
@@ -28,10 +28,10 @@ class EntryEntity(id: EntityID<Int>) : IntEntity(id) {
     var created by Entries.created
     var ended by Entries.ended
 
-    val user by UserEntity referencedOn Entries.user
-    val category by CategoryEntity referencedOn Entries.category
+    var user by UserEntity referencedOn Entries.user
+    var category by CategoryEntity referencedOn Entries.category
 
     fun toDto(): Entry {
-        return Entry(name, amount, repeat, user.id.value, category.id.value)
+        return Entry(name, amount, repeat, category.id.value)
     }
 }

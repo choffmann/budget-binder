@@ -1,8 +1,6 @@
 package de.hsfl.budgetBinder.server
 
-import de.hsfl.budgetBinder.server.models.Categories
-import de.hsfl.budgetBinder.server.models.Entries
-import de.hsfl.budgetBinder.server.models.Users
+import de.hsfl.budgetBinder.server.models.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import kotlinx.coroutines.runBlocking
