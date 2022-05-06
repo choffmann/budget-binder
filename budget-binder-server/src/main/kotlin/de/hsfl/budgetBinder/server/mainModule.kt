@@ -65,7 +65,7 @@ fun Application.module() {
                 val tokenVersion = it.payload.getClaim("token_version").asInt()
                 val userService: UserService by closestDI().instance()
                 userService.findUserByID(id)?.let { user ->
-                    if (user.active && user.tokenVersion == tokenVersion) user else null
+                    if (user.tokenVersion == tokenVersion) user else null
                 }
             }
         }

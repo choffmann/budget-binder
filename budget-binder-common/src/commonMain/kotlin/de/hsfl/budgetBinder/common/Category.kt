@@ -11,10 +11,12 @@ data class Category(
     val budget: Float
 ) {
     enum class Color {
+        DEFAULT,
         RED
     }
 
     enum class Image {
+        DEFAULT,
         SHOPPING
     }
 }

@@ -85,6 +85,8 @@ paths:
                 $ref: '#/components/schemas/UserResponse'
         401:
           description: Not-Authorized
+      security:
+        - LoginBearer: [ ]
     delete:
       tags:
         - Users
@@ -98,6 +100,8 @@ paths:
                 $ref: '#/components/schemas/UserResponse'
         401:
           description: Not-Authorized
+      security:
+        - LoginBearer: [ ]
 components:
   schemas:
     ErrorModel:

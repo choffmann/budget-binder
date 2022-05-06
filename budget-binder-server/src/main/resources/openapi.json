@@ -138,7 +138,12 @@
           "401": {
             "description": "Not-Authorized"
           }
-        }
+        },
+        "security": [
+          {
+            "LoginBearer": []
+          }
+        ]
       },
       "delete": {
         "tags": [
@@ -159,7 +164,12 @@
           "401": {
             "description": "Not-Authorized"
           }
-        }
+        },
+        "security": [
+          {
+            "LoginBearer": []
+          }
+        ]
       }
     }
   },

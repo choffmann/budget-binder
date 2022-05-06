@@ -8,5 +8,5 @@ data class Entry(
     val name: String,
     val amount: Float,
     val repeat: Boolean,
-    val category_id: Int
+    val category_id: Int?
 )
