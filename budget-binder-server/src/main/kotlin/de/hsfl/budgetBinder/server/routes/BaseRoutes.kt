@@ -18,6 +18,16 @@ fun Application.baseRoutes() {
         get("/") {
             call.respondText(call.request.headers.toMap().toString())
         }
+        get("/favicon.ico") {
+            /* val classLoader = javaClass.classLoader
+            val inputStream = classLoader.getResourceAsStream("favicon.ico")!!
+            call.respondBytes(contentType = ContentType.defaultForFileExtension("ico")) {
+                withContext(Dispatchers.IO) {
+                    inputStream.readAllBytes()
+                }
+            } */
+            call.response.status(HttpStatusCode.NotFound)
+        }
         get("/openapi.json") {
             val classLoader = javaClass.classLoader
             val inputStream = classLoader.getResourceAsStream("openapi.json")!!
