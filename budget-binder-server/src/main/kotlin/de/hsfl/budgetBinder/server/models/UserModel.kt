@@ -26,6 +26,9 @@ class UserEntity(id: EntityID<Int>) : IntEntity(id), Principal {
     var tokenVersion by Users.tokenVersion
     var active by Users.active
 
+    val categories by CategoryEntity referrersOn Categories.user
+    val entries by EntryEntity referrersOn Entries.user
+
     fun toDto(): User {
         return User(id.value, firstName, name, email, active)
     }
