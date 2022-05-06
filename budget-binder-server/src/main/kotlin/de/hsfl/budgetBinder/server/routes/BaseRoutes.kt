@@ -3,14 +3,15 @@ package de.hsfl.budgetBinder.server.routes
 import de.hsfl.budgetBinder.server.services.UserService
 import io.ktor.application.*
 import io.ktor.html.*
+import io.ktor.http.*
 import io.ktor.response.*
 import io.ktor.routing.*
 import io.ktor.util.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlinx.html.*
 import org.kodein.di.instance
 import org.kodein.di.ktor.closestDI
-import java.io.File
-import java.net.URL
 
 fun Application.baseRoutes() {
     routing {
@@ -19,9 +20,12 @@ fun Application.baseRoutes() {
         }
         get("/openapi.json") {
             val classLoader = javaClass.classLoader
-            val url: URL = classLoader.getResource("openapi.json")!!
-            val file = File(url.toURI())
-            call.respondFile(file)
+            val inputStream = classLoader.getResourceAsStream("openapi.json")!!
+            call.respondBytes(contentType = ContentType.defaultForFileExtension("json")) {
+                withContext(Dispatchers.IO) {
+                    inputStream.readAllBytes()
+                }
+            }
         }
         get("/docs") {
             call.respondHtml {
