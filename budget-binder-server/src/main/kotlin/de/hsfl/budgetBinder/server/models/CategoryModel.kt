@@ -33,6 +33,6 @@ class CategoryEntity(id: EntityID<Int>) : IntEntity(id) {
     val entries by EntryEntity referrersOn Entries.category
 
     fun toDto(): Category {
-        return Category(name, color, image, budget)
+        return Category(id.value, name, color, image, budget)
     }
 }

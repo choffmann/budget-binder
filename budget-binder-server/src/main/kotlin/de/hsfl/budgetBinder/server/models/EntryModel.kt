@@ -32,6 +32,6 @@ class EntryEntity(id: EntityID<Int>) : IntEntity(id) {
     var category by CategoryEntity referencedOn Entries.category
 
     fun toDto(): Entry {
-        return Entry(name, amount, repeat, category.id.value)
+        return Entry(id.value, name, amount, repeat, category.id.value)
     }
 }

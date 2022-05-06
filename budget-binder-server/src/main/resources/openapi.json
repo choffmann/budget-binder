@@ -253,15 +253,19 @@
         "type": "object",
         "properties": {
           "firstName": {
+            "nullable": true,
             "type": "string"
           },
           "name": {
+            "nullable": true,
             "type": "string"
           },
           "email": {
+            "nullable": true,
             "type": "string"
           },
           "password": {
+            "nullable": true,
             "type": "string"
           }
         }
@@ -284,6 +288,160 @@
             "type": "boolean"
           }
         }
+      },
+      "Entry": {
+        "title": "Entry",
+        "required": [
+          "id",
+          "name",
+          "amount",
+          "repeat"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "name": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "number"
+          },
+          "repeat": {
+            "type": "boolean"
+          },
+          "category_id": {
+            "nullable": true,
+            "type": "integer"
+          }
+        }
+      },
+      "EntryPut": {
+        "title": "Entry Put",
+        "type": "object",
+        "properties": {
+          "name": {
+            "nullable": true,
+            "type": "string"
+          },
+          "amount": {
+            "nullable": true,
+            "type": "number"
+          },
+          "repeat": {
+            "nullable": true,
+            "type": "boolean"
+          },
+          "category_id": {
+            "nullable": true,
+            "type": "integer"
+          }
+        }
+      },
+      "EntryResponse": {
+        "title": "Entry Response",
+        "required": [
+          "success"
+        ],
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Entry"
+          },
+          "error": {
+            "$ref": "#/components/schemas/ErrorModel"
+          },
+          "success": {
+            "title": "Success",
+            "type": "boolean"
+          }
+        }
+      },
+      "Category": {
+        "title": "Category",
+        "required": [
+          "id",
+          "name",
+          "color",
+          "image",
+          "budget"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "name": {
+            "type": "string"
+          },
+          "color": {
+            "$ref": "#/components/schemas/Color"
+          },
+          "image": {
+            "$ref": "#/components/schemas/Image"
+          },
+          "budget": {
+            "type": "number"
+          }
+        }
+      },
+      "CategoryPut": {
+        "title": "Category Put",
+        "type": "object",
+        "properties": {
+          "name": {
+            "nullable": true,
+            "type": "string"
+          },
+          "color": {
+            "$ref": "#/components/schemas/Color"
+          },
+          "image": {
+            "$ref": "#/components/schemas/Image"
+          },
+          "budget": {
+            "nullable": true,
+            "type": "number"
+          }
+        }
+      },
+      "CategoryResponse": {
+        "title": "Category Response",
+        "required": [
+          "success"
+        ],
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Category"
+          },
+          "error": {
+            "$ref": "#/components/schemas/ErrorModel"
+          },
+          "success": {
+            "title": "Success",
+            "type": "boolean"
+          }
+        }
+      },
+      "Color": {
+        "type": "string",
+        "enum": [
+          "black",
+          "white",
+          "red",
+          "green",
+          "blue"
+        ]
+      },
+      "Image": {
+        "type": "string",
+        "enum": [
+          "shopping"
+        ]
       }
     },
     "securitySchemes": {
