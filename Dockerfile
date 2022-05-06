@@ -13,7 +13,7 @@ COPY --from=build /home/gradle/src/budget-binder-server/build/libs/*.jar /app/kt
 ENV \
 HOST=0.0.0.0 \
 PORT=8080 \
-FRONTEND_ADDRESS="" \
+FRONTEND_ADDRESSES="" \
 JWT_ACCESS_SECRET="" \
 JWT_ACCESS_MINUTES=15 \
 JWT_REFRESH_SECRET="" \

@@ -31,8 +31,10 @@ fun Application.module() {
     }
 
     install(CORS) {
-        val clientHost = System.getenv("FRONTEND_ADDRESS").split("://")
-        host(clientHost[1], schemes = listOf(clientHost[0]))
+        System.getenv("FRONTEND_ADDRESSES").replace(" ", "").split(",").forEach {
+            val (scheme, host) = it.split("://")
+            host(host, schemes = listOf(scheme))
+        }
         allowCredentials = true
         header(HttpHeaders.Authorization)
         header(HttpHeaders.ContentType)
