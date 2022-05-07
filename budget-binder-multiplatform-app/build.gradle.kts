@@ -134,7 +134,14 @@ compose.desktop {
     application {
         mainClass = "de.hsfl.budgetBinder.desktop.MainKt"
         nativeDistributions {
-            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
+            targetFormats(
+                TargetFormat.Dmg, // TargetFormat.Pkg only one of them works at the same time
+                TargetFormat.Msi,
+                TargetFormat.Exe,
+                TargetFormat.Deb, // Debian
+                TargetFormat.AppImage, // For all Linux Distros
+                TargetFormat.Rpm // Redhat
+            )
             includeAllModules = true
             packageName = "budget-binder"
             version = "1.0-SNAPSHOT"
