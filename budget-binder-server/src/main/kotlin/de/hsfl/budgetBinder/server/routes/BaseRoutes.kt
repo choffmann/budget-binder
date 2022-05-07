@@ -19,14 +19,13 @@ fun Application.baseRoutes() {
             call.respondText(call.request.headers.toMap().toString())
         }
         get("/favicon.ico") {
-            /* val classLoader = javaClass.classLoader
-            val inputStream = classLoader.getResourceAsStream("favicon.ico")!!
+            val classLoader = javaClass.classLoader
+            val inputStream = classLoader.getResourceAsStream("ico/BudgetBinderRounded.ico")!!
             call.respondBytes(contentType = ContentType.defaultForFileExtension("ico")) {
                 withContext(Dispatchers.IO) {
                     inputStream.readAllBytes()
                 }
-            } */
-            call.response.status(HttpStatusCode.NotFound)
+            }
         }
         get("/openapi.json") {
             val classLoader = javaClass.classLoader
@@ -45,6 +44,7 @@ fun Application.baseRoutes() {
                     meta("description", "SwaggerIU")
                     title("SwaggerUI")
                     link(href = "https://unpkg.com/swagger-ui-dist@4.5.0/swagger-ui.css", rel = "stylesheet")
+                    link(href = "/favicon.ico", rel = "icon", type = "image/x-icon")
                 }
                 body {
                     div {
