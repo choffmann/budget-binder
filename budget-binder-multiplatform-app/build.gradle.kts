@@ -1,3 +1,5 @@
+import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+
 plugins {
     kotlin("multiplatform")
     id("com.android.application")
@@ -27,28 +29,27 @@ kotlin {
     }*/
 
     sourceSets {
-        val ktor_version = "2.0.1"
+        val ktorVersion = "2.0.1"
         val commonMain by getting {
             dependencies {
                 implementation(project(":budget-binder-common"))
 
-                implementation("io.ktor:ktor-client-core:$ktor_version")
-                implementation("io.ktor:ktor-client-serialization:$ktor_version")
-                implementation("io.ktor:ktor-client-core:$ktor_version")
-                implementation("io.ktor:ktor-client-auth:$ktor_version")
-                implementation("io.ktor:ktor-client-logging:$ktor_version")
-                implementation("io.ktor:ktor-client-content-negotiation:$ktor_version")
-                implementation("io.ktor:ktor-serialization-kotlinx-json:$ktor_version")
+                implementation("io.ktor:ktor-client-core:$ktorVersion")
+                implementation("io.ktor:ktor-client-serialization:$ktorVersion")
+                implementation("io.ktor:ktor-client-core:$ktorVersion")
+                implementation("io.ktor:ktor-client-auth:$ktorVersion")
+                implementation("io.ktor:ktor-client-logging:$ktorVersion")
+                implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
+                implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1")
-
-                implementation("org.kodein.di:kodein-di:7.11.0")
                 implementation("org.kodein.di:kodein-di-framework-compose:7.11.0")
+                implementation("org.kodein.di:kodein-di:7.11.0")
             }
         }
 
         val jvmMain by creating {
             dependencies {
-                implementation("io.ktor:ktor-client-java:$ktor_version")
+                implementation("io.ktor:ktor-client-java:$ktorVersion")
                 implementation(compose.foundation)
                 implementation(compose.material)
                 api(compose.preview)
@@ -77,13 +78,13 @@ kotlin {
                 implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.4.1")
                 implementation("androidx.activity:activity-compose:1.4.0")
 
-                implementation("io.ktor:ktor-client-android:$ktor_version")
+                implementation("io.ktor:ktor-client-android:$ktorVersion")
             }
         }
 
         val jsMain by getting {
             dependencies {
-                implementation("io.ktor:ktor-client-js:$ktor_version")
+                implementation("io.ktor:ktor-client-js:$ktorVersion")
                 implementation(compose.web.core)
                 implementation(compose.runtime)
                 implementation(compose.web.svg)
@@ -133,9 +134,27 @@ compose.desktop {
     application {
         mainClass = "de.hsfl.budgetBinder.desktop.MainKt"
         nativeDistributions {
-            targetFormats(org.jetbrains.compose.desktop.application.dsl.TargetFormat.Dmg, org.jetbrains.compose.desktop.application.dsl.TargetFormat.Msi, org.jetbrains.compose.desktop.application.dsl.TargetFormat.Deb)
-            packageName = "jvm"
+            targetFormats(
+                TargetFormat.Dmg, // TargetFormat.Pkg only one of them works at the same time
+                TargetFormat.Msi,
+                TargetFormat.Exe,
+                TargetFormat.Deb, // Debian
+                TargetFormat.AppImage, // For all Linux Distros
+                TargetFormat.Rpm // Redhat
+            )
+            includeAllModules = true
+            packageName = "budget-binder"
+            version = "1.0-SNAPSHOT"
             packageVersion = "1.0.0"
+            macOS {
+                iconFile.set(project.file("src/desktopMain/resources/icon.icns"))
+            }
+            linux {
+                iconFile.set(project.file("src/desktopMain/resources/icon.png"))
+            }
+            windows {
+                iconFile.set(project.file("src/desktopMain/resources/icon.ico"))
+            }
         }
     }
 }
