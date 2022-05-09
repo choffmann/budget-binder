@@ -59,7 +59,7 @@ class UserService {
             val category = transaction {
                 CategoryEntity.new {
                     name = "default"
-                    color = Category.Color.DEFAULT
+                    color = "000000"
                     image = Category.Image.DEFAULT
                     budget = 0.0f
                     user = it

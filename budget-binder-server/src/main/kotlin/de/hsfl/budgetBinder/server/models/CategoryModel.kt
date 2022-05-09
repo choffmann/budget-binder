@@ -10,7 +10,7 @@ import java.time.LocalDateTime
 
 object Categories : IntIdTable() {
     val name = varchar("name", 50)
-    val color = enumeration<Category.Color>("color")
+    val color = char("color", 6)
     val image = enumeration<Category.Image>("image")
     val budget = float("budget")
     val created = datetime("created").default(LocalDateTime.now())
