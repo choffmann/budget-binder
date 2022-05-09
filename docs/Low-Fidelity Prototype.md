@@ -28,7 +28,8 @@ Das Startmenü dient zur leichten Übersicht des eigenen Budgets. Wir schwanken 
 Wir haben uns für Kategorie-Icons entschieden, damit die Kategorien auf einen Blick leicht zu unterscheiden sind, wenn man sie miteinander vergleicht.
 
 
-##User Tests
+##Usability Testing 
+Um unseren Prototypen sinnvoll zu testen haben wir uns eine Liste an Aufgaben und Fragen überlegt, die von externen Personen gelöst und beantwortet werden sollen. Die von uns überlegten Aufgaben und Fragen findet man unter Die dazugehörigen Tests findet man unter Anhand der von uns durchgeführten Tests sind wir zu folgenden Änderungen gekommen: 
 - TBA
 
 ##Designänderungen durch den User Test
