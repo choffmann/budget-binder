@@ -1,6 +1,6 @@
 package de.hsfl.budgetBinder.server
 
-import de.hsfl.budgetBinder.server.models.Users
+import de.hsfl.budgetBinder.server.models.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import kotlinx.coroutines.runBlocking
@@ -50,7 +50,7 @@ fun main() = runBlocking<Unit> {
         // Logging for DEV purposes
         addLogger(StdOutSqlLogger)
 
-        SchemaUtils.create(Users)
+        SchemaUtils.create(Users, Categories, Entries)
     }
     /*
     * configure = {

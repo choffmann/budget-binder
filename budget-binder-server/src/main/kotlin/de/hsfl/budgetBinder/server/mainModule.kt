@@ -31,8 +31,10 @@ fun Application.module() {
     }
 
     install(CORS) {
-        val clientHost = System.getenv("FRONTEND_ADDRESS").split("://")
-        host(clientHost[1], schemes = listOf(clientHost[0]))
+        System.getenv("FRONTEND_ADDRESSES").replace(" ", "").split(",").forEach {
+            val (scheme, hostName) = it.split("://")
+            host(hostName, schemes = listOf(scheme))
+        }
         allowCredentials = true
         header(HttpHeaders.Authorization)
         header(HttpHeaders.ContentType)
@@ -65,7 +67,7 @@ fun Application.module() {
                 val tokenVersion = it.payload.getClaim("token_version").asInt()
                 val userService: UserService by closestDI().instance()
                 userService.findUserByID(id)?.let { user ->
-                    if (user.active && user.tokenVersion == tokenVersion) user else null
+                    if (user.tokenVersion == tokenVersion) user else null
                 }
             }
         }

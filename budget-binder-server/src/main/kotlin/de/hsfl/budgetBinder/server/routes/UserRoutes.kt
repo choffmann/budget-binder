@@ -15,11 +15,11 @@ import org.kodein.di.ktor.closestDI
 
 fun Route.meRoute() {
     authenticate("auth-jwt") {
-        route("/users/me") {
+        route("/me") {
             get {
                 call.respond(APIResponse(data = call.principal<UserEntity>()!!.toDto(), success = true))
             }
-            put {
+            patch {
                 val user = call.principal<UserEntity>()!!
                 val userService: UserService by closestDI().instance()
 

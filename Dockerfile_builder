@@ -1,0 +1,4 @@
+FROM gradle:7-jdk17
+COPY --chown=gradle:gradle . /home/gradle/src
+WORKDIR /home/gradle/src/budget-binder-server
+RUN gradle shadowJar --no-daemon

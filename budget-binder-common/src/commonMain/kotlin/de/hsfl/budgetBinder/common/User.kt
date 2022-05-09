@@ -7,8 +7,7 @@ data class User(
     val id: Int,
     val firstName: String,
     val name: String,
-    val email: String,
-    val active: Boolean
+    val email: String
 ) {
 
     @Serializable
@@ -18,7 +17,6 @@ data class User(
     data class Put(
         val firstName: String? = null,
         val name: String? = null,
-        val active: Boolean? = null,
         val password: String? = null
     )
 }

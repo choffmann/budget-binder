@@ -13,7 +13,7 @@ object Users : IntIdTable() {
     val email = varchar("email", 50).uniqueIndex()
     val passwordHash = char("password_hash", 60)
     val tokenVersion = integer("token_version").default(1)
-    val active = bool("active").default(true)
+    val category = reference("category", Categories).nullable()
 }
 
 class UserEntity(id: EntityID<Int>) : IntEntity(id), Principal {
@@ -24,9 +24,12 @@ class UserEntity(id: EntityID<Int>) : IntEntity(id), Principal {
     var email by Users.email
     var passwordHash by Users.passwordHash
     var tokenVersion by Users.tokenVersion
-    var active by Users.active
+    var category by Users.category
+
+    val categories by CategoryEntity referrersOn Categories.user
+    val entries by EntryEntity referrersOn Entries.user
 
     fun toDto(): User {
-        return User(id.value, firstName, name, email, active)
+        return User(id.value, firstName, name, email)
     }
 }
