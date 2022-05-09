@@ -32,7 +32,7 @@ dependencies {
     val ktorVersion = "1.6.8" // ""2.0.0"
     val exposedVersion = "0.38.1"
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1")
-
+    implementation("io.ktor:ktor-network-tls-certificates:$ktorVersion")
     implementation("io.ktor:ktor-server-core:$ktorVersion")
     // implementation("io.ktor:ktor-server-auth:$ktorVersion")
     implementation("io.ktor:ktor-auth:$ktorVersion")

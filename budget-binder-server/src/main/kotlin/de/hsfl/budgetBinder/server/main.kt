@@ -1,14 +1,14 @@
 package de.hsfl.budgetBinder.server
 
 import io.ktor.application.*
+import io.ktor.network.tls.certificates.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import kotlinx.coroutines.runBlocking
+import java.io.File
+import java.security.KeyStore
 
 fun main() = runBlocking<Unit> {
-    val port = Integer.parseInt(System.getenv("PORT") ?: "8080")
-    val host = System.getenv("HOST") ?: "0.0.0.0"
-
     /*
     * configure = {
     *   https://ktor.io/docs/engines.html#engine-main-configure
@@ -21,11 +21,41 @@ fun main() = runBlocking<Unit> {
     *   responseWriteTimeoutSeconds = 10
     * }
     * */
-    embeddedServer(
-        Netty,
-        host = host,
-        port = port,
-        module = Application::module,
+
+    val dev = System.getenv("DEV") != null
+    val keyStoreFile: File?
+    val keystore: KeyStore?
+    if (dev) {
+        keyStoreFile = File("data/keystore.jks")
+        keystore = generateCertificate(
+            file = keyStoreFile,
+            keyAlias = "sampleAlias",
+            keyPassword = "foobar",
+            jksPassword = "foobar"
+        )
+    } else {
+        keyStoreFile = null
+        keystore = null
+    }
+    val environment = applicationEngineEnvironment {
+        // log = LoggerFactory.getLogger("ktor.application")
+        connector {
+            port = Integer.parseInt(System.getenv("PORT") ?: "8080")
+            host = System.getenv("HOST") ?: "0.0.0.0"
+        }
+        if (dev) {
+            sslConnector(
+                keyStore = keystore!!,
+                keyAlias = "sampleAlias",
+                keyStorePassword = { "foobar".toCharArray() },
+                privateKeyPassword = { "foobar".toCharArray() }) {
+                port = 8443
+                keyStorePath = keyStoreFile
+            }
+        }
+        module(Application::module)
         watchPaths = listOf("build/classes", "build/resources")
-    ).start(wait = true)
+    }
+
+    embeddedServer(Netty, environment).start(wait = true)
 }

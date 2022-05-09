@@ -20,17 +20,14 @@ import org.kodein.di.instance
 import org.kodein.di.ktor.closestDI
 
 fun createRefreshCookie(token: String, timestamp: Long): Cookie {
-    val secure = System.getenv("DEV") != "True"
-    val sameSiteValue = if (secure) SameSite.None.toString() else SameSite.Lax.toString()
-
     return Cookie(
         "jwt",
         token,
         expires = GMTDate(timestamp),
         path = "/refresh_token",
         httpOnly = true,
-        secure = secure,
-        extensions = hashMapOf(SAMESITE to sameSiteValue)
+        secure = true,
+        extensions = hashMapOf(SAMESITE to SameSite.None.toString())
     )
 }
 
