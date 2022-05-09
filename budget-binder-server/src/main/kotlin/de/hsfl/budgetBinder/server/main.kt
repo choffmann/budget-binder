@@ -54,6 +54,7 @@ fun main() = runBlocking<Unit> {
                 keyAlias = "Budget Binder Server",
                 keyStorePassword = { keyStorePassword.toCharArray() },
                 privateKeyPassword = { keyStorePassword.toCharArray() }) {
+                host = System.getenv("SSL_HOST") ?: "0.0.0.0"
                 port = Integer.parseInt(System.getenv("SSL_PORT") ?: "8443")
             }
         }
