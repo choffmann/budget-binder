@@ -63,9 +63,10 @@ fun Application.module() {
 
 
     transaction {
-        // Logging for DEV purposes
-        addLogger(StdOutSqlLogger)
-
+        if (System.getenv("DEV") == "True") {
+            // Logging for DEV purposes
+            addLogger(StdOutSqlLogger)
+        }
         SchemaUtils.create(Users, Categories, Entries)
     }
 

@@ -30,23 +30,27 @@ fun main() = runBlocking<Unit> {
     }
 
     val environment = applicationEngineEnvironment {
+        module(Application::module)
         // log = LoggerFactory.getLogger("ktor.application")
+
         connector {
-            port = Integer.parseInt(System.getenv("PORT") ?: "8080")
             host = System.getenv("HOST") ?: "0.0.0.0"
+            port = Integer.parseInt(System.getenv("PORT") ?: "8080")
         }
         if (sslState == "SSL" || sslState == "DEV") {
             sslConnector(
                 keyStore = keyStore!!,
                 keyAlias = "Budget Binder Server",
                 keyStorePassword = { keyStorePassword.toCharArray() },
-                privateKeyPassword = { keyStorePassword.toCharArray() }) {
+                privateKeyPassword = { keyStorePassword.toCharArray() }
+            ) {
                 host = System.getenv("SSL_HOST") ?: "0.0.0.0"
                 port = Integer.parseInt(System.getenv("SSL_PORT") ?: "8443")
             }
         }
-        module(Application::module)
-        watchPaths = listOf("build/classes", "build/resources")
+        if (sslState == "DEV") {
+            watchPaths = listOf("build/classes", "build/resources")
+        }
     }
 
     embeddedServer(Netty, environment = environment, configure = {
