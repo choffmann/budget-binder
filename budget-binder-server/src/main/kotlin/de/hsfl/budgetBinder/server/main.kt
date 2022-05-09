@@ -4,7 +4,9 @@ import io.ktor.application.*
 import io.ktor.network.tls.certificates.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.security.KeyStore
 
@@ -22,35 +24,37 @@ fun main() = runBlocking<Unit> {
     * }
     * */
 
-    val dev = System.getenv("DEV") != null
-    val keyStoreFile: File?
-    val keystore: KeyStore?
-    if (dev) {
-        keyStoreFile = File("data/keystore.jks")
-        keystore = generateCertificate(
-            file = keyStoreFile,
-            keyAlias = "sampleAlias",
-            keyPassword = "foobar",
-            jksPassword = "foobar"
+    val sslState = System.getenv("DEV")?.let { "DEV" } ?: System.getenv("SSL")?.let { "SSL" } ?: "NONE"
+
+    val keyStorePath = System.getenv("KEYSTORE_PATH")
+    val keyStorePassword = System.getenv("KEYSTORE_PASSWORD") ?: "budget-binder"
+
+    val keyStore = when (sslState) {
+        "DEV" -> generateCertificate(
+            file = File("data/dev_keystore.jks"),
+            keyAlias = "Budget Binder Server",
+            keyPassword = keyStorePassword,
+            jksPassword = keyStorePassword
         )
-    } else {
-        keyStoreFile = null
-        keystore = null
+        "SSL" -> withContext(Dispatchers.IO) {
+            KeyStore.getInstance(File(keyStorePath), keyStorePassword.toCharArray())
+        }
+        else -> null
     }
+
     val environment = applicationEngineEnvironment {
         // log = LoggerFactory.getLogger("ktor.application")
         connector {
             port = Integer.parseInt(System.getenv("PORT") ?: "8080")
             host = System.getenv("HOST") ?: "0.0.0.0"
         }
-        if (dev) {
+        if (sslState == "SSL" || sslState == "DEV") {
             sslConnector(
-                keyStore = keystore!!,
-                keyAlias = "sampleAlias",
-                keyStorePassword = { "foobar".toCharArray() },
-                privateKeyPassword = { "foobar".toCharArray() }) {
-                port = 8443
-                keyStorePath = keyStoreFile
+                keyStore = keyStore!!,
+                keyAlias = "Budget Binder Server",
+                keyStorePassword = { keyStorePassword.toCharArray() },
+                privateKeyPassword = { keyStorePassword.toCharArray() }) {
+                port = Integer.parseInt(System.getenv("SSL_PORT") ?: "8443")
             }
         }
         module(Application::module)

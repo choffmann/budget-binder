@@ -93,7 +93,8 @@ fun Application.module() {
         method(HttpMethod.Post)
         allowNonSimpleContentTypes = true
     }
-    install(XForwardedHeaderSupport)
+
+    System.getenv("NO_FORWARD_HEADER") ?: install(XForwardedHeaderSupport)
 
     install(Authentication) {
         form("auth-form") {
