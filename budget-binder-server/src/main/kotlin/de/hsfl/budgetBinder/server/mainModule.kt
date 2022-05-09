@@ -2,6 +2,9 @@ package de.hsfl.budgetBinder.server
 
 import de.hsfl.budgetBinder.common.APIResponse
 import de.hsfl.budgetBinder.common.ErrorModel
+import de.hsfl.budgetBinder.server.models.Categories
+import de.hsfl.budgetBinder.server.models.Entries
+import de.hsfl.budgetBinder.server.models.Users
 import de.hsfl.budgetBinder.server.routes.authRoutes
 import de.hsfl.budgetBinder.server.routes.baseRoutes
 import de.hsfl.budgetBinder.server.routes.userRoutes
@@ -14,12 +17,57 @@ import io.ktor.features.*
 import io.ktor.http.*
 import io.ktor.response.*
 import io.ktor.serialization.*
+import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.sql.StdOutSqlLogger
+import org.jetbrains.exposed.sql.addLogger
+import org.jetbrains.exposed.sql.transactions.transaction
 import org.kodein.di.*
 import org.kodein.di.ktor.closestDI
 import org.kodein.di.ktor.di
 import org.slf4j.event.Level
 
 fun Application.module() {
+    val dbType = System.getenv("DB_TYPE")
+    val dbServer = System.getenv("DB_SERVER")
+    val dbPort = System.getenv("DB_PORT")
+    val dbDatabaseName = System.getenv("DB_DATABASE_NAME")
+    val dbUser = System.getenv("DB_USER") ?: ""
+    val dbPassword = System.getenv("DB_PASSWORD") ?: ""
+
+    val url: String
+    val driver: String
+    when (dbType) {
+        "SQLITE" -> {
+            // Database.connect("jdbc:sqlite:file:test?mode=memory&cache=shared", "org.sqlite.JDBC")
+            val path = (System.getenv("SQLITE_PATH") ?: (System.getProperty("user.dir") + "/data")) + "/data.db"
+            url = "jdbc:sqlite:$path"
+            driver = "org.sqlite.JDBC"
+        }
+        "MYSQL" -> {
+            // Database.connect("jdbc:mysql://localhost:3306/test", driver = "com.mysql.cj.jdbc.Driver",
+            //      user = "root", password = "your_pwd")
+            url = "jdbc:mysql://$dbServer:$dbPort/$dbDatabaseName"
+            driver = "com.mysql.cj.jdbc.Driver"
+        }
+        "POSTGRESQL" -> {
+            url = "jdbc:pgsql://$dbServer:$dbPort/$dbDatabaseName"
+            driver = "com.impossibl.postgres.jdbc.PGDriver"
+        }
+        else -> {
+            throw Exception("No DATABASE Type given")
+        }
+    }
+
+    Database.connect(url, driver, user = dbUser, password = dbPassword)
+
+
+    transaction {
+        // Logging for DEV purposes
+        addLogger(StdOutSqlLogger)
+
+        SchemaUtils.create(Users, Categories, Entries)
+    }
 
     di {
         bindSingleton { UserService() }
