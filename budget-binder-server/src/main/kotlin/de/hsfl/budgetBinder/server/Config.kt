@@ -31,6 +31,7 @@ object Config {
     val keyStorePath: String
 
     val frontendAddresses: List<String>
+    val forwardedHeaderSupport: Boolean
 
     val jwtAccessSecret: String
     val jwtRefreshSecret: String
@@ -82,8 +83,9 @@ object Config {
         port = Integer.parseInt(System.getenv("PORT") ?: "8080")
         sslPort = Integer.parseInt(System.getenv("SSL_PORT") ?: "8443")
 
+        forwardedHeaderSupport = System.getenv("NO_FORWARDED_HEADER") == null
         val devEnv = System.getenv("DEV")
-        dev = devEnv?.let { true } ?: false
+        dev = devEnv != null
 
         sslState = devEnv?.let {
             SSLState.DEV
