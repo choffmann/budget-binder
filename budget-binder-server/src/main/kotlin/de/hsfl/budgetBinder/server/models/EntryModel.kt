@@ -13,7 +13,10 @@ object Entries : IntIdTable() {
     val amount = float("amount")
     val repeat = bool("repeat").default(false)
     val created = datetime("created").default(LocalDateTime.now())
-    val ended = datetime("ended").nullable()
+    val ended = datetime("ended").nullable().default(null)
+
+    val parent = reference("parent", Entries).nullable().default(null)
+    val child = reference("child", Entries).nullable().default(null)
 
     val user = reference("user", Users)
     val category = reference("category", Categories)
@@ -28,12 +31,38 @@ class EntryEntity(id: EntityID<Int>) : IntEntity(id) {
     var created by Entries.created
     var ended by Entries.ended
 
+    var parent by Entries.parent
+    var child by Entries.child
+
     var user by UserEntity referencedOn Entries.user
     var category by CategoryEntity referencedOn Entries.category
 
+    private fun next(): EntryEntity? {
+        return child?.let {
+            EntryEntity[it]
+        }
+    }
+
+    private fun prev(): EntryEntity? {
+        return parent?.let {
+            EntryEntity[it]
+        }
+    }
+
+    private fun lastChild(): EntryEntity {
+        var lastChild = this
+        while (true) {
+            val child = lastChild.next() ?: break
+            lastChild = child
+        }
+        return lastChild
+    }
+
     fun toDto(): Entry {
+        val lastChild = lastChild()
+
         val categoryId =
             if (user.category?.value == category.id.value) null else category.id.value
-        return Entry(id.value, name, amount, repeat, categoryId)
+        return Entry(id.value, lastChild.name, amount, repeat, categoryId)
     }
 }
