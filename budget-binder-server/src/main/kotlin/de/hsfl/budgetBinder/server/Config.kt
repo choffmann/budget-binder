@@ -68,8 +68,8 @@ object Config {
 
         jwtAccessSecret = System.getenv("JWT_ACCESS_SECRET") ?: throw Exception("No AccessTokenSecret provided")
         jwtRefreshSecret = System.getenv("JWT_REFRESH_SECRET") ?: throw Exception("No RefreshTokenSecret provided")
-        jwtAccessMinutes = Integer.parseInt(System.getenv("JWT_ACCESS_MINUTES") ?: "15")
-        jwtRefreshDays = Integer.parseInt(System.getenv("JWT_REFRESH_DAYS") ?: "7")
+        jwtAccessMinutes = System.getenv("JWT_ACCESS_MINUTES").toIntOrNull() ?: 15
+        jwtRefreshDays = System.getenv("JWT_REFRESH_DAYS").toIntOrNull() ?: 7
         jwtIssuer = System.getenv("JWT_ISSUER") ?: "http://0.0.0.0:8080/"
         jwtAudience = System.getenv("JWT_AUDIENCE") ?: "http://0.0.0.0:8080/"
 
@@ -80,8 +80,8 @@ object Config {
 
         host = System.getenv("HOST") ?: "0.0.0.0"
         sslHost = System.getenv("SSL_HOST") ?: "0.0.0.0"
-        port = Integer.parseInt(System.getenv("PORT") ?: "8080")
-        sslPort = Integer.parseInt(System.getenv("SSL_PORT") ?: "8443")
+        port = System.getenv("PORT").toIntOrNull() ?: 8080
+        sslPort = System.getenv("SSL_PORT").toIntOrNull() ?: 8443
 
         forwardedHeaderSupport = System.getenv("NO_FORWARDED_HEADER") == null
         val devEnv = System.getenv("DEV")
