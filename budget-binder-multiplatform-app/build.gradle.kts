@@ -134,14 +134,25 @@ compose.desktop {
     application {
         mainClass = "de.hsfl.budgetBinder.desktop.MainKt"
         nativeDistributions {
-            targetFormats(
-                TargetFormat.Dmg, // TargetFormat.Pkg only one of them works at the same time
-                TargetFormat.Msi,
-                TargetFormat.Exe,
-                TargetFormat.Deb, // Debian
-                TargetFormat.AppImage, // For all Linux Distros
-                TargetFormat.Rpm // Redhat
-            )
+            // TargetFormat.AppImage throw error on macOS
+            when (currentOs) {
+                macos_x64, macos_arm64 ->
+                    targetFormats(
+                        TargetFormat.Dmg,
+                        TargetFormat.Msi,
+                        TargetFormat.Exe,
+                        TargetFormat.Deb, 
+                        TargetFormat.Rpm 
+                    )
+                else -> targetFormats(
+                    TargetFormat.Dmg, 
+                    TargetFormat.Msi,
+                    TargetFormat.Exe,
+                    TargetFormat.Deb, 
+                    TargetFormat.Rpm, 
+                    TargetFormat.AppImage 
+                )
+            }
             includeAllModules = true
             packageName = "budget-binder"
             version = "1.0-SNAPSHOT"
