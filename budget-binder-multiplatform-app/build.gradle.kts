@@ -1,3 +1,6 @@
+import org.jetbrains.compose.ComposePlugin.DesktopDependencies.currentOs
+import org.jetbrains.compose.ComposePlugin.DesktopDependencies.macos_arm64
+import org.jetbrains.compose.ComposePlugin.DesktopDependencies.macos_x64
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 
 plugins {
