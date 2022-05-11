@@ -4,7 +4,6 @@ import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.types.file
 import de.hsfl.budgetBinder.server.config.getServerConfig
-import io.ktor.application.*
 import io.ktor.network.tls.certificates.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
@@ -44,7 +43,9 @@ class ServerMain : CliktCommand() {
         }
 
         val environment = applicationEngineEnvironment {
-            module(Application::module)
+            module {
+                mainModule(config)
+            }
             // log = LoggerFactory.getLogger("ktor.application")
 
             connector {

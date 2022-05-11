@@ -2,6 +2,8 @@ package de.hsfl.budgetBinder.server
 
 import de.hsfl.budgetBinder.common.APIResponse
 import de.hsfl.budgetBinder.common.ErrorModel
+import de.hsfl.budgetBinder.server.config.Config
+import de.hsfl.budgetBinder.server.config.getServerConfig
 import de.hsfl.budgetBinder.server.models.Categories
 import de.hsfl.budgetBinder.server.models.Entries
 import de.hsfl.budgetBinder.server.models.Users
@@ -27,7 +29,11 @@ import org.kodein.di.ktor.closestDI
 import org.kodein.di.ktor.di
 import org.slf4j.event.Level
 
-fun Application.module() {
+fun Application.mainModule(serverConfig: Config? = null, configString: String? = null) {
+
+    val config =
+        serverConfig ?: configString?.let { getServerConfig(null, configString) } ?: throw Exception("Do not Reach")
+
     val dbType = System.getenv("DB_TYPE")
     val dbServer = System.getenv("DB_SERVER")
     val dbPort = System.getenv("DB_PORT")
@@ -71,6 +77,7 @@ fun Application.module() {
     }
 
     di {
+        bindEagerSingleton { config }
         bindSingleton { UserService() }
         bindSingleton { JWTService() }
     }
