@@ -10,11 +10,14 @@ import java.time.LocalDateTime
 
 object Categories : IntIdTable() {
     val name = varchar("name", 50)
-    val color = enumeration<Category.Color>("color")
+    val color = char("color", 6)
     val image = enumeration<Category.Image>("image")
     val budget = float("budget")
     val created = datetime("created").default(LocalDateTime.now())
-    val ended = datetime("ended").nullable()
+    val ended = datetime("ended").nullable().default(null)
+
+    val parent = reference("parent", Categories).nullable().default(null)
+    val child = reference("child", Categories).nullable().default(null)
 
     val user = reference("user", Users)
 }
@@ -29,10 +32,35 @@ class CategoryEntity(id: EntityID<Int>) : IntEntity(id) {
     var created by Categories.created
     var ended by Categories.ended
 
+    var parent by Categories.parent
+    var child by Categories.child
+
     var user by UserEntity referencedOn Categories.user
     val entries by EntryEntity referrersOn Entries.category
 
+    private fun next(): CategoryEntity? {
+        return child?.let {
+            CategoryEntity[it]
+        }
+    }
+
+    private fun prev(): CategoryEntity? {
+        return parent?.let {
+            CategoryEntity[it]
+        }
+    }
+
+    private fun lastChild(): CategoryEntity {
+        var lastChild = this
+        while (true) {
+            val child = lastChild.next() ?: break
+            lastChild = child
+        }
+        return lastChild
+    }
+
     fun toDto(): Category {
-        return Category(id.value, name, color, image, budget)
+        val lastChild = lastChild()
+        return Category(id.value, lastChild.name, lastChild.color, lastChild.image, budget)
     }
 }
