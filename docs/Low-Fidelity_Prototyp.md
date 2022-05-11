@@ -16,7 +16,7 @@ Features:
   - Kategorie
   - Name
   - Menge
-  - Wiederholung (Am ersten Tag des Monats oder an eigen festgelegten Tag)
+  - Wiederholung (Am ersten Tag des Monats)
 - Erstellen von neuen Kategorien
   - Bild
   - Name
@@ -29,8 +29,7 @@ Wir haben uns für Kategorie-Icons entschieden, damit die Kategorien auf einen B
 
 
 ## Usability Testing 
-Um unseren Prototypen sinnvoll zu testen haben wir uns eine Liste an Aufgaben und Fragen überlegt, die von externen Personen gelöst und beantwortet werden sollen. Die von uns überlegten Aufgaben und Fragen findet man unter Die dazugehörigen Tests findet man unter Anhand der von uns durchgeführten Tests sind wir zu folgenden Änderungen gekommen: 
-- TBA
+Um unseren Prototypen sinnvoll zu testen haben wir uns eine Liste an Aufgaben und Fragen überlegt, die von externen Personen gelöst und beantwortet werden sollen. Die von uns überlegten Aufgaben und Fragen findet man unter Die dazugehörigen Tests findet man unter Anhand der von uns durchgeführten Tests sind wir zu den folgend genannten Änderungen gekommen.
 
 ## Designänderungen durch den User Test
 - TBA
