@@ -1,6 +1,6 @@
 # Low-Fidelity Prototyp
 
-##Allgemeines
+## Allgemeines
 Der Lo-Fi Prototyp wurde mit <a href="https://www.figma.com/"><img src="https://upload.wikimedia.org/wikipedia/commons/3/33/Figma-logo.svg" height="10" width="10" ></a> [Figma](https://www.figma.com/ "Figma's Homepage") erstellt.
 
 Hier ist der Link, um den Prototypen selbst aufzurufen: [Low Fidelity Prototyp](https://www.figma.com/proto/FgMPlzpcNq7p4y9uxPL896/Budget-Binder-Lofi?node-id=1%3A122&scaling=scale-down&page-id=0%3A1&starting-point-node-id=1%3A122&hide-ui=1 "Low Fidelity Prototyp")
@@ -28,9 +28,9 @@ Das Startmenü dient zur leichten Übersicht des eigenen Budgets. Wir schwanken 
 Wir haben uns für Kategorie-Icons entschieden, damit die Kategorien auf einen Blick leicht zu unterscheiden sind, wenn man sie miteinander vergleicht.
 
 
-##Usability Testing 
+## Usability Testing 
 Um unseren Prototypen sinnvoll zu testen haben wir uns eine Liste an Aufgaben und Fragen überlegt, die von externen Personen gelöst und beantwortet werden sollen. Die von uns überlegten Aufgaben und Fragen findet man unter Die dazugehörigen Tests findet man unter Anhand der von uns durchgeführten Tests sind wir zu folgenden Änderungen gekommen: 
 - TBA
 
-##Designänderungen durch den User Test
+## Designänderungen durch den User Test
 - TBA
