@@ -25,6 +25,8 @@ dependencies {
     implementation(project(":budget-binder-common"))
     implementation(kotlin("stdlib"))
 
+    implementation("com.github.ajalt.clikt:clikt:3.4.2")
+
     // implementation("org.kodein.di:kodein-di:7.8.0")
     implementation("org.kodein.di:kodein-di-framework-ktor-server-jvm:7.11.0")
 
