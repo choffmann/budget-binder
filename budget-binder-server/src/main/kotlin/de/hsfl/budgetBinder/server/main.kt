@@ -3,6 +3,7 @@ package de.hsfl.budgetBinder.server
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.types.file
+import de.hsfl.budgetBinder.server.config.getServerConfig
 import io.ktor.application.*
 import io.ktor.network.tls.certificates.*
 import io.ktor.server.engine.*
@@ -21,6 +22,9 @@ class ServerMain : CliktCommand() {
     )
 
     override fun run(): Unit = runBlocking {
+
+        val config = getServerConfig(configFile)
+
         val sslState = System.getenv("DEV")?.let { "DEV" } ?: System.getenv("SSL")?.let { "SSL" } ?: "NONE"
 
         val keyStorePath = System.getenv("KEYSTORE_PATH")

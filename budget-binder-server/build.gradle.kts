@@ -26,6 +26,8 @@ dependencies {
     implementation(kotlin("stdlib"))
 
     implementation("com.github.ajalt.clikt:clikt:3.4.2")
+    implementation("com.sksamuel.hoplite:hoplite-core:2.1.3")
+    implementation("com.sksamuel.hoplite:hoplite-yaml:2.1.3")
 
     // implementation("org.kodein.di:kodein-di:7.8.0")
     implementation("org.kodein.di:kodein-di-framework-ktor-server-jvm:7.11.0")

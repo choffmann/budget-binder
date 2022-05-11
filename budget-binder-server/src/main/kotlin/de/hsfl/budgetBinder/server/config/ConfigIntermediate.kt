@@ -1,5 +1,10 @@
 package de.hsfl.budgetBinder.server.config
 
+import com.sksamuel.hoplite.ConfigLoaderBuilder
+import com.sksamuel.hoplite.addFileSource
+import com.sksamuel.hoplite.yaml.YamlPropertySource
+import java.io.File
+
 data class ConfigIntermediate(val server: Server, val dataBase: DataBase, val jwt: JWT) {
     data class Server(
         val dev: Boolean?,
@@ -129,7 +134,7 @@ data class ConfigIntermediate(val server: Server, val dataBase: DataBase, val jw
     }
 }
 
-fun getConfigIntermediateFromEnv(): ConfigIntermediate {
+private fun getConfigIntermediateFromEnv(): ConfigIntermediate {
     val server = ConfigIntermediate.Server(
         System.getenv("DEV") != null,
         System.getenv("SSL") != null,
@@ -173,4 +178,28 @@ fun getConfigIntermediateFromEnv(): ConfigIntermediate {
     )
 
     return ConfigIntermediate(server, dataBase, jwt)
+}
+
+private fun getConfigIntermediateFromFile(configFile: File): ConfigIntermediate {
+    return ConfigLoaderBuilder
+        .default()
+        .addFileSource(configFile)
+        .build()
+        .loadConfigOrThrow()
+}
+
+private fun getConfigIntermediateFromString(configString: String): ConfigIntermediate {
+    return ConfigLoaderBuilder
+        .default()
+        .addSource(YamlPropertySource(configString))
+        .build()
+        .loadConfigOrThrow()
+}
+
+fun getServerConfig(configFile: File? = null, configString: String? = null): Config {
+    return configString?.let {
+        getConfigIntermediateFromString(it).toConfig()
+    } ?: configFile?.let {
+        getConfigIntermediateFromFile(it).toConfig()
+    } ?: getConfigIntermediateFromEnv().toConfig()
 }
