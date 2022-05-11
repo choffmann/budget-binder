@@ -74,3 +74,24 @@ Or you build the jar on your machine:
 - copy the `budget-binder-server/build/libs/budget-binder-server-1.0-SNAPSHOT-all.jar` on the server
 - set up the env-variables from the top
 - run it with `java -jar budget-binder-server-1.0-SNAPSHOT-all.jar`
+
+## Configure SSL
+the easiest way to get SSL is to get a reverse proxy that handles it for you
+for this you don't need anything else to specify
+
+in development, you only need to specify the environment variable `DEV` on every start there will be a new created certificate
+
+if you still want to do ssl with this server by its own you need a certificate for your domain from somewhere like `lets encrypt` and convert it to a jks-File
+
+```bash
+openssl pkcs12 -export -in cert.pem -inkey key.pem -out keystore.p12 -name "Budget Binder Server"
+
+# You will be prompted to enter a passphrase for key.pem and a new password for keystore.p12.
+
+keytool -importkeystore -srckeystore keystore.p12 -srcstoretype pkcs12 -destkeystore keystore.jks
+
+# You will be prompted to enter a password for the keystore.p12 file and a new password for keystore.jks. 
+# The keystore.jks will be generated.
+```
+
+Then you need to set the ENV `SSL` to `True` and `KEYSTORE_PATH` to the file path as well as `KEYSTORE_PASSWORD` with the specified passphrases. At last, you can set `NO_FORWARD_HEADER` to disable the forward header support.

@@ -63,9 +63,10 @@ fun Application.module() {
 
 
     transaction {
-        // Logging for DEV purposes
-        addLogger(StdOutSqlLogger)
-
+        if (System.getenv("DEV") == "True") {
+            // Logging for DEV purposes
+            addLogger(StdOutSqlLogger)
+        }
         SchemaUtils.create(Users, Categories, Entries)
     }
 
@@ -93,7 +94,8 @@ fun Application.module() {
         method(HttpMethod.Post)
         allowNonSimpleContentTypes = true
     }
-    install(XForwardedHeaderSupport)
+
+    System.getenv("NO_FORWARD_HEADER") ?: install(XForwardedHeaderSupport)
 
     install(Authentication) {
         form("auth-form") {
