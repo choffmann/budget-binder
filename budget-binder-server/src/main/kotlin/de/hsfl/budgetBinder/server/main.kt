@@ -23,7 +23,7 @@ class ServerMain : CliktCommand() {
     )
 
     override fun run(): Unit = runBlocking {
-        val config = getServerConfig(configFile)
+        val config = getServerConfig(configFile = configFile)
 
         val keyStore = when (config.server.sslState) {
             Config.SSLState.DEV -> generateCertificate(

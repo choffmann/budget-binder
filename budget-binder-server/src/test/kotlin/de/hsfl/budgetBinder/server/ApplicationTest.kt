@@ -3,6 +3,7 @@ package de.hsfl.budgetBinder.server
 import de.hsfl.budgetBinder.common.APIResponse
 import de.hsfl.budgetBinder.common.User
 import de.hsfl.budgetBinder.server.config.Config
+import de.hsfl.budgetBinder.server.config.getServerConfig
 import de.hsfl.budgetBinder.server.models.CategoryEntity
 import de.hsfl.budgetBinder.server.models.UserEntity
 import io.ktor.application.*
@@ -14,11 +15,11 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import kotlin.test.*
 
 fun <R> withCustomTestApplication(
-    moduleFunction: Application.(config: Config?, confString: String?) -> Unit,
+    moduleFunction: Application.(config: Config) -> Unit,
     test: TestApplicationEngine.() -> R
 ) {
     withApplication(createTestEnvironment()) {
-        val stringConfig = """
+        val configString = """
             dataBase:
                 dbType: SQLITE
                 sqlitePath: file:test?mode=memory&cache=shared
@@ -29,7 +30,7 @@ fun <R> withCustomTestApplication(
                 refreshSecret: testSecret2
                 accessMinutes: 1
             """.trimIndent()
-        moduleFunction(application, null, stringConfig)
+        moduleFunction(application, getServerConfig(configString = configString))
         test()
     }
 }

@@ -28,11 +28,7 @@ import org.kodein.di.ktor.di
 import org.slf4j.event.Level
 import java.sql.DriverManager
 
-fun Application.mainModule(serverConfig: Config? = null, configString: String? = null) {
-
-    val config =
-        serverConfig ?: configString?.let { getServerConfig(null, configString) } ?: throw Exception("Do not Reach")
-
+fun Application.mainModule(config: Config) {
     val url: String
     val driver: String
     when (config.dataBase.dbType) {
