@@ -48,7 +48,7 @@ data class ConfigIntermediate(val server: Server, val dataBase: DataBase, val jw
         val dbUser: String
         val dbPassword: String
         if (dbType == Config.DBType.SQLITE) {
-            sqlitePath = (dataBase.sqlitePath ?: (System.getProperty("user.dir") + "/data")) + "/data.db"
+            sqlitePath = dataBase.sqlitePath ?: (System.getProperty("user.dir") + "/data/data.db")
             dbServerAddress = ""
             dbServerPort = ""
             dbName = ""

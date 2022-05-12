@@ -29,12 +29,11 @@ fun <R> withCustomTestApplication(
 
 class ApplicationTest {
     @Test
-    @Ignore("Test not Fully Implemented")
     fun testRoot() {
         withCustomTestApplication(Application::mainModule) {
             handleRequest(HttpMethod.Get, "/").apply {
                 assertEquals(HttpStatusCode.OK, response.status())
-                assertEquals("Hello, world!", response.content)
+                assertEquals("{}", response.content)
             }
         }
     }
