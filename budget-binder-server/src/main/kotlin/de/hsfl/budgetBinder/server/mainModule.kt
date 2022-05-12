@@ -39,6 +39,9 @@ fun Application.mainModule(serverConfig: Config? = null, configString: String? =
         Config.DBType.SQLITE -> {
             url = "jdbc:sqlite:${config.dataBase.sqlitePath}"
             if (url == "jdbc:sqlite:file:test?mode=memory&cache=shared") {
+                // This is used to hold a connection
+                // if not specified the database will be deleted
+                // after each transaction because it will be closed
                 DriverManager.getConnection(url)
             }
 
