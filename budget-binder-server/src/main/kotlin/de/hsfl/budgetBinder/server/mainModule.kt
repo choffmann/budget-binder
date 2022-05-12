@@ -41,7 +41,7 @@ fun Application.mainModule(serverConfig: Config? = null, configString: String? =
         Config.DBType.SQLITE -> {
             url = "jdbc:sqlite:${config.dataBase.sqlitePath}"
             if (url == "jdbc:sqlite:file:test?mode=memory&cache=shared") {
-                val keepAliveConnection = DriverManager.getConnection(url)
+                DriverManager.getConnection(url)
             }
 
             driver = "org.sqlite.JDBC"
