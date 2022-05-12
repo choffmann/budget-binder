@@ -11,18 +11,19 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import androidx.compose.ui.Modifier
 import de.hsfl.budgetBinder.domain.use_case.get_user.UserUseCase
-import de.hsfl.budgetBinder.presentation.UserState
-import de.hsfl.budgetBinder.presentation.UserViewModel
+import de.hsfl.budgetBinder.presentation.component.user.UserView
+import de.hsfl.budgetBinder.presentation.viewmodel.UserState
+import de.hsfl.budgetBinder.presentation.viewmodel.UserViewModel
 import org.kodein.di.compose.localDI
 import org.kodein.di.instance
 
 @Composable
-fun UserView() {
+fun UserViewContent(component: UserView) {
     val scope = CoroutineScope(Dispatchers.Unconfined + SupervisorJob())
 
     val di = localDI()
     val userUseCase: UserUseCase by di.instance()
-    val viewModel = UserViewModel(userUseCase,scope)
+    val viewModel = UserViewModel(userUseCase, scope)
 
     val uiState by viewModel.state.collectAsState(scope)
     MaterialTheme {
@@ -39,8 +40,13 @@ fun UserView() {
                     CircularProgressIndicator()
                 }
             }
-            Button(onClick = { viewModel.getMyUser() }) {
-                Text("Update")
+            Row {
+                Button(onClick = { viewModel.getMyUser() }) {
+                    Text("Update")
+                }
+                Button(onClick = { }) {
+                    Text("Logout")
+                }
             }
         }
     }

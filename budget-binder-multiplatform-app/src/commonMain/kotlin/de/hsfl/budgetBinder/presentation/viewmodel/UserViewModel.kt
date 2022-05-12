@@ -1,4 +1,4 @@
-package de.hsfl.budgetBinder.presentation
+package de.hsfl.budgetBinder.presentation.viewmodel
 
 import de.hsfl.budgetBinder.common.DataResponse
 import de.hsfl.budgetBinder.common.User

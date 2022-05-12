@@ -1,3 +1,6 @@
+import org.jetbrains.compose.ComposePlugin.DesktopDependencies.currentOs
+import org.jetbrains.compose.ComposePlugin.DesktopDependencies.macos_arm64
+import org.jetbrains.compose.ComposePlugin.DesktopDependencies.macos_x64
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 
 plugins {
@@ -44,12 +47,18 @@ kotlin {
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1")
                 implementation("org.kodein.di:kodein-di-framework-compose:7.11.0")
                 implementation("org.kodein.di:kodein-di:7.11.0")
+
+                implementation("com.arkivanov.decompose:decompose:0.6.0")
+                implementation("com.badoo.reaktive:reaktive:1.2.1")
+                implementation("com.badoo.reaktive:reaktive-annotations:1.2.1")
+                implementation("com.badoo.reaktive:coroutines-interop:1.2.1")
             }
         }
 
         val jvmMain by creating {
             dependencies {
                 implementation("io.ktor:ktor-client-java:$ktorVersion")
+                implementation("com.arkivanov.decompose:extensions-compose-jetbrains:0.6.0")
                 implementation(compose.foundation)
                 implementation(compose.material)
                 api(compose.preview)
@@ -79,6 +88,7 @@ kotlin {
                 implementation("androidx.activity:activity-compose:1.4.0")
 
                 implementation("io.ktor:ktor-client-android:$ktorVersion")
+                implementation("com.arkivanov.decompose:extensions-android:0.6.0")
             }
         }
 
@@ -134,14 +144,24 @@ compose.desktop {
     application {
         mainClass = "de.hsfl.budgetBinder.desktop.MainKt"
         nativeDistributions {
-            targetFormats(
-                TargetFormat.Dmg, // TargetFormat.Pkg only one of them works at the same time
-                TargetFormat.Msi,
-                TargetFormat.Exe,
-                TargetFormat.Deb, // Debian
-                TargetFormat.AppImage, // For all Linux Distros
-                TargetFormat.Rpm // Redhat
-            )
+            when (currentOs) {
+                macos_x64, macos_arm64 ->
+                    targetFormats(
+                        TargetFormat.Dmg,
+                        TargetFormat.Msi,
+                        TargetFormat.Exe,
+                        TargetFormat.Deb,
+                        TargetFormat.Rpm
+                    )
+                else -> targetFormats(
+                    TargetFormat.Dmg,
+                    TargetFormat.Msi,
+                    TargetFormat.Exe,
+                    TargetFormat.Deb,
+                    TargetFormat.Rpm,
+                    TargetFormat.AppImage
+                )
+            }
             includeAllModules = true
             packageName = "budget-binder"
             version = "1.0-SNAPSHOT"
