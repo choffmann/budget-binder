@@ -21,8 +21,6 @@ import io.ktor.response.*
 import io.ktor.serialization.*
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.StdOutSqlLogger
-import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.kodein.di.*
 import org.kodein.di.ktor.closestDI
@@ -59,10 +57,6 @@ fun Application.mainModule(serverConfig: Config? = null, configString: String? =
     Database.connect(url, driver, user = config.dataBase.user, password = config.dataBase.password)
 
     transaction {
-        if (config.server.dev) {
-            // Logging for DEV purposes
-            addLogger(StdOutSqlLogger)
-        }
         SchemaUtils.create(Users, Categories, Entries)
     }
 
@@ -73,7 +67,7 @@ fun Application.mainModule(serverConfig: Config? = null, configString: String? =
     }
 
     install(CallLogging) {
-        level = if (config.server.dev) Level.DEBUG else Level.INFO
+        level = Level.INFO
     }
 
     install(CORS) {

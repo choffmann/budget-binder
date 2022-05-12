@@ -11,6 +11,7 @@ import io.ktor.server.netty.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
+import org.slf4j.LoggerFactory
 import java.io.File
 import java.security.KeyStore
 
@@ -41,7 +42,7 @@ class ServerMain : CliktCommand() {
             module {
                 mainModule(config)
             }
-            // log = LoggerFactory.getLogger("ktor.application")
+            log = LoggerFactory.getLogger("ktor.application")
 
             connector {
                 host = config.server.host
