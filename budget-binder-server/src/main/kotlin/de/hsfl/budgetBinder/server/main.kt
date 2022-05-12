@@ -3,6 +3,7 @@ package de.hsfl.budgetBinder.server
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.types.file
+import de.hsfl.budgetBinder.server.config.Config
 import de.hsfl.budgetBinder.server.config.getServerConfig
 import io.ktor.network.tls.certificates.*
 import io.ktor.server.engine.*
@@ -21,25 +22,19 @@ class ServerMain : CliktCommand() {
     )
 
     override fun run(): Unit = runBlocking {
-
         val config = getServerConfig(configFile)
 
-        val sslState = System.getenv("DEV")?.let { "DEV" } ?: System.getenv("SSL")?.let { "SSL" } ?: "NONE"
-
-        val keyStorePath = System.getenv("KEYSTORE_PATH")
-        val keyStorePassword = System.getenv("KEYSTORE_PASSWORD") ?: "budget-binder"
-
-        val keyStore = when (sslState) {
-            "DEV" -> generateCertificate(
+        val keyStore = when (config.server.sslState) {
+            Config.SSLState.DEV -> generateCertificate(
                 file = File("data/dev_keystore.jks"),
                 keyAlias = "Budget Binder Server",
-                keyPassword = keyStorePassword,
-                jksPassword = keyStorePassword
+                keyPassword = config.server.keyStorePassword,
+                jksPassword = config.server.keyStorePassword
             )
-            "SSL" -> withContext(Dispatchers.IO) {
-                KeyStore.getInstance(File(keyStorePath), keyStorePassword.toCharArray())
+            Config.SSLState.SSL -> withContext(Dispatchers.IO) {
+                KeyStore.getInstance(File(config.server.keyStorePath), config.server.keyStorePassword.toCharArray())
             }
-            else -> null
+            Config.SSLState.NONE -> null
         }
 
         val environment = applicationEngineEnvironment {
@@ -49,21 +44,21 @@ class ServerMain : CliktCommand() {
             // log = LoggerFactory.getLogger("ktor.application")
 
             connector {
-                host = System.getenv("HOST") ?: "0.0.0.0"
-                port = Integer.parseInt(System.getenv("PORT") ?: "8080")
+                host = config.server.host
+                port = config.server.port
             }
-            if (sslState == "SSL" || sslState == "DEV") {
+            if (config.server.sslState > Config.SSLState.NONE) {
                 sslConnector(
                     keyStore = keyStore!!,
                     keyAlias = "Budget Binder Server",
-                    keyStorePassword = { keyStorePassword.toCharArray() },
-                    privateKeyPassword = { keyStorePassword.toCharArray() }
+                    keyStorePassword = { config.server.keyStorePassword.toCharArray() },
+                    privateKeyPassword = { config.server.keyStorePassword.toCharArray() }
                 ) {
-                    host = System.getenv("SSL_HOST") ?: "0.0.0.0"
-                    port = Integer.parseInt(System.getenv("SSL_PORT") ?: "8443")
+                    host = config.server.sslHost
+                    port = config.server.sslPort
                 }
             }
-            if (sslState == "DEV") {
+            if (config.server.sslState == Config.SSLState.DEV) {
                 watchPaths = listOf("build/classes", "build/resources")
             }
         }

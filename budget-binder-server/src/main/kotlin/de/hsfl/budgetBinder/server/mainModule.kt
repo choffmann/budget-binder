@@ -34,42 +34,27 @@ fun Application.mainModule(serverConfig: Config? = null, configString: String? =
     val config =
         serverConfig ?: configString?.let { getServerConfig(null, configString) } ?: throw Exception("Do not Reach")
 
-    val dbType = System.getenv("DB_TYPE")
-    val dbServer = System.getenv("DB_SERVER")
-    val dbPort = System.getenv("DB_PORT")
-    val dbDatabaseName = System.getenv("DB_DATABASE_NAME")
-    val dbUser = System.getenv("DB_USER") ?: ""
-    val dbPassword = System.getenv("DB_PASSWORD") ?: ""
-
     val url: String
     val driver: String
-    when (dbType) {
-        "SQLITE" -> {
-            // Database.connect("jdbc:sqlite:file:test?mode=memory&cache=shared", "org.sqlite.JDBC")
-            val path = (System.getenv("SQLITE_PATH") ?: (System.getProperty("user.dir") + "/data")) + "/data.db"
-            url = "jdbc:sqlite:$path"
+    when (config.dataBase.dbType) {
+        Config.DBType.SQLITE -> {
+            url = "jdbc:sqlite:${config.dataBase.sqlitePath}"
             driver = "org.sqlite.JDBC"
         }
-        "MYSQL" -> {
-            // Database.connect("jdbc:mysql://localhost:3306/test", driver = "com.mysql.cj.jdbc.Driver",
-            //      user = "root", password = "your_pwd")
-            url = "jdbc:mysql://$dbServer:$dbPort/$dbDatabaseName"
+        Config.DBType.MYSQL -> {
+            url = "jdbc:mysql://${config.dataBase.serverAddress}:${config.dataBase.serverPort}/${config.dataBase.name}"
             driver = "com.mysql.cj.jdbc.Driver"
         }
-        "POSTGRESQL" -> {
-            url = "jdbc:pgsql://$dbServer:$dbPort/$dbDatabaseName"
+        Config.DBType.POSTGRES -> {
+            url = "jdbc:pgsql://${config.dataBase.serverAddress}:${config.dataBase.serverPort}/${config.dataBase.name}"
             driver = "com.impossibl.postgres.jdbc.PGDriver"
-        }
-        else -> {
-            throw Exception("No DATABASE Type given")
         }
     }
 
-    Database.connect(url, driver, user = dbUser, password = dbPassword)
-
+    Database.connect(url, driver, user = config.dataBase.user, password = config.dataBase.password)
 
     transaction {
-        if (System.getenv("DEV") == "True") {
+        if (config.server.dev) {
             // Logging for DEV purposes
             addLogger(StdOutSqlLogger)
         }
@@ -79,15 +64,15 @@ fun Application.mainModule(serverConfig: Config? = null, configString: String? =
     di {
         bindEagerSingleton { config }
         bindSingleton { UserService() }
-        bindSingleton { JWTService() }
+        bindSingleton { JWTService(instance()) }
     }
 
     install(CallLogging) {
-        level = if (System.getenv("DEV") == "True") Level.DEBUG else Level.INFO
+        level = if (config.server.dev) Level.DEBUG else Level.INFO
     }
 
     install(CORS) {
-        System.getenv("FRONTEND_ADDRESSES").replace(" ", "").split(",").forEach {
+        config.server.frontendAddresses.forEach {
             val (scheme, hostName) = it.split("://")
             host(hostName, schemes = listOf(scheme))
         }
@@ -102,7 +87,8 @@ fun Application.mainModule(serverConfig: Config? = null, configString: String? =
         allowNonSimpleContentTypes = true
     }
 
-    System.getenv("NO_FORWARD_HEADER") ?: install(XForwardedHeaderSupport)
+    if (config.server.forwardedHeaderSupport)
+        install(XForwardedHeaderSupport)
 
     install(Authentication) {
         form("auth-form") {

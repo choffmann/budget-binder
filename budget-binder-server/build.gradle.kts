@@ -24,7 +24,6 @@ repositories {
 dependencies {
     implementation(project(":budget-binder-common"))
     implementation(kotlin("stdlib"))
-    // implementation("org.junit.jupiter:junit-jupiter:5.8.1")
 
     // Stay @1.6.8 as long as kodein has not updated their packages for new ktor
     val ktorVersion = "1.6.8" // ""2.0.0"
