@@ -9,9 +9,7 @@ import de.hsfl.budgetBinder.server.models.Users
 import de.hsfl.budgetBinder.server.routes.authRoutes
 import de.hsfl.budgetBinder.server.routes.baseRoutes
 import de.hsfl.budgetBinder.server.routes.userRoutes
-import de.hsfl.budgetBinder.server.services.JWTService
-import de.hsfl.budgetBinder.server.services.UserService
-import de.hsfl.budgetBinder.server.services.UserServiceImpl
+import de.hsfl.budgetBinder.server.services.*
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.auth.jwt.*
@@ -62,6 +60,8 @@ fun Application.mainModule(config: Config) {
     di {
         bindEagerSingleton { config }
         bindSingleton<UserService> { UserServiceImpl() }
+        bindSingleton<EntryService> { EntryServiceImpl() }
+        bindSingleton<CategoryService> { CategoryServiceImpl() }
         bindSingleton { JWTService(instance()) }
     }
 
