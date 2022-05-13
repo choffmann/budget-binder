@@ -1,7 +1,6 @@
 package de.hsfl.budgetBinder.server.models
 
 import de.hsfl.budgetBinder.common.User
-import io.ktor.auth.*
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
@@ -16,7 +15,7 @@ object Users : IntIdTable() {
     val category = reference("category", Categories).nullable()
 }
 
-class UserEntity(id: EntityID<Int>) : IntEntity(id), Principal {
+class UserEntity(id: EntityID<Int>) : IntEntity(id), UserPrincipal {
     companion object : IntEntityClass<UserEntity>(Users)
 
     var firstName by Users.firstName
@@ -31,5 +30,13 @@ class UserEntity(id: EntityID<Int>) : IntEntity(id), Principal {
 
     fun toDto(): User {
         return User(id.value, firstName, name, email)
+    }
+
+    override fun getUserID(): Int {
+        return id.value
+    }
+
+    override fun getUserTokenVersion(): Int {
+        return tokenVersion
     }
 }

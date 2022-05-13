@@ -4,7 +4,7 @@ import de.hsfl.budgetBinder.common.APIResponse
 import de.hsfl.budgetBinder.common.AuthToken
 import de.hsfl.budgetBinder.common.ErrorModel
 import de.hsfl.budgetBinder.common.User
-import de.hsfl.budgetBinder.server.models.UserEntity
+import de.hsfl.budgetBinder.server.models.UserPrincipal
 import de.hsfl.budgetBinder.server.services.JWTService
 import de.hsfl.budgetBinder.server.services.UserService
 import io.ktor.application.*
@@ -34,11 +34,12 @@ fun createRefreshCookie(token: String, timestamp: Long): Cookie {
 fun Route.login() {
     authenticate("auth-form") {
         post("/login") {
-            val user: UserEntity = call.principal()!!
+            val userPrincipal: UserPrincipal = call.principal()!!
 
             val jwtService: JWTService by closestDI().instance()
-            val token = jwtService.createAccessToken(user.id.value, user.tokenVersion)
-            val refreshToken = jwtService.createRefreshToken(user.id.value, user.tokenVersion)
+            val token = jwtService.createAccessToken(userPrincipal.getUserID(), userPrincipal.getUserTokenVersion())
+            val refreshToken =
+                jwtService.createRefreshToken(userPrincipal.getUserID(), userPrincipal.getUserTokenVersion())
 
             call.response.cookies.append(
                 createRefreshCookie(
@@ -55,11 +56,11 @@ fun Route.logout() {
     authenticate("auth-jwt") {
         get("/logout") {
             val logoutAll = call.request.queryParameters["all"].toBoolean()
-            val user: UserEntity = call.principal()!!
+            val userPrincipal: UserPrincipal = call.principal()!!
 
             if (logoutAll) {
                 val userService: UserService by closestDI().instance()
-                userService.logoutAllClients(user)
+                userService.logoutAllClients(userPrincipal.getUserID())
             }
 
             call.response.cookies.appendExpired("jwt", path = "/refresh_token")
@@ -77,9 +78,9 @@ fun Route.refreshCookie() {
             val token = jwtService.getRefreshTokenVerifier().verify(tokenToCheck)
             val id = token.getClaim("userid").asInt()
             val tokenVersion = token.getClaim("token_version").asInt()
-            userService.findUserByID(id)?.let { user ->
-                val accessToken = jwtService.createAccessToken(user.id.value, tokenVersion)
-                val refreshToken = jwtService.createRefreshToken(user.id.value, tokenVersion)
+            userService.getUserPrincipalByIDAndTokenVersion(id, tokenVersion)?.let { userPrincipal ->
+                val accessToken = jwtService.createAccessToken(userPrincipal.getUserID(), tokenVersion)
+                val refreshToken = jwtService.createRefreshToken(userPrincipal.getUserID(), tokenVersion)
                 call.response.cookies.append(
                     createRefreshCookie(
                         refreshToken,
@@ -99,7 +100,7 @@ fun Route.register() {
 
         val response = call.receiveOrNull<User.In>()?.let { userIn ->
             userService.insertNewUserOrNull(userIn)?.let { user ->
-                APIResponse(data = user.toDto(), success = true)
+                APIResponse(data = user, success = true)
             } ?: APIResponse(ErrorModel("Email already assigned"))
         } ?: APIResponse(ErrorModel("not the right format"))
         call.respond(response)

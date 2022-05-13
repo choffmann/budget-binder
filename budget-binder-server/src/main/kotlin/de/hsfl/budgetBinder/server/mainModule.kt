@@ -3,7 +3,6 @@ package de.hsfl.budgetBinder.server
 import de.hsfl.budgetBinder.common.APIResponse
 import de.hsfl.budgetBinder.common.ErrorModel
 import de.hsfl.budgetBinder.server.config.Config
-import de.hsfl.budgetBinder.server.config.getServerConfig
 import de.hsfl.budgetBinder.server.models.Categories
 import de.hsfl.budgetBinder.server.models.Entries
 import de.hsfl.budgetBinder.server.models.Users
@@ -12,6 +11,7 @@ import de.hsfl.budgetBinder.server.routes.baseRoutes
 import de.hsfl.budgetBinder.server.routes.userRoutes
 import de.hsfl.budgetBinder.server.services.JWTService
 import de.hsfl.budgetBinder.server.services.UserService
+import de.hsfl.budgetBinder.server.services.UserServiceImpl
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.auth.jwt.*
@@ -61,7 +61,7 @@ fun Application.mainModule(config: Config) {
 
     di {
         bindEagerSingleton { config }
-        bindSingleton { UserService() }
+        bindSingleton<UserService> { UserServiceImpl() }
         bindSingleton { JWTService(instance()) }
     }
 
@@ -107,9 +107,7 @@ fun Application.mainModule(config: Config) {
                 val id = it.payload.getClaim("userid").asInt()
                 val tokenVersion = it.payload.getClaim("token_version").asInt()
                 val userService: UserService by closestDI().instance()
-                userService.findUserByID(id)?.let { user ->
-                    if (user.tokenVersion == tokenVersion) user else null
-                }
+                userService.getUserPrincipalByIDAndTokenVersion(id, tokenVersion)
             }
         }
     }

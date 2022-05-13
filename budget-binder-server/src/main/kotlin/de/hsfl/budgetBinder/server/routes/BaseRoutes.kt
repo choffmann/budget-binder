@@ -1,6 +1,5 @@
 package de.hsfl.budgetBinder.server.routes
 
-import de.hsfl.budgetBinder.server.services.UserService
 import io.ktor.application.*
 import io.ktor.html.*
 import io.ktor.http.*
@@ -10,8 +9,6 @@ import io.ktor.util.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.html.*
-import org.kodein.di.instance
-import org.kodein.di.ktor.closestDI
 
 fun Application.baseRoutes() {
     routing {
@@ -65,14 +62,6 @@ fun Application.baseRoutes() {
                     }
                 }
             }
-        }
-    }
-
-    routing {
-        get("/path") {
-            val userService: UserService by closestDI().instance()
-            val user = userService.getRandomUser()
-            call.respondText(user.email)
         }
     }
 }
