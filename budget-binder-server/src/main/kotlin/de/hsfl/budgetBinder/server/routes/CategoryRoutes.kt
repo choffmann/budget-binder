@@ -1,10 +1,10 @@
 package de.hsfl.budgetBinder.server.routes
 
 import de.hsfl.budgetBinder.common.APIResponse
-import de.hsfl.budgetBinder.common.Entry
+import de.hsfl.budgetBinder.common.Category
 import de.hsfl.budgetBinder.common.ErrorModel
 import de.hsfl.budgetBinder.server.models.UserPrincipal
-import de.hsfl.budgetBinder.server.services.EntryService
+import de.hsfl.budgetBinder.server.services.CategoryService
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.request.*
@@ -13,33 +13,35 @@ import io.ktor.routing.*
 import org.kodein.di.instance
 import org.kodein.di.ktor.closestDI
 
-fun Route.entriesRoute() {
-    route("/entries") {
+fun Route.categoriesRoute() {
+    route("/categories") {
         get {
             val userPrincipal: UserPrincipal = call.principal()!!
-            val entryService: EntryService by closestDI().instance()
+            val categoryService: CategoryService by closestDI().instance()
 
-            call.respond(APIResponse(data = entryService.getAllEntries(userPrincipal.getUserID()), success = true))
+            call.respond(
+                APIResponse(data = categoryService.getAllCategories(userPrincipal.getUserID()), success = true)
+            )
         }
         post {
             val userPrincipal: UserPrincipal = call.principal()!!
-            val entryService: EntryService by closestDI().instance()
+            val categoryService: CategoryService by closestDI().instance()
 
-            val response = call.receiveOrNull<Entry.In>()?.let {
-                APIResponse(data = entryService.insertEntryForUser(userPrincipal.getUserID(), it), success = true)
+            val response = call.receiveOrNull<Category.In>()?.let {
+                APIResponse(data = categoryService.insertCategoryForUser(userPrincipal.getUserID(), it), success = true)
             } ?: APIResponse(ErrorModel("not the right Parameters provided"))
             call.respond(response)
         }
     }
 }
 
-fun Route.entryByIdRoute() {
-    route("/entries/{id}") {
+fun Route.categoryByIdRoute() {
+    route("/categories/{id}") {
         get {
             val userPrincipal: UserPrincipal = call.principal()!!
-            val entryService: EntryService by closestDI().instance()
+            val categoryService: CategoryService by closestDI().instance()
 
-            val response = entryService.getByIDOrErrorResponse(
+            val response = categoryService.getByIDOrErrorResponse(
                 userPrincipal.getUserID(),
                 call.parameters["id"]?.toIntOrNull()
             ) {
@@ -50,15 +52,15 @@ fun Route.entryByIdRoute() {
 
         patch {
             val userPrincipal: UserPrincipal = call.principal()!!
-            val entryService: EntryService by closestDI().instance()
+            val categoryService: CategoryService by closestDI().instance()
 
-            val response = entryService.getByIDOrErrorResponse(
+            val response = categoryService.getByIDOrErrorResponse(
                 userPrincipal.getUserID(),
                 call.parameters["id"]?.toIntOrNull()
-            ) { entry ->
-                call.receiveOrNull<Entry.Patch>()?.let { changeEntry ->
+            ) { category ->
+                call.receiveOrNull<Category.Patch>()?.let { changeCategory ->
                     APIResponse(
-                        data = entryService.changeEntry(userPrincipal.getUserID(), entry.id, changeEntry),
+                        data = categoryService.changeCategory(userPrincipal.getUserID(), category.id, changeCategory),
                         success = true
                     )
                 } ?: APIResponse(ErrorModel("not the right Parameters provided"))
@@ -68,24 +70,24 @@ fun Route.entryByIdRoute() {
 
         delete {
             val userPrincipal: UserPrincipal = call.principal()!!
-            val entryService: EntryService by closestDI().instance()
+            val categoryService: CategoryService by closestDI().instance()
 
-            val response = entryService.getByIDOrErrorResponse(
+            val response = categoryService.getByIDOrErrorResponse(
                 userPrincipal.getUserID(),
                 call.parameters["id"]?.toIntOrNull()
             ) {
-                APIResponse(data = entryService.deleteEntry(it.id), success = true)
+                APIResponse(data = categoryService.deleteCategory(it.id), success = true)
             }
             call.respond(response)
         }
     }
 }
 
-fun Application.entryRoutes() {
+fun Application.categoryRoutes() {
     routing {
         authenticate("auth-jwt") {
-            entriesRoute()
-            entryByIdRoute()
+            categoriesRoute()
+            categoryByIdRoute()
         }
     }
 }

@@ -14,4 +14,20 @@ data class Category(
         DEFAULT,
         SHOPPING
     }
+
+    @Serializable
+    data class In(
+        val name: String,
+        val color: String,
+        val image: Image = Image.DEFAULT,
+        val budget: Float
+    )
+
+    @Serializable
+    data class Patch(
+        val name: String? = null,
+        val color: String? = null,
+        val image: Image? = null,
+        val budget: Float? = null
+    )
 }
