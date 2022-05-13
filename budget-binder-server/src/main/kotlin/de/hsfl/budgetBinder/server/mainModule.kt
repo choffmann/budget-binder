@@ -8,6 +8,7 @@ import de.hsfl.budgetBinder.server.models.Entries
 import de.hsfl.budgetBinder.server.models.Users
 import de.hsfl.budgetBinder.server.routes.authRoutes
 import de.hsfl.budgetBinder.server.routes.baseRoutes
+import de.hsfl.budgetBinder.server.routes.entryRoutes
 import de.hsfl.budgetBinder.server.routes.userRoutes
 import de.hsfl.budgetBinder.server.services.*
 import io.ktor.application.*
@@ -130,4 +131,5 @@ fun Application.mainModule(config: Config) {
     baseRoutes()
     userRoutes()
     authRoutes()
+    entryRoutes()
 }
