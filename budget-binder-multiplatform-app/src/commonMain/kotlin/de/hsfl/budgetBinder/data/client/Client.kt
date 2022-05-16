@@ -20,6 +20,8 @@ interface ApiClient {
 
     suspend fun register(firstName: String, lastName: String, email: String, password: String): APIResponse<User>
 
+    suspend fun logout(onAllDevice: Boolean)
+
     suspend fun getMyUser(): APIResponse<User>
 }
 
@@ -74,6 +76,14 @@ class Client : ApiClient {
             contentType(ContentType.Application.Json)
             setBody(User.In(firstName, lastName, email, password))
         }.body()
+    }
+
+    override suspend fun logout(onAllDevice: Boolean) {
+        client.submitForm(
+            url = "/logout", formParameters = Parameters.build {
+                append("all", onAllDevice.toString())
+            }, encodeInQuery = true
+        )
     }
 
     override suspend fun getMyUser(): APIResponse<User> {
