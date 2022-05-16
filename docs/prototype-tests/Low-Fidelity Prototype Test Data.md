@@ -50,3 +50,16 @@ Die Notizen sind im Format:
     - Bei der Aufgabe 4 wurde gefragt, ob es am Ende so ist, wie bei normalen Apps, wo man sich nur einmal Anmelden muss.
     - Frage: Gibt es eine Seite, wo man alle Kategorien mit deren gesamten Budget und Ausgaben auf einem Blick sehen kann?
     - Frage zur Darstellung der Icons, findet es gut, das wir Farben und Icons vorgeben.
+
+<hr>
+
+- Lars, 33, Medieninformatik-Student 
+  - Aufgaben:
+    - 1.) keine Probleme
+    - 2.) keine Probleme
+    - 3.) Zuerst im Bürger Menu geschaut, dann schnell den Pfeil entdeckt. Dachte hier aber wie bei Testperson Alissa auch zuerst, das die 30,20€ das gesamte Budget ist.
+    - 4.) keine Probleme
+  - Fragen:
+    - 1.) 4 und 5 sind to much. Optisch 2 am besten. 1 ist am minimalistischten. Wenn man kennzeichnet, das man durch ein klick auf die anzeige den betrag und das Budget sehen kann, dann 1 in kombination mit 2, ansonsten 3.
+    - 2.) 1 ist besser,sieht dynamischer und moderner aus; 2 nicht so gut.
+
