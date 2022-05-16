@@ -11,7 +11,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import androidx.compose.ui.Modifier
 import de.hsfl.budgetBinder.domain.use_case.get_user.UserUseCase
-import de.hsfl.budgetBinder.presentation.UserState
+import de.hsfl.budgetBinder.presentation.UiState
 import de.hsfl.budgetBinder.presentation.UserViewModel
 import org.kodein.di.compose.localDI
 import org.kodein.di.instance
@@ -29,13 +29,13 @@ fun UserView() {
         Box(modifier = Modifier.fillMaxSize())
         Column {
             when (uiState) {
-                is UserState.Success -> {
-                    Text((uiState as UserState.Success).user.toString())
+                is UiState.Success<*> -> {
+                    Text((uiState as UiState.Success<*>).element.toString())
                 }
-                is UserState.Error -> {
-                    Text((uiState as UserState.Error).error)
+                is UiState.Error -> {
+                    Text((uiState as UiState.Error).error)
                 }
-                is UserState.Loading -> {
+                is UiState.Loading -> {
                     CircularProgressIndicator()
                 }
             }

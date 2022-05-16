@@ -1,19 +1,18 @@
 package de.hsfl.budgetBinder.domain.use_case.auth_user
 
-import de.hsfl.budgetBinder.common.AuthToken
-import de.hsfl.budgetBinder.common.DataResponse
+import de.hsfl.budgetBinder.common.*
 import de.hsfl.budgetBinder.domain.repository.AuthRepository
 import io.ktor.utils.io.errors.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
-class LoginUseCase(
+class RegisterUseCase(
     private val repository: AuthRepository
 ) {
-    operator fun invoke(email: String, password: String): Flow<DataResponse<AuthToken>> = flow {
+    operator fun invoke(firstName: String, lastName: String, email: String, password: String): Flow<DataResponse<User>> = flow {
         try {
             emit(DataResponse.Loading())
-            repository.authorize(email, password).data?.let {
+            repository.register(firstName, lastName, email, password).data?.let {
                 emit(DataResponse.Success(it))
             }
         } catch (e: IOException) {

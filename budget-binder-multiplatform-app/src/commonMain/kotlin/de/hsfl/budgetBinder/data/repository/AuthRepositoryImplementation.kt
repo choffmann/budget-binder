@@ -1,12 +1,17 @@
 package de.hsfl.budgetBinder.data.repository
 
+import de.hsfl.budgetBinder.common.*
 import de.hsfl.budgetBinder.data.client.Client
 import de.hsfl.budgetBinder.domain.repository.AuthRepository
 
 class AuthRepositoryImplementation(
     private val client: Client
 ) : AuthRepository {
-    override suspend fun authorize(username: String, password: String) {
-        return client.login(username, password)
+    override suspend fun authorize(email: String, password: String): APIResponse<AuthToken> {
+        return client.login(email, password)
+    }
+
+    override suspend fun register(firstName: String, lastName: String, email: String, password: String): APIResponse<User> {
+        return client.register(firstName, lastName, email, password)
     }
 }
