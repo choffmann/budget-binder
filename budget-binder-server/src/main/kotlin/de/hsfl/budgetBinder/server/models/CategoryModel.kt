@@ -16,7 +16,6 @@ object Categories : IntIdTable() {
     val created = datetime("created").default(LocalDateTime.now())
     val ended = datetime("ended").nullable().default(null)
 
-    val parent = reference("parent", Categories).nullable().default(null)
     val child = reference("child", Categories).nullable().default(null)
 
     val user = reference("user", Users)
@@ -32,7 +31,6 @@ class CategoryEntity(id: EntityID<Int>) : IntEntity(id) {
     var created by Categories.created
     var ended by Categories.ended
 
-    var parent by Categories.parent
     var child by Categories.child
 
     var user by UserEntity referencedOn Categories.user
@@ -40,12 +38,6 @@ class CategoryEntity(id: EntityID<Int>) : IntEntity(id) {
 
     private fun next(): CategoryEntity? {
         return child?.let {
-            CategoryEntity[it]
-        }
-    }
-
-    private fun prev(): CategoryEntity? {
-        return parent?.let {
             CategoryEntity[it]
         }
     }

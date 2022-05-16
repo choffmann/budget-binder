@@ -15,7 +15,6 @@ object Entries : IntIdTable() {
     val created = datetime("created").default(LocalDateTime.now())
     val ended = datetime("ended").nullable().default(null)
 
-    val parent = reference("parent", Entries).nullable().default(null)
     val child = reference("child", Entries).nullable().default(null)
 
     val user = reference("user", Users)
@@ -31,7 +30,6 @@ class EntryEntity(id: EntityID<Int>) : IntEntity(id) {
     var created by Entries.created
     var ended by Entries.ended
 
-    var parent by Entries.parent
     var child by Entries.child
 
     var user by UserEntity referencedOn Entries.user
@@ -43,11 +41,6 @@ class EntryEntity(id: EntityID<Int>) : IntEntity(id) {
         }
     }
 
-    private fun prev(): EntryEntity? {
-        return parent?.let {
-            EntryEntity[it]
-        }
-    }
 
     private fun lastChild(): EntryEntity {
         var lastChild = this
