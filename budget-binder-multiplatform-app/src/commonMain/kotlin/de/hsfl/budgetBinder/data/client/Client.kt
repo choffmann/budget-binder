@@ -21,13 +21,12 @@ import io.ktor.serialization.kotlinx.json.*
 interface ApiClient {
     // '/login'
     suspend fun login(username: String, password: String)
-    // '/users/me'
+
+    // '/me'
     suspend fun getMyUser(): APIResponse<User>
-    // '/path'
-    suspend fun path(): String
 }
 
-class Client: ApiClient {
+class Client : ApiClient {
     private val client = HttpClient {
         install(ContentNegotiation) {
             json()
@@ -66,14 +65,9 @@ class Client: ApiClient {
                 append("password", password)
             }, encodeInQuery = false
         ).body()
-        println("Client::login $response")
     }
 
     override suspend fun getMyUser(): APIResponse<User> {
-        return client.get("/users/me").body()
-    }
-
-    override suspend fun path(): String {
-        return client.get("/path").body()
+        return client.get("/me").body()
     }
 }

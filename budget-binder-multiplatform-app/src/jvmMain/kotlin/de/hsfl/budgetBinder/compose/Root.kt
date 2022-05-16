@@ -39,19 +39,15 @@ fun App() = withDI(di) {
     when (screenState.value) {
         is Screen.Login -> {
             LoginView(
+                state = viewState,
                 onLoginButtonPressed = { email, password ->
                     viewModel.auth(email, password)
-                    if (viewState.value is LoginState.Success) {
-                        screenState.value = Screen.User
-                    }
-                }, state = viewState
+                },
+                onLoginSuccess = { screenState.value = Screen.User }
             )
         }
         is Screen.User -> {
             UserView()
         }
     }
-
-    //LoginView()
-    //UserView()
 }

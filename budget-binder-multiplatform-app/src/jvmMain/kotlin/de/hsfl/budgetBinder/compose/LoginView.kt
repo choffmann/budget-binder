@@ -14,8 +14,9 @@ import de.hsfl.budgetBinder.presentation.LoginState
 
 @Composable
 fun LoginView(
+    state: State<Any>,
     onLoginButtonPressed: (email: String, password: String) -> Unit,
-    state: State<Any>
+    onLoginSuccess: () -> Unit
 ) {
     var emailTextFieldState by remember { mutableStateOf("") }
     var passwordTextFieldState by remember { mutableStateOf("") }
@@ -43,9 +44,10 @@ fun LoginView(
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
             )
 
-            /*when (viewState) {
+
+            when (viewState) {
                 is LoginState.Success -> {
-                    Text((viewState as LoginState.Success).login.toString())
+                    onLoginSuccess()
                 }
                 is LoginState.Error -> {
                     Text(
@@ -57,13 +59,12 @@ fun LoginView(
                 is LoginState.Loading -> {
                     CircularProgressIndicator()
                 }
-            }*/
+                else -> {}
+            }
 
             Button(onClick = {
                 localFocusManager.clearFocus()
                 onLoginButtonPressed(emailTextFieldState, passwordTextFieldState)
-                //viewModel.auth(emailTextFieldState, passwordTextFieldState)
-
             }) {
                 Text("Login")
             }
