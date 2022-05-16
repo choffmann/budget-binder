@@ -45,6 +45,7 @@ kotlin {
                 implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
                 implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1")
+                implementation("ch.qos.logback:logback-classic:1.2.11")
             }
         }
 
