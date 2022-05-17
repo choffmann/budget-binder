@@ -21,7 +21,19 @@ object Categories : IntIdTable() {
     val user = reference("user", Users)
 }
 
-class CategoryEntity(id: EntityID<Int>) : IntEntity(id) {
+class CategoryIter(start: CategoryEntity) : Iterator<CategoryEntity> {
+    private var curr = start
+    override fun hasNext(): Boolean {
+        return curr.child != null
+    }
+
+    override fun next(): CategoryEntity {
+        curr = CategoryEntity[curr.child!!]
+        return curr
+    }
+}
+
+class CategoryEntity(id: EntityID<Int>) : IntEntity(id), Iterable<CategoryEntity> {
     companion object : IntEntityClass<CategoryEntity>(Categories)
 
     var name by Categories.name
@@ -36,23 +48,12 @@ class CategoryEntity(id: EntityID<Int>) : IntEntity(id) {
     var user by UserEntity referencedOn Categories.user
     val entries by EntryEntity referrersOn Entries.category
 
-    private fun next(): CategoryEntity? {
-        return child?.let {
-            CategoryEntity[it]
-        }
-    }
-
-    private fun lastChild(): CategoryEntity {
-        var lastChild = this
-        while (true) {
-            val child = lastChild.next() ?: break
-            lastChild = child
-        }
-        return lastChild
-    }
-
     fun toDto(): Category {
-        val lastChild = lastChild()
+        val lastChild = this.lastOrNull() ?: this
         return Category(id.value, lastChild.name, lastChild.color, lastChild.image, budget)
+    }
+
+    override fun iterator(): Iterator<CategoryEntity> {
+        return CategoryIter(this)
     }
 }
