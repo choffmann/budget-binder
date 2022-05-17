@@ -51,6 +51,12 @@ class EntryServiceImpl : EntryService {
             return@transaction null
         }
 
+        val categoryEntity = entry.category?.let { getCategoryByID(userId, it.id) }
+
+        if (categoryEntity?.ended != null) {
+            return@transaction null
+        }
+
         if (entryEntity.repeat) {
             if (entry.repeat == false || entry.amount != null) {
                 val oldEntity = entryEntity
@@ -69,7 +75,7 @@ class EntryServiceImpl : EntryService {
         entry.name?.let { entryEntity.name = it }
         entry.amount?.let { entryEntity.amount = it }
         entry.repeat?.let { entryEntity.repeat = it }
-        entry.category?.let { entryEntity.category = getCategoryByID(userId, it.id) }
+        categoryEntity?.let { entryEntity.category = it }
 
         entryEntity.toDto()
     }
