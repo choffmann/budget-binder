@@ -12,7 +12,7 @@ object Entries : IntIdTable() {
     val name = varchar("name", 50)
     val amount = float("amount")
     val repeat = bool("repeat").default(false)
-    val created = datetime("created").default(LocalDateTime.now())
+    val created = datetime("created").clientDefault { LocalDateTime.now() }
     val ended = datetime("ended").nullable().default(null)
 
     val child = reference("child", Entries).nullable().default(null)

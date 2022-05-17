@@ -13,7 +13,7 @@ object Categories : IntIdTable() {
     val color = char("color", 6)
     val image = enumeration<Category.Image>("image")
     val budget = float("budget")
-    val created = datetime("created").default(LocalDateTime.now())
+    val created = datetime("created").clientDefault { LocalDateTime.now() }
     val ended = datetime("ended").nullable().default(null)
 
     val child = reference("child", Categories).nullable().default(null)
