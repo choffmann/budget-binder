@@ -4,7 +4,7 @@ import de.hsfl.budgetBinder.common.APIResponse
 import de.hsfl.budgetBinder.common.ErrorModel
 import de.hsfl.budgetBinder.common.User
 import de.hsfl.budgetBinder.server.models.UserPrincipal
-import de.hsfl.budgetBinder.server.services.UserService
+import de.hsfl.budgetBinder.server.services.interfaces.UserService
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.request.*

@@ -1,4 +1,4 @@
-package de.hsfl.budgetBinder.server.services
+package de.hsfl.budgetBinder.server.services.implementations
 
 import de.hsfl.budgetBinder.common.Category
 import de.hsfl.budgetBinder.common.User
@@ -6,6 +6,7 @@ import de.hsfl.budgetBinder.server.models.CategoryEntity
 import de.hsfl.budgetBinder.server.models.UserEntity
 import de.hsfl.budgetBinder.server.models.UserPrincipal
 import de.hsfl.budgetBinder.server.models.Users
+import de.hsfl.budgetBinder.server.services.interfaces.UserService
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.mindrot.jbcrypt.BCrypt

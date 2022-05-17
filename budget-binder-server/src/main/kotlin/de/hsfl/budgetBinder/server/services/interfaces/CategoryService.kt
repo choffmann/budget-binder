@@ -1,4 +1,4 @@
-package de.hsfl.budgetBinder.server.services
+package de.hsfl.budgetBinder.server.services.interfaces
 
 import de.hsfl.budgetBinder.common.APIResponse
 import de.hsfl.budgetBinder.common.Category

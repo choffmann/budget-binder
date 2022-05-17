@@ -8,6 +8,12 @@ import de.hsfl.budgetBinder.server.models.Entries
 import de.hsfl.budgetBinder.server.models.Users
 import de.hsfl.budgetBinder.server.routes.*
 import de.hsfl.budgetBinder.server.services.*
+import de.hsfl.budgetBinder.server.services.implementations.CategoryServiceImpl
+import de.hsfl.budgetBinder.server.services.implementations.EntryServiceImpl
+import de.hsfl.budgetBinder.server.services.implementations.UserServiceImpl
+import de.hsfl.budgetBinder.server.services.interfaces.CategoryService
+import de.hsfl.budgetBinder.server.services.interfaces.EntryService
+import de.hsfl.budgetBinder.server.services.interfaces.UserService
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.auth.jwt.*

@@ -1,4 +1,4 @@
-package de.hsfl.budgetBinder.server.services
+package de.hsfl.budgetBinder.server.services.interfaces
 
 import de.hsfl.budgetBinder.common.User
 import de.hsfl.budgetBinder.server.models.UserPrincipal

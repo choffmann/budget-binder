@@ -1,4 +1,4 @@
-package de.hsfl.budgetBinder.server.services
+package de.hsfl.budgetBinder.server.services.implementations
 
 import de.hsfl.budgetBinder.common.APIResponse
 import de.hsfl.budgetBinder.common.Entry
@@ -7,6 +7,7 @@ import de.hsfl.budgetBinder.server.models.CategoryEntity
 import de.hsfl.budgetBinder.server.models.EntryEntity
 import de.hsfl.budgetBinder.server.models.UserEntity
 import de.hsfl.budgetBinder.server.repository.isCreatedAndEndedCorrectPeriod
+import de.hsfl.budgetBinder.server.services.interfaces.EntryService
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.time.LocalDateTime
 
