@@ -4,6 +4,7 @@ import de.hsfl.budgetBinder.common.Category
 import de.hsfl.budgetBinder.server.models.CategoryEntity
 import de.hsfl.budgetBinder.server.models.UserEntity
 import org.jetbrains.exposed.sql.transactions.transaction
+import java.time.LocalDateTime
 
 class CategoryServiceImpl : CategoryService {
     override fun getAllCategories(userId: Int): List<Category> = transaction {
@@ -25,11 +26,24 @@ class CategoryServiceImpl : CategoryService {
     }
 
     override fun changeCategory(userId: Int, categoryId: Int, category: Category.Patch): Category = transaction {
-        val categoryEntity = CategoryEntity[categoryId]
+        var categoryEntity = CategoryEntity[categoryId]
+        if (category.budget != null) {
+            val oldEntity = categoryEntity
+            categoryEntity = CategoryEntity.new {
+                name = oldEntity.name
+                color = oldEntity.color
+                image = oldEntity.image
+                budget = category.budget!!
+                user = oldEntity.user
+            }
+            oldEntity.child = categoryEntity.id
+            oldEntity.ended = LocalDateTime.now()
+        }
+
         category.name?.let { categoryEntity.name = it }
         category.color?.let { categoryEntity.color = it }
         category.image?.let { categoryEntity.image = it }
-        category.budget?.let { categoryEntity.budget = it }
+
         categoryEntity.toDto()
     }
 
