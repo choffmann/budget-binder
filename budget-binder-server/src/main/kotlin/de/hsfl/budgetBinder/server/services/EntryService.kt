@@ -3,9 +3,10 @@ package de.hsfl.budgetBinder.server.services
 import de.hsfl.budgetBinder.common.APIResponse
 import de.hsfl.budgetBinder.common.Entry
 import de.hsfl.budgetBinder.common.ErrorModel
+import java.time.LocalDateTime
 
 interface EntryService {
-    fun getAllEntries(userId: Int): List<Entry>
+    fun getEntriesByPeriod(userId: Int, period: LocalDateTime?): List<Entry>
     fun findEntryByID(userId: Int, id: Int): Entry?
     fun insertEntryForUser(userId: Int, entry: Entry.In): Entry
     fun changeEntry(userId: Int, entryId: Int, entry: Entry.Patch): Entry?

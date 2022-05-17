@@ -6,6 +6,7 @@ import de.hsfl.budgetBinder.common.ErrorModel
 import de.hsfl.budgetBinder.server.models.CategoryEntity
 import de.hsfl.budgetBinder.server.models.EntryEntity
 import de.hsfl.budgetBinder.server.models.UserEntity
+import de.hsfl.budgetBinder.server.repository.isCreatedAndEndedCorrectPeriod
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.time.LocalDateTime
 
@@ -15,8 +16,19 @@ class EntryServiceImpl : EntryService {
         categoryId?.let { CategoryEntity.findById(it) } ?: CategoryEntity[UserEntity[userId].category!!]
     }
 
-    override fun getAllEntries(userId: Int): List<Entry> = transaction {
-        UserEntity[userId].entries.map { it.toDto() }
+    override fun getEntriesByPeriod(userId: Int, period: LocalDateTime?): List<Entry> = transaction {
+        val user = UserEntity[userId]
+
+        val value = period?.let {
+            user.entries.filter {
+                if (it.repeat)
+                    isCreatedAndEndedCorrectPeriod(it.created, it.ended, period)
+                else
+                    it.created > period && it.created < period.plusMonths(1)
+            }
+        } ?: user.entries
+
+        value.map { it.toDto() }
     }
 
     override fun findEntryByID(userId: Int, id: Int): Entry? = transaction {
@@ -47,6 +59,7 @@ class EntryServiceImpl : EntryService {
                     amount = oldEntity.amount
                     repeat = oldEntity.repeat
                     user = oldEntity.user
+                    category = oldEntity.category
                 }
                 oldEntity.child = entryEntity.id
                 oldEntity.ended = LocalDateTime.now()

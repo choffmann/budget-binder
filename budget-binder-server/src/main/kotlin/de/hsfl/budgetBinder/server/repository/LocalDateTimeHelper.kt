@@ -5,7 +5,6 @@ import java.time.LocalDateTime
 fun isCreatedAndEndedCorrectPeriod(created: LocalDateTime, ended: LocalDateTime?, period: LocalDateTime): Boolean {
     val createdTime = LocalDateTime.of(created.year, created.month.value, 1, 0, 0, 0)
     val endedTime = ended?.let { LocalDateTime.of(it.year, it.month.value, 1, 0, 0, 0) }
-
     return createdTime <= period && (endedTime == null || endedTime > period)
 }
 
