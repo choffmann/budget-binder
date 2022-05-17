@@ -5,6 +5,7 @@ import de.hsfl.budgetBinder.server.models.CategoryEntity
 import de.hsfl.budgetBinder.server.models.EntryEntity
 import de.hsfl.budgetBinder.server.models.UserEntity
 import org.jetbrains.exposed.sql.transactions.transaction
+import java.time.LocalDateTime
 
 class EntryServiceImpl : EntryService {
 
@@ -31,11 +32,27 @@ class EntryServiceImpl : EntryService {
     }
 
     override fun changeEntry(userId: Int, entryId: Int, entry: Entry.Patch): Entry = transaction {
-        val entryEntity = EntryEntity[entryId]
+        var entryEntity = EntryEntity[entryId]
+
+        if (entryEntity.repeat) {
+            if (entry.repeat == false || entry.amount != null) {
+                val oldEntity = entryEntity
+                entryEntity = EntryEntity.new {
+                    name = oldEntity.name
+                    amount = oldEntity.amount
+                    repeat = oldEntity.repeat
+                    user = oldEntity.user
+                }
+                oldEntity.child = entryEntity.id
+                oldEntity.ended = LocalDateTime.now()
+            }
+        }
+
         entry.name?.let { entryEntity.name = it }
         entry.amount?.let { entryEntity.amount = it }
         entry.repeat?.let { entryEntity.repeat = it }
         entry.category?.let { entryEntity.category = getCategoryByID(userId, it.id) }
+
         entryEntity.toDto()
     }
 
