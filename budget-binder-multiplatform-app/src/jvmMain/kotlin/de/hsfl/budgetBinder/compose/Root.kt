@@ -6,9 +6,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.Color
-import de.hsfl.budgetBinder.compose.login.LoginComponent
-import de.hsfl.budgetBinder.compose.register.RegisterComponent
-import de.hsfl.budgetBinder.compose.user.UserComponent
 import de.hsfl.budgetBinder.data.client.Client
 import de.hsfl.budgetBinder.data.repository.AuthRepositoryImplementation
 import de.hsfl.budgetBinder.data.repository.UserRepositoryImplementation
@@ -18,6 +15,7 @@ import de.hsfl.budgetBinder.domain.use_case.auth_user.LoginUseCase
 import de.hsfl.budgetBinder.domain.use_case.auth_user.LogoutUseCase
 import de.hsfl.budgetBinder.domain.use_case.auth_user.RegisterUseCase
 import de.hsfl.budgetBinder.domain.use_case.get_user.UserUseCase
+import de.hsfl.budgetBinder.presentation.Screen
 import org.kodein.di.DI
 import org.kodein.di.bindSingleton
 import org.kodein.di.compose.withDI

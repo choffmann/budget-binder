@@ -1,10 +1,10 @@
 package de.hsfl.budgetBinder.compose.user
 
 import androidx.compose.runtime.*
-import de.hsfl.budgetBinder.compose.Screen
 import de.hsfl.budgetBinder.domain.use_case.auth_user.LogoutUseCase
 import de.hsfl.budgetBinder.domain.use_case.get_user.UserUseCase
 import de.hsfl.budgetBinder.presentation.LogoutViewModel
+import de.hsfl.budgetBinder.presentation.Screen
 import de.hsfl.budgetBinder.presentation.UiState
 import de.hsfl.budgetBinder.presentation.UserViewModel
 import kotlinx.coroutines.CoroutineScope

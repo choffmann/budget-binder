@@ -1,4 +1,4 @@
-package de.hsfl.budgetBinder.compose
+package de.hsfl.budgetBinder.presentation
 
 sealed class Screen {
     object Welcome : Screen()

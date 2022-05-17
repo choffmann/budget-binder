@@ -1,10 +1,10 @@
 package de.hsfl.budgetBinder.compose.login
 
 import androidx.compose.runtime.*
-import de.hsfl.budgetBinder.compose.Screen
 import de.hsfl.budgetBinder.compose.di
 import de.hsfl.budgetBinder.domain.use_case.auth_user.LoginUseCase
 import de.hsfl.budgetBinder.presentation.LoginViewModel
+import de.hsfl.budgetBinder.presentation.Screen
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob

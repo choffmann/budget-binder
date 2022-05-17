@@ -5,6 +5,7 @@ import androidx.compose.runtime.MutableState
 import de.hsfl.budgetBinder.compose.login.LoginComponent
 import de.hsfl.budgetBinder.compose.register.RegisterComponent
 import de.hsfl.budgetBinder.compose.user.UserComponent
+import de.hsfl.budgetBinder.presentation.Screen
 
 @Composable
 fun Router(screenState: MutableState<Screen>) {
