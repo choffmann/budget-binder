@@ -3,9 +3,10 @@ package de.hsfl.budgetBinder.server.services
 import de.hsfl.budgetBinder.common.APIResponse
 import de.hsfl.budgetBinder.common.Category
 import de.hsfl.budgetBinder.common.ErrorModel
+import java.time.LocalDateTime
 
 interface CategoryService {
-    fun getAllCategories(userId: Int): List<Category>
+    fun getCategoriesByPeriod(userId: Int, period: LocalDateTime?): List<Category>
     fun findCategoryByID(userId: Int, id: Int): Category?
     fun insertCategoryForUser(userId: Int, category: Category.In): Category
     fun changeCategory(userId: Int, categoryId: Int, category: Category.Patch): Category?

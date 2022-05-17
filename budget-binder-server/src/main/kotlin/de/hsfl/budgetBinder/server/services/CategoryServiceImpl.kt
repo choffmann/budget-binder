@@ -3,14 +3,23 @@ package de.hsfl.budgetBinder.server.services
 import de.hsfl.budgetBinder.common.Category
 import de.hsfl.budgetBinder.server.models.CategoryEntity
 import de.hsfl.budgetBinder.server.models.UserEntity
+import de.hsfl.budgetBinder.server.repository.isCreatedAndEndedCorrectPeriod
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.time.LocalDateTime
 
 class CategoryServiceImpl : CategoryService {
-    override fun getAllCategories(userId: Int): List<Category> = transaction {
-        val user = UserEntity[userId]
-        user.categories.filter { it.id != user.category }.map { it.toDto() }
-    }
+    override fun getCategoriesByPeriod(userId: Int, period: LocalDateTime?): List<Category> =
+        transaction {
+            val user = UserEntity[userId]
+
+            val value = period?.let { period ->
+                user.categories.filter {
+                    it.id != user.category && isCreatedAndEndedCorrectPeriod(it.created, it.ended, period)
+                }
+            } ?: user.categories.filter { it.id != user.category }
+
+            value.map { it.toDto() }
+        }
 
     override fun findCategoryByID(userId: Int, id: Int): Category? = transaction {
         val user = UserEntity[userId]
@@ -54,6 +63,7 @@ class CategoryServiceImpl : CategoryService {
 
     override fun deleteCategory(categoryId: Int): Category = transaction {
         val categoryEntity = CategoryEntity[categoryId]
+        categoryEntity.entries.forEach { it.category = CategoryEntity[categoryEntity.user.category!!] }
         val returnValue = categoryEntity.toDto()
         categoryEntity.delete()
         returnValue
