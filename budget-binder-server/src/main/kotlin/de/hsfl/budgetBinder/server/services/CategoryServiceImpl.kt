@@ -27,8 +27,11 @@ class CategoryServiceImpl : CategoryService {
         }.toDto()
     }
 
-    override fun changeCategory(userId: Int, categoryId: Int, category: Category.Patch): Category = transaction {
+    override fun changeCategory(userId: Int, categoryId: Int, category: Category.Patch): Category? = transaction {
         var categoryEntity = CategoryEntity[categoryId]
+        if (categoryEntity.lastOrNull() != null) {
+            return@transaction null
+        }
         if (category.budget != null) {
             val oldEntity = categoryEntity
             categoryEntity = CategoryEntity.new {

@@ -8,7 +8,7 @@ interface EntryService {
     fun getAllEntries(userId: Int): List<Entry>
     fun findEntryByID(userId: Int, id: Int): Entry?
     fun insertEntryForUser(userId: Int, entry: Entry.In): Entry
-    fun changeEntry(userId: Int, entryId: Int, entry: Entry.Patch): Entry
+    fun changeEntry(userId: Int, entryId: Int, entry: Entry.Patch): Entry?
     fun deleteEntry(entryId: Int): Entry
     fun getAllEntriesForCategoryIdParam(userId: Int, categoryId: String?): APIResponse<List<Entry>>
 

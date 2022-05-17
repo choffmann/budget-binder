@@ -57,10 +57,9 @@ fun Route.entryByIdRoute() {
                 call.parameters["id"]?.toIntOrNull()
             ) { entry ->
                 call.receiveOrNull<Entry.Patch>()?.let { changeEntry ->
-                    APIResponse(
-                        data = entryService.changeEntry(userPrincipal.getUserID(), entry.id, changeEntry),
-                        success = true
-                    )
+                    entryService.changeEntry(userPrincipal.getUserID(), entry.id, changeEntry)?.let {
+                        APIResponse(data = it, success = true)
+                    } ?: APIResponse(ErrorModel("You can't change this entry"))
                 } ?: APIResponse(ErrorModel("not the right Parameters provided"))
             }
             call.respond(response)

@@ -33,8 +33,11 @@ class EntryServiceImpl : EntryService {
         }.toDto()
     }
 
-    override fun changeEntry(userId: Int, entryId: Int, entry: Entry.Patch): Entry = transaction {
+    override fun changeEntry(userId: Int, entryId: Int, entry: Entry.Patch): Entry? = transaction {
         var entryEntity = EntryEntity[entryId]
+        if (entryEntity.lastOrNull() != null) {
+            return@transaction null
+        }
 
         if (entryEntity.repeat) {
             if (entry.repeat == false || entry.amount != null) {

@@ -60,10 +60,9 @@ fun Route.categoryByIdRoute() {
                 call.parameters["id"]?.toIntOrNull()
             ) { category ->
                 call.receiveOrNull<Category.Patch>()?.let { changeCategory ->
-                    APIResponse(
-                        data = categoryService.changeCategory(userPrincipal.getUserID(), category.id, changeCategory),
-                        success = true
-                    )
+                    categoryService.changeCategory(userPrincipal.getUserID(), category.id, changeCategory)?.let {
+                        APIResponse(data = it, success = true)
+                    } ?: APIResponse(ErrorModel("you can't change this Category"))
                 } ?: APIResponse(ErrorModel("not the right Parameters provided"))
             }
             call.respond(response)
