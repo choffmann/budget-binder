@@ -2,6 +2,7 @@ package de.hsfl.budgetBinder.server.services
 
 import de.hsfl.budgetBinder.common.Category
 import de.hsfl.budgetBinder.server.models.CategoryEntity
+import de.hsfl.budgetBinder.server.models.EntryEntity
 import de.hsfl.budgetBinder.server.models.UserEntity
 import de.hsfl.budgetBinder.server.repository.isCreatedAndEndedCorrectPeriod
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -36,27 +37,53 @@ class CategoryServiceImpl : CategoryService {
         }.toDto()
     }
 
-    override fun changeCategory(userId: Int, categoryId: Int, category: Category.Patch): Category? = transaction {
+    override fun changeCategory(userId: Int, categoryId: Int, categoryPatch: Category.Patch): Category? = transaction {
         var categoryEntity = CategoryEntity[categoryId]
         if (categoryEntity.lastOrNull() != null) {
             return@transaction null
         }
-        if (category.budget != null) {
-            val oldEntity = categoryEntity
+        if (categoryPatch.budget != null) {
+            val oldCategory = categoryEntity
             categoryEntity = CategoryEntity.new {
-                name = oldEntity.name
-                color = oldEntity.color
-                image = oldEntity.image
-                budget = category.budget!!
-                user = oldEntity.user
+                name = oldCategory.name
+                color = oldCategory.color
+                image = oldCategory.image
+                budget = categoryPatch.budget!!
+                user = oldCategory.user
             }
-            oldEntity.child = categoryEntity.id
-            oldEntity.ended = LocalDateTime.now()
+            oldCategory.child = categoryEntity.id
+            oldCategory.ended = LocalDateTime.now()
+
+            val now = LocalDateTime.now()
+            val period = LocalDateTime.of(now.year, now.month.value, 1, 0, 0)
+            val plusPeriod = period.plusMonths(1)
+
+            oldCategory.entries.forEach {
+                if (it.repeat) {
+                    val entryPeriod = LocalDateTime.of(it.created.year, it.created.month.value, 1, 0, 0)
+                    if (entryPeriod == period)
+                        it.category = categoryEntity
+                    else {
+                        val entryEntity = EntryEntity.new {
+                            name = it.name
+                            amount = it.amount
+                            repeat = it.repeat
+                            user = it.user
+                            category = categoryEntity
+                        }
+                        it.child = entryEntity.id
+                        it.ended = LocalDateTime.now()
+                    }
+                } else {
+                    if (it.created > period && it.created < plusPeriod)
+                        it.category = categoryEntity
+                }
+            }
         }
 
-        category.name?.let { categoryEntity.name = it }
-        category.color?.let { categoryEntity.color = it }
-        category.image?.let { categoryEntity.image = it }
+        categoryPatch.name?.let { categoryEntity.name = it }
+        categoryPatch.color?.let { categoryEntity.color = it }
+        categoryPatch.image?.let { categoryEntity.image = it }
 
         categoryEntity.toDto()
     }
