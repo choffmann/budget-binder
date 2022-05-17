@@ -42,13 +42,9 @@ fun App() = withDI(di) {
     MaterialTheme(
         colors = if (darkTheme.value) darkColors() else lightColors()
     ) {
-        when (screenState.value) {
-            is Screen.Welcome -> {}
-            is Screen.Register -> RegisterComponent(screenState = screenState)
-            is Screen.Login -> LoginComponent(screenState = screenState)
-            is Screen.User -> UserComponent(screenState = screenState)
-        }
+        Router(screenState = screenState)
 
+        // Toggle Dark-mode
         IconToggleButton(checked = darkTheme.value, onCheckedChange = { darkTheme.value = it }) {
             if (darkTheme.value)
                 Icon(Icons.Filled.Info, contentDescription = null, tint = Color.White)
