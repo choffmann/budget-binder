@@ -4,6 +4,7 @@ import de.hsfl.budgetBinder.common.APIResponse
 import de.hsfl.budgetBinder.common.AuthToken
 import de.hsfl.budgetBinder.common.ErrorModel
 import de.hsfl.budgetBinder.common.User
+import de.hsfl.budgetBinder.server.config.Config
 import de.hsfl.budgetBinder.server.models.UserPrincipal
 import de.hsfl.budgetBinder.server.services.JWTService
 import de.hsfl.budgetBinder.server.services.interfaces.UserService
@@ -19,15 +20,28 @@ import io.netty.handler.codec.http.cookie.CookieHeaderNames.SameSite
 import org.kodein.di.instance
 import org.kodein.di.ktor.closestDI
 
-fun createRefreshCookie(token: String, timestamp: Long): Cookie {
+fun createRefreshCookie(token: String, timestamp: Long, sslState: Config.SSLState): Cookie {
+    val secure: Boolean
+    val sameSite: String
+    when (sslState) {
+        Config.SSLState.SSL,
+        Config.SSLState.DEV -> {
+            secure = true
+            sameSite = SameSite.None.toString()
+        }
+        Config.SSLState.NONE -> {
+            secure = false
+            sameSite = SameSite.Lax.toString()
+        }
+    }
     return Cookie(
         "jwt",
         token,
         expires = GMTDate(timestamp),
         path = "/refresh_token",
         httpOnly = true,
-        secure = true,
-        extensions = hashMapOf(SAMESITE to SameSite.None.toString())
+        secure = secure,
+        extensions = hashMapOf(SAMESITE to sameSite)
     )
 }
 
@@ -35,6 +49,7 @@ fun Route.login() {
     authenticate("auth-form") {
         post("/login") {
             val userPrincipal: UserPrincipal = call.principal()!!
+            val config: Config by closestDI().instance()
 
             val jwtService: JWTService by closestDI().instance()
             val token = jwtService.createAccessToken(userPrincipal.getUserID(), userPrincipal.getUserTokenVersion())
@@ -44,7 +59,8 @@ fun Route.login() {
             call.response.cookies.append(
                 createRefreshCookie(
                     refreshToken,
-                    System.currentTimeMillis() + jwtService.getRefreshTokenValidationTime()
+                    System.currentTimeMillis() + jwtService.getRefreshTokenValidationTime(),
+                    config.server.sslState
                 )
             )
             call.respond(APIResponse(data = AuthToken(token = token), success = true))
@@ -73,6 +89,7 @@ fun Route.refreshCookie() {
     get("/refresh_token") {
         val jwtService: JWTService by closestDI().instance()
         val userService: UserService by closestDI().instance()
+        val config: Config by closestDI().instance()
 
         val (status, response) = call.request.cookies["jwt"]?.let { tokenToCheck ->
             val token = jwtService.getRefreshTokenVerifier().verify(tokenToCheck)
@@ -84,7 +101,8 @@ fun Route.refreshCookie() {
                 call.response.cookies.append(
                     createRefreshCookie(
                         refreshToken,
-                        System.currentTimeMillis() + jwtService.getRefreshTokenValidationTime()
+                        System.currentTimeMillis() + jwtService.getRefreshTokenValidationTime(),
+                        config.server.sslState
                     )
                 )
                 HttpStatusCode.OK to APIResponse(data = AuthToken(token = accessToken), success = true)
