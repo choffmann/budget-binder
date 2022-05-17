@@ -10,6 +10,7 @@ interface EntryService {
     fun insertEntryForUser(userId: Int, entry: Entry.In): Entry
     fun changeEntry(userId: Int, entryId: Int, entry: Entry.Patch): Entry
     fun deleteEntry(entryId: Int): Entry
+    fun getAllEntriesForCategoryIdParam(userId: Int, categoryId: String?): APIResponse<List<Entry>>
 
     suspend fun getByIDOrErrorResponse(
         userId: Int,

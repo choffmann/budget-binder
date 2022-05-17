@@ -5,6 +5,7 @@ import de.hsfl.budgetBinder.common.Category
 import de.hsfl.budgetBinder.common.ErrorModel
 import de.hsfl.budgetBinder.server.models.UserPrincipal
 import de.hsfl.budgetBinder.server.services.CategoryService
+import de.hsfl.budgetBinder.server.services.EntryService
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.request.*
@@ -79,6 +80,13 @@ fun Route.categoryByIdRoute() {
                 APIResponse(data = categoryService.deleteCategory(it.id), success = true)
             }
             call.respond(response)
+        }
+
+        get("/entries") {
+            val userPrincipal: UserPrincipal = call.principal()!!
+            val entryService: EntryService by closestDI().instance()
+
+            call.respond(entryService.getAllEntriesForCategoryIdParam(userPrincipal.getUserID(), call.parameters["id"]))
         }
     }
 }

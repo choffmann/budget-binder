@@ -1,6 +1,8 @@
 package de.hsfl.budgetBinder.server.services
 
+import de.hsfl.budgetBinder.common.APIResponse
 import de.hsfl.budgetBinder.common.Entry
+import de.hsfl.budgetBinder.common.ErrorModel
 import de.hsfl.budgetBinder.server.models.CategoryEntity
 import de.hsfl.budgetBinder.server.models.EntryEntity
 import de.hsfl.budgetBinder.server.models.UserEntity
@@ -61,5 +63,22 @@ class EntryServiceImpl : EntryService {
         val returnValue = entryEntity.toDto()
         entryEntity.delete()
         returnValue
+    }
+
+    override fun getAllEntriesForCategoryIdParam(
+        userId: Int,
+        categoryId: String?
+    ): APIResponse<List<Entry>> = transaction {
+        val userEntity = UserEntity[userId]
+
+        if (categoryId == "null") {
+            APIResponse(data = CategoryEntity[userEntity.category!!].entries.map { it.toDto() }, success = true)
+        } else {
+            categoryId?.toIntOrNull()?.let { id ->
+                CategoryEntity.findById(id)?.let { category ->
+                    APIResponse(data = category.entries.map { it.toDto() }, success = true)
+                } ?: APIResponse(ErrorModel("Category not found"))
+            } ?: APIResponse(ErrorModel("path parameter is not a number"))
+        }
     }
 }
