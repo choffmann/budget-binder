@@ -16,7 +16,6 @@ fun RegisterComponent(screenState: MutableState<Screen>) {
     val registerUseCase: RegisterUseCase by di.instance()
     val viewModel = RegisterViewModel(registerUseCase, scope)
     val viewState = viewModel.state.collectAsState(scope)
-
     RegisterView(
         state = viewState,
         onRegisterButtonPressed = { firstName, lastName, email, password ->

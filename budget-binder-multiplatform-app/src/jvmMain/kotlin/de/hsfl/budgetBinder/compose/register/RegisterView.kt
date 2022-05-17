@@ -4,10 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Button
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,58 +24,62 @@ fun RegisterView(
     var passwordTextState by remember { mutableStateOf("") }
     val viewState by remember { state }
 
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        OutlinedTextField(
-            value = firstNameTextState,
-            onValueChange = { firstNameTextState = it },
-            label = { Text("Fistname") },
-        )
 
-        OutlinedTextField(
-            value = lastNameTextState,
-            onValueChange = { lastNameTextState = it },
-            label = { Text("Lastname") },
-        )
-
-        OutlinedTextField(
-            value = emailTextState,
-            onValueChange = { emailTextState = it },
-            label = { Text("Email") },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
-        )
-
-        OutlinedTextField(
-            value = passwordTextState,
-            onValueChange = { passwordTextState = it },
-            label = { Text("Password") },
-            visualTransformation = PasswordVisualTransformation(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
-        )
-
-        Button(onClick = {
-            onRegisterButtonPressed(
-                firstNameTextState,
-                lastNameTextState,
-                emailTextState,
-                passwordTextState
+    Surface {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            OutlinedTextField(
+                value = firstNameTextState,
+                onValueChange = { firstNameTextState = it },
+                label = { Text("Fistname") },
+                singleLine = true
             )
-        }) {
-            Text("Register")
-        }
 
-        when (viewState) {
-            is UiState.Success<*> -> {
-                onRegisterSuccess()
+            OutlinedTextField(
+                value = lastNameTextState,
+                onValueChange = { lastNameTextState = it },
+                label = { Text("Lastname") },
+                singleLine = true
+            )
+
+            OutlinedTextField(
+                value = emailTextState,
+                onValueChange = { emailTextState = it },
+                label = { Text("Email") },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                singleLine = true
+            )
+
+            OutlinedTextField(
+                value = passwordTextState,
+                onValueChange = { passwordTextState = it },
+                label = { Text("Password") },
+                visualTransformation = PasswordVisualTransformation(),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                singleLine = true
+            )
+
+            Button(onClick = {
+                onRegisterButtonPressed(
+                    firstNameTextState, lastNameTextState, emailTextState, passwordTextState
+                )
+            }) {
+                Text("Register")
             }
-            is UiState.Error -> {
-                Text((viewState as UiState.Error).error)
-            }
-            is UiState.Loading -> {
-                CircularProgressIndicator()
+
+            when (viewState) {
+                is UiState.Success<*> -> {
+                    onRegisterSuccess()
+                }
+                is UiState.Error -> {
+                    Text((viewState as UiState.Error).error)
+                }
+                is UiState.Loading -> {
+                    CircularProgressIndicator()
+                }
             }
         }
     }

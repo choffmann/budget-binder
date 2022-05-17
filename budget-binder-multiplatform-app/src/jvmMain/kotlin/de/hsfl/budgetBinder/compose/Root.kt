@@ -1,6 +1,11 @@
 package de.hsfl.budgetBinder.compose
 
+import androidx.compose.material.*
+import androidx.compose.material.Icon
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.graphics.Color
 import de.hsfl.budgetBinder.compose.login.LoginComponent
 import de.hsfl.budgetBinder.compose.register.RegisterComponent
 import de.hsfl.budgetBinder.compose.user.UserComponent
@@ -33,10 +38,22 @@ val di = DI {
 @Composable
 fun App() = withDI(di) {
     val screenState = remember { mutableStateOf<Screen>(Screen.Register) }
-    when (screenState.value) {
-        is Screen.Welcome -> {}
-        is Screen.Register -> RegisterComponent(screenState = screenState)
-        is Screen.Login -> LoginComponent(screenState = screenState)
-        is Screen.User -> UserComponent(screenState = screenState)
+    val darkTheme = remember { mutableStateOf(false) }
+    MaterialTheme(
+        colors = if (darkTheme.value) darkColors() else lightColors()
+    ) {
+        when (screenState.value) {
+            is Screen.Welcome -> {}
+            is Screen.Register -> RegisterComponent(screenState = screenState)
+            is Screen.Login -> LoginComponent(screenState = screenState)
+            is Screen.User -> UserComponent(screenState = screenState)
+        }
+
+        IconToggleButton(checked = darkTheme.value, onCheckedChange = { darkTheme.value = it }) {
+            if (darkTheme.value)
+                Icon(Icons.Filled.Info, contentDescription = null, tint = Color.White)
+            else
+                Icon(Icons.Filled.Info, contentDescription = null, tint = Color.Black)
+        }
     }
 }
