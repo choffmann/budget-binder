@@ -8,11 +8,13 @@ import java.time.LocalDateTime
 
 class CategoryServiceImpl : CategoryService {
     override fun getAllCategories(userId: Int): List<Category> = transaction {
-        UserEntity[userId].categories.map { it.toDto() }
+        val user = UserEntity[userId]
+        user.categories.filter { it.id != user.category }.map { it.toDto() }
     }
 
     override fun findCategoryByID(userId: Int, id: Int): Category? = transaction {
-        UserEntity[userId].categories.firstOrNull { it.id.value == id }?.toDto()
+        val user = UserEntity[userId]
+        user.categories.firstOrNull { it.id.value == id && it.id != user.category }?.toDto()
     }
 
     override fun insertCategoryForUser(userId: Int, category: Category.In): Category = transaction {
