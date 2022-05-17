@@ -26,7 +26,7 @@ fun createRefreshCookie(token: String, timestamp: Long): Cookie {
         expires = GMTDate(timestamp),
         path = "/refresh_token",
         httpOnly = true,
-        secure = false,
+        secure = true,
         extensions = hashMapOf(SAMESITE to SameSite.None.toString())
     )
 }
