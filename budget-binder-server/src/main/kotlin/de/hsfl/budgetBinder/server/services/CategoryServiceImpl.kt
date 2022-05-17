@@ -2,7 +2,6 @@ package de.hsfl.budgetBinder.server.services
 
 import de.hsfl.budgetBinder.common.Category
 import de.hsfl.budgetBinder.server.models.CategoryEntity
-import de.hsfl.budgetBinder.server.models.EntryEntity
 import de.hsfl.budgetBinder.server.models.UserEntity
 import de.hsfl.budgetBinder.server.repository.isCreatedAndEndedCorrectPeriod
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -59,21 +58,13 @@ class CategoryServiceImpl : CategoryService {
             val plusPeriod = period.plusMonths(1)
 
             oldCategory.entries.forEach {
-                if (it.repeat) {
-                    val entryPeriod = LocalDateTime.of(it.created.year, it.created.month.value, 1, 0, 0)
-                    if (entryPeriod == period)
-                        it.category = categoryEntity
-                    else {
-                        val entryEntity = EntryEntity.new {
-                            name = it.name
-                            amount = it.amount
-                            repeat = it.repeat
-                            user = it.user
-                            category = categoryEntity
-                        }
-                        it.child = entryEntity.id
-                        it.ended = LocalDateTime.now()
-                    }
+                val entryPeriod = LocalDateTime.of(it.created.year, it.created.month.value, 1, 0, 0)
+                var changeEntity = it
+                if (it.repeat && entryPeriod != period) {
+                    changeEntity = changeEntity.createChild()
+
+                    changeEntity.category = categoryEntity
+
                 } else {
                     if (it.created > period && it.created < plusPeriod)
                         it.category = categoryEntity

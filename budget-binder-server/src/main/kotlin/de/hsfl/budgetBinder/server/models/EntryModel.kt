@@ -59,4 +59,18 @@ class EntryEntity(id: EntityID<Int>) : IntEntity(id), Iterable<EntryEntity> {
     override fun iterator(): Iterator<EntryEntity> {
         return EntryIter(this)
     }
+
+    fun createChild(): EntryEntity {
+        val oldEntity = this
+        val entryEntity = EntryEntity.new {
+            this.name = oldEntity.name
+            this.amount = oldEntity.amount
+            this.repeat = oldEntity.repeat
+            this.user = oldEntity.user
+            this.category = oldEntity.category
+        }
+        this.child = entryEntity.id
+        this.ended = LocalDateTime.now()
+        return entryEntity
+    }
 }

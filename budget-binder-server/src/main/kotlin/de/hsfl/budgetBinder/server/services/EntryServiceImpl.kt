@@ -59,16 +59,7 @@ class EntryServiceImpl : EntryService {
 
         if (entryEntity.repeat) {
             if (entry.repeat == false || entry.amount != null) {
-                val oldEntity = entryEntity
-                entryEntity = EntryEntity.new {
-                    name = oldEntity.name
-                    amount = oldEntity.amount
-                    repeat = oldEntity.repeat
-                    user = oldEntity.user
-                    category = oldEntity.category
-                }
-                oldEntity.child = entryEntity.id
-                oldEntity.ended = LocalDateTime.now()
+                entryEntity = entryEntity.createChild()
             }
         }
 
