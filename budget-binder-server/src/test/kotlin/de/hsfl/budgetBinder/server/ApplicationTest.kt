@@ -196,11 +196,75 @@ class ApplicationTest {
             loginUser()
             checkMeSuccess()
 
+            val userId = transaction { UserEntity.all().first().id.value }
+
             sendAuthenticatedRequest(HttpMethod.Patch, "/me") {
                 assertEquals(HttpStatusCode.OK, response.status())
 
                 val user: APIResponse<User> = decodeFromString(response.content!!)
                 val shouldUser: APIResponse<User> = wrapFailure("not the right Parameters provided")
+                assertEquals(shouldUser, user)
+            }
+
+            val patchedUser = User.Put("changedTest", "changedSurname", "newPassword")
+
+            with(handleRequest(HttpMethod.Patch, "/me") {
+                addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+                setBody(toJsonString(patchedUser))
+            }) {
+                assertEquals(HttpStatusCode.Unauthorized, response.status())
+                assertNull(response.content)
+            }
+
+            sendAuthenticatedRequest(HttpMethod.Patch, "/me", toJsonString(patchedUser)) {
+                assertEquals(HttpStatusCode.OK, response.status())
+
+                val user: APIResponse<User> = decodeFromString(response.content!!)
+                val shouldUser = wrapSuccess(User(userId, "changedTest", "changedSurname", TestUser.email))
+                assertEquals(shouldUser, user)
+            }
+
+            with(handleRequest(HttpMethod.Post, "/login") {
+                addHeader(HttpHeaders.ContentType, ContentType.Application.FormUrlEncoded.toString())
+                setBody(
+                    listOf(
+                        "username" to TestUser.email,
+                        "password" to TestUser.password
+                    ).formUrlEncode()
+                )
+            }) {
+                assertEquals(HttpStatusCode.Unauthorized, response.status())
+                assertNull(response.content)
+            }
+
+            with(handleRequest(HttpMethod.Post, "/login") {
+                addHeader(HttpHeaders.ContentType, ContentType.Application.FormUrlEncoded.toString())
+                setBody(
+                    listOf(
+                        "username" to TestUser.email,
+                        "password" to "newPassword"
+                    ).formUrlEncode()
+                )
+            }) {
+                assertEquals(HttpStatusCode.OK, response.status())
+                assertNotNull(response.content)
+                val token: APIResponse<AuthToken> = decodeFromString(response.content!!)
+                assert(token.success)
+                assertNotNull(token.data)
+                TestUser.accessToken = token.data!!.token
+            }
+
+            handleRequest(HttpMethod.Delete, "/me").apply {
+                assertEquals(HttpStatusCode.Unauthorized, response.status())
+                assertNull(response.content)
+            }
+
+            sendAuthenticatedRequest(HttpMethod.Delete, "/me") {
+                assertEquals(HttpStatusCode.OK, response.status())
+                assertNotNull(response.content)
+                val user: APIResponse<User> = decodeFromString(response.content!!)
+
+                val shouldUser = wrapSuccess(User(userId, "changedTest", "changedSurname", TestUser.email))
                 assertEquals(shouldUser, user)
             }
         }

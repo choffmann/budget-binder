@@ -34,7 +34,7 @@ fun Route.meRoute() {
             delete {
                 val userPrincipal: UserPrincipal = call.principal()!!
                 val userService: UserService by closestDI().instance()
-                call.respond(userService.deleteUser(userPrincipal.getUserID()))
+                call.respond(APIResponse(data = userService.deleteUser(userPrincipal.getUserID()), success = true))
             }
         }
     }
