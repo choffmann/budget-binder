@@ -222,6 +222,13 @@ class ApplicationTest {
                 val user: APIResponse<User> = decodeFromString(response.content!!)
                 val shouldUser = wrapSuccess(User(userId, "changedTest", "changedSurname", TestUser.email))
                 assertEquals(shouldUser, user)
+
+                transaction {
+                    val userEntity = UserEntity[userId]
+                    assertEquals("changedTest", userEntity.firstName)
+                    assertEquals("changedSurname", userEntity.name)
+                    assertEquals("changedSurname", userEntity.name)
+                }
             }
 
             with(handleRequest(HttpMethod.Post, "/login") {
@@ -266,6 +273,30 @@ class ApplicationTest {
 
                 val shouldUser = wrapSuccess(User(userId, "changedTest", "changedSurname", TestUser.email))
                 assertEquals(shouldUser, user)
+
+                transaction {
+                    assertNull(UserEntity.findById(userId))
+                }
+            }
+
+            with(handleRequest(HttpMethod.Get, "/me") {
+                addHeader(HttpHeaders.Authorization, "Bearer ${TestUser.accessToken ?: ""}")
+            }) {
+                assertEquals(HttpStatusCode.Unauthorized, response.status())
+                assertNull(response.content)
+            }
+
+            with(handleRequest(HttpMethod.Post, "/login") {
+                addHeader(HttpHeaders.ContentType, ContentType.Application.FormUrlEncoded.toString())
+                setBody(
+                    listOf(
+                        "username" to TestUser.email,
+                        "password" to "newPassword"
+                    ).formUrlEncode()
+                )
+            }) {
+                assertEquals(HttpStatusCode.Unauthorized, response.status())
+                assertNull(response.content)
             }
         }
     }
