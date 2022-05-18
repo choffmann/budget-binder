@@ -25,11 +25,11 @@ class ApplicationTest {
                 val user: APIResponse<User> = decodeFromString(response.content!!)
                 val id = transaction {
                     val userEntity = UserEntity.all().first()
-                    assertEquals(userEntity.email, TestUser.email)
+                    assertEquals(TestUser.email, userEntity.email)
                     assertNotNull(userEntity.category)
                     val categoryEntity = CategoryEntity[userEntity.category!!]
                     assertNotNull(categoryEntity)
-                    assertEquals(categoryEntity.name, "default")
+                    assertEquals("default", categoryEntity.name)
                     userEntity.id.value
                 }
                 val shouldUser = wrapSuccess(
@@ -40,7 +40,7 @@ class ApplicationTest {
                         TestUser.email
                     )
                 )
-                assertEquals(user, shouldUser)
+                assertEquals(shouldUser, user)
 
             }
         }
@@ -98,9 +98,9 @@ class ApplicationTest {
                     assertNotNull(setCookieHeader)
                     val cookie = HttpCookie.parse(setCookieHeader)
                     assertNotNull(cookie)
-                    assertEquals(cookie.size, 1)
-                    assertEquals(cookie[0].name, "jwt")
-                    assertNotEquals(cookie[0].value, "")
+                    assertEquals(1, cookie.size)
+                    assertEquals("jwt", cookie[0].name)
+                    assertNotEquals("", cookie[0].value)
                 }
 
                 handleRequest(HttpMethod.Get, "/me").apply {
@@ -140,9 +140,9 @@ class ApplicationTest {
                     assertNotNull(setCookieHeader)
                     val cookie = HttpCookie.parse(setCookieHeader)
                     assertNotNull(cookie)
-                    assertEquals(cookie.size, 1)
-                    assertEquals(cookie[0].name, "jwt")
-                    assertEquals(cookie[0].value, "")
+                    assertEquals(1, cookie.size)
+                    assertEquals("jwt", cookie[0].name)
+                    assertEquals("", cookie[0].value)
                 }
 
                 checkMeSuccess()
@@ -171,7 +171,7 @@ class ApplicationTest {
 
                 val tokenVersion = transaction {
                     val tokenVersion = UserEntity.all().first().tokenVersion
-                    assertEquals(tokenVersion, 1)
+                    assertEquals(1, tokenVersion)
                     tokenVersion
                 }
 
@@ -182,7 +182,7 @@ class ApplicationTest {
 
                 transaction {
                     val newTokenVersion = UserEntity.all().first().tokenVersion
-                    assertNotEquals(newTokenVersion, tokenVersion)
+                    assertNotEquals(tokenVersion, newTokenVersion)
                 }
 
                 checkMeFailure()
@@ -201,7 +201,7 @@ class ApplicationTest {
 
                 val user: APIResponse<User> = decodeFromString(response.content!!)
                 val shouldUser: APIResponse<User> = wrapFailure("not the right Parameters provided")
-                assertEquals(user, shouldUser)
+                assertEquals(shouldUser, user)
             }
         }
     }

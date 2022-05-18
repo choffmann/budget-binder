@@ -113,7 +113,7 @@ fun TestApplicationEngine.checkMeSuccess() {
         val id = transaction { UserEntity.all().first().id.value }
 
         val shouldUser = wrapSuccess(TestUser.getTestUser(id))
-        assertEquals(response, shouldUser)
+        assertEquals(shouldUser, response)
     }
 }
 
