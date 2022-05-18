@@ -32,7 +32,7 @@ class ApplicationTest {
                     assertEquals(categoryEntity.name, "default")
                     userEntity.id.value
                 }
-                val shouldUser = wrapSuccessFull(
+                val shouldUser = wrapSuccess(
                     User(
                         id,
                         TestUser.firstName,
@@ -156,8 +156,8 @@ class ApplicationTest {
                 assertEquals(HttpStatusCode.Unauthorized, response.status())
                 assertNotNull(response.content)
                 val token: APIResponse<AuthToken> = decodeFromString(response.content!!)
-                assert(!token.success)
-                assertEquals(token.error!!.message, "No Refresh Cookie")
+                val shouldToken: APIResponse<AuthToken> = wrapFailure("No Refresh Cookie")
+                assertEquals(shouldToken, token)
             }
         }
     }
@@ -191,7 +191,18 @@ class ApplicationTest {
     }
 
     @Test
-    fun test() {
+    fun testUserEndpoints() {
+        withCustomTestApplication(Application::mainModule) {
+            loginUser()
+            checkMeSuccess()
 
+            sendAuthenticatedRequest(HttpMethod.Patch, "/me") {
+                assertEquals(HttpStatusCode.OK, response.status())
+
+                val user: APIResponse<User> = decodeFromString(response.content!!)
+                val shouldUser: APIResponse<User> = wrapFailure("not the right Parameters provided")
+                assertEquals(user, shouldUser)
+            }
+        }
     }
 }

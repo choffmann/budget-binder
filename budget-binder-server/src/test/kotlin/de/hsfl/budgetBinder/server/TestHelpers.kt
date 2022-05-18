@@ -2,6 +2,7 @@ package de.hsfl.budgetBinder.server
 
 import de.hsfl.budgetBinder.common.APIResponse
 import de.hsfl.budgetBinder.common.AuthToken
+import de.hsfl.budgetBinder.common.ErrorModel
 import de.hsfl.budgetBinder.common.User
 import de.hsfl.budgetBinder.server.config.Config
 import de.hsfl.budgetBinder.server.config.getServerConfig
@@ -60,8 +61,12 @@ inline fun <reified T> decodeFromString(value: String): APIResponse<T> {
     return Json.decodeFromString(APIResponse.serializer(serializer()), value)
 }
 
-inline fun <reified T> wrapSuccessFull(value: T): APIResponse<T> {
+inline fun <reified T> wrapSuccess(value: T): APIResponse<T> {
     return APIResponse(data = value, success = true)
+}
+
+inline fun <reified T> wrapFailure(message: String): APIResponse<T> {
+    return APIResponse(error = ErrorModel(message = message), success = false)
 }
 
 fun TestApplicationEngine.loginUser(block: TestApplicationCall.() -> Unit = {}) {
@@ -107,7 +112,7 @@ fun TestApplicationEngine.checkMeSuccess() {
 
         val id = transaction { UserEntity.all().first().id.value }
 
-        val shouldUser = wrapSuccessFull(TestUser.getTestUser(id))
+        val shouldUser = wrapSuccess(TestUser.getTestUser(id))
         assertEquals(response, shouldUser)
     }
 }
