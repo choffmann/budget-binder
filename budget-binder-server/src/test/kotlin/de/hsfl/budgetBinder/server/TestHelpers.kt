@@ -5,24 +5,28 @@ import de.hsfl.budgetBinder.common.AuthToken
 import de.hsfl.budgetBinder.common.User
 import de.hsfl.budgetBinder.server.config.Config
 import de.hsfl.budgetBinder.server.config.getServerConfig
+import de.hsfl.budgetBinder.server.models.UserEntity
 import io.ktor.application.*
 import io.ktor.http.*
 import io.ktor.server.testing.*
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.serializer
+import org.jetbrains.exposed.sql.transactions.transaction
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 
 object TestUser {
-    const val id = 1
     const val email = "test@test.com"
     const val password = "test-test"
     const val firstName = "test"
     const val surName = "Test"
 
-    val user = User(id, firstName, surName, email)
     val userIn = User.In(firstName, surName, email, password)
+
+    fun getTestUser(id: Int): User {
+        return User(id, firstName, surName, email)
+    }
 
     var accessToken: String? = null
 }
@@ -58,27 +62,6 @@ inline fun <reified T> decodeFromString(value: String): APIResponse<T> {
 
 inline fun <reified T> wrapSuccessFull(value: T): APIResponse<T> {
     return APIResponse(data = value, success = true)
-}
-
-fun TestApplicationEngine.registerUser(block: TestApplicationCall.() -> Unit = {}) {
-    with(handleRequest(HttpMethod.Post, "/register") {
-        addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
-        setBody(toJsonString(TestUser.userIn))
-    }) {
-        assertEquals(HttpStatusCode.OK, response.status())
-        assertNotNull(response.content)
-        val user: APIResponse<User> = decodeFromString(response.content!!)
-        val shouldUser = wrapSuccessFull(
-            User(
-                1,
-                TestUser.firstName,
-                TestUser.surName,
-                TestUser.email
-            )
-        )
-        assertEquals(user, shouldUser)
-        block()
-    }
 }
 
 fun TestApplicationEngine.loginUser(block: TestApplicationCall.() -> Unit = {}) {
@@ -122,7 +105,9 @@ fun TestApplicationEngine.checkMeSuccess() {
         assertNotNull(response.content)
         val response: APIResponse<User> = decodeFromString(response.content!!)
 
-        val shouldUser = wrapSuccessFull(TestUser.user)
+        val id = transaction { UserEntity.all().first().id.value }
+
+        val shouldUser = wrapSuccessFull(TestUser.getTestUser(id))
         assertEquals(response, shouldUser)
     }
 }

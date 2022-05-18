@@ -2,6 +2,7 @@ package de.hsfl.budgetBinder.server
 
 import de.hsfl.budgetBinder.common.APIResponse
 import de.hsfl.budgetBinder.common.AuthToken
+import de.hsfl.budgetBinder.common.User
 import de.hsfl.budgetBinder.server.models.CategoryEntity
 import de.hsfl.budgetBinder.server.models.UserEntity
 import io.ktor.application.*
@@ -12,6 +13,48 @@ import java.net.HttpCookie
 import kotlin.test.*
 
 class ApplicationTest {
+    @BeforeTest
+    fun registerTestUser() {
+        withCustomTestApplication(Application::mainModule) {
+            with(handleRequest(HttpMethod.Post, "/register") {
+                addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+                setBody(toJsonString(TestUser.userIn))
+            }) {
+                assertEquals(HttpStatusCode.OK, response.status())
+                assertNotNull(response.content)
+                val user: APIResponse<User> = decodeFromString(response.content!!)
+                val id = transaction {
+                    val userEntity = UserEntity.all().first()
+                    assertEquals(userEntity.email, TestUser.email)
+                    assertNotNull(userEntity.category)
+                    val categoryEntity = CategoryEntity[userEntity.category!!]
+                    assertNotNull(categoryEntity)
+                    assertEquals(categoryEntity.name, "default")
+                    userEntity.id.value
+                }
+                val shouldUser = wrapSuccessFull(
+                    User(
+                        id,
+                        TestUser.firstName,
+                        TestUser.surName,
+                        TestUser.email
+                    )
+                )
+                assertEquals(user, shouldUser)
+
+            }
+        }
+    }
+
+    @AfterTest
+    fun deleteTestUser() {
+        withCustomTestApplication(Application::mainModule) {
+            transaction {
+                UserEntity.all().forEach { it.delete() }
+            }
+        }
+    }
+
     @Test
     fun testRoot() {
         withCustomTestApplication(Application::mainModule) {
@@ -23,26 +66,33 @@ class ApplicationTest {
     }
 
     @Test
-    fun testRegister() {
+    fun testRegisterLoginAndLogout() {
         withCustomTestApplication(Application::mainModule) {
-            registerUser {
-                transaction {
-                    val userEntity = UserEntity[TestUser.id]
-                    assertEquals(userEntity.email, TestUser.email)
-                    assertNotNull(userEntity.category)
-                    val categoryEntity = CategoryEntity[userEntity.category!!]
-                    assertNotNull(categoryEntity)
-                    assertEquals(categoryEntity.name, "default")
-                }
-            }
-        }
-    }
-
-    @Test
-    fun testLoginAndLogout() {
-        withCustomTestApplication(Application::mainModule) {
-            registerUser()
             cookiesSession {
+
+                handleRequest(HttpMethod.Get, "/login").apply {
+                    assertEquals(HttpStatusCode.NotFound, response.status())
+                    assertNull(response.content)
+                }
+
+                handleRequest(HttpMethod.Post, "/login").apply {
+                    assertEquals(HttpStatusCode.Unauthorized, response.status())
+                    assertNull(response.content)
+                }
+
+                with(handleRequest(HttpMethod.Post, "/login") {
+                    addHeader(HttpHeaders.ContentType, ContentType.Application.FormUrlEncoded.toString())
+                    setBody(
+                        listOf(
+                            "username" to "falseTest@test.com",
+                            "password" to "falsetest"
+                        ).formUrlEncode()
+                    )
+                }) {
+                    assertEquals(HttpStatusCode.Unauthorized, response.status())
+                    assertNull(response.content)
+                }
+
                 loginUser {
                     val setCookieHeader = response.headers[HttpHeaders.SetCookie]
                     assertNotNull(setCookieHeader)
@@ -115,14 +165,12 @@ class ApplicationTest {
     @Test
     fun testLogoutAll() {
         withCustomTestApplication(Application::mainModule) {
-            registerUser()
-
             cookiesSession {
                 loginUser()
                 checkMeSuccess()
 
                 val tokenVersion = transaction {
-                    val tokenVersion = UserEntity[TestUser.id].tokenVersion
+                    val tokenVersion = UserEntity.all().first().tokenVersion
                     assertEquals(tokenVersion, 1)
                     tokenVersion
                 }
@@ -133,12 +181,17 @@ class ApplicationTest {
                 }
 
                 transaction {
-                    val newTokenVersion = UserEntity[TestUser.id].tokenVersion
+                    val newTokenVersion = UserEntity.all().first().tokenVersion
                     assertNotEquals(newTokenVersion, tokenVersion)
                 }
 
                 checkMeFailure()
             }
         }
+    }
+
+    @Test
+    fun test() {
+
     }
 }
