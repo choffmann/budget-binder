@@ -2,7 +2,6 @@ package de.hsfl.budgetBinder.server
 
 import de.hsfl.budgetBinder.common.APIResponse
 import de.hsfl.budgetBinder.common.AuthToken
-import de.hsfl.budgetBinder.common.User
 import de.hsfl.budgetBinder.server.models.CategoryEntity
 import de.hsfl.budgetBinder.server.models.UserEntity
 import io.ktor.application.*
@@ -26,16 +25,7 @@ class ApplicationTest {
     @Test
     fun testRegister() {
         withCustomTestApplication(Application::mainModule) {
-            with(handleRequest(HttpMethod.Post, "/register") {
-                addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
-                setBody(toJsonString(TestUser.userIn))
-            }) {
-                assertEquals(HttpStatusCode.OK, response.status())
-                assertNotNull(response.content)
-                val user: APIResponse<User> = decodeFromString(response.content!!)
-                val shouldUser = wrapSuccessFull(TestUser.user)
-                assertEquals(user, shouldUser)
-
+            registerUser {
                 transaction {
                     val userEntity = UserEntity[TestUser.id]
                     assertEquals(userEntity.email, TestUser.email)
@@ -53,22 +43,7 @@ class ApplicationTest {
         withCustomTestApplication(Application::mainModule) {
             registerUser()
             cookiesSession {
-                with(handleRequest(HttpMethod.Post, "/login") {
-                    addHeader(HttpHeaders.ContentType, ContentType.Application.FormUrlEncoded.toString())
-                    setBody(
-                        listOf(
-                            "username" to TestUser.email,
-                            "password" to TestUser.password
-                        ).formUrlEncode()
-                    )
-                }) {
-                    assertEquals(HttpStatusCode.OK, response.status())
-                    assertNotNull(response.content)
-                    val token: APIResponse<AuthToken> = decodeFromString(response.content!!)
-                    assert(token.success)
-                    assertNotNull(token.data)
-                    TestUser.accessToken = token.data!!.token
-
+                loginUser {
                     val setCookieHeader = response.headers[HttpHeaders.SetCookie]
                     assertNotNull(setCookieHeader)
                     val cookie = HttpCookie.parse(setCookieHeader)

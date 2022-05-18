@@ -60,7 +60,7 @@ inline fun <reified T> wrapSuccessFull(value: T): APIResponse<T> {
     return APIResponse(data = value, success = true)
 }
 
-fun TestApplicationEngine.registerUser() {
+fun TestApplicationEngine.registerUser(block: TestApplicationCall.() -> Unit = {}) {
     with(handleRequest(HttpMethod.Post, "/register") {
         addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
         setBody(toJsonString(TestUser.userIn))
@@ -77,10 +77,11 @@ fun TestApplicationEngine.registerUser() {
             )
         )
         assertEquals(user, shouldUser)
+        block()
     }
 }
 
-fun TestApplicationEngine.loginUser() {
+fun TestApplicationEngine.loginUser(block: TestApplicationCall.() -> Unit = {}) {
     with(handleRequest(HttpMethod.Post, "/login") {
         addHeader(HttpHeaders.ContentType, ContentType.Application.FormUrlEncoded.toString())
         setBody(
@@ -96,6 +97,7 @@ fun TestApplicationEngine.loginUser() {
         assert(token.success)
         assertNotNull(token.data)
         TestUser.accessToken = token.data!!.token
+        block()
     }
 }
 
