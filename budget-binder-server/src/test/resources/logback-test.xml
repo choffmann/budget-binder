@@ -10,4 +10,5 @@
     <logger name="io.netty" level="OFF"/>
     <logger name="Exposed" level="OFF"/>
     <logger name="ktor.test" level="OFF"/>
+    <logger name="io.ktor.auth.jwt" level="OFF"/>
 </configuration>

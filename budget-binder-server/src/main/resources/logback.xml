@@ -10,4 +10,5 @@
     <logger name="io.netty" level="INFO"/>
     <logger name="Exposed" level="DEBUG"/>
     <logger name="ktor.application" level="DEBUG"/>
+    <logger name="io.ktor.auth.jwt" level="DEBUG"/>
 </configuration>
