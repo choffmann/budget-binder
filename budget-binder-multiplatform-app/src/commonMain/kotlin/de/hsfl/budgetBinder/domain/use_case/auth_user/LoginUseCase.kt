@@ -15,7 +15,7 @@ class LoginUseCase(
             emit(DataResponse.Loading())
             repository.authorize(email, password).data?.let {
                 emit(DataResponse.Success(it))
-            }
+            } ?: emit(DataResponse.Error("No Data response from Server"))
         } catch (e: IOException) {
             e.printStackTrace()
             emit(DataResponse.Error("Couldn't reach the server"))
