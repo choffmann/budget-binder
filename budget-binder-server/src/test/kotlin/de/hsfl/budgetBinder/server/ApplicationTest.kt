@@ -16,33 +16,7 @@ class ApplicationTest {
     @BeforeTest
     fun registerTestUser() {
         withCustomTestApplication(Application::mainModule) {
-            with(handleRequest(HttpMethod.Post, "/register") {
-                addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
-                setBody(toJsonString(TestUser.userIn))
-            }) {
-                assertEquals(HttpStatusCode.OK, response.status())
-                assertNotNull(response.content)
-                val user: APIResponse<User> = decodeFromString(response.content!!)
-                val id = transaction {
-                    val userEntity = UserEntity.all().first()
-                    assertEquals(TestUser.email, userEntity.email)
-                    assertNotNull(userEntity.category)
-                    val categoryEntity = CategoryEntity[userEntity.category!!]
-                    assertNotNull(categoryEntity)
-                    assertEquals("default", categoryEntity.name)
-                    userEntity.id.value
-                }
-                val shouldUser = wrapSuccess(
-                    User(
-                        id,
-                        TestUser.firstName,
-                        TestUser.surName,
-                        TestUser.email
-                    )
-                )
-                assertEquals(shouldUser, user)
-
-            }
+            registerUser()
         }
     }
 
@@ -50,7 +24,10 @@ class ApplicationTest {
     fun deleteTestUser() {
         withCustomTestApplication(Application::mainModule) {
             transaction {
-                UserEntity.all().forEach { it.delete() }
+                UserEntity.all().forEach {
+                    CategoryEntity[it.category!!].delete()
+                    it.delete()
+                }
             }
         }
     }
