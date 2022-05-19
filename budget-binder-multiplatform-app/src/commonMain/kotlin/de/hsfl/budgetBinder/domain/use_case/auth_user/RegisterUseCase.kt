@@ -12,9 +12,11 @@ class RegisterUseCase(
     operator fun invoke(firstName: String, lastName: String, email: String, password: String): Flow<DataResponse<User>> = flow {
         try {
             emit(DataResponse.Loading())
-            repository.register(firstName, lastName, email, password).data?.let {
-                emit(DataResponse.Success(it))
-            } ?: emit(DataResponse.Error("No Data response from Server"))
+            repository.register(firstName, lastName, email, password).let { response ->
+                response.data?.let { 
+                    emit(DataResponse.Success(it))
+                } ?: emit(DataResponse.Error(response.error!!.message))
+            }
         } catch (e: IOException) {
             e.printStackTrace()
             emit(DataResponse.Error("Couldn't reach the server"))
