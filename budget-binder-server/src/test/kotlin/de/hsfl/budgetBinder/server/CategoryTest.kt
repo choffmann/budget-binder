@@ -314,4 +314,24 @@ class CategoryTest {
             }
         }
     }
+
+    @Test
+    @Ignore("Test Not implemented")
+    fun testPatchCategory() {
+        withCustomTestApplication(Application::mainModule) {
+            loginUser()
+
+            TODO()
+        }
+    }
+
+    @Test
+    @Ignore("Test Not implemented")
+    fun testDeleteCategory() {
+        withCustomTestApplication(Application::mainModule) {
+            loginUser()
+
+            TODO()
+        }
+    }
 }
