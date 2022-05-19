@@ -24,7 +24,8 @@ class LoginViewModel(
                     _state.value = UiState.Success(response.data)
                 }
                 is DataResponse.Error -> {
-                    _state.value = UiState.Error(response.message!!)
+                    // Eigentlich response.error!!.message, aber status 401 kommt ohne body
+                    _state.value = UiState.Error("Username or Password incorrect")
                 }
                 is DataResponse.Loading -> {
                     _state.value = UiState.Loading
