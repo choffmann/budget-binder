@@ -35,7 +35,7 @@ val di = DI {
 
 @Composable
 fun App() = withDI(di) {
-    val screenState = remember { mutableStateOf<Screen>(Screen.Register) }
+    val screenState = remember { mutableStateOf<Screen>(Screen.Login) }
     val darkTheme = remember { mutableStateOf(false) }
     MaterialTheme(
         colors = if (darkTheme.value) darkColors() else lightColors()
