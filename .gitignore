@@ -1,4 +1,5 @@
 */**/data.db
+kotlin-js-store/yarn.lock
 # Created by https://www.toptal.com/developers/gitignore/api/windows,linux,macos,gradle,kotlin,intellij,intellij+iml,intellij+all,android,androidstudio,swift,xcode,xcodeinjection,swiftpm,swiftpackagemanager
 # Edit at https://www.toptal.com/developers/gitignore?templates=windows,linux,macos,gradle,kotlin,intellij,intellij+iml,intellij+all,android,androidstudio,swift,xcode,xcodeinjection,swiftpm,swiftpackagemanager
 
