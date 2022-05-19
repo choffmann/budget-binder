@@ -8,6 +8,8 @@ import io.ktor.application.*
 import io.ktor.server.testing.*
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.serializer
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 fun <R> withCustomTestApplication(
     moduleFunction: Application.(config: Config) -> Unit,
@@ -44,4 +46,8 @@ inline fun <reified T> wrapSuccess(value: T): APIResponse<T> {
 
 inline fun <reified T> wrapFailure(message: String): APIResponse<T> {
     return APIResponse(error = ErrorModel(message = message), success = false)
+}
+
+fun formatToPeriod(time: LocalDateTime): String {
+    return time.format(DateTimeFormatter.ofPattern("MM-yyyy"))
 }
