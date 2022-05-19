@@ -11,6 +11,7 @@ import io.ktor.client.plugins.cookies.*
 import io.ktor.client.plugins.logging.*
 import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
+import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 
@@ -58,12 +59,17 @@ class Client : ApiClient {
     }
 
     override suspend fun login(email: String, password: String): APIResponse<AuthToken> {
-        return client.submitForm(
+        val response: HttpResponse = client.submitForm(
             url = "/login", formParameters = Parameters.build {
                 append("username", email)
                 append("password", password)
             }, encodeInQuery = false
-        ).body()
+        )
+
+        return when (response.status) {
+            HttpStatusCode.Unauthorized -> APIResponse(ErrorModel("Username or Password incorrect"))
+            else -> response.body()
+        }
     }
 
     override suspend fun register(

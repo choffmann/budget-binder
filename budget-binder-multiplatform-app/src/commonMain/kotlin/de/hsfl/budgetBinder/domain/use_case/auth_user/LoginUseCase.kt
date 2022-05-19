@@ -16,8 +16,7 @@ class LoginUseCase(
             repository.authorize(email, password).let { response ->
                 response.data?.let {
                     emit(DataResponse.Success(it))
-                } ?: emit(DataResponse.Error("Username or Password incorrect"))
-                // Eigentlich response.error!!.message, aber status 401 kommt ohne body
+                } ?: emit(DataResponse.Error(response.error!!.message))
             }
         } catch (e: IOException) {
             e.printStackTrace()
