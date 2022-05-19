@@ -7,8 +7,8 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.Color
 import de.hsfl.budgetBinder.data.client.Client
-import de.hsfl.budgetBinder.data.repository.AuthRepositoryImplementation
-import de.hsfl.budgetBinder.data.repository.UserRepositoryImplementation
+import de.hsfl.budgetBinder.data.repository.AuthRepositoryImpl
+import de.hsfl.budgetBinder.data.repository.UserRepositoryImpl
 import de.hsfl.budgetBinder.domain.repository.AuthRepository
 import de.hsfl.budgetBinder.domain.repository.UserRepository
 import de.hsfl.budgetBinder.domain.use_case.auth_user.LoginUseCase
@@ -24,8 +24,8 @@ import org.kodein.di.instance
 val di = DI {
     bindSingleton { Client() }
 
-    bindSingleton<AuthRepository> { AuthRepositoryImplementation(instance()) }
-    bindSingleton<UserRepository> { UserRepositoryImplementation(instance()) }
+    bindSingleton<AuthRepository> { AuthRepositoryImpl(instance()) }
+    bindSingleton<UserRepository> { UserRepositoryImpl(instance()) }
 
     bindSingleton { RegisterUseCase(instance()) }
     bindSingleton { LoginUseCase(instance()) }
