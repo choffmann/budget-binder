@@ -268,4 +268,50 @@ class CategoryTest {
             }
         }
     }
+
+    @Test
+    fun testGetCategoryById() {
+        withCustomTestApplication(Application::mainModule) {
+            loginUser()
+
+            handleRequest(HttpMethod.Get, "/categories/1").apply {
+                assertEquals(HttpStatusCode.Unauthorized, response.status())
+                assertNull(response.content)
+            }
+
+            sendAuthenticatedRequest(HttpMethod.Get, "/categories/test") {
+                assertEquals(HttpStatusCode.OK, response.status())
+                assertNotNull(response.content)
+                val response: APIResponse<Category> = decodeFromString(response.content!!)
+                val shouldResponse: APIResponse<Category> = wrapFailure("path parameter is not a number")
+                assertEquals(shouldResponse, response)
+            }
+
+            sendAuthenticatedRequest(HttpMethod.Get, "/categories/null") {
+                assertEquals(HttpStatusCode.OK, response.status())
+                assertNotNull(response.content)
+                val response: APIResponse<Category> = decodeFromString(response.content!!)
+                val shouldResponse: APIResponse<Category> = wrapFailure("path parameter is not a number")
+                assertEquals(shouldResponse, response)
+            }
+
+            sendAuthenticatedRequest(HttpMethod.Get, "/categories/5000") {
+                assertEquals(HttpStatusCode.OK, response.status())
+                assertNotNull(response.content)
+                val response: APIResponse<Category> = decodeFromString(response.content!!)
+                val shouldResponse: APIResponse<Category> = wrapFailure("Category not found")
+                assertEquals(shouldResponse, response)
+            }
+
+            val id = transaction { CategoryEntity.all().first().id.value + 1 }
+
+            sendAuthenticatedRequest(HttpMethod.Get, "/categories/${id}") {
+                assertEquals(HttpStatusCode.OK, response.status())
+                assertNotNull(response.content)
+                val response: APIResponse<Category> = decodeFromString(response.content!!)
+                val shouldResponse = wrapSuccess(Category(id, "test", TestCategories.color, TestCategories.image, 10f))
+                assertEquals(shouldResponse, response)
+            }
+        }
+    }
 }
