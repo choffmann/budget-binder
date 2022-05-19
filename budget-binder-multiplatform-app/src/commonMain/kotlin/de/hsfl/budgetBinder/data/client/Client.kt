@@ -1,9 +1,6 @@
 package de.hsfl.budgetBinder.data.client
 
-import de.hsfl.budgetBinder.common.APIResponse
-import de.hsfl.budgetBinder.common.AuthToken
-import de.hsfl.budgetBinder.common.Constants
-import de.hsfl.budgetBinder.common.User
+import de.hsfl.budgetBinder.common.*
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.plugins.*
@@ -19,15 +16,16 @@ import io.ktor.serialization.kotlinx.json.*
 
 // Define API Interfaces
 interface ApiClient {
-    // '/login'
-    suspend fun login(username: String, password: String)
-    // '/users/me'
+    suspend fun login(email: String, password: String): APIResponse<AuthToken>
+
+    suspend fun register(firstName: String, lastName: String, email: String, password: String): APIResponse<User>
+
+    suspend fun logout(onAllDevice: Boolean)
+
     suspend fun getMyUser(): APIResponse<User>
-    // '/path'
-    suspend fun path(): String
 }
 
-class Client: ApiClient {
+class Client : ApiClient {
     private val client = HttpClient {
         install(ContentNegotiation) {
             json()
@@ -59,21 +57,36 @@ class Client: ApiClient {
         }
     }
 
-    override suspend fun login(username: String, password: String) {
-        val response: APIResponse<AuthToken> = client.submitForm(
+    override suspend fun login(email: String, password: String): APIResponse<AuthToken> {
+        return client.submitForm(
             url = "/login", formParameters = Parameters.build {
-                append("username", username)
+                append("username", email)
                 append("password", password)
             }, encodeInQuery = false
         ).body()
-        println("Client::login $response")
+    }
+
+    override suspend fun register(
+        firstName: String,
+        lastName: String,
+        email: String,
+        password: String
+    ): APIResponse<User> {
+        return client.post("/register") {
+            contentType(ContentType.Application.Json)
+            setBody(User.In(firstName, lastName, email, password))
+        }.body()
+    }
+
+    override suspend fun logout(onAllDevice: Boolean) {
+        client.submitForm(
+            url = "/logout", formParameters = Parameters.build {
+                append("all", onAllDevice.toString())
+            }, encodeInQuery = true
+        )
     }
 
     override suspend fun getMyUser(): APIResponse<User> {
-        return client.get("/users/me").body()
-    }
-
-    override suspend fun path(): String {
-        return client.get("/path").body()
+        return client.get("/me").body()
     }
 }

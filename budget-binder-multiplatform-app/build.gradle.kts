@@ -45,14 +45,16 @@ kotlin {
                 implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
                 implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1")
-                implementation("org.kodein.di:kodein-di-framework-compose:7.11.0")
+
                 implementation("org.kodein.di:kodein-di:7.11.0")
+                implementation("ch.qos.logback:logback-classic:1.2.11")
             }
         }
 
         val jvmMain by creating {
             dependencies {
                 implementation("io.ktor:ktor-client-java:$ktorVersion")
+                implementation("org.kodein.di:kodein-di-framework-compose:7.11.0")
                 implementation(compose.foundation)
                 implementation(compose.material)
                 api(compose.preview)
@@ -88,6 +90,7 @@ kotlin {
         val jsMain by getting {
             dependencies {
                 implementation("io.ktor:ktor-client-js:$ktorVersion")
+                implementation("org.kodein.di:kodein-di-framework-compose:7.11.0")
                 implementation(compose.web.core)
                 implementation(compose.runtime)
                 implementation(compose.web.svg)

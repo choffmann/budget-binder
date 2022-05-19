@@ -14,29 +14,22 @@ class LoginViewModel(
     private val authUseCase: LoginUseCase,
     private val scope: CoroutineScope = CoroutineScope(Dispatchers.Unconfined + SupervisorJob())
 ) {
-    private val _state = MutableStateFlow<LoginState>(LoginState.Empty)
-    val state: StateFlow<LoginState> = _state
+    private val _state = MutableStateFlow<UiState>(UiState.Empty)
+    val state: StateFlow<UiState> = _state
 
-    fun auth(username: String, password: String) {
-        authUseCase(username, password).onEach { auth ->
-            when(auth) {
+    fun auth(email: String, password: String) {
+        authUseCase(email, password).onEach { auth ->
+            when (auth) {
                 is DataResponse.Success -> {
-                    _state.value = LoginState.Success(true)
+                    _state.value = UiState.Success(true)
                 }
                 is DataResponse.Error -> {
-                    _state.value = LoginState.Error("Username or Password incorrect")
+                    _state.value = UiState.Error("Username or Password incorrect")
                 }
                 is DataResponse.Loading -> {
-                    _state.value = LoginState.Loading
+                    _state.value = UiState.Loading
                 }
             }
         }.launchIn(scope)
     }
-}
-
-sealed class LoginState {
-    object Empty : LoginState()
-    object Loading : LoginState()
-    data class Success(val login: Boolean) : LoginState()
-    data class Error(val error: String) : LoginState()
 }
