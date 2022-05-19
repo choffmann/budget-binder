@@ -15,6 +15,7 @@ import io.ktor.auth.*
 import io.ktor.auth.jwt.*
 import io.ktor.features.*
 import io.ktor.http.*
+import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.serialization.*
 import org.jetbrains.exposed.sql.Database
@@ -134,6 +135,14 @@ fun Application.module() {
                 APIResponse<String>(ErrorModel("Internal Server Error"))
             )
             throw cause
+        }
+        status(HttpStatusCode.Unauthorized) {
+            if (call.request.uri == "/login") {
+                call.respond(HttpStatusCode.Unauthorized, APIResponse<String>(ErrorModel("Unauthorized")))
+            } else {
+                call.response.headers.append(HttpHeaders.WWWAuthenticate, "Bearer realm=\"Access to all your stuff\"")
+                call.respond(HttpStatusCode.Unauthorized, APIResponse<String>(ErrorModel("Unauthorized")))
+            }
         }
     }
 
