@@ -457,7 +457,19 @@ class CategoryTest {
                 assertEquals(shouldResponse, response)
             }
 
-            TODO()
+            sendAuthenticatedRequest(HttpMethod.Delete, "/categories/${id + 4}") {
+                assertEquals(HttpStatusCode.OK, response.status())
+                assertNotNull(response.content)
+                val response: APIResponse<Category> = decodeFromString(response.content!!)
+                val shouldResponse: APIResponse<Category> =
+                    wrapSuccess(Category(id + 4, "Hobbies", TestCategories.color, TestCategories.image, 150f))
+                assertEquals(shouldResponse, response)
+
+                transaction {
+                    val categoryEntity = CategoryEntity.findById(id + 4)
+                    assertNull(categoryEntity)
+                }
+            }
         }
     }
 }
