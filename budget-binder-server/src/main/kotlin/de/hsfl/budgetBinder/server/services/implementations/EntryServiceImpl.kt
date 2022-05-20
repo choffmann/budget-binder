@@ -48,7 +48,7 @@ class EntryServiceImpl : EntryService {
 
     override fun changeEntry(userId: Int, entryId: Int, entry: Entry.Patch): Entry? = transaction {
         var entryEntity = EntryEntity[entryId]
-        if (entryEntity.lastOrNull() != null) {
+        if (entryEntity.ended != null) {
             return@transaction null
         }
 

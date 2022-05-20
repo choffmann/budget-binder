@@ -39,7 +39,7 @@ class CategoryServiceImpl : CategoryService {
 
     override fun changeCategory(userId: Int, categoryId: Int, categoryPatch: Category.Patch): Category? = transaction {
         var categoryEntity = CategoryEntity[categoryId]
-        if (categoryEntity.lastOrNull() != null) {
+        if (categoryEntity.ended != null) {
             return@transaction null
         }
         if (categoryPatch.budget != null) {
