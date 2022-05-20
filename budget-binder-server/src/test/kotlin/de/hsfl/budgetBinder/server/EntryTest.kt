@@ -274,12 +274,40 @@ class EntryTest {
     }
 
     @Test
-    @Ignore("Test Not implemented")
     fun testGetEntryById() {
         withCustomTestApplication(Application::mainModule) {
             loginUser()
 
-            TODO()
+            handleRequest(HttpMethod.Get, "/entries/1").apply {
+                assertEquals(HttpStatusCode.Unauthorized, response.status())
+                assertNull(response.content)
+            }
+
+            sendAuthenticatedRequest(HttpMethod.Get, "/entries/test") {
+                assertEquals(HttpStatusCode.OK, response.status())
+                assertNotNull(response.content)
+                val response: APIResponse<Entry> = decodeFromString(response.content!!)
+                val shouldResponse: APIResponse<Entry> = wrapFailure("path parameter is not a number")
+                assertEquals(shouldResponse, response)
+            }
+
+            sendAuthenticatedRequest(HttpMethod.Get, "/entries/5000") {
+                assertEquals(HttpStatusCode.OK, response.status())
+                assertNotNull(response.content)
+                val response: APIResponse<Entry> = decodeFromString(response.content!!)
+                val shouldResponse: APIResponse<Entry> = wrapFailure("Entry not found")
+                assertEquals(shouldResponse, response)
+            }
+
+            val id = transaction { EntryEntity.all().first().id.value }
+
+            sendAuthenticatedRequest(HttpMethod.Get, "/entries/$id") {
+                assertEquals(HttpStatusCode.OK, response.status())
+                assertNotNull(response.content)
+                val response: APIResponse<Entry> = decodeFromString(response.content!!)
+                val shouldResponse = wrapSuccess(Entry(id, "Monthly Job Pay", 3000f, true, null))
+                assertEquals(shouldResponse, response)
+            }
         }
     }
 
