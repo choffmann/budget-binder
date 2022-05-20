@@ -391,47 +391,20 @@ class CategoryTest {
                 }
             }
 
-
             sendAuthenticatedRequest(
                 HttpMethod.Patch,
                 "/categories/${id + 4}",
-                toJsonString(Category.Patch(name = "Hobbies", budget = 200f))
-            ) {
-                assertEquals(HttpStatusCode.OK, response.status())
-                assertNotNull(response.content)
-                val response: APIResponse<Category> = decodeFromString(response.content!!)
-                val shouldResponse =
-                    wrapSuccess(Category(id + 5, "Hobbies", TestCategories.color, TestCategories.image, 200f))
-                assertEquals(shouldResponse, response)
-
-                transaction {
-                    val categoryEntity = CategoryEntity[id + 4]
-                    assertEquals("Fishing", categoryEntity.name)
-                    assertNotNull(categoryEntity.ended)
-                    assertNotNull(categoryEntity.child)
-                    assertEquals(id + 5, categoryEntity.child!!.value)
-
-                    val newCategoryEntity = CategoryEntity[id + 5]
-                    assertEquals("Hobbies", newCategoryEntity.name)
-                    assertNull(newCategoryEntity.ended)
-                    assertNull(newCategoryEntity.child)
-                }
-            }
-
-            sendAuthenticatedRequest(
-                HttpMethod.Patch,
-                "/categories/${id + 5}",
                 toJsonString(Category.Patch(name = "Fishing", budget = 100f))
             ) {
                 assertEquals(HttpStatusCode.OK, response.status())
                 assertNotNull(response.content)
                 val response: APIResponse<Category> = decodeFromString(response.content!!)
                 val shouldResponse =
-                    wrapSuccess(Category(id + 5, "Fishing", TestCategories.color, TestCategories.image, 100f))
+                    wrapSuccess(Category(id + 4, "Fishing", TestCategories.color, TestCategories.image, 100f))
                 assertEquals(shouldResponse, response)
 
                 transaction {
-                    val newCategoryEntity = CategoryEntity[id + 5]
+                    val newCategoryEntity = CategoryEntity[id + 4]
                     assertEquals("Fishing", newCategoryEntity.name)
                     assertNull(newCategoryEntity.ended)
                     assertNull(newCategoryEntity.child)

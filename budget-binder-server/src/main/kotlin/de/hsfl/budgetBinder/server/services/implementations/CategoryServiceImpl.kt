@@ -37,40 +37,49 @@ class CategoryServiceImpl : CategoryService {
         }.toDto()
     }
 
+    private fun createOrChangeCategory(oldCategory: CategoryEntity, patchBudget: Float): CategoryEntity {
+        val now = LocalDateTime.now()
+        val period = LocalDateTime.of(now.year, now.month.value, 1, 0, 0)
+        if (oldCategory.created > period || oldCategory.entries.empty() || oldCategory.entries.all { it.created > period }) {
+            oldCategory.budget = patchBudget
+            return oldCategory
+        }
+        val newCategory = CategoryEntity.new {
+            name = oldCategory.name
+            color = oldCategory.color
+            image = oldCategory.image
+            budget = patchBudget
+            user = oldCategory.user
+        }
+
+        oldCategory.child = newCategory.id
+        oldCategory.ended = LocalDateTime.now()
+
+        val plusPeriod = period.plusMonths(1)
+        oldCategory.entries.forEach {
+            val entryPeriod = LocalDateTime.of(it.created.year, it.created.month.value, 1, 0, 0)
+            var changeEntity = it
+            if (it.repeat && entryPeriod != period) {
+                changeEntity = changeEntity.createChild()
+
+                changeEntity.category = newCategory
+
+            } else {
+                if (it.created > period && it.created < plusPeriod)
+                    it.category = newCategory
+            }
+        }
+
+        return newCategory
+    }
+
     override fun changeCategory(userId: Int, categoryId: Int, categoryPatch: Category.Patch): Category? = transaction {
         var categoryEntity = CategoryEntity[categoryId]
         if (categoryEntity.ended != null) {
             return@transaction null
         }
         if (categoryPatch.budget != null) {
-            val oldCategory = categoryEntity
-            categoryEntity = CategoryEntity.new {
-                name = oldCategory.name
-                color = oldCategory.color
-                image = oldCategory.image
-                budget = categoryPatch.budget!!
-                user = oldCategory.user
-            }
-            oldCategory.child = categoryEntity.id
-            oldCategory.ended = LocalDateTime.now()
-
-            val now = LocalDateTime.now()
-            val period = LocalDateTime.of(now.year, now.month.value, 1, 0, 0)
-            val plusPeriod = period.plusMonths(1)
-
-            oldCategory.entries.forEach {
-                val entryPeriod = LocalDateTime.of(it.created.year, it.created.month.value, 1, 0, 0)
-                var changeEntity = it
-                if (it.repeat && entryPeriod != period) {
-                    changeEntity = changeEntity.createChild()
-
-                    changeEntity.category = categoryEntity
-
-                } else {
-                    if (it.created > period && it.created < plusPeriod)
-                        it.category = categoryEntity
-                }
-            }
+            categoryEntity = createOrChangeCategory(categoryEntity, categoryPatch.budget!!)
         }
 
         categoryPatch.name?.let { categoryEntity.name = it }
