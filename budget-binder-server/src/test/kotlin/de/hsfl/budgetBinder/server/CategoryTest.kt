@@ -305,6 +305,14 @@ class CategoryTest {
 
             val id = transaction { CategoryEntity.all().first().id.value + 1 }
 
+            sendAuthenticatedRequest(HttpMethod.Get, "/categories/${id - 1}") {
+                assertEquals(HttpStatusCode.OK, response.status())
+                assertNotNull(response.content)
+                val response: APIResponse<Category> = decodeFromString(response.content!!)
+                val shouldResponse: APIResponse<Category> = wrapFailure("Category not found")
+                assertEquals(shouldResponse, response)
+            }
+
             sendAuthenticatedRequest(HttpMethod.Get, "/categories/${id}") {
                 assertEquals(HttpStatusCode.OK, response.status())
                 assertNotNull(response.content)
@@ -368,6 +376,18 @@ class CategoryTest {
                 assertNotNull(response.content)
                 val response: APIResponse<Category> = decodeFromString(response.content!!)
                 val shouldResponse: APIResponse<Category> = wrapFailure("you can't change this Category")
+                assertEquals(shouldResponse, response)
+            }
+
+            sendAuthenticatedRequest(
+                HttpMethod.Patch,
+                "/categories/${id - 1}",
+                toJsonString(Category.Patch(name = "patchedTest"))
+            )  {
+                assertEquals(HttpStatusCode.OK, response.status())
+                assertNotNull(response.content)
+                val response: APIResponse<Category> = decodeFromString(response.content!!)
+                val shouldResponse: APIResponse<Category> = wrapFailure("Category not found")
                 assertEquals(shouldResponse, response)
             }
 
@@ -448,6 +468,14 @@ class CategoryTest {
             }
 
             val id = transaction { CategoryEntity.all().first().id.value + 1 }
+
+            sendAuthenticatedRequest(HttpMethod.Delete, "/categories/${id - 1}") {
+                assertEquals(HttpStatusCode.OK, response.status())
+                assertNotNull(response.content)
+                val response: APIResponse<Category> = decodeFromString(response.content!!)
+                val shouldResponse: APIResponse<Category> = wrapFailure("Category not found")
+                assertEquals(shouldResponse, response)
+            }
 
             sendAuthenticatedRequest(HttpMethod.Delete, "/categories/${id}") {
                 assertEquals(HttpStatusCode.OK, response.status())

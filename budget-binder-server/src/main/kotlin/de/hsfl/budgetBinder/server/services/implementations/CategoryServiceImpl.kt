@@ -53,7 +53,7 @@ class CategoryServiceImpl : CategoryService {
         }
 
         oldCategory.child = newCategory.id
-        oldCategory.ended = LocalDateTime.now()
+        oldCategory.ended = now
 
         val plusPeriod = period.plusMonths(1)
         oldCategory.entries.forEach {
