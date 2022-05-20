@@ -88,8 +88,10 @@ fun Route.entryByIdRoute() {
             val response = entryService.getByIDOrErrorResponse(
                 userPrincipal.getUserID(),
                 call.parameters["id"]?.toIntOrNull()
-            ) {
-                APIResponse(data = entryService.deleteEntry(it.id), success = true)
+            ) { entry ->
+                entryService.deleteEntry(entry.id)?.let {
+                    APIResponse(data = it, success = true)
+                } ?: APIResponse(ErrorModel("you can't delete this Entry"))
             }
             call.respond(response)
         }

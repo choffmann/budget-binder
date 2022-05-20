@@ -458,12 +458,92 @@ class EntryTest {
     }
 
     @Test
-    @Ignore("Test Not implemented")
     fun testDeleteEntry() {
         withCustomTestApplication(Application::mainModule) {
             loginUser()
 
-            TODO()
+            handleRequest(HttpMethod.Delete, "/entries/1").apply {
+                assertEquals(HttpStatusCode.Unauthorized, response.status())
+                assertNull(response.content)
+            }
+
+            sendAuthenticatedRequest(HttpMethod.Delete, "/entries/test") {
+                assertEquals(HttpStatusCode.OK, response.status())
+                assertNotNull(response.content)
+                val response: APIResponse<Entry> = decodeFromString(response.content!!)
+                val shouldResponse: APIResponse<Entry> = wrapFailure("path parameter is not a number")
+                assertEquals(shouldResponse, response)
+            }
+
+            sendAuthenticatedRequest(HttpMethod.Delete, "/entries/5000") {
+                assertEquals(HttpStatusCode.OK, response.status())
+                assertNotNull(response.content)
+                val response: APIResponse<Entry> = decodeFromString(response.content!!)
+                val shouldResponse: APIResponse<Entry> = wrapFailure("Entry not found")
+                assertEquals(shouldResponse, response)
+            }
+
+            val id = transaction { EntryEntity.all().first().id.value }
+
+            sendAuthenticatedRequest(HttpMethod.Delete, "/entries/$id") {
+                assertEquals(HttpStatusCode.OK, response.status())
+                assertNotNull(response.content)
+                val response: APIResponse<Entry> = decodeFromString(response.content!!)
+                val shouldResponse: APIResponse<Entry> = wrapFailure("you can't delete this Entry")
+                assertEquals(shouldResponse, response)
+            }
+
+            sendAuthenticatedRequest(HttpMethod.Delete, "/entries/${id + 1}") {
+                assertEquals(HttpStatusCode.OK, response.status())
+                assertNotNull(response.content)
+                val response: APIResponse<Entry> = decodeFromString(response.content!!)
+                val shouldResponse = wrapSuccess(Entry(id + 1, "Monthly Job Pay", 3500f, true, null))
+                assertEquals(shouldResponse, response)
+
+                transaction {
+                    val entry = EntryEntity[id + 1]
+                    assertNotNull(entry.ended)
+                }
+            }
+
+            sendAuthenticatedRequest(HttpMethod.Delete, "/entries/${id + 6}") {
+                assertEquals(HttpStatusCode.OK, response.status())
+                assertNotNull(response.content)
+                val response: APIResponse<Entry> = decodeFromString(response.content!!)
+                val shouldResponse = wrapSuccess(Entry(id + 6, "new Phone", -50f, true, null))
+                assertEquals(shouldResponse, response)
+
+                transaction {
+                    val entry = EntryEntity.findById(id + 6)
+                    assertNull(entry)
+                }
+            }
+
+            sendAuthenticatedRequest(HttpMethod.Delete, "/entries/${id + 4}") {
+                assertEquals(HttpStatusCode.OK, response.status())
+                assertNotNull(response.content)
+                val response: APIResponse<Entry> = decodeFromString(response.content!!)
+                val shouldResponse = wrapSuccess(Entry(id + 4, "Bike", -1500f, false, null))
+                assertEquals(shouldResponse, response)
+
+                transaction {
+                    val entry = EntryEntity.findById(id + 4)
+                    assertNull(entry)
+                }
+            }
+
+            sendAuthenticatedRequest(HttpMethod.Delete, "/entries/${id + 5}") {
+                assertEquals(HttpStatusCode.OK, response.status())
+                assertNotNull(response.content)
+                val response: APIResponse<Entry> = decodeFromString(response.content!!)
+                val shouldResponse = wrapSuccess(Entry(id + 5, "Ikea", -200f, false, null))
+                assertEquals(shouldResponse, response)
+
+                transaction {
+                    val entry = EntryEntity.findById(id + 5)
+                    assertNull(entry)
+                }
+            }
         }
     }
 }

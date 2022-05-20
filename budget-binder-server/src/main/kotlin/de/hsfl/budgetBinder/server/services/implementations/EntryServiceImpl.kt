@@ -82,10 +82,21 @@ class EntryServiceImpl : EntryService {
         entryEntity.toDto()
     }
 
-    override fun deleteEntry(entryId: Int): Entry = transaction {
+    override fun deleteEntry(entryId: Int): Entry? = transaction {
         val entryEntity = EntryEntity[entryId]
+        if (entryEntity.ended != null) {
+            return@transaction null
+        }
         val returnValue = entryEntity.toDto()
-        entryEntity.delete()
+
+        val now = LocalDateTime.now()
+        val period = LocalDateTime.of(now.year, now.month.value, 1, 0, 0)
+        if (entryEntity.repeat && entryEntity.created < period) {
+            entryEntity.ended = now
+        } else {
+            entryEntity.delete()
+        }
+
         returnValue
     }
 
