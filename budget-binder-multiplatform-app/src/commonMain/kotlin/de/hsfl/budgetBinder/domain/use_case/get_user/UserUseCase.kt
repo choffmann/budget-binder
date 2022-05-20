@@ -13,8 +13,10 @@ class UserUseCase(
     operator fun invoke(): Flow<DataResponse<User>> = flow {
         try {
             emit(DataResponse.Loading())
-            repository.getMyUser().data?.let {
-                emit(DataResponse.Success(it))
+            repository.getMyUser().let { response ->
+                response.data?.let {
+                    emit(DataResponse.Success(it))
+                } ?: emit(DataResponse.Error(response.error!!.message))
             }
         } catch (e: IOException) {
             emit(DataResponse.Error("Couldn't reach the server"))

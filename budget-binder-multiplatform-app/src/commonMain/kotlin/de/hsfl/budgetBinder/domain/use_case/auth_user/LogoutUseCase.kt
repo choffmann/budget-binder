@@ -14,6 +14,7 @@ class LogoutUseCase(
             emit(DataResponse.Loading())
             repository.logout(onAllDevices)
             emit(DataResponse.Success(true))
+            // TODO: Handle Server Error
         } catch (e: IOException) {
             e.printStackTrace()
             emit(DataResponse.Error("Couldn't reach the server"))

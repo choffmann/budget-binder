@@ -18,13 +18,13 @@ class LoginViewModel(
     val state: StateFlow<UiState> = _state
 
     fun auth(email: String, password: String) {
-        authUseCase(email, password).onEach { auth ->
-            when (auth) {
+        authUseCase(email, password).onEach { response ->
+            when (response) {
                 is DataResponse.Success -> {
-                    _state.value = UiState.Success(true)
+                    _state.value = UiState.Success(response.data)
                 }
                 is DataResponse.Error -> {
-                    _state.value = UiState.Error("Username or Password incorrect")
+                    _state.value = UiState.Error(response.message!!)
                 }
                 is DataResponse.Loading -> {
                     _state.value = UiState.Loading
