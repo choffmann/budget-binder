@@ -1,9 +1,13 @@
 package de.hsfl.budgetBinder.server
 
+import de.hsfl.budgetBinder.common.APIResponse
+import de.hsfl.budgetBinder.common.Entry
 import de.hsfl.budgetBinder.server.models.CategoryEntity
 import de.hsfl.budgetBinder.server.models.EntryEntity
 import de.hsfl.budgetBinder.server.models.UserEntity
 import io.ktor.application.*
+import io.ktor.http.*
+import io.ktor.server.testing.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.time.LocalDateTime
 import kotlin.test.*
@@ -112,12 +116,46 @@ class EntryTest {
     }
 
     @Test
-    @Ignore("Test Not implemented")
     fun testCreateEntry() {
         withCustomTestApplication(Application::mainModule) {
             loginUser()
 
-            TODO()
+            handleRequest(HttpMethod.Post, "/entries").apply {
+                assertEquals(HttpStatusCode.Unauthorized, response.status())
+                assertNull(response.content)
+            }
+
+            sendAuthenticatedRequest(HttpMethod.Post, "/entries") {
+                assertEquals(HttpStatusCode.OK, response.status())
+                assertNotNull(response.content)
+
+                val entry: APIResponse<Entry> = decodeFromString(response.content!!)
+                val shouldEntry: APIResponse<Entry> = wrapFailure("not the right Parameters provided")
+                assertEquals(shouldEntry, entry)
+            }
+
+            sendAuthenticatedRequest(
+                HttpMethod.Post, "/entries",
+                toJsonString(
+                    Entry.In("Bafög", 700f, true, null)
+                )
+            ) {
+                assertEquals(HttpStatusCode.OK, response.status())
+                assertNotNull(response.content)
+                val entry: APIResponse<Entry> = decodeFromString(response.content!!)
+
+                val id = transaction {
+                    EntryEntity.all().last().let {
+                        assertEquals("Bafög", it.name)
+                        assertEquals(700f, it.amount)
+                        assert(it.repeat)
+                        assertEquals(it.user.category, it.category.id)
+                        it.id.value
+                    }
+                }
+                val shouldEntry = wrapSuccess(Entry(id, "Bafög", 700f, true, null))
+                assertEquals(shouldEntry, entry)
+            }
         }
     }
 
