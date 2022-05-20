@@ -414,10 +414,48 @@ class CategoryTest {
     }
 
     @Test
-    @Ignore("Test Not implemented")
     fun testDeleteCategory() {
         withCustomTestApplication(Application::mainModule) {
             loginUser()
+
+            handleRequest(HttpMethod.Delete, "/categories/1").apply {
+                assertEquals(HttpStatusCode.Unauthorized, response.status())
+                assertNull(response.content)
+            }
+
+            sendAuthenticatedRequest(HttpMethod.Delete, "/categories/test") {
+                assertEquals(HttpStatusCode.OK, response.status())
+                assertNotNull(response.content)
+                val response: APIResponse<Category> = decodeFromString(response.content!!)
+                val shouldResponse: APIResponse<Category> = wrapFailure("path parameter is not a number")
+                assertEquals(shouldResponse, response)
+            }
+
+            sendAuthenticatedRequest(HttpMethod.Delete, "/categories/null") {
+                assertEquals(HttpStatusCode.OK, response.status())
+                assertNotNull(response.content)
+                val response: APIResponse<Category> = decodeFromString(response.content!!)
+                val shouldResponse: APIResponse<Category> = wrapFailure("path parameter is not a number")
+                assertEquals(shouldResponse, response)
+            }
+
+            sendAuthenticatedRequest(HttpMethod.Delete, "/categories/5000") {
+                assertEquals(HttpStatusCode.OK, response.status())
+                assertNotNull(response.content)
+                val response: APIResponse<Category> = decodeFromString(response.content!!)
+                val shouldResponse: APIResponse<Category> = wrapFailure("Category not found")
+                assertEquals(shouldResponse, response)
+            }
+
+            val id = transaction { CategoryEntity.all().first().id.value + 1 }
+
+            sendAuthenticatedRequest(HttpMethod.Delete, "/categories/${id}") {
+                assertEquals(HttpStatusCode.OK, response.status())
+                assertNotNull(response.content)
+                val response: APIResponse<Category> = decodeFromString(response.content!!)
+                val shouldResponse: APIResponse<Category> = wrapFailure("you can't delete this Category")
+                assertEquals(shouldResponse, response)
+            }
 
             TODO()
         }

@@ -89,8 +89,11 @@ class CategoryServiceImpl : CategoryService {
         categoryEntity.toDto()
     }
 
-    override fun deleteCategory(categoryId: Int): Category = transaction {
+    override fun deleteCategory(categoryId: Int): Category? = transaction {
         val categoryEntity = CategoryEntity[categoryId]
+        if (categoryEntity.ended != null) {
+            return@transaction null
+        }
         categoryEntity.entries.forEach { it.category = CategoryEntity[categoryEntity.user.category!!] }
         val returnValue = categoryEntity.toDto()
         categoryEntity.delete()

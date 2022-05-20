@@ -88,8 +88,10 @@ fun Route.categoryByIdRoute() {
             val response = categoryService.getByIDOrErrorResponse(
                 userPrincipal.getUserID(),
                 call.parameters["id"]?.toIntOrNull()
-            ) {
-                APIResponse(data = categoryService.deleteCategory(it.id), success = true)
+            ) { category ->
+                categoryService.deleteCategory(category.id)?.let {
+                    APIResponse(data = it, success = true)
+                } ?: APIResponse(ErrorModel("you can't delete this Category"))
             }
             call.respond(response)
         }

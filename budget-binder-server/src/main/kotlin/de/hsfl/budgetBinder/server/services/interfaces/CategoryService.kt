@@ -10,7 +10,7 @@ interface CategoryService {
     fun findCategoryByID(userId: Int, id: Int): Category?
     fun insertCategoryForUser(userId: Int, category: Category.In): Category
     fun changeCategory(userId: Int, categoryId: Int, categoryPatch: Category.Patch): Category?
-    fun deleteCategory(categoryId: Int): Category
+    fun deleteCategory(categoryId: Int): Category?
 
     suspend fun getByIDOrErrorResponse(
         userId: Int,
