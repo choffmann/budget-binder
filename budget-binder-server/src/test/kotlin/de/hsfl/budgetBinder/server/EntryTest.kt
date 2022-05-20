@@ -160,10 +160,35 @@ class EntryTest {
     }
 
     @Test
-    @Ignore("Test Not implemented")
     fun testGetEntries() {
         withCustomTestApplication(Application::mainModule) {
             loginUser()
+
+            handleRequest(HttpMethod.Get, "/entries").apply {
+                assertEquals(HttpStatusCode.Unauthorized, response.status())
+                assertNull(response.content)
+            }
+
+            val id = transaction { EntryEntity.all().first().id.value }
+
+            val entryList = listOf(
+                Entry(id, "Monthly Job Pay", 3000f, true, null),
+                Entry(id + 1, "Monthly Job Pay", 3500f, true, null),
+                Entry(id + 2, "Phone", -50f, true, null),
+                Entry(id + 3, "Internet", -50f, true, null),
+                Entry(id + 4, "Bike", -1500f, false, null),
+                Entry(id + 5, "Ikea", -200f, false, null),
+            )
+
+            sendAuthenticatedRequest(HttpMethod.Get, "/entries") {
+                assertEquals(HttpStatusCode.OK, response.status())
+                assertNotNull(response.content)
+                val response: APIResponse<List<Entry>> = decodeFromString(response.content!!)
+                assert(response.success)
+                assertEquals(6, response.data!!.size)
+                val shouldResponse = wrapSuccess(entryList)
+                assertEquals(shouldResponse, response)
+            }
 
             TODO()
         }
