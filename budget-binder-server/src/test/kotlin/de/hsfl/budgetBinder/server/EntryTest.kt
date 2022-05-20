@@ -190,7 +190,86 @@ class EntryTest {
                 assertEquals(shouldResponse, response)
             }
 
-            TODO()
+            sendAuthenticatedRequest(HttpMethod.Get, "/entries?current=true") {
+                assertEquals(HttpStatusCode.OK, response.status())
+                assertNotNull(response.content)
+                val response: APIResponse<List<Entry>> = decodeFromString(response.content!!)
+                assert(response.success)
+                assertEquals(3, response.data!!.size)
+
+                val currentList = listOf(entryList[1], entryList[3], entryList[5])
+                val shouldResponse = wrapSuccess(currentList)
+                assertEquals(shouldResponse, response)
+            }
+
+            sendAuthenticatedRequest(HttpMethod.Get, "/entries?period=50-8346") {
+                assertEquals(HttpStatusCode.OK, response.status())
+                assertNotNull(response.content)
+                val response: APIResponse<List<Entry>> = decodeFromString(response.content!!)
+                val shouldResponse: APIResponse<List<Entry>> = wrapFailure("period has not the right pattern")
+                assertEquals(shouldResponse, response)
+            }
+
+            val now = LocalDateTime.now()
+
+            sendAuthenticatedRequest(HttpMethod.Get, "/entries?period=${formatToPeriod(now)}") {
+                assertEquals(HttpStatusCode.OK, response.status())
+                assertNotNull(response.content)
+                val response: APIResponse<List<Entry>> = decodeFromString(response.content!!)
+                assert(response.success)
+                assertEquals(3, response.data!!.size)
+
+                val currentList = listOf(entryList[1], entryList[3], entryList[5])
+                val shouldResponse = wrapSuccess(currentList)
+                assertEquals(shouldResponse, response)
+            }
+
+            sendAuthenticatedRequest(HttpMethod.Get, "/entries?period=${formatToPeriod(now.minusMonths(1))}") {
+                assertEquals(HttpStatusCode.OK, response.status())
+                assertNotNull(response.content)
+                val response: APIResponse<List<Entry>> = decodeFromString(response.content!!)
+                assert(response.success)
+                assertEquals(3, response.data!!.size)
+
+                val currentList = listOf(entryList[1], entryList[3], entryList[4])
+                val shouldResponse = wrapSuccess(currentList)
+                assertEquals(shouldResponse, response)
+            }
+
+            sendAuthenticatedRequest(HttpMethod.Get, "/entries?period=${formatToPeriod(now.minusMonths(2))}") {
+                assertEquals(HttpStatusCode.OK, response.status())
+                assertNotNull(response.content)
+                val response: APIResponse<List<Entry>> = decodeFromString(response.content!!)
+                assert(response.success)
+                assertEquals(3, response.data!!.size)
+
+                val currentList = listOf(entryList[1], entryList[2], entryList[3])
+                val shouldResponse = wrapSuccess(currentList)
+                assertEquals(shouldResponse, response)
+            }
+
+            sendAuthenticatedRequest(HttpMethod.Get, "/entries?period=${formatToPeriod(now.minusMonths(3))}") {
+                assertEquals(HttpStatusCode.OK, response.status())
+                assertNotNull(response.content)
+                val response: APIResponse<List<Entry>> = decodeFromString(response.content!!)
+                assert(response.success)
+                assertEquals(2, response.data!!.size)
+
+                val currentList = listOf(entryList[0], entryList[2])
+                val shouldResponse = wrapSuccess(currentList)
+                assertEquals(shouldResponse, response)
+            }
+
+            sendAuthenticatedRequest(HttpMethod.Get, "/entries?period=${formatToPeriod(now.minusMonths(4))}") {
+                assertEquals(HttpStatusCode.OK, response.status())
+                assertNotNull(response.content)
+                val response: APIResponse<List<Entry>> = decodeFromString(response.content!!)
+                assert(response.success)
+                assertEquals(0, response.data!!.size)
+
+                val shouldResponse: APIResponse<List<Entry>> = wrapSuccess(emptyList())
+                assertEquals(shouldResponse, response)
+            }
         }
     }
 
