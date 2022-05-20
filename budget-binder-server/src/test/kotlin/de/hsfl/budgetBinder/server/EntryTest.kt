@@ -96,6 +96,18 @@ class EntryTest {
                     user = userEntity
                     category = CategoryEntity[userEntity.category!!]
                 }
+
+                EntryEntity.new {
+                    name = "new Phone"
+                    amount = -50f
+                    repeat = true
+                    created = now
+                    ended = null
+                    child = null
+
+                    user = userEntity
+                    category = CategoryEntity[userEntity.category!!]
+                }
             }
         }
     }
@@ -178,6 +190,7 @@ class EntryTest {
                 Entry(id + 3, "Internet", -50f, true, null),
                 Entry(id + 4, "Bike", -1500f, false, null),
                 Entry(id + 5, "Ikea", -200f, false, null),
+                Entry(id + 6, "new Phone", -50f, true, null),
             )
 
             sendAuthenticatedRequest(HttpMethod.Get, "/entries") {
@@ -185,7 +198,7 @@ class EntryTest {
                 assertNotNull(response.content)
                 val response: APIResponse<List<Entry>> = decodeFromString(response.content!!)
                 assert(response.success)
-                assertEquals(6, response.data!!.size)
+                assertEquals(7, response.data!!.size)
                 val shouldResponse = wrapSuccess(entryList)
                 assertEquals(shouldResponse, response)
             }
@@ -195,9 +208,9 @@ class EntryTest {
                 assertNotNull(response.content)
                 val response: APIResponse<List<Entry>> = decodeFromString(response.content!!)
                 assert(response.success)
-                assertEquals(3, response.data!!.size)
+                assertEquals(4, response.data!!.size)
 
-                val currentList = listOf(entryList[1], entryList[3], entryList[5])
+                val currentList = listOf(entryList[1], entryList[3], entryList[5], entryList[6])
                 val shouldResponse = wrapSuccess(currentList)
                 assertEquals(shouldResponse, response)
             }
@@ -217,9 +230,9 @@ class EntryTest {
                 assertNotNull(response.content)
                 val response: APIResponse<List<Entry>> = decodeFromString(response.content!!)
                 assert(response.success)
-                assertEquals(3, response.data!!.size)
+                assertEquals(4, response.data!!.size)
 
-                val currentList = listOf(entryList[1], entryList[3], entryList[5])
+                val currentList = listOf(entryList[1], entryList[3], entryList[5], entryList[6])
                 val shouldResponse = wrapSuccess(currentList)
                 assertEquals(shouldResponse, response)
             }
@@ -392,13 +405,13 @@ class EntryTest {
             }
 
             sendAuthenticatedRequest(
-                HttpMethod.Patch, "/entries/${id + 5}",
+                HttpMethod.Patch, "/entries/${id + 6}",
                 toJsonString(Entry.Patch(repeat = false))
             ) {
                 assertEquals(HttpStatusCode.OK, response.status())
                 assertNotNull(response.content)
                 val response: APIResponse<Entry> = decodeFromString(response.content!!)
-                val shouldResponse = wrapSuccess(Entry(id + 5, "Ikea", -200f, false, null))
+                val shouldResponse = wrapSuccess(Entry(id + 6, "new Phone", -50f, false, null))
                 assertEquals(shouldResponse, response)
             }
 
@@ -409,12 +422,12 @@ class EntryTest {
                 assertEquals(HttpStatusCode.OK, response.status())
                 assertNotNull(response.content)
                 val response: APIResponse<Entry> = decodeFromString(response.content!!)
-                val shouldResponse = wrapSuccess(Entry(id + 6, "Internet", -50f, false, null))
+                val shouldResponse = wrapSuccess(Entry(id + 7, "Internet", -50f, false, null))
                 assertEquals(shouldResponse, response)
 
                 transaction {
                     val oldEntry = EntryEntity[id + 3]
-                    val newEntry = EntryEntity[id + 6]
+                    val newEntry = EntryEntity[id + 7]
                     assertNotNull(oldEntry.ended)
                     assertEquals(newEntry.id, oldEntry.child)
                     assertNull(newEntry.ended)
@@ -429,12 +442,12 @@ class EntryTest {
                 assertEquals(HttpStatusCode.OK, response.status())
                 assertNotNull(response.content)
                 val response: APIResponse<Entry> = decodeFromString(response.content!!)
-                val shouldResponse = wrapSuccess(Entry(id + 7, "Monthly Job Pay", 3700f, true, null))
+                val shouldResponse = wrapSuccess(Entry(id + 8, "Monthly Job Pay", 3700f, true, null))
                 assertEquals(shouldResponse, response)
 
                 transaction {
                     val oldEntry = EntryEntity[id + 1]
-                    val newEntry = EntryEntity[id + 7]
+                    val newEntry = EntryEntity[id + 8]
                     assertNotNull(oldEntry.ended)
                     assertEquals(newEntry.id, oldEntry.child)
                     assertNull(newEntry.ended)
