@@ -46,6 +46,21 @@ class EntryServiceImpl : EntryService {
         }.toDto()
     }
 
+    private fun createOrChangeEntry(oldEntry: EntryEntity, repeat: Boolean?, amount: Float?): EntryEntity {
+        val now = LocalDateTime.now()
+        val period = LocalDateTime.of(now.year, now.month.value, 1, 0, 0)
+
+        if (!oldEntry.repeat || (repeat != false && amount == null) || oldEntry.created > period) {
+            return oldEntry
+        }
+
+        val newEntry = oldEntry.createChild()
+        oldEntry.child = newEntry.id
+        oldEntry.ended = now
+
+        return newEntry
+    }
+
     override fun changeEntry(userId: Int, entryId: Int, entry: Entry.Patch): Entry? = transaction {
         var entryEntity = EntryEntity[entryId]
         if (entryEntity.ended != null) {
@@ -57,12 +72,7 @@ class EntryServiceImpl : EntryService {
         if (categoryEntity?.ended != null) {
             return@transaction null
         }
-
-        if (entryEntity.repeat) {
-            if (entry.repeat == false || entry.amount != null) {
-                entryEntity = entryEntity.createChild()
-            }
-        }
+        entryEntity = createOrChangeEntry(entryEntity, entry.repeat, entry.amount)
 
         entry.name?.let { entryEntity.name = it }
         entry.amount?.let { entryEntity.amount = it }

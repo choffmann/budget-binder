@@ -312,12 +312,135 @@ class EntryTest {
     }
 
     @Test
-    @Ignore("Test Not implemented")
     fun testPatchEntry() {
         withCustomTestApplication(Application::mainModule) {
             loginUser()
 
-            TODO()
+            handleRequest(HttpMethod.Patch, "/entries/1").apply {
+                assertEquals(HttpStatusCode.Unauthorized, response.status())
+                assertNull(response.content)
+            }
+
+            sendAuthenticatedRequest(HttpMethod.Patch, "/entries/test") {
+                assertEquals(HttpStatusCode.OK, response.status())
+                assertNotNull(response.content)
+                val response: APIResponse<Entry> = decodeFromString(response.content!!)
+                val shouldResponse: APIResponse<Entry> = wrapFailure("path parameter is not a number")
+                assertEquals(shouldResponse, response)
+            }
+
+            sendAuthenticatedRequest(HttpMethod.Patch, "/entries/5000") {
+                assertEquals(HttpStatusCode.OK, response.status())
+                assertNotNull(response.content)
+                val response: APIResponse<Entry> = decodeFromString(response.content!!)
+                val shouldResponse: APIResponse<Entry> = wrapFailure("Entry not found")
+                assertEquals(shouldResponse, response)
+            }
+
+            val id = transaction { EntryEntity.all().first().id.value }
+
+            sendAuthenticatedRequest(HttpMethod.Patch, "/entries/$id") {
+                assertEquals(HttpStatusCode.OK, response.status())
+                assertNotNull(response.content)
+                val response: APIResponse<Entry> = decodeFromString(response.content!!)
+                val shouldResponse: APIResponse<Entry> = wrapFailure("not the right Parameters provided")
+                assertEquals(shouldResponse, response)
+            }
+
+            sendAuthenticatedRequest(
+                HttpMethod.Patch, "/entries/$id",
+                toJsonString(Entry.Patch(name = "Pay"))
+            ) {
+                assertEquals(HttpStatusCode.OK, response.status())
+                assertNotNull(response.content)
+                val response: APIResponse<Entry> = decodeFromString(response.content!!)
+                val shouldResponse: APIResponse<Entry> = wrapFailure("you can't change this Entry")
+                assertEquals(shouldResponse, response)
+            }
+
+            sendAuthenticatedRequest(
+                HttpMethod.Patch, "/entries/${id + 5}",
+                toJsonString(Entry.Patch(name = "Ikea Shopping"))
+            ) {
+                assertEquals(HttpStatusCode.OK, response.status())
+                assertNotNull(response.content)
+                val response: APIResponse<Entry> = decodeFromString(response.content!!)
+                val shouldResponse = wrapSuccess(Entry(id + 5, "Ikea Shopping", -200f, false, null))
+                assertEquals(shouldResponse, response)
+            }
+
+            sendAuthenticatedRequest(
+                HttpMethod.Patch, "/entries/${id + 4}",
+                toJsonString(Entry.Patch(amount = -1700f))
+            ) {
+                assertEquals(HttpStatusCode.OK, response.status())
+                assertNotNull(response.content)
+                val response: APIResponse<Entry> = decodeFromString(response.content!!)
+                val shouldResponse = wrapSuccess(Entry(id + 4, "Bike", -1700f, false, null))
+                assertEquals(shouldResponse, response)
+            }
+
+            sendAuthenticatedRequest(
+                HttpMethod.Patch, "/entries/${id + 5}",
+                toJsonString(Entry.Patch(name = "Ikea", repeat = true))
+            ) {
+                assertEquals(HttpStatusCode.OK, response.status())
+                assertNotNull(response.content)
+                val response: APIResponse<Entry> = decodeFromString(response.content!!)
+                val shouldResponse = wrapSuccess(Entry(id + 5, "Ikea", -200f, true, null))
+                assertEquals(shouldResponse, response)
+            }
+
+            sendAuthenticatedRequest(
+                HttpMethod.Patch, "/entries/${id + 5}",
+                toJsonString(Entry.Patch(repeat = false))
+            ) {
+                assertEquals(HttpStatusCode.OK, response.status())
+                assertNotNull(response.content)
+                val response: APIResponse<Entry> = decodeFromString(response.content!!)
+                val shouldResponse = wrapSuccess(Entry(id + 5, "Ikea", -200f, false, null))
+                assertEquals(shouldResponse, response)
+            }
+
+            sendAuthenticatedRequest(
+                HttpMethod.Patch, "/entries/${id + 3}",
+                toJsonString(Entry.Patch(repeat = false))
+            ) {
+                assertEquals(HttpStatusCode.OK, response.status())
+                assertNotNull(response.content)
+                val response: APIResponse<Entry> = decodeFromString(response.content!!)
+                val shouldResponse = wrapSuccess(Entry(id + 6, "Internet", -50f, false, null))
+                assertEquals(shouldResponse, response)
+
+                transaction {
+                    val oldEntry = EntryEntity[id + 3]
+                    val newEntry = EntryEntity[id + 6]
+                    assertNotNull(oldEntry.ended)
+                    assertEquals(newEntry.id, oldEntry.child)
+                    assertNull(newEntry.ended)
+                    assertNull(newEntry.child)
+                }
+            }
+
+            sendAuthenticatedRequest(
+                HttpMethod.Patch, "/entries/${id + 1}",
+                toJsonString(Entry.Patch(amount = 3700f))
+            ) {
+                assertEquals(HttpStatusCode.OK, response.status())
+                assertNotNull(response.content)
+                val response: APIResponse<Entry> = decodeFromString(response.content!!)
+                val shouldResponse = wrapSuccess(Entry(id + 7, "Monthly Job Pay", 3700f, true, null))
+                assertEquals(shouldResponse, response)
+
+                transaction {
+                    val oldEntry = EntryEntity[id + 1]
+                    val newEntry = EntryEntity[id + 7]
+                    assertNotNull(oldEntry.ended)
+                    assertEquals(newEntry.id, oldEntry.child)
+                    assertNull(newEntry.ended)
+                    assertNull(newEntry.child)
+                }
+            }
         }
     }
 
