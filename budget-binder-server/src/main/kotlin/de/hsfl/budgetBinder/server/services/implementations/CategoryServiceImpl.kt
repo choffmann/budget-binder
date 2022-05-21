@@ -37,24 +37,15 @@ class CategoryServiceImpl : CategoryService {
         }.toDto()
     }
 
-    private fun createOrChangeCategory(oldCategory: CategoryEntity, patchBudget: Float): CategoryEntity {
+    private fun isNewCategory(categoryEntity: CategoryEntity): Boolean {
         val now = LocalDateTime.now()
         val period = LocalDateTime.of(now.year, now.month.value, 1, 0, 0)
-        if (oldCategory.created > period || oldCategory.entries.empty() || oldCategory.entries.all { it.created > period }) {
-            oldCategory.budget = patchBudget
-            return oldCategory
-        }
-        val newCategory = CategoryEntity.new {
-            name = oldCategory.name
-            color = oldCategory.color
-            image = oldCategory.image
-            budget = patchBudget
-            user = oldCategory.user
-        }
+        return categoryEntity.created > period || categoryEntity.entries.empty() || categoryEntity.entries.all { it.created > period }
+    }
 
-        oldCategory.child = newCategory.id
-        oldCategory.ended = now
-
+    private fun changeEntriesWithCategory(oldCategory: CategoryEntity, newCategory: CategoryEntity) {
+        val now = LocalDateTime.now()
+        val period = LocalDateTime.of(now.year, now.month.value, 1, 0, 0)
         val plusPeriod = period.plusMonths(1)
         oldCategory.entries.forEach {
             val entryPeriod = LocalDateTime.of(it.created.year, it.created.month.value, 1, 0, 0)
@@ -69,7 +60,26 @@ class CategoryServiceImpl : CategoryService {
                     it.category = newCategory
             }
         }
+    }
 
+    private fun createOrChangeCategory(oldCategory: CategoryEntity, patchBudget: Float): CategoryEntity {
+        if (isNewCategory(oldCategory)) {
+            oldCategory.budget = patchBudget
+            return oldCategory
+        }
+
+        val newCategory = CategoryEntity.new {
+            name = oldCategory.name
+            color = oldCategory.color
+            image = oldCategory.image
+            budget = patchBudget
+            user = oldCategory.user
+        }
+
+        oldCategory.child = newCategory.id
+        oldCategory.ended = LocalDateTime.now()
+
+        changeEntriesWithCategory(oldCategory, newCategory)
         return newCategory
     }
 
@@ -94,9 +104,15 @@ class CategoryServiceImpl : CategoryService {
         if (categoryEntity.ended != null) {
             return@transaction null
         }
-        categoryEntity.entries.forEach { it.category = CategoryEntity[categoryEntity.user.category!!] }
         val returnValue = categoryEntity.toDto()
-        categoryEntity.delete()
+        if (isNewCategory(categoryEntity)) {
+            categoryEntity.entries.forEach { it.category = CategoryEntity[it.user.category!!] }
+            categoryEntity.delete()
+            return@transaction returnValue
+        }
+
+        categoryEntity.ended = LocalDateTime.now()
+        changeEntriesWithCategory(categoryEntity, CategoryEntity[categoryEntity.user.category!!])
         returnValue
     }
 }
