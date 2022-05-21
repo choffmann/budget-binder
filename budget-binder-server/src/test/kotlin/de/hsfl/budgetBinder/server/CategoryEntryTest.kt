@@ -197,4 +197,54 @@ class CategoryEntryTest {
             }
         }
     }
+
+    @Test
+    fun createEntryWithCategory() {
+        withCustomTestApplication(Application::mainModule) {
+            loginUser()
+            val categoryId = transaction { CategoryEntity.all().first().id.value + 2 }
+
+            sendAuthenticatedRequest(
+                HttpMethod.Post, "/entries",
+                toJsonString(Entry.In("Second Phone", -50f, true, 5000))
+            ) {
+                assertEquals(HttpStatusCode.OK, response.status())
+                assertNotNull(response.content)
+                val response: APIResponse<Entry> = decodeFromString(response.content!!)
+
+                val id = transaction {
+                    EntryEntity.all().last().let {
+                        assertEquals("Second Phone", it.name)
+                        assertEquals(-50f, it.amount)
+                        assert(it.repeat)
+                        assertEquals(it.user.category, it.category.id)
+                        it.id.value
+                    }
+                }
+                val shouldResponse = wrapSuccess(Entry(id, "Second Phone", -50f, true, null))
+                assertEquals(shouldResponse, response)
+            }
+
+            sendAuthenticatedRequest(
+                HttpMethod.Post, "/entries",
+                toJsonString(Entry.In("Second Phone", -50f, true, categoryId))
+            ) {
+                assertEquals(HttpStatusCode.OK, response.status())
+                assertNotNull(response.content)
+                val response: APIResponse<Entry> = decodeFromString(response.content!!)
+
+                val id = transaction {
+                    EntryEntity.all().last().let {
+                        assertEquals("Second Phone", it.name)
+                        assertEquals(-50f, it.amount)
+                        assert(it.repeat)
+                        assertEquals(categoryId, it.category.id.value)
+                        it.id.value
+                    }
+                }
+                val shouldResponse = wrapSuccess(Entry(id, "Second Phone", -50f, true, categoryId))
+                assertEquals(shouldResponse, response)
+            }
+        }
+    }
 }
