@@ -100,7 +100,12 @@ fun Route.categoryByIdRoute() {
             val userPrincipal: UserPrincipal = call.principal()!!
             val entryService: EntryService by closestDI().instance()
 
-            call.respond(entryService.getAllEntriesForCategoryIdParam(userPrincipal.getUserID(), call.parameters["id"]))
+            call.respond(
+                entryService.getAllEntriesForCategoryIdParam(
+                    userPrincipal.getUserID(),
+                    call.parameters["id"]
+                )
+            )
         }
     }
 }

@@ -106,14 +106,15 @@ class EntryServiceImpl : EntryService {
     ): APIResponse<List<Entry>> = transaction {
         val userEntity = UserEntity[userId]
 
-        if (categoryId == "null") {
-            APIResponse(data = CategoryEntity[userEntity.category!!].entries.map { it.toDto() }, success = true)
+        val category = if (categoryId == "null") {
+            CategoryEntity[userEntity.category!!]
         } else {
             categoryId?.toIntOrNull()?.let { id ->
-                CategoryEntity.findById(id)?.let { category ->
-                    APIResponse(data = category.entries.map { it.toDto() }, success = true)
-                } ?: APIResponse(ErrorModel("Category not found"))
-            } ?: APIResponse(ErrorModel("path parameter is not a number"))
+                userEntity.categories.firstOrNull { it.id.value == id && it.id != userEntity.category }
+                    ?: return@transaction APIResponse(ErrorModel("Category not found"))
+            } ?: return@transaction APIResponse(ErrorModel("path parameter is not a number"))
         }
+
+        APIResponse(data = category.entries.map { it.toDto() }, success = true)
     }
 }
