@@ -247,4 +247,57 @@ class CategoryEntryTest {
             }
         }
     }
+
+    @Test
+    fun testChangeCategoryInEntry() {
+        withCustomTestApplication(Application::mainModule) {
+            loginUser()
+
+            val categoryId = transaction { CategoryEntity.all().first().id.value + 2 }
+            val entryId = transaction { EntryEntity.all().last().id.value }
+
+            sendAuthenticatedRequest(
+                HttpMethod.Patch, "/entries/$entryId",
+                toJsonString(Entry.Patch(category = Entry.Category(categoryId - 1)))
+            ) {
+                assertEquals(HttpStatusCode.OK, response.status())
+                assertNotNull(response.content)
+                val response: APIResponse<Entry> = decodeFromString(response.content!!)
+                val shouldResponse: APIResponse<Entry> = wrapFailure("you can't change this Entry")
+                assertEquals(shouldResponse, response)
+            }
+
+            sendAuthenticatedRequest(
+                HttpMethod.Patch, "/entries/$entryId",
+                toJsonString(Entry.Patch(category = Entry.Category(categoryId)))
+            ) {
+                assertEquals(HttpStatusCode.OK, response.status())
+                assertNotNull(response.content)
+                val response: APIResponse<Entry> = decodeFromString(response.content!!)
+
+                transaction {
+                    assertEquals(categoryId, EntryEntity[entryId].category.id.value)
+                }
+                val shouldResponse = wrapSuccess(Entry(entryId, "Monthly Pay", 3000f, true, categoryId))
+                assertEquals(shouldResponse, response)
+            }
+
+            sendAuthenticatedRequest(
+                HttpMethod.Patch, "/entries/$entryId",
+                toJsonString(Entry.Patch(category = Entry.Category(5000)))
+            ) {
+                assertEquals(HttpStatusCode.OK, response.status())
+                assertNotNull(response.content)
+                val response: APIResponse<Entry> = decodeFromString(response.content!!)
+
+                transaction {
+                    EntryEntity[entryId].let {
+                        assertEquals(it.user.category, it.category.id)
+                    }
+                }
+                val shouldResponse = wrapSuccess(Entry(entryId, "Monthly Pay", 3000f, true, null))
+                assertEquals(shouldResponse, response)
+            }
+        }
+    }
 }
