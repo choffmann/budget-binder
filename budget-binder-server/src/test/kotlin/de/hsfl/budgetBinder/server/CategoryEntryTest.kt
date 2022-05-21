@@ -1,6 +1,7 @@
 package de.hsfl.budgetBinder.server
 
 import de.hsfl.budgetBinder.common.APIResponse
+import de.hsfl.budgetBinder.common.Category
 import de.hsfl.budgetBinder.common.Entry
 import de.hsfl.budgetBinder.server.models.CategoryEntity
 import de.hsfl.budgetBinder.server.models.EntryEntity
@@ -300,4 +301,67 @@ class CategoryEntryTest {
             }
         }
     }
+
+    @Test
+    fun testChangeOldCategoryHasOldEntries() {
+        withCustomTestApplication(Application::mainModule) {
+            loginUser()
+
+            val categoryId = transaction { CategoryEntity.all().first().id.value + 2 }
+            val entryId = transaction { EntryEntity.all().first().id.value + 1 }
+
+            sendAuthenticatedRequest(
+                HttpMethod.Patch, "/categories/$categoryId",
+                toJsonString(Category.Patch(budget = 200f))
+            ) {
+                assertEquals(HttpStatusCode.OK, response.status())
+                assertNotNull(response.content)
+                val response: APIResponse<Category> = decodeFromString(response.content!!)
+
+                val id = transaction {
+                    val oldCategory = CategoryEntity[categoryId]
+                    assertNotNull(oldCategory.ended)
+                    assertNotNull(oldCategory.child)
+                    val newCategory = CategoryEntity[oldCategory.child!!]
+
+                    val oldInternetEntry = EntryEntity[entryId]
+                    val oldPhoneEntry = EntryEntity[entryId + 1]
+                    val oldPhoneOneTimeEntry = EntryEntity[entryId + 2]
+
+                    val newId = EntryEntity.all().last().id.value - 1
+                    val newInternetEntry = EntryEntity[newId]
+                    val newPhoneEntry = EntryEntity[newId + 1]
+
+                    assertEquals(oldInternetEntry.name, newInternetEntry.name)
+                    assertEquals(oldInternetEntry.repeat, newInternetEntry.repeat)
+                    assertNotEquals(oldInternetEntry.category, newInternetEntry.category)
+                    assertNotNull(oldInternetEntry.child)
+                    assertNotNull(oldInternetEntry.ended)
+                    assertEquals(newInternetEntry.id, oldInternetEntry.child)
+                    assertNull(newInternetEntry.child)
+                    assertNull(newInternetEntry.ended)
+
+                    assertEquals(oldPhoneEntry.name, newPhoneEntry.name)
+                    assertEquals(oldPhoneEntry.repeat, newPhoneEntry.repeat)
+                    assertNotEquals(oldPhoneEntry.category, newPhoneEntry.category)
+                    assertNotNull(oldPhoneEntry.child)
+                    assertNotNull(oldPhoneEntry.ended)
+                    assertEquals(oldPhoneEntry.child, newPhoneEntry.id)
+                    assertNull(newPhoneEntry.child)
+                    assertNull(newPhoneEntry.ended)
+
+                    assert(!oldPhoneOneTimeEntry.repeat)
+                    assertNull(oldPhoneOneTimeEntry.child)
+                    assertNull(oldPhoneOneTimeEntry.ended)
+
+                    newCategory.id.value
+                }
+
+                val shouldResponse =
+                    wrapSuccess(Category(id, "Internet-Phone", TestCategories.color, TestCategories.image, 200f))
+                assertEquals(shouldResponse, response)
+            }
+        }
+    }
+
 }
