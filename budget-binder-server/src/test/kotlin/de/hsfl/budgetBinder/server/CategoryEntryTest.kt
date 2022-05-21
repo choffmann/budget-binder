@@ -364,4 +364,80 @@ class CategoryEntryTest {
         }
     }
 
+    @Test
+    fun testChangeOldCategoryHasNewEntries() {
+        withCustomTestApplication(Application::mainModule) {
+            loginUser()
+
+            val categoryId = transaction { CategoryEntity.all().first().id.value + 2 }
+            transaction {
+                val userEntity = UserEntity.all().first()
+
+                EntryEntity.new {
+                    name = "Mobile"
+                    amount = -50f
+                    repeat = true
+                    created = LocalDateTime.now()
+                    ended = null
+                    child = null
+                    user = userEntity
+                    category = CategoryEntity[categoryId]
+                }.id.value
+
+                EntryEntity.new {
+                    name = "Mobile One"
+                    amount = -250f
+                    repeat = false
+                    created = LocalDateTime.now()
+                    ended = null
+                    child = null
+                    user = userEntity
+                    category = CategoryEntity[categoryId]
+                }
+            }
+
+            val entryId = transaction { EntryEntity.all().last().id.value - 1 }
+
+            sendAuthenticatedRequest(
+                HttpMethod.Patch, "/categories/$categoryId",
+                toJsonString(Category.Patch(budget = 200f))
+            ) {
+                assertEquals(HttpStatusCode.OK, response.status())
+                assertNotNull(response.content)
+                val response: APIResponse<Category> = decodeFromString(response.content!!)
+
+                val id = transaction {
+                    val oldCategory = CategoryEntity[categoryId]
+                    assertNotNull(oldCategory.ended)
+                    assertNotNull(oldCategory.child)
+                    val newCategory = CategoryEntity[oldCategory.child!!]
+
+                    val mobileEntry = EntryEntity[entryId]
+                    val mobileOneEntry = EntryEntity[entryId + 1]
+
+                    assertNull(mobileEntry.child)
+                    assertNull(mobileEntry.ended)
+                    assert(mobileEntry.repeat)
+
+                    assertNull(mobileOneEntry.child)
+                    assertNull(mobileOneEntry.ended)
+                    assert(!mobileOneEntry.repeat)
+
+                    newCategory.id.value
+                }
+
+                val shouldResponse = wrapSuccess(
+                    Category(
+                        id,
+                        "Internet-Phone",
+                        TestCategories.color,
+                        TestCategories.image,
+                        200f
+                    )
+                )
+                assertEquals(shouldResponse, response)
+            }
+        }
+    }
+
 }
