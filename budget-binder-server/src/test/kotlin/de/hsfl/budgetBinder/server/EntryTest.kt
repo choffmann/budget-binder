@@ -125,9 +125,7 @@ class EntryTest {
 
 
     @Test
-    fun testCreateEntry() = customTestApplication { client ->
-        loginUser(client)
-
+    fun testCreateEntry() = customTestApplicationWithLogin { client ->
         client.get("/entries").let { response ->
             assertEquals(HttpStatusCode.Unauthorized, response.status)
             val responseBody: APIResponse<Entry> = response.body()
@@ -166,9 +164,7 @@ class EntryTest {
 
 
     @Test
-    fun testGetEntries() = customTestApplication { client ->
-        loginUser(client)
-
+    fun testGetEntries() = customTestApplicationWithLogin { client ->
         client.get("/entries").let { response ->
             assertEquals(HttpStatusCode.Unauthorized, response.status)
             val responseBody: APIResponse<List<Entry>> = response.body()
@@ -290,9 +286,7 @@ class EntryTest {
 
 
     @Test
-    fun testGetEntryById() = customTestApplication { client ->
-        loginUser(client)
-
+    fun testGetEntryById() = customTestApplicationWithLogin { client ->
         client.get("/entries/1").let { response ->
             assertEquals(HttpStatusCode.Unauthorized, response.status)
             val responseBody: APIResponse<Entry> = response.body()
@@ -326,9 +320,7 @@ class EntryTest {
 
 
     @Test
-    fun testPatchEntry() = customTestApplication { client ->
-        loginUser(client)
-
+    fun testPatchEntry() = customTestApplicationWithLogin { client ->
         client.patch("/entries/1").let { response ->
             assertEquals(HttpStatusCode.Unauthorized, response.status)
             val responseBody: APIResponse<Entry> = response.body()
@@ -457,9 +449,7 @@ class EntryTest {
 
 
     @Test
-    fun testDeleteEntry() = customTestApplication { client ->
-        loginUser(client)
-
+    fun testDeleteEntry() = customTestApplicationWithLogin { client ->
         client.delete("/entries/1").let { response ->
             assertEquals(HttpStatusCode.Unauthorized, response.status)
             val responseBody: APIResponse<Entry> = response.body()

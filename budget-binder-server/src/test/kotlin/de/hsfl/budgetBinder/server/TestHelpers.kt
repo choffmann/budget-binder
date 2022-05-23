@@ -35,6 +35,12 @@ fun customTestApplication(block: suspend ApplicationTestBuilder.(client: HttpCli
     }
 }
 
+fun customTestApplicationWithLogin(block: suspend ApplicationTestBuilder.(client: HttpClient) -> Unit) =
+    customTestApplication { client ->
+        loginUser(client)
+        block(client)
+    }
+
 inline fun <reified T> wrapSuccess(value: T): APIResponse<T> {
     return APIResponse(data = value, success = true)
 }

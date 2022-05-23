@@ -191,9 +191,7 @@ class ApplicationTest {
     }
 
     @Test
-    fun testUserEndpoints() = customTestApplication { client ->
-
-        loginUser(client)
+    fun testUserEndpoints() = customTestApplicationWithLogin { client ->
         checkMeSuccess(client)
 
         val userId = transaction { UserEntity.all().first().id.value }

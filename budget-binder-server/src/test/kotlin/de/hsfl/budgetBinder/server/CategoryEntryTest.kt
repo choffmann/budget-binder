@@ -117,10 +117,7 @@ class CategoryEntryTest {
 
 
     @Test
-    fun testGetEntriesByCategory() = customTestApplication { client ->
-
-        loginUser(client)
-
+    fun testGetEntriesByCategory() = customTestApplicationWithLogin { client ->
         client.get("/categories/1/entries").let { response ->
             assertEquals(HttpStatusCode.Unauthorized, response.status)
             val responseBody: APIResponse<List<Entry>> = response.body()
@@ -191,8 +188,7 @@ class CategoryEntryTest {
 
 
     @Test
-    fun createEntryWithCategory() = customTestApplication { client ->
-        loginUser(client)
+    fun createEntryWithCategory() = customTestApplicationWithLogin { client ->
         val categoryId = transaction { CategoryEntity.all().first().id.value + 2 }
 
         sendAuthenticatedRequestWithBody(
@@ -240,10 +236,7 @@ class CategoryEntryTest {
     }
 
     @Test
-    fun testChangeCategoryInEntry() = customTestApplication { client ->
-
-        loginUser(client)
-
+    fun testChangeCategoryInEntry() = customTestApplicationWithLogin { client ->
         val categoryId = transaction { CategoryEntity.all().first().id.value + 2 }
         val entryId = transaction { EntryEntity.all().last().id.value }
 
@@ -293,10 +286,7 @@ class CategoryEntryTest {
 
 
     @Test
-    fun testChangeOldCategoryHasOldEntries() = customTestApplication { client ->
-
-        loginUser(client)
-
+    fun testChangeOldCategoryHasOldEntries() = customTestApplicationWithLogin { client ->
         val categoryId = transaction { CategoryEntity.all().first().id.value + 2 }
         val entryId = transaction { EntryEntity.all().first().id.value + 1 }
 
@@ -358,10 +348,7 @@ class CategoryEntryTest {
 
 
     @Test
-    fun testChangeOldCategoryHasNewEntries() = customTestApplication { client ->
-
-        loginUser(client)
-
+    fun testChangeOldCategoryHasNewEntries() = customTestApplicationWithLogin { client ->
         val categoryId = transaction { CategoryEntity.all().first().id.value + 2 }
         transaction {
             val userEntity = UserEntity.all().first()
@@ -440,9 +427,7 @@ class CategoryEntryTest {
 
 
     @Test
-    fun testChangeOldCategoryHasOnlyNewEntries() = customTestApplication { client ->
-        loginUser(client)
-
+    fun testChangeOldCategoryHasOnlyNewEntries() = customTestApplicationWithLogin { client ->
         val categoryId = transaction { CategoryEntity.all().first().id.value + 2 }
         transaction {
             val userEntity = UserEntity.all().first()
@@ -522,9 +507,7 @@ class CategoryEntryTest {
 
 
     @Test
-    fun testChangeNewCategoryHasNewEntries() = customTestApplication { client ->
-        loginUser(client)
-
+    fun testChangeNewCategoryHasNewEntries() = customTestApplicationWithLogin { client ->
         transaction {
             val userEntity = UserEntity.all().first()
             val now = LocalDateTime.now()
@@ -610,9 +593,7 @@ class CategoryEntryTest {
 
 
     @Test
-    fun testDeleteOldCategoryHasOldEntries() = customTestApplication { client ->
-        loginUser(client)
-
+    fun testDeleteOldCategoryHasOldEntries() = customTestApplicationWithLogin { client ->
         val categoryId = transaction { CategoryEntity.all().first().id.value + 2 }
         val entryId = transaction { EntryEntity.all().first().id.value + 1 }
 
@@ -667,9 +648,7 @@ class CategoryEntryTest {
 
 
     @Test
-    fun testDeleteOldCategoryHasNewEntries() = customTestApplication { client ->
-        loginUser(client)
-
+    fun testDeleteOldCategoryHasNewEntries() = customTestApplicationWithLogin { client ->
         val categoryId = transaction { CategoryEntity.all().first().id.value + 2 }
         transaction {
             val userEntity = UserEntity.all().first()
@@ -737,9 +716,7 @@ class CategoryEntryTest {
 
 
     @Test
-    fun testDeleteOldCategoryHasOnlyNewEntries() = customTestApplication { client ->
-        loginUser(client)
-
+    fun testDeleteOldCategoryHasOnlyNewEntries() = customTestApplicationWithLogin { client ->
         val categoryId = transaction { CategoryEntity.all().first().id.value + 2 }
         transaction {
             val userEntity = UserEntity.all().first()
@@ -807,9 +784,7 @@ class CategoryEntryTest {
 
 
     @Test
-    fun testDeleteNewCategoryHasNewEntries() = customTestApplication { client ->
-        loginUser(client)
-
+    fun testDeleteNewCategoryHasNewEntries() = customTestApplicationWithLogin { client ->
         transaction {
             val userEntity = UserEntity.all().first()
             val now = LocalDateTime.now()

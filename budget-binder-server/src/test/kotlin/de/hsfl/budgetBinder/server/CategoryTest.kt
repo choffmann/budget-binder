@@ -94,10 +94,7 @@ class CategoryTest {
 
 
     @Test
-    fun testCreateCategory() = customTestApplication { client ->
-
-        loginUser(client)
-
+    fun testCreateCategory() = customTestApplicationWithLogin { client ->
         client.get("/categories").let { response ->
             assertEquals(HttpStatusCode.Unauthorized, response.status)
             val responseBody: APIResponse<Category> = response.body()
@@ -138,9 +135,7 @@ class CategoryTest {
 
 
     @Test
-    fun testGetCategories() = customTestApplication { client ->
-        loginUser(client)
-
+    fun testGetCategories() = customTestApplicationWithLogin { client ->
         client.get("/categories").let { response ->
             assertEquals(HttpStatusCode.Unauthorized, response.status)
             val responseBody: APIResponse<List<Category>> = response.body()
@@ -274,9 +269,7 @@ class CategoryTest {
 
 
     @Test
-    fun testGetCategoryById() = customTestApplication { client ->
-        loginUser(client)
-
+    fun testGetCategoryById() = customTestApplicationWithLogin { client ->
         client.get("/categories/1").let { response ->
             assertEquals(HttpStatusCode.Unauthorized, response.status)
             val responseBody: APIResponse<Category> = response.body()
@@ -324,9 +317,7 @@ class CategoryTest {
 
 
     @Test
-    fun testPatchCategory() = customTestApplication { client ->
-        loginUser(client)
-
+    fun testPatchCategory() = customTestApplicationWithLogin { client ->
         client.patch("/categories/1").let { response ->
             assertEquals(HttpStatusCode.Unauthorized, response.status)
             val responseBody: APIResponse<Category> = response.body()
@@ -431,9 +422,7 @@ class CategoryTest {
 
 
     @Test
-    fun testDeleteCategory() = customTestApplication { client ->
-        loginUser(client)
-
+    fun testDeleteCategory() = customTestApplicationWithLogin { client ->
         client.get("categories/1").let { response ->
             assertEquals(HttpStatusCode.Unauthorized, response.status)
             val responseBody: APIResponse<Category> = response.body()
