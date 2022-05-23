@@ -2,21 +2,18 @@ package de.hsfl.budgetBinder.server
 
 import de.hsfl.budgetBinder.common.APIResponse
 import de.hsfl.budgetBinder.common.ErrorModel
-import de.hsfl.budgetBinder.server.config.Config
 import de.hsfl.budgetBinder.server.config.getServerConfig
-import io.ktor.application.*
+import io.ktor.client.*
+import io.ktor.serialization.kotlinx.json.*
+import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.server.testing.*
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.serializer
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-fun <R> withCustomTestApplication(
-    moduleFunction: Application.(config: Config) -> Unit,
-    test: TestApplicationEngine.() -> R
-) {
-    withApplication(createTestEnvironment()) {
-        val configString = """
+fun customTestApplication(block: suspend ApplicationTestBuilder.(client: HttpClient) -> Unit) {
+    testApplication {
+        application {
+            val configString = """
             dataBase:
                 dbType: SQLITE
                 sqlitePath: file:test?mode=memory&cache=shared
@@ -27,18 +24,22 @@ fun <R> withCustomTestApplication(
                 refreshSecret: testSecret2
                 accessMinutes: 10
             """.trimIndent()
-        moduleFunction(application, getServerConfig(configString = configString))
-        test()
+            mainModule(getServerConfig(configString = configString))
+        }
+        val client = createClient {
+            install(ContentNegotiation) {
+                json()
+            }
+        }
+        block(client)
     }
 }
 
-inline fun <reified T> toJsonString(value: T): String {
-    return Json.encodeToString(serializer(), value)
-}
-
-inline fun <reified T> decodeFromString(value: String): APIResponse<T> {
-    return Json.decodeFromString(APIResponse.serializer(serializer()), value)
-}
+fun customTestApplicationWithLogin(block: suspend ApplicationTestBuilder.(client: HttpClient) -> Unit) =
+    customTestApplication { client ->
+        loginUser(client)
+        block(client)
+    }
 
 inline fun <reified T> wrapSuccess(value: T): APIResponse<T> {
     return APIResponse(data = value, success = true)

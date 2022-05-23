@@ -7,11 +7,11 @@ import de.hsfl.budgetBinder.server.models.UserPrincipal
 import de.hsfl.budgetBinder.server.repository.parseParameterToLocalDateTime
 import de.hsfl.budgetBinder.server.services.interfaces.CategoryService
 import de.hsfl.budgetBinder.server.services.interfaces.EntryService
-import io.ktor.application.*
-import io.ktor.auth.*
-import io.ktor.request.*
-import io.ktor.response.*
-import io.ktor.routing.*
+import io.ktor.server.application.*
+import io.ktor.server.auth.*
+import io.ktor.server.request.*
+import io.ktor.server.response.*
+import io.ktor.server.routing.*
 import org.kodein.di.instance
 import org.kodein.di.ktor.closestDI
 
