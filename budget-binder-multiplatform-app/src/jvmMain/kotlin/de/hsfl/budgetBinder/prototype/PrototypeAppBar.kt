@@ -1,4 +1,4 @@
-package de.hsfl.budgetBinder.prototyp
+package de.hsfl.budgetBinder.prototype
 
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton

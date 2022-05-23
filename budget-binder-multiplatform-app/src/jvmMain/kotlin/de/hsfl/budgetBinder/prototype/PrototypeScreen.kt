@@ -1,4 +1,5 @@
-package de.hsfl.budgetBinder.prototyp
+package de.hsfl.budgetBinder.prototype
+
 
 // Define the Screens
 sealed class PrototypeScreen {

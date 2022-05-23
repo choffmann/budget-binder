@@ -1,4 +1,4 @@
-package de.hsfl.budgetBinder.prototyp
+package de.hsfl.budgetBinder.prototype
 
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
@@ -8,7 +8,6 @@ import androidx.compose.runtime.remember
 // Root Component to handle View's
 @Composable
 fun Prototype() {
-    val screenState = remember { mutableStateOf<PrototypeScreen>(PrototypeScreen.Screen1) }
     val scaffoldState = rememberScaffoldState()
     val darkTheme = remember { mutableStateOf(false) }
     MaterialTheme(
@@ -24,7 +23,7 @@ fun Prototype() {
             floatingActionButtonPosition = FabPosition.End,
             isFloatingActionButtonDocked = false,
         ) {
-            Router(screenState)
+            Router()
         }
     }
 
