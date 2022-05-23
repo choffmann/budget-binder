@@ -80,7 +80,7 @@ fun Route.logout() {
             }
 
             call.response.cookies.appendExpired("jwt", path = "/refresh_token")
-            call.respond(HttpStatusCode.OK)
+            call.respond(APIResponse(data = AuthToken(""), success = true))
         }
     }
 }

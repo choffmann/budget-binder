@@ -126,7 +126,10 @@ class ApplicationTest {
 
                 sendAuthenticatedRequest(HttpMethod.Get, "/logout") {
                     assertEquals(HttpStatusCode.OK, response.status())
-                    assertNull(response.content)
+                    assertNotNull(response.content)
+                    val logoutResponse: APIResponse<AuthToken> = decodeFromString(response.content!!)
+                    val shouldResponse = wrapSuccess(AuthToken(""))
+                    assertEquals(shouldResponse, logoutResponse)
 
                     val setCookieHeader = response.headers[HttpHeaders.SetCookie]
                     assertNotNull(setCookieHeader)
@@ -169,7 +172,10 @@ class ApplicationTest {
 
                 sendAuthenticatedRequest(HttpMethod.Get, "/logout?all=true") {
                     assertEquals(HttpStatusCode.OK, response.status())
-                    assertNull(response.content)
+                    assertNotNull(response.content)
+                    val response: APIResponse<AuthToken> = decodeFromString(response.content!!)
+                    val shouldResponse = wrapSuccess(AuthToken(""))
+                    assertEquals(shouldResponse, response)
                 }
 
                 transaction {
