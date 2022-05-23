@@ -1,30 +1,35 @@
-package de.hsfl.budgetBinder.server.services
+package de.hsfl.budgetBinder.server.services.implementations
 
 import de.hsfl.budgetBinder.common.Category
 import de.hsfl.budgetBinder.common.User
 import de.hsfl.budgetBinder.server.models.CategoryEntity
 import de.hsfl.budgetBinder.server.models.UserEntity
+import de.hsfl.budgetBinder.server.models.UserPrincipal
 import de.hsfl.budgetBinder.server.models.Users
+import de.hsfl.budgetBinder.server.services.interfaces.UserService
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.mindrot.jbcrypt.BCrypt
 
-class UserService {
-    fun getRandomUser() = transaction {
-        UserEntity.all().toList().random()
-    }
-
-    fun findUserByEmailAndPassword(email: String, password: String): UserEntity? = transaction {
+class UserServiceImpl : UserService {
+    override fun findUserByEmailAndPassword(email: String, password: String): UserPrincipal? = transaction {
         UserEntity.find { Users.email eq email }.firstOrNull()?.let { user ->
             if (BCrypt.checkpw(password, user.passwordHash)) user else null
         }
     }
 
-    fun findUserByID(id: Int): UserEntity? = transaction {
-        UserEntity.findById(id)
+    override fun getUserPrincipalByIDAndTokenVersion(id: Int, tokenVersion: Int): UserPrincipal? = transaction {
+        UserEntity.findById(id)?.let {
+            if (it.tokenVersion == tokenVersion) it else null
+        }
     }
 
-    fun changeUser(user: UserEntity, userPut: User.Put): UserEntity = transaction {
+    override fun findUserByID(id: Int): User? = transaction {
+        UserEntity.findById(id)?.toDto()
+    }
+
+    override fun changeUser(userId: Int, userPut: User.Put): User = transaction {
+        val user = UserEntity[userId]
         userPut.name?.let {
             user.name = it
         }
@@ -34,14 +39,14 @@ class UserService {
         userPut.password?.let {
             user.passwordHash = BCrypt.hashpw(it, BCrypt.gensalt())
         }
-        user
+        user.toDto()
     }
 
-    fun logoutAllClients(user: UserEntity): Unit = transaction {
-        user.tokenVersion++
+    override fun logoutAllClients(userId: Int): Unit = transaction {
+        UserEntity[userId].tokenVersion++
     }
 
-    fun insertNewUserOrNull(userIn: User.In): UserEntity? {
+    override fun insertNewUserOrNull(userIn: User.In): User? {
         val userEntity = transaction {
             try {
                 UserEntity.new {
@@ -68,15 +73,18 @@ class UserService {
             transaction {
                 it.category = category.id
             }
-            it
+            it.toDto()
         }
     }
 
 
-    fun deleteUser(user: UserEntity): Unit = transaction {
+    override fun deleteUser(userId: Int): User = transaction {
+        val user = UserEntity[userId]
+        val userDto = user.toDto()
         user.entries.forEach { it.delete() }
         user.category = null
         user.categories.forEach { it.delete() }
         user.delete()
+        userDto
     }
 }

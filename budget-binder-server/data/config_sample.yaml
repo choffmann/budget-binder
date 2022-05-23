@@ -1,0 +1,26 @@
+server:
+    dev: true
+    ssl: false
+    host: 0.0.0.0
+    port: 8080
+    sslHost: 0.0.0.0
+    sslPort: 8443
+    keyStorePassword: null
+    keyStorePath: null
+    frontendAddresses: http://localhost:8081
+    noForwardedHeaderSupport: false
+dataBase:
+    dbType: SQLITE
+    sqlitePath: null
+    serverAddress: null
+    serverPort: null
+    name: null
+    user: null
+    password: null
+jwt:
+    accessSecret: secret
+    refreshSecret: secret2
+    accessMinutes: 15
+    refreshDays: 7
+    issuer: http://0.0.0.0:8080
+    audience: http://0.0.0.0:8080

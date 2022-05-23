@@ -12,17 +12,28 @@ object Entries : IntIdTable() {
     val name = varchar("name", 50)
     val amount = float("amount")
     val repeat = bool("repeat").default(false)
-    val created = datetime("created").default(LocalDateTime.now())
+    val created = datetime("created").clientDefault { LocalDateTime.now() }
     val ended = datetime("ended").nullable().default(null)
 
-    val parent = reference("parent", Entries).nullable().default(null)
     val child = reference("child", Entries).nullable().default(null)
 
     val user = reference("user", Users)
     val category = reference("category", Categories)
 }
 
-class EntryEntity(id: EntityID<Int>) : IntEntity(id) {
+class EntryIter(start: EntryEntity) : Iterator<EntryEntity> {
+    private var curr = start
+    override fun hasNext(): Boolean {
+        return curr.child != null
+    }
+
+    override fun next(): EntryEntity {
+        curr = EntryEntity[curr.child!!]
+        return curr
+    }
+}
+
+class EntryEntity(id: EntityID<Int>) : IntEntity(id), Iterable<EntryEntity> {
     companion object : IntEntityClass<EntryEntity>(Entries)
 
     var name by Entries.name
@@ -31,38 +42,35 @@ class EntryEntity(id: EntityID<Int>) : IntEntity(id) {
     var created by Entries.created
     var ended by Entries.ended
 
-    var parent by Entries.parent
     var child by Entries.child
 
     var user by UserEntity referencedOn Entries.user
     var category by CategoryEntity referencedOn Entries.category
 
-    private fun next(): EntryEntity? {
-        return child?.let {
-            EntryEntity[it]
-        }
-    }
-
-    private fun prev(): EntryEntity? {
-        return parent?.let {
-            EntryEntity[it]
-        }
-    }
-
-    private fun lastChild(): EntryEntity {
-        var lastChild = this
-        while (true) {
-            val child = lastChild.next() ?: break
-            lastChild = child
-        }
-        return lastChild
-    }
 
     fun toDto(): Entry {
-        val lastChild = lastChild()
+        val lastChild = this.lastOrNull() ?: this
 
         val categoryId =
             if (user.category?.value == category.id.value) null else category.id.value
         return Entry(id.value, lastChild.name, amount, repeat, categoryId)
+    }
+
+    override fun iterator(): Iterator<EntryEntity> {
+        return EntryIter(this)
+    }
+
+    fun createChild(): EntryEntity {
+        val oldEntity = this
+        val entryEntity = EntryEntity.new {
+            this.name = oldEntity.name
+            this.amount = oldEntity.amount
+            this.repeat = oldEntity.repeat
+            this.user = oldEntity.user
+            this.category = oldEntity.category
+        }
+        this.child = entryEntity.id
+        this.ended = LocalDateTime.now()
+        return entryEntity
     }
 }

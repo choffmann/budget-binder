@@ -7,8 +7,8 @@
     <root level="trace">
         <appender-ref ref="STDOUT"/>
     </root>
-    <logger name="io.netty" level="INFO"/>
-    <logger name="Exposed" level="DEBUG"/>
-    <logger name="ktor.application" level="DEBUG"/>
-    <logger name="io.ktor.auth.jwt" level="DEBUG"/>
+    <logger name="io.netty" level="OFF"/>
+    <logger name="Exposed" level="OFF"/>
+    <logger name="ktor.test" level="OFF"/>
+    <logger name="io.ktor.auth.jwt" level="OFF"/>
 </configuration>
