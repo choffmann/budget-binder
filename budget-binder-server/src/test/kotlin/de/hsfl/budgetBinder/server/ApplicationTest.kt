@@ -5,312 +5,304 @@ import de.hsfl.budgetBinder.common.AuthToken
 import de.hsfl.budgetBinder.common.User
 import de.hsfl.budgetBinder.server.models.CategoryEntity
 import de.hsfl.budgetBinder.server.models.UserEntity
-import io.ktor.application.*
+import io.ktor.client.call.*
+import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.plugins.cookies.*
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
 import io.ktor.http.*
-import io.ktor.server.testing.*
+import io.ktor.serialization.kotlinx.json.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.net.HttpCookie
 import kotlin.test.*
 
 class ApplicationTest {
     @BeforeTest
-    fun registerTestUser() {
-        withCustomTestApplication(Application::mainModule) {
-            registerUser()
-        }
+    fun registerTestUser() = customTestApplication { client ->
+        registerUser(client)
     }
 
     @AfterTest
-    fun deleteTestUser() {
-        withCustomTestApplication(Application::mainModule) {
+    fun deleteTestUser() = transaction {
+        UserEntity.all().forEach {
+            CategoryEntity[it.category!!].delete()
+            it.delete()
+        }
+    }
+
+
+    @Test
+    fun testRoot() = customTestApplication { client ->
+        val response = client.get("/")
+        assertEquals(HttpStatusCode.OK, response.status)
+        assertEquals("{Accept=[application/json], Accept-Charset=[UTF-8], Content-Length=[0]}", response.bodyAsText())
+    }
+
+
+    @Test
+    fun testRegisterLoginAndLogout() = customTestApplication {
+        val client = createClient {
+            install(ContentNegotiation) {
+                json()
+            }
+            install(HttpCookies)
+        }
+
+        client.get("/login").let { response ->
+            assertEquals(HttpStatusCode.MethodNotAllowed, response.status)
+            val responseBody: APIResponse<AuthToken> = response.body()
+            val shouldResponse: APIResponse<AuthToken> = wrapFailure("Method Not Allowed")
+            assertEquals(shouldResponse, responseBody)
+        }
+
+        client.post("/login").let { response ->
+            assertEquals(HttpStatusCode.Unauthorized, response.status)
+            val responseBody: APIResponse<AuthToken> = response.body()
+            val shouldResponse: APIResponse<AuthToken> = wrapFailure("Unauthorized")
+            assertEquals(shouldResponse, responseBody)
+        }
+
+        client.post("/login") {
+            header(HttpHeaders.ContentType, ContentType.Application.FormUrlEncoded)
+            setBody(
+                listOf(
+                    "username" to "falseTest@test.com",
+                    "password" to "falsetest"
+                ).formUrlEncode()
+            )
+        }.let { response ->
+            assertEquals(HttpStatusCode.Unauthorized, response.status)
+            val responseBody: APIResponse<AuthToken> = response.body()
+            val shouldResponse: APIResponse<AuthToken> = wrapFailure("Unauthorized")
+            assertEquals(shouldResponse, responseBody)
+        }
+
+        loginUser(client) { response ->
+            val setCookieHeader = response.headers[HttpHeaders.SetCookie]
+            assertNotNull(setCookieHeader)
+            val cookie = HttpCookie.parse(setCookieHeader)
+            assertNotNull(cookie)
+            assertEquals(1, cookie.size)
+            assertEquals("jwt", cookie[0].name)
+            assertNotEquals("", cookie[0].value)
+        }
+
+        client.get("/me").let { response ->
+            assertEquals(HttpStatusCode.Unauthorized, response.status)
+            val responseBody: APIResponse<User> = response.body()
+            val shouldResponse: APIResponse<User> = wrapFailure("Unauthorized")
+            assertEquals(shouldResponse, responseBody)
+        }
+
+        client.get("/me") {
+            val bearer =
+                "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyaWQiOjF9.OsLv52jTx-f-vcuQEJ6FJ-kTJ_DYm3XqVpjLwagQtM0"
+            header(HttpHeaders.Authorization, "Bearer $bearer")
+        }.let { response ->
+            assertEquals(HttpStatusCode.Unauthorized, response.status)
+            val responseBody: APIResponse<User> = response.body()
+            val shouldResponse: APIResponse<User> = wrapFailure("Unauthorized")
+            assertEquals(shouldResponse, responseBody)
+        }
+
+        checkMeSuccess(client)
+
+        client.get("/refresh_token").let { response ->
+            assertEquals(HttpStatusCode.OK, response.status)
+            val responseBody: APIResponse<AuthToken> = response.body()
+            assert(responseBody.success)
+            assertNotNull(responseBody.data)
+        }
+
+        client.get("/logout").let { response ->
+            assertEquals(HttpStatusCode.Unauthorized, response.status)
+            val responseBody: APIResponse<AuthToken> = response.body()
+            val shouldResponse: APIResponse<AuthToken> = wrapFailure("Unauthorized")
+            assertEquals(shouldResponse, responseBody)
+        }
+
+        sendAuthenticatedRequest(client, HttpMethod.Get, "/logout") { response ->
+            assertEquals(HttpStatusCode.OK, response.status)
+            val logoutResponse: APIResponse<AuthToken> = response.body()
+            val shouldResponse = wrapSuccess(AuthToken(""))
+            assertEquals(shouldResponse, logoutResponse)
+
+            val setCookieHeader = response.headers[HttpHeaders.SetCookie]
+            assertNotNull(setCookieHeader)
+            val cookie = HttpCookie.parse(setCookieHeader)
+            assertNotNull(cookie)
+            assertEquals(1, cookie.size)
+            assertEquals("jwt", cookie[0].name)
+            assertEquals("", cookie[0].value)
+        }
+
+        checkMeSuccess(client)
+        TestUser.accessToken = null
+        checkMeFailure(client)
+    }
+
+
+    @Test
+    fun testRefreshTokenWithoutCookie() = customTestApplication { client ->
+        val response = client.get("/refresh_token")
+        assertEquals(HttpStatusCode.Unauthorized, response.status)
+        val responseBody: APIResponse<AuthToken> = response.body()
+        val shouldResponse: APIResponse<AuthToken> = wrapFailure("False Refresh Cookie")
+        assertEquals(shouldResponse, responseBody)
+    }
+
+    @Test
+    fun testLogoutAll() = customTestApplication {
+        val client = createClient {
+            install(ContentNegotiation) {
+                json()
+            }
+            install(HttpCookies)
+        }
+        loginUser(client)
+        checkMeSuccess(client)
+
+        val tokenVersion = transaction {
+            val tokenVersion = UserEntity.all().first().tokenVersion
+            assertEquals(1, tokenVersion)
+            tokenVersion
+        }
+
+        sendAuthenticatedRequest(client, HttpMethod.Get, "/logout?all=true") { response ->
+            assertEquals(HttpStatusCode.OK, response.status)
+            val responseBody: APIResponse<AuthToken> = response.body()
+            val shouldResponse = wrapSuccess(AuthToken(""))
+            assertEquals(shouldResponse, responseBody)
+        }
+
+        transaction {
+            val newTokenVersion = UserEntity.all().first().tokenVersion
+            assertNotEquals(tokenVersion, newTokenVersion)
+        }
+
+        checkMeFailure(client)
+
+        client.get("/refresh_token").let { response ->
+            assertEquals(HttpStatusCode.Unauthorized, response.status)
+            val responseBody: APIResponse<AuthToken> = response.body()
+            val shouldResponse: APIResponse<AuthToken> = wrapFailure("False Refresh Cookie")
+            assertEquals(shouldResponse, responseBody)
+        }
+    }
+
+    @Test
+    fun testUserEndpoints() = customTestApplicationWithLogin { client ->
+        checkMeSuccess(client)
+
+        val userId = transaction { UserEntity.all().first().id.value }
+
+        sendAuthenticatedRequest(client, HttpMethod.Patch, "/me") { response ->
+            assertEquals(HttpStatusCode.OK, response.status)
+
+            val user: APIResponse<User> = response.body()
+            val shouldUser: APIResponse<User> = wrapFailure("not the right Parameters provided")
+            assertEquals(shouldUser, user)
+        }
+
+        val patchedUser = User.Put("changedTest", "changedSurname", "newPassword")
+
+        client.patch("/me") {
+            header(HttpHeaders.ContentType, ContentType.Application.Json)
+            setBody(patchedUser)
+        }.let { response ->
+            assertEquals(HttpStatusCode.Unauthorized, response.status)
+            val responseBody: APIResponse<User> = response.body()
+            val shouldResponse: APIResponse<User> = wrapFailure("Unauthorized")
+            assertEquals(shouldResponse, responseBody)
+        }
+
+        sendAuthenticatedRequestWithBody(client, HttpMethod.Patch, "/me", patchedUser) { response ->
+            assertEquals(HttpStatusCode.OK, response.status)
+
+            val user: APIResponse<User> = response.body()
+            val shouldUser = wrapSuccess(User(userId, "changedTest", "changedSurname", TestUser.email))
+            assertEquals(shouldUser, user)
+
             transaction {
-                UserEntity.all().forEach {
-                    CategoryEntity[it.category!!].delete()
-                    it.delete()
-                }
+                val userEntity = UserEntity[userId]
+                assertEquals("changedTest", userEntity.firstName)
+                assertEquals("changedSurname", userEntity.name)
+                assertEquals("changedSurname", userEntity.name)
             }
         }
-    }
 
-    @Test
-    fun testRoot() {
-        withCustomTestApplication(Application::mainModule) {
-            handleRequest(HttpMethod.Get, "/").apply {
-                assertEquals(HttpStatusCode.OK, response.status())
-                assertEquals("{}", response.content)
+        client.post("/login") {
+            header(HttpHeaders.ContentType, ContentType.Application.FormUrlEncoded)
+            setBody(
+                listOf(
+                    "username" to TestUser.email,
+                    "password" to TestUser.password
+                ).formUrlEncode()
+            )
+        }.let { response ->
+            assertEquals(HttpStatusCode.Unauthorized, response.status)
+            val responseBody: APIResponse<User> = response.body()
+            val shouldResponse: APIResponse<User> = wrapFailure("Unauthorized")
+            assertEquals(shouldResponse, responseBody)
+        }
+
+        client.post("/login") {
+            header(HttpHeaders.ContentType, ContentType.Application.FormUrlEncoded)
+            setBody(
+                listOf(
+                    "username" to TestUser.email,
+                    "password" to "newPassword"
+                ).formUrlEncode()
+            )
+        }.let { response ->
+            assertEquals(HttpStatusCode.OK, response.status)
+            val token: APIResponse<AuthToken> = response.body()
+            assert(token.success)
+            assertNotNull(token.data)
+            TestUser.accessToken = token.data!!.token
+        }
+
+        client.delete("/me").let { response ->
+            assertEquals(HttpStatusCode.Unauthorized, response.status)
+            val responseBody: APIResponse<User> = response.body()
+            val shouldResponse: APIResponse<User> = wrapFailure("Unauthorized")
+            assertEquals(shouldResponse, responseBody)
+        }
+
+        sendAuthenticatedRequest(client, HttpMethod.Delete, "/me") { response ->
+            assertEquals(HttpStatusCode.OK, response.status)
+            val user: APIResponse<User> = response.body()
+
+            val shouldUser = wrapSuccess(User(userId, "changedTest", "changedSurname", TestUser.email))
+            assertEquals(shouldUser, user)
+
+            transaction {
+                assertNull(UserEntity.findById(userId))
             }
         }
-    }
 
-    @Test
-    fun testRegisterLoginAndLogout() {
-        withCustomTestApplication(Application::mainModule) {
-            cookiesSession {
-
-                handleRequest(HttpMethod.Get, "/login").apply {
-                    assertEquals(HttpStatusCode.NotFound, response.status())
-                    assertNull(response.content)
-                }
-
-                handleRequest(HttpMethod.Post, "/login").apply {
-                    assertEquals(HttpStatusCode.Unauthorized, response.status())
-                    assertNotNull(response.content)
-                    val response: APIResponse<AuthToken> = decodeFromString(response.content!!)
-                    val shouldResponse: APIResponse<AuthToken> = wrapFailure("Unauthorized")
-                    assertEquals(shouldResponse, response)
-                }
-
-                with(handleRequest(HttpMethod.Post, "/login") {
-                    addHeader(HttpHeaders.ContentType, ContentType.Application.FormUrlEncoded.toString())
-                    setBody(
-                        listOf(
-                            "username" to "falseTest@test.com",
-                            "password" to "falsetest"
-                        ).formUrlEncode()
-                    )
-                }) {
-                    assertEquals(HttpStatusCode.Unauthorized, response.status())
-                    assertNotNull(response.content)
-                    val response: APIResponse<AuthToken> = decodeFromString(response.content!!)
-                    val shouldResponse: APIResponse<AuthToken> = wrapFailure("Unauthorized")
-                    assertEquals(shouldResponse, response)
-                }
-
-                loginUser {
-                    val setCookieHeader = response.headers[HttpHeaders.SetCookie]
-                    assertNotNull(setCookieHeader)
-                    val cookie = HttpCookie.parse(setCookieHeader)
-                    assertNotNull(cookie)
-                    assertEquals(1, cookie.size)
-                    assertEquals("jwt", cookie[0].name)
-                    assertNotEquals("", cookie[0].value)
-                }
-
-                handleRequest(HttpMethod.Get, "/me").apply {
-                    assertEquals(HttpStatusCode.Unauthorized, response.status())
-                    assertNotNull(response.content)
-                    val response: APIResponse<User> = decodeFromString(response.content!!)
-                    val shouldResponse: APIResponse<User> = wrapFailure("Unauthorized")
-                    assertEquals(shouldResponse, response)
-                }
-
-                with(handleRequest(HttpMethod.Get, "/me") {
-                    val bearer =
-                        "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyaWQiOjF9.OsLv52jTx-f-vcuQEJ6FJ-kTJ_DYm3XqVpjLwagQtM0"
-                    addHeader(HttpHeaders.Authorization, "Bearer $bearer")
-                }) {
-                    assertEquals(HttpStatusCode.Unauthorized, response.status())
-                    assertNotNull(response.content)
-                    val response: APIResponse<User> = decodeFromString(response.content!!)
-                    val shouldResponse: APIResponse<User> = wrapFailure("Unauthorized")
-                    assertEquals(shouldResponse, response)
-                }
-
-                checkMeSuccess()
-
-                handleRequest(HttpMethod.Get, "/refresh_token").apply {
-                    assertEquals(HttpStatusCode.OK, response.status())
-                    assertNotNull(response.content)
-                    val token: APIResponse<AuthToken> = decodeFromString(response.content!!)
-                    assert(token.success)
-                    assertNotNull(token.data)
-                }
-
-                handleRequest(HttpMethod.Get, "/logout").apply {
-                    assertEquals(HttpStatusCode.Unauthorized, response.status())
-                    assertNotNull(response.content)
-                    val response: APIResponse<AuthToken> = decodeFromString(response.content!!)
-                    val shouldResponse: APIResponse<AuthToken> = wrapFailure("Unauthorized")
-                    assertEquals(shouldResponse, response)
-                }
-
-                sendAuthenticatedRequest(HttpMethod.Get, "/logout") {
-                    assertEquals(HttpStatusCode.OK, response.status())
-                    assertNotNull(response.content)
-                    val logoutResponse: APIResponse<AuthToken> = decodeFromString(response.content!!)
-                    val shouldResponse = wrapSuccess(AuthToken(""))
-                    assertEquals(shouldResponse, logoutResponse)
-
-                    val setCookieHeader = response.headers[HttpHeaders.SetCookie]
-                    assertNotNull(setCookieHeader)
-                    val cookie = HttpCookie.parse(setCookieHeader)
-                    assertNotNull(cookie)
-                    assertEquals(1, cookie.size)
-                    assertEquals("jwt", cookie[0].name)
-                    assertEquals("", cookie[0].value)
-                }
-
-                checkMeSuccess()
-
-                TestUser.accessToken = null
-
-                checkMeFailure()
-            }
-
-            handleRequest(HttpMethod.Get, "/refresh_token").apply {
-                assertEquals(HttpStatusCode.Unauthorized, response.status())
-                assertNotNull(response.content)
-                val token: APIResponse<AuthToken> = decodeFromString(response.content!!)
-                val shouldToken: APIResponse<AuthToken> = wrapFailure("No Refresh Cookie")
-                assertEquals(shouldToken, token)
-            }
+        client.get("/me") {
+            header(HttpHeaders.Authorization, "Bearer ${TestUser.accessToken ?: ""}")
+        }.let { response ->
+            assertEquals(HttpStatusCode.Unauthorized, response.status)
+            val responseBody: APIResponse<User> = response.body()
+            val shouldResponse: APIResponse<User> = wrapFailure("Unauthorized")
+            assertEquals(shouldResponse, responseBody)
         }
-    }
 
-    @Test
-    fun testLogoutAll() {
-        withCustomTestApplication(Application::mainModule) {
-            cookiesSession {
-                loginUser()
-                checkMeSuccess()
-
-                val tokenVersion = transaction {
-                    val tokenVersion = UserEntity.all().first().tokenVersion
-                    assertEquals(1, tokenVersion)
-                    tokenVersion
-                }
-
-                sendAuthenticatedRequest(HttpMethod.Get, "/logout?all=true") {
-                    assertEquals(HttpStatusCode.OK, response.status())
-                    assertNotNull(response.content)
-                    val response: APIResponse<AuthToken> = decodeFromString(response.content!!)
-                    val shouldResponse = wrapSuccess(AuthToken(""))
-                    assertEquals(shouldResponse, response)
-                }
-
-                transaction {
-                    val newTokenVersion = UserEntity.all().first().tokenVersion
-                    assertNotEquals(tokenVersion, newTokenVersion)
-                }
-
-                checkMeFailure()
-            }
-        }
-    }
-
-    @Test
-    fun testUserEndpoints() {
-        withCustomTestApplication(Application::mainModule) {
-            loginUser()
-            checkMeSuccess()
-
-            val userId = transaction { UserEntity.all().first().id.value }
-
-            sendAuthenticatedRequest(HttpMethod.Patch, "/me") {
-                assertEquals(HttpStatusCode.OK, response.status())
-
-                val user: APIResponse<User> = decodeFromString(response.content!!)
-                val shouldUser: APIResponse<User> = wrapFailure("not the right Parameters provided")
-                assertEquals(shouldUser, user)
-            }
-
-            val patchedUser = User.Put("changedTest", "changedSurname", "newPassword")
-
-            with(handleRequest(HttpMethod.Patch, "/me") {
-                addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
-                setBody(toJsonString(patchedUser))
-            }) {
-                assertEquals(HttpStatusCode.Unauthorized, response.status())
-                assertNotNull(response.content)
-                val response: APIResponse<User> = decodeFromString(response.content!!)
-                val shouldResponse: APIResponse<User> = wrapFailure("Unauthorized")
-                assertEquals(shouldResponse, response)
-            }
-
-            sendAuthenticatedRequest(HttpMethod.Patch, "/me", toJsonString(patchedUser)) {
-                assertEquals(HttpStatusCode.OK, response.status())
-
-                val user: APIResponse<User> = decodeFromString(response.content!!)
-                val shouldUser = wrapSuccess(User(userId, "changedTest", "changedSurname", TestUser.email))
-                assertEquals(shouldUser, user)
-
-                transaction {
-                    val userEntity = UserEntity[userId]
-                    assertEquals("changedTest", userEntity.firstName)
-                    assertEquals("changedSurname", userEntity.name)
-                    assertEquals("changedSurname", userEntity.name)
-                }
-            }
-
-            with(handleRequest(HttpMethod.Post, "/login") {
-                addHeader(HttpHeaders.ContentType, ContentType.Application.FormUrlEncoded.toString())
-                setBody(
-                    listOf(
-                        "username" to TestUser.email,
-                        "password" to TestUser.password
-                    ).formUrlEncode()
-                )
-            }) {
-                assertEquals(HttpStatusCode.Unauthorized, response.status())
-                assertNotNull(response.content)
-                val response: APIResponse<User> = decodeFromString(response.content!!)
-                val shouldResponse: APIResponse<User> = wrapFailure("Unauthorized")
-                assertEquals(shouldResponse, response)
-            }
-
-            with(handleRequest(HttpMethod.Post, "/login") {
-                addHeader(HttpHeaders.ContentType, ContentType.Application.FormUrlEncoded.toString())
-                setBody(
-                    listOf(
-                        "username" to TestUser.email,
-                        "password" to "newPassword"
-                    ).formUrlEncode()
-                )
-            }) {
-                assertEquals(HttpStatusCode.OK, response.status())
-                assertNotNull(response.content)
-                val token: APIResponse<AuthToken> = decodeFromString(response.content!!)
-                assert(token.success)
-                assertNotNull(token.data)
-                TestUser.accessToken = token.data!!.token
-            }
-
-            handleRequest(HttpMethod.Delete, "/me").apply {
-                assertEquals(HttpStatusCode.Unauthorized, response.status())
-                assertNotNull(response.content)
-                val response: APIResponse<User> = decodeFromString(response.content!!)
-                val shouldResponse: APIResponse<User> = wrapFailure("Unauthorized")
-                assertEquals(shouldResponse, response)
-            }
-
-            sendAuthenticatedRequest(HttpMethod.Delete, "/me") {
-                assertEquals(HttpStatusCode.OK, response.status())
-                assertNotNull(response.content)
-                val user: APIResponse<User> = decodeFromString(response.content!!)
-
-                val shouldUser = wrapSuccess(User(userId, "changedTest", "changedSurname", TestUser.email))
-                assertEquals(shouldUser, user)
-
-                transaction {
-                    assertNull(UserEntity.findById(userId))
-                }
-            }
-
-            with(handleRequest(HttpMethod.Get, "/me") {
-                addHeader(HttpHeaders.Authorization, "Bearer ${TestUser.accessToken ?: ""}")
-            }) {
-                assertEquals(HttpStatusCode.Unauthorized, response.status())
-                assertNotNull(response.content)
-                val response: APIResponse<User> = decodeFromString(response.content!!)
-                val shouldResponse: APIResponse<User> = wrapFailure("Unauthorized")
-                assertEquals(shouldResponse, response)
-            }
-
-            with(handleRequest(HttpMethod.Post, "/login") {
-                addHeader(HttpHeaders.ContentType, ContentType.Application.FormUrlEncoded.toString())
-                setBody(
-                    listOf(
-                        "username" to TestUser.email,
-                        "password" to "newPassword"
-                    ).formUrlEncode()
-                )
-            }) {
-                assertEquals(HttpStatusCode.Unauthorized, response.status())
-                assertNotNull(response.content)
-                val response: APIResponse<AuthToken> = decodeFromString(response.content!!)
-                val shouldResponse: APIResponse<AuthToken> = wrapFailure("Unauthorized")
-                assertEquals(shouldResponse, response)
-            }
+        client.post("/login") {
+            header(HttpHeaders.ContentType, ContentType.Application.FormUrlEncoded)
+            setBody(
+                listOf(
+                    "username" to TestUser.email,
+                    "password" to "newPassword"
+                ).formUrlEncode()
+            )
+        }.let { response ->
+            assertEquals(HttpStatusCode.Unauthorized, response.status)
+            val responseBody: APIResponse<AuthToken> = response.body()
+            val shouldResponse: APIResponse<AuthToken> = wrapFailure("Unauthorized")
+            assertEquals(shouldResponse, responseBody)
         }
     }
 }
