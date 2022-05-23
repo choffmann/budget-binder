@@ -5,7 +5,7 @@ import de.hsfl.budgetBinder.common.AuthToken
 import de.hsfl.budgetBinder.common.User
 import de.hsfl.budgetBinder.server.models.CategoryEntity
 import de.hsfl.budgetBinder.server.models.UserEntity
-import io.ktor.application.*
+import io.ktor.server.application.*
 import io.ktor.http.*
 import io.ktor.server.testing.*
 import org.jetbrains.exposed.sql.transactions.transaction

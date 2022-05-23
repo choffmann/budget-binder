@@ -14,19 +14,25 @@ import de.hsfl.budgetBinder.server.services.implementations.UserServiceImpl
 import de.hsfl.budgetBinder.server.services.interfaces.CategoryService
 import de.hsfl.budgetBinder.server.services.interfaces.EntryService
 import de.hsfl.budgetBinder.server.services.interfaces.UserService
-import io.ktor.application.*
-import io.ktor.auth.*
-import io.ktor.auth.jwt.*
-import io.ktor.features.*
+import io.ktor.server.application.*
+import io.ktor.server.auth.*
+import io.ktor.server.auth.jwt.*
 import io.ktor.http.*
-import io.ktor.request.*
-import io.ktor.response.*
-import io.ktor.serialization.*
+import io.ktor.serialization.kotlinx.json.*
+import io.ktor.server.request.*
+import io.ktor.server.response.*
+import io.ktor.server.plugins.callloging.CallLogging
+import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.server.plugins.cors.routing.*
+import io.ktor.server.plugins.forwardedheaders.*
+import io.ktor.server.plugins.statuspages.*
 import kotlinx.serialization.json.Json
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.kodein.di.*
+import org.kodein.di.bindEagerSingleton
+import org.kodein.di.bindSingleton
+import org.kodein.di.instance
 import org.kodein.di.ktor.closestDI
 import org.kodein.di.ktor.di
 import org.slf4j.event.Level
@@ -79,21 +85,21 @@ fun Application.mainModule(config: Config) {
     install(CORS) {
         config.server.frontendAddresses.forEach {
             val (scheme, hostName) = it.split("://")
-            host(hostName, schemes = listOf(scheme))
+            allowHost(hostName, schemes = listOf(scheme))
         }
         allowCredentials = true
-        header(HttpHeaders.Authorization)
-        header(HttpHeaders.ContentType)
-        method(HttpMethod.Put)
-        method(HttpMethod.Options)
-        method(HttpMethod.Patch)
-        method(HttpMethod.Delete)
-        method(HttpMethod.Post)
+        allowHeader(HttpHeaders.Authorization)
+        allowHeader(HttpHeaders.ContentType)
+        allowMethod(HttpMethod.Put)
+        allowMethod(HttpMethod.Options)
+        allowMethod(HttpMethod.Patch)
+        allowMethod(HttpMethod.Delete)
+        allowMethod(HttpMethod.Post)
         allowNonSimpleContentTypes = true
     }
 
     if (config.server.forwardedHeaderSupport)
-        install(XForwardedHeaderSupport)
+        install(XForwardedHeaders)
 
     install(Authentication) {
         form("auth-form") {
@@ -106,7 +112,7 @@ fun Application.mainModule(config: Config) {
         }
 
         jwt("auth-jwt") {
-            val jwtService: JWTService by closestDI().instance()
+            val jwtService: JWTService by this@mainModule.closestDI().instance()
             realm = "Access to all your stuff"
             verifier(jwtService.getAccessTokenVerifier())
 
@@ -126,14 +132,14 @@ fun Application.mainModule(config: Config) {
     }
 
     install(StatusPages) {
-        exception<Throwable> { cause ->
+        exception<Throwable> { call, cause ->
             call.respond(
                 HttpStatusCode.InternalServerError,
                 APIResponse<String>(ErrorModel("Internal Server Error"))
             )
             throw cause
         }
-        status(HttpStatusCode.Unauthorized) {
+        status(HttpStatusCode.Unauthorized) { call, _ ->
             if (call.request.uri == "/login") {
                 call.respond(HttpStatusCode.Unauthorized, APIResponse<String>(ErrorModel("Unauthorized")))
             } else {

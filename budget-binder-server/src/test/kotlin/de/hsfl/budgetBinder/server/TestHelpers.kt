@@ -4,7 +4,7 @@ import de.hsfl.budgetBinder.common.APIResponse
 import de.hsfl.budgetBinder.common.ErrorModel
 import de.hsfl.budgetBinder.server.config.Config
 import de.hsfl.budgetBinder.server.config.getServerConfig
-import io.ktor.application.*
+import io.ktor.server.application.*
 import io.ktor.server.testing.*
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.serializer

@@ -1,6 +1,6 @@
 package de.hsfl.budgetBinder.server.models
 
-import io.ktor.auth.*
+import io.ktor.server.auth.*
 
 
 interface UserPrincipal : Principal {

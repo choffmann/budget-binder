@@ -4,7 +4,7 @@ import de.hsfl.budgetBinder.common.APIResponse
 import de.hsfl.budgetBinder.common.Category
 import de.hsfl.budgetBinder.server.models.CategoryEntity
 import de.hsfl.budgetBinder.server.models.UserEntity
-import io.ktor.application.*
+import io.ktor.server.application.*
 import io.ktor.http.*
 import io.ktor.server.testing.*
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -395,7 +395,7 @@ class CategoryTest {
                 HttpMethod.Patch,
                 "/categories/${id - 1}",
                 toJsonString(Category.Patch(name = "patchedTest"))
-            )  {
+            ) {
                 assertEquals(HttpStatusCode.OK, response.status())
                 assertNotNull(response.content)
                 val response: APIResponse<Category> = decodeFromString(response.content!!)
