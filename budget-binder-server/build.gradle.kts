@@ -41,8 +41,9 @@ dependencies {
     implementation("io.ktor:ktor-server-call-logging:$ktorVersion")
     implementation("io.ktor:ktor-server-content-negotiation:$ktorVersion")
     testImplementation("io.ktor:ktor-server-test-host-jvm:$ktorVersion")
+    testImplementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
 
-   implementation("org.kodein.di:kodein-di-framework-ktor-server-jvm:8.0.0-ktor-2-SNAPSHOT")
+    implementation("org.kodein.di:kodein-di-framework-ktor-server-jvm:8.0.0-ktor-2-SNAPSHOT")
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1")
 

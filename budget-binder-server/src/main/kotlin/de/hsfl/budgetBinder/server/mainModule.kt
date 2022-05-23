@@ -139,13 +139,21 @@ fun Application.mainModule(config: Config) {
             )
             throw cause
         }
-        status(HttpStatusCode.Unauthorized) { call, _ ->
-            if (call.request.uri == "/login") {
-                call.respond(HttpStatusCode.Unauthorized, APIResponse<String>(ErrorModel("Unauthorized")))
-            } else {
-                call.response.headers.append(HttpHeaders.WWWAuthenticate, "Bearer realm=\"Access to all your stuff\"")
-                call.respond(HttpStatusCode.Unauthorized, APIResponse<String>(ErrorModel("Unauthorized")))
+        status(HttpStatusCode.Unauthorized) { call, status ->
+            when (call.request.uri) {
+                "/login" -> call.respond(status, APIResponse<String>(ErrorModel("Unauthorized")))
+                "/refresh_token" -> call.respond(status, APIResponse<String>(ErrorModel("False Refresh Cookie")))
+                else -> {
+                    call.response.headers.append(
+                        HttpHeaders.WWWAuthenticate,
+                        "Bearer realm=\"Access to all your stuff\""
+                    )
+                    call.respond(status, APIResponse<String>(ErrorModel("Unauthorized")))
+                }
             }
+        }
+        status(HttpStatusCode.MethodNotAllowed) { call, status ->
+            call.respond(status, APIResponse<String>(ErrorModel("Method Not Allowed")))
         }
     }
 
