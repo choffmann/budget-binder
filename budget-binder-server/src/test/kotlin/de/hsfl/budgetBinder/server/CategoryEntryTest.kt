@@ -127,7 +127,10 @@ class CategoryEntryTest {
 
             handleRequest(HttpMethod.Get, "/categories/1/entries").apply {
                 assertEquals(HttpStatusCode.Unauthorized, response.status())
-                assertNull(response.content)
+                assertNotNull(response.content)
+                val response: APIResponse<List<Entry>> = decodeFromString(response.content!!)
+                val shouldResponse: APIResponse<List<Entry>> = wrapFailure("Unauthorized")
+                assertEquals(shouldResponse, response)
             }
 
             sendAuthenticatedRequest(HttpMethod.Get, "/categories/test/entries") {

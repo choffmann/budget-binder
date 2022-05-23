@@ -54,7 +54,10 @@ class ApplicationTest {
 
                 handleRequest(HttpMethod.Post, "/login").apply {
                     assertEquals(HttpStatusCode.Unauthorized, response.status())
-                    assertNull(response.content)
+                    assertNotNull(response.content)
+                    val response: APIResponse<AuthToken> = decodeFromString(response.content!!)
+                    val shouldResponse: APIResponse<AuthToken> = wrapFailure("Unauthorized")
+                    assertEquals(shouldResponse, response)
                 }
 
                 with(handleRequest(HttpMethod.Post, "/login") {
@@ -67,7 +70,10 @@ class ApplicationTest {
                     )
                 }) {
                     assertEquals(HttpStatusCode.Unauthorized, response.status())
-                    assertNull(response.content)
+                    assertNotNull(response.content)
+                    val response: APIResponse<AuthToken> = decodeFromString(response.content!!)
+                    val shouldResponse: APIResponse<AuthToken> = wrapFailure("Unauthorized")
+                    assertEquals(shouldResponse, response)
                 }
 
                 loginUser {
@@ -82,7 +88,10 @@ class ApplicationTest {
 
                 handleRequest(HttpMethod.Get, "/me").apply {
                     assertEquals(HttpStatusCode.Unauthorized, response.status())
-                    assertNull(response.content)
+                    assertNotNull(response.content)
+                    val response: APIResponse<User> = decodeFromString(response.content!!)
+                    val shouldResponse: APIResponse<User> = wrapFailure("Unauthorized")
+                    assertEquals(shouldResponse, response)
                 }
 
                 with(handleRequest(HttpMethod.Get, "/me") {
@@ -91,7 +100,10 @@ class ApplicationTest {
                     addHeader(HttpHeaders.Authorization, "Bearer $bearer")
                 }) {
                     assertEquals(HttpStatusCode.Unauthorized, response.status())
-                    assertNull(response.content)
+                    assertNotNull(response.content)
+                    val response: APIResponse<User> = decodeFromString(response.content!!)
+                    val shouldResponse: APIResponse<User> = wrapFailure("Unauthorized")
+                    assertEquals(shouldResponse, response)
                 }
 
                 checkMeSuccess()
@@ -106,7 +118,10 @@ class ApplicationTest {
 
                 handleRequest(HttpMethod.Get, "/logout").apply {
                     assertEquals(HttpStatusCode.Unauthorized, response.status())
-                    assertNull(response.content)
+                    assertNotNull(response.content)
+                    val response: APIResponse<AuthToken> = decodeFromString(response.content!!)
+                    val shouldResponse: APIResponse<AuthToken> = wrapFailure("Unauthorized")
+                    assertEquals(shouldResponse, response)
                 }
 
                 sendAuthenticatedRequest(HttpMethod.Get, "/logout") {
@@ -190,7 +205,10 @@ class ApplicationTest {
                 setBody(toJsonString(patchedUser))
             }) {
                 assertEquals(HttpStatusCode.Unauthorized, response.status())
-                assertNull(response.content)
+                assertNotNull(response.content)
+                val response: APIResponse<User> = decodeFromString(response.content!!)
+                val shouldResponse: APIResponse<User> = wrapFailure("Unauthorized")
+                assertEquals(shouldResponse, response)
             }
 
             sendAuthenticatedRequest(HttpMethod.Patch, "/me", toJsonString(patchedUser)) {
@@ -218,7 +236,10 @@ class ApplicationTest {
                 )
             }) {
                 assertEquals(HttpStatusCode.Unauthorized, response.status())
-                assertNull(response.content)
+                assertNotNull(response.content)
+                val response: APIResponse<User> = decodeFromString(response.content!!)
+                val shouldResponse: APIResponse<User> = wrapFailure("Unauthorized")
+                assertEquals(shouldResponse, response)
             }
 
             with(handleRequest(HttpMethod.Post, "/login") {
@@ -240,7 +261,10 @@ class ApplicationTest {
 
             handleRequest(HttpMethod.Delete, "/me").apply {
                 assertEquals(HttpStatusCode.Unauthorized, response.status())
-                assertNull(response.content)
+                assertNotNull(response.content)
+                val response: APIResponse<User> = decodeFromString(response.content!!)
+                val shouldResponse: APIResponse<User> = wrapFailure("Unauthorized")
+                assertEquals(shouldResponse, response)
             }
 
             sendAuthenticatedRequest(HttpMethod.Delete, "/me") {
@@ -260,7 +284,10 @@ class ApplicationTest {
                 addHeader(HttpHeaders.Authorization, "Bearer ${TestUser.accessToken ?: ""}")
             }) {
                 assertEquals(HttpStatusCode.Unauthorized, response.status())
-                assertNull(response.content)
+                assertNotNull(response.content)
+                val response: APIResponse<User> = decodeFromString(response.content!!)
+                val shouldResponse: APIResponse<User> = wrapFailure("Unauthorized")
+                assertEquals(shouldResponse, response)
             }
 
             with(handleRequest(HttpMethod.Post, "/login") {
@@ -273,7 +300,10 @@ class ApplicationTest {
                 )
             }) {
                 assertEquals(HttpStatusCode.Unauthorized, response.status())
-                assertNull(response.content)
+                assertNotNull(response.content)
+                val response: APIResponse<AuthToken> = decodeFromString(response.content!!)
+                val shouldResponse: APIResponse<AuthToken> = wrapFailure("Unauthorized")
+                assertEquals(shouldResponse, response)
             }
         }
     }

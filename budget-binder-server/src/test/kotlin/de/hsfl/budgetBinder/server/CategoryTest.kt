@@ -104,7 +104,10 @@ class CategoryTest {
 
             handleRequest(HttpMethod.Post, "/categories").apply {
                 assertEquals(HttpStatusCode.Unauthorized, response.status())
-                assertNull(response.content)
+                assertNotNull(response.content)
+                val response: APIResponse<Category> = decodeFromString(response.content!!)
+                val shouldResponse: APIResponse<Category> = wrapFailure("Unauthorized")
+                assertEquals(shouldResponse, response)
             }
 
             sendAuthenticatedRequest(HttpMethod.Post, "/categories") {
@@ -152,7 +155,10 @@ class CategoryTest {
 
             handleRequest(HttpMethod.Get, "/categories").apply {
                 assertEquals(HttpStatusCode.Unauthorized, response.status())
-                assertNull(response.content)
+                assertNotNull(response.content)
+                val response: APIResponse<List<Category>> = decodeFromString(response.content!!)
+                val shouldResponse: APIResponse<List<Category>> = wrapFailure("Unauthorized")
+                assertEquals(shouldResponse, response)
             }
 
             val id = transaction { CategoryEntity.all().first().id.value + 1 }
@@ -276,7 +282,10 @@ class CategoryTest {
 
             handleRequest(HttpMethod.Get, "/categories/1").apply {
                 assertEquals(HttpStatusCode.Unauthorized, response.status())
-                assertNull(response.content)
+                assertNotNull(response.content)
+                val response: APIResponse<Category> = decodeFromString(response.content!!)
+                val shouldResponse: APIResponse<Category> = wrapFailure("Unauthorized")
+                assertEquals(shouldResponse, response)
             }
 
             sendAuthenticatedRequest(HttpMethod.Get, "/categories/test") {
@@ -330,7 +339,10 @@ class CategoryTest {
 
             handleRequest(HttpMethod.Patch, "/categories/1").apply {
                 assertEquals(HttpStatusCode.Unauthorized, response.status())
-                assertNull(response.content)
+                assertNotNull(response.content)
+                val response: APIResponse<Category> = decodeFromString(response.content!!)
+                val shouldResponse: APIResponse<Category> = wrapFailure("Unauthorized")
+                assertEquals(shouldResponse, response)
             }
 
             sendAuthenticatedRequest(HttpMethod.Patch, "/categories/test") {
@@ -440,7 +452,10 @@ class CategoryTest {
 
             handleRequest(HttpMethod.Delete, "/categories/1").apply {
                 assertEquals(HttpStatusCode.Unauthorized, response.status())
-                assertNull(response.content)
+                assertNotNull(response.content)
+                val response: APIResponse<Category> = decodeFromString(response.content!!)
+                val shouldResponse: APIResponse<Category> = wrapFailure("Unauthorized")
+                assertEquals(shouldResponse, response)
             }
 
             sendAuthenticatedRequest(HttpMethod.Delete, "/categories/test") {

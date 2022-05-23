@@ -10,7 +10,6 @@ import io.ktor.server.testing.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
-import kotlin.test.assertNull
 
 
 fun TestApplicationEngine.registerUser() {
@@ -93,6 +92,9 @@ fun TestApplicationEngine.checkMeSuccess() {
 fun TestApplicationEngine.checkMeFailure() {
     sendAuthenticatedRequest(HttpMethod.Get, "/me") {
         assertEquals(HttpStatusCode.Unauthorized, response.status())
-        assertNull(response.content)
+        assertNotNull(response.content)
+        val response: APIResponse<User> = decodeFromString(response.content!!)
+        val shouldResponse: APIResponse<User> = wrapFailure("Unauthorized")
+        assertEquals(shouldResponse, response)
     }
 }
