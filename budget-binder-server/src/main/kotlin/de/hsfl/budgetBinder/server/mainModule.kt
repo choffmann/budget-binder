@@ -73,6 +73,7 @@ fun Application.mainModule(config: Config) {
 
     install(CallLogging) {
         level = Level.INFO
+        disableDefaultColors()
     }
 
     install(CORS) {
