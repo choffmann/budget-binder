@@ -58,6 +58,7 @@ kotlin {
                 implementation(compose.foundation)
                 implementation(compose.material)
                 api(compose.preview)
+                implementation(kotlin("reflect"))
             }
         }
 
