@@ -9,9 +9,9 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.Composable
 
 @Composable
-fun PrototypeAppBar() {
+fun PrototypeAppBar(onMenuClicked: () -> Unit) {
     TopAppBar(title = { Text("Budget Binder Prototype") }, navigationIcon = {
-        IconButton(onClick = { /* NavDrawer */ }) {
+        IconButton(onClick = { onMenuClicked() }) {
             Icon(Icons.Filled.Menu, contentDescription = null)
         }
     }, actions = { /* Action Buttons */ })

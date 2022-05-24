@@ -1,4 +1,4 @@
-package de.hsfl.budgetBinder.prototype.screen1
+package de.hsfl.budgetBinder.prototype.screens.screen1
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.Button
@@ -7,7 +7,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import de.hsfl.budgetBinder.prototype.Constants.screenState
+import de.hsfl.budgetBinder.prototype.StateManager.screenState
 import de.hsfl.budgetBinder.prototype.PrototypeScreen
 
 @Composable
@@ -18,7 +18,7 @@ fun Screen1Component() {
 }
 
 @Composable
-fun Screen1View(onButtonClicked: (String) -> Unit) {
+private fun Screen1View(onButtonClicked: (String) -> Unit) {
     val msgTextState = remember { mutableStateOf("") }
 
     Column {
