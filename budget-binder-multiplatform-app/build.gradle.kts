@@ -6,7 +6,7 @@ import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 plugins {
     kotlin("multiplatform")
     id("com.android.application")
-    id("org.jetbrains.compose") version "1.2.0-alpha01-dev679"
+    id("org.jetbrains.compose") version "1.2.0-alpha01-dev686"
 
 }
 
