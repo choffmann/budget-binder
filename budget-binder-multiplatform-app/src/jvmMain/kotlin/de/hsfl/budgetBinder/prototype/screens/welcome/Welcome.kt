@@ -7,7 +7,6 @@ import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -16,15 +15,16 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 
 
+private val welcomeScreenState: MutableState<WelcomeScreen> = mutableStateOf(WelcomeScreen.Screen1())
+
 @Composable
 fun WelcomeComponent() {
-    val welcomeScreenState = remember { mutableStateOf<WelcomeScreen>(WelcomeScreen.Screen1()) }
-    WelcomeView(screenState = welcomeScreenState)
+    WelcomeView()
 }
 
 @Composable
-private fun WelcomeView(screenState: MutableState<WelcomeScreen>) {
-    when (screenState.value) {
+private fun WelcomeView() {
+    when (welcomeScreenState.value) {
         is WelcomeScreen.Screen1 -> {
             Column {
                 ImageWelcomeScreen1(modifier = Modifier.padding(16.dp).align(Alignment.CenterHorizontally))
@@ -32,9 +32,9 @@ private fun WelcomeView(screenState: MutableState<WelcomeScreen>) {
                     title = "Welcome to Budget Binder",
                     subtitle = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At"
                 )
-                BottomButtons(onNext = { screenState.value = (screenState.value as WelcomeScreen.Screen1).nextScreen },
-                    onSkip = { screenState.value = WelcomeScreen.GetStarted },
-                    currentScreen = screenState.value.toInt()
+                BottomButtons(onNext = { welcomeScreenState.value = (welcomeScreenState.value as WelcomeScreen.Screen1).nextScreen },
+                    onSkip = { welcomeScreenState.value = WelcomeScreen.GetStarted },
+                    currentScreen = welcomeScreenState.value.toInt()
                 )
             }
         }
@@ -45,9 +45,9 @@ private fun WelcomeView(screenState: MutableState<WelcomeScreen>) {
                     title = "How you can save your money",
                     subtitle = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At"
                 )
-                BottomButtons(onNext = { screenState.value = (screenState.value as WelcomeScreen.Screen2).nextScreen },
-                    onSkip = { screenState.value = WelcomeScreen.GetStarted },
-                    currentScreen = screenState.value.toInt()
+                BottomButtons(onNext = { welcomeScreenState.value = (welcomeScreenState.value as WelcomeScreen.Screen2).nextScreen },
+                    onSkip = { welcomeScreenState.value = WelcomeScreen.GetStarted },
+                    currentScreen = welcomeScreenState.value.toInt()
                 )
             }
         }
@@ -85,8 +85,7 @@ private fun BottomButtons(onNext: () -> Unit, onSkip: () -> Unit, currentScreen:
         Row(
             modifier = Modifier.align(Alignment.BottomCenter), verticalAlignment = Alignment.Bottom
         ) {
-            OutlinedButton(
-                modifier = Modifier.padding(16.dp).wrapContentWidth(Alignment.Start).weight(1F),
+            OutlinedButton(modifier = Modifier.padding(16.dp).wrapContentWidth(Alignment.Start).weight(1F),
                 onClick = { onSkip() }) {
                 Text("SKIP")
             }
@@ -97,8 +96,7 @@ private fun BottomButtons(onNext: () -> Unit, onSkip: () -> Unit, currentScreen:
                 isActive = currentScreen
             )
 
-            Button(
-                modifier = Modifier.padding(16.dp).wrapContentWidth(Alignment.End).weight(1F),
+            Button(modifier = Modifier.padding(16.dp).wrapContentWidth(Alignment.End).weight(1F),
                 onClick = { onNext() }) {
                 Text("NEXT")
             }
