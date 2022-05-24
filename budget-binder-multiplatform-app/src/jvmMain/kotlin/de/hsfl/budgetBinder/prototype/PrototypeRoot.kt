@@ -19,7 +19,14 @@ fun Prototype() {
         // Scaffold to handle AppBar, Floating Buttons, Snackbar and Co.
         Scaffold(
             scaffoldState = scaffoldState,
-            topBar = { PrototypeAppBar { scope.launch { drawerState.open() } } },
+            topBar = {
+                PrototypeAppBar {
+                    scope.launch {
+                        if (drawerState.isOpen) drawerState.close()
+                        else drawerState.open()
+                    }
+                }
+            },
             snackbarHost = {},
             floatingActionButton = {},
             floatingActionButtonPosition = FabPosition.End,
