@@ -63,5 +63,10 @@ private fun DrawerList() {
         ),
             text = { Text("Einstellungen") },
             icon = { Icon(Icons.Filled.Info, contentDescription = null) })
+        ListItem(modifier = Modifier.align(Alignment.CenterHorizontally).clickable(
+            onClick = { darkMode.value = !darkMode.value }
+        ),
+            text = { Text("Darkmode") },
+            icon = { Icon(Icons.Filled.Info, contentDescription = null) })
     }
 }

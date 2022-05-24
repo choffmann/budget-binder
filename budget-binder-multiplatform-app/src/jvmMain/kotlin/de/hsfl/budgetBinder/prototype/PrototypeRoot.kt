@@ -13,9 +13,8 @@ fun Prototype() {
     val scaffoldState = rememberScaffoldState()
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
-    val darkTheme = remember { mutableStateOf(false) }
     MaterialTheme(
-        colors = if (darkTheme.value) darkColors() else lightColors()
+        colors = if (darkMode.value) darkColors() else lightColors()
     ) {
         // Scaffold to handle AppBar, Floating Buttons, Snackbar and Co.
         Scaffold(
