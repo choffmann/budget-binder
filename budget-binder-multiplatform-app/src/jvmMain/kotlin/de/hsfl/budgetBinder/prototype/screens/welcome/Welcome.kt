@@ -33,8 +33,7 @@ private fun WelcomeView() {
                     subtitle = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At"
                 )
                 BottomButtons(onNext = { welcomeScreenState.value = (welcomeScreenState.value as WelcomeScreen.Screen1).nextScreen },
-                    onSkip = { welcomeScreenState.value = WelcomeScreen.GetStarted },
-                    currentScreen = welcomeScreenState.value.toInt()
+                    onSkip = { welcomeScreenState.value = WelcomeScreen.GetStarted }
                 )
             }
         }
@@ -46,8 +45,7 @@ private fun WelcomeView() {
                     subtitle = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At"
                 )
                 BottomButtons(onNext = { welcomeScreenState.value = (welcomeScreenState.value as WelcomeScreen.Screen2).nextScreen },
-                    onSkip = { welcomeScreenState.value = WelcomeScreen.GetStarted },
-                    currentScreen = welcomeScreenState.value.toInt()
+                    onSkip = { welcomeScreenState.value = WelcomeScreen.GetStarted }
                 )
             }
         }
@@ -80,7 +78,7 @@ private fun WelcomeText(title: String, subtitle: String) {
 }
 
 @Composable
-private fun BottomButtons(onNext: () -> Unit, onSkip: () -> Unit, currentScreen: Int) {
+private fun BottomButtons(onNext: () -> Unit, onSkip: () -> Unit) {
     Box(modifier = Modifier.fillMaxSize()) {
         Row(
             modifier = Modifier.align(Alignment.BottomCenter), verticalAlignment = Alignment.Bottom
@@ -93,7 +91,7 @@ private fun BottomButtons(onNext: () -> Unit, onSkip: () -> Unit, currentScreen:
             Stepper(
                 modifier = Modifier.fillMaxSize().wrapContentSize(Alignment.Center).weight(1F),
                 total = WelcomeScreen::class.nestedClasses.size,
-                isActive = currentScreen
+                isActive = welcomeScreenState.value.toInt()
             )
 
             Button(modifier = Modifier.padding(16.dp).wrapContentWidth(Alignment.End).weight(1F),
