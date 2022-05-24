@@ -1,5 +1,6 @@
 package de.hsfl.budgetBinder.prototype.screens.welcome
 
+import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -23,45 +24,78 @@ fun WelcomeComponent() {
     WelcomeView()
 }
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 private fun WelcomeView() {
-    when (welcomeScreenState.value) {
-        is WelcomeScreen.Screen1 -> {
-            Column {
-                ImageWelcomeScreen1(modifier = Modifier.padding(16.dp).align(Alignment.CenterHorizontally))
-                WelcomeText(
-                    title = "Welcome to Budget Binder",
-                    subtitle = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At"
-                )
-                BottomButtons(onNext = {
-                    welcomeScreenState.value = (welcomeScreenState.value as WelcomeScreen.Screen1).nextScreen
-                }, onSkip = { welcomeScreenState.value = WelcomeScreen.GetStarted() })
+    Column {
+        AnimatedContent(targetState = welcomeScreenState.value, transitionSpec = {
+            if (targetState.current > initialState.current) {
+                // If welcomeScreenState ID is larger than previous ID,
+                // slide in from right and slide out to left
+                slideInHorizontally { fullWidth -> fullWidth } + fadeIn() with
+                        slideOutHorizontally { fullWidth -> -fullWidth }
+            } else {
+                // If welcomeScreenState ID is smaller than previous ID,
+                // slide in from left and slide out to right
+                slideInHorizontally { fullWidth -> -fullWidth } + fadeIn() with
+                        slideOutHorizontally { fullWidth -> fullWidth }
+            }.using(SizeTransform(clip = false))
+        }) { state ->
+            when (state) {
+                is WelcomeScreen.Screen1 -> Screen1()
+                is WelcomeScreen.Screen2 -> Screen2()
+                is WelcomeScreen.GetStarted -> Screen3()
             }
         }
-        is WelcomeScreen.Screen2 -> {
-            Column {
-                ImageWelcomeScreen2(modifier = Modifier.padding(16.dp).align(Alignment.CenterHorizontally))
-                WelcomeText(
-                    title = "How you can save your money",
-                    subtitle = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At"
-                )
-                BottomButtons(onNext = {
-                    welcomeScreenState.value = (welcomeScreenState.value as WelcomeScreen.Screen2).nextScreen
-                }, onSkip = { welcomeScreenState.value = WelcomeScreen.GetStarted() })
+
+        BottomButtons(onNext = {
+            when (welcomeScreenState.value) {
+                is WelcomeScreen.Screen1 -> {
+                    welcomeScreenState.value = WelcomeScreen.Screen2()
+                }
+                is WelcomeScreen.Screen2 -> {
+                    welcomeScreenState.value = WelcomeScreen.GetStarted()
+                }
+                else -> {}
             }
-        }
-        is WelcomeScreen.GetStarted -> {
-            Column {
-                ImageWelcomeScreen3(modifier = Modifier.padding(16.dp).align(Alignment.CenterHorizontally))
-                WelcomeText(
-                    title = "So, let's get started",
-                    subtitle = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At"
-                )
-                GetStartedButton(onLogin = {}, onRegister = {})
-            }
-        }
+        }, onSkip = { welcomeScreenState.value = WelcomeScreen.GetStarted() })
     }
 }
+
+@Composable
+private fun Screen1() {
+    Column {
+        ImageWelcomeScreen1(modifier = Modifier.padding(16.dp).align(Alignment.CenterHorizontally))
+        WelcomeText(
+            title = "Welcome to Budget Binder",
+            subtitle = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At"
+        )
+    }
+}
+
+@Composable
+private fun Screen2() {
+    Column {
+        ImageWelcomeScreen2(modifier = Modifier.padding(16.dp).align(Alignment.CenterHorizontally))
+        WelcomeText(
+            title = "How you can save your money",
+            subtitle = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At"
+        )
+    }
+}
+
+@Composable
+private fun Screen3() {
+    Column {
+        ImageWelcomeScreen3(modifier = Modifier.padding(16.dp).align(Alignment.CenterHorizontally))
+        WelcomeText(
+            title = "So, let's get started",
+            subtitle = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At"
+        )
+        GetStartedButton(onLogin = {}, onRegister = {})
+    }
+}
+
 
 @Composable
 private fun WelcomeText(title: String, subtitle: String) {
