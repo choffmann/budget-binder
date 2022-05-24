@@ -52,36 +52,23 @@ private fun DrawerUser() {
 private fun DrawerList() {
     val scope = rememberCoroutineScope()
     Column {
-        ListItem(modifier = Modifier.align(Alignment.CenterHorizontally).clickable(
-            onClick = {
-                screenState.value = PrototypeScreen.Home
-                scope.launch { drawerState.close() }
-            }
-        ),
-            text = { Text("Übersicht") },
-            icon = { Icon(Icons.Filled.Home, contentDescription = null) })
-        ListItem(modifier = Modifier.align(Alignment.CenterHorizontally).clickable(
-            onClick = {
-                screenState.value = PrototypeScreen.Categories
-                scope.launch { drawerState.close() }
-            }
-        ),
-            text = { Text("Kategorien") },
-            icon = { Icon(Icons.Filled.ShoppingCart, contentDescription = null) })
-        ListItem(modifier = Modifier.align(Alignment.CenterHorizontally).clickable(
-            onClick = {
-                screenState.value = PrototypeScreen.Settings
-                scope.launch { drawerState.close() }
-            }
-        ),
-            text = { Text("Einstellungen") },
-            icon = { Icon(Icons.Filled.Info, contentDescription = null) })
+        ListItem(modifier = Modifier.align(Alignment.CenterHorizontally).clickable(onClick = {
+            screenState.value = PrototypeScreen.Home
+            scope.launch { drawerState.close() }
+        }), text = { Text("Übersicht") }, icon = { Icon(Icons.Filled.Home, contentDescription = null) })
+        ListItem(modifier = Modifier.align(Alignment.CenterHorizontally).clickable(onClick = {
+            screenState.value = PrototypeScreen.Categories
+            scope.launch { drawerState.close() }
+        }), text = { Text("Kategorien") }, icon = { Icon(Icons.Filled.ShoppingCart, contentDescription = null) })
+        ListItem(modifier = Modifier.align(Alignment.CenterHorizontally).clickable(onClick = {
+            screenState.value = PrototypeScreen.Settings
+            scope.launch { drawerState.close() }
+        }), text = { Text("Einstellungen") }, icon = { Icon(Icons.Filled.Info, contentDescription = null) })
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Switch(
+            Switch(modifier = Modifier.padding(start = 8.dp),
                 checked = darkMode.value,
-                onCheckedChange = { darkMode.value = it }
-            )
-            Text("Darkmode")
+                onCheckedChange = { darkMode.value = it })
+            Text(modifier = Modifier.padding(start = 16.dp), text = "Darkmode")
         }
     }
 }
