@@ -1,6 +1,7 @@
 package de.hsfl.budgetBinder.prototype.screens.welcome
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
@@ -32,9 +33,9 @@ private fun WelcomeView() {
                     title = "Welcome to Budget Binder",
                     subtitle = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At"
                 )
-                BottomButtons(onNext = { welcomeScreenState.value = (welcomeScreenState.value as WelcomeScreen.Screen1).nextScreen },
-                    onSkip = { welcomeScreenState.value = WelcomeScreen.GetStarted }
-                )
+                BottomButtons(onNext = {
+                    welcomeScreenState.value = (welcomeScreenState.value as WelcomeScreen.Screen1).nextScreen
+                }, onSkip = { welcomeScreenState.value = WelcomeScreen.GetStarted() })
             }
         }
         is WelcomeScreen.Screen2 -> {
@@ -44,9 +45,9 @@ private fun WelcomeView() {
                     title = "How you can save your money",
                     subtitle = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At"
                 )
-                BottomButtons(onNext = { welcomeScreenState.value = (welcomeScreenState.value as WelcomeScreen.Screen2).nextScreen },
-                    onSkip = { welcomeScreenState.value = WelcomeScreen.GetStarted }
-                )
+                BottomButtons(onNext = {
+                    welcomeScreenState.value = (welcomeScreenState.value as WelcomeScreen.Screen2).nextScreen
+                }, onSkip = { welcomeScreenState.value = WelcomeScreen.GetStarted() })
             }
         }
         is WelcomeScreen.GetStarted -> {
@@ -88,11 +89,10 @@ private fun BottomButtons(onNext: () -> Unit, onSkip: () -> Unit) {
                 Text("SKIP")
             }
 
-            Stepper(
-                modifier = Modifier.fillMaxSize().wrapContentSize(Alignment.Center).weight(1F),
+            Stepper(modifier = Modifier.fillMaxSize().wrapContentSize(Alignment.Center).weight(1F),
                 total = WelcomeScreen::class.nestedClasses.size,
-                isActive = welcomeScreenState.value.toInt()
-            )
+                current = welcomeScreenState.value.current,
+                onClick = { /* Eventuell Screen wechsel bei Click auf Stepper, Position wird hier mitgesendet */ })
 
             Button(modifier = Modifier.padding(16.dp).wrapContentWidth(Alignment.End).weight(1F),
                 onClick = { onNext() }) {
@@ -115,19 +115,19 @@ private fun GetStartedButton(onLogin: () -> Unit, onRegister: () -> Unit) {
 }
 
 @Composable
-fun Stepper(modifier: Modifier, total: Int, isActive: Int) {
+fun Stepper(modifier: Modifier, total: Int, current: Int, onClick: (Int) -> Unit) {
     Box(modifier = modifier) {
         Row {
             for (i in (0 until total)) {
-                if (i == isActive) {
+                if (i == current) {
                     Box(
                         modifier = Modifier.size(16.dp).padding(4.dp).clip(CircleShape)
-                            .background(MaterialTheme.colors.primary)
+                            .background(MaterialTheme.colors.primary).clickable(onClick = { onClick(i) })
                     )
                 } else {
                     Box(
                         modifier = Modifier.size(16.dp).padding(4.dp).clip(CircleShape)
-                            .background(MaterialTheme.colors.secondary)
+                            .background(MaterialTheme.colors.secondary).clickable(onClick = { onClick(i) })
                     )
                 }
             }
@@ -144,18 +144,8 @@ expect fun ImageWelcomeScreen2(modifier: Modifier = Modifier)
 @Composable
 expect fun ImageWelcomeScreen3(modifier: Modifier = Modifier)
 
-sealed class WelcomeScreen {
-    data class Screen1(val nextScreen: WelcomeScreen = Screen2()) : WelcomeScreen()
-    data class Screen2(val nextScreen: WelcomeScreen = GetStarted) : WelcomeScreen()
-    object GetStarted : WelcomeScreen()
+sealed class WelcomeScreen(val current: Int = 0) {
+    data class Screen1(val nextScreen: WelcomeScreen = Screen2(), val position: Int = 0) : WelcomeScreen(position)
+    data class Screen2(val nextScreen: WelcomeScreen = GetStarted(), val position: Int = 1) : WelcomeScreen(position)
+    data class GetStarted(val position: Int = 2) : WelcomeScreen(position)
 }
-
-fun WelcomeScreen.toInt(): Int {
-    return when (this) {
-        is WelcomeScreen.Screen1 -> 0
-        is WelcomeScreen.Screen2 -> 1
-        is WelcomeScreen.GetStarted -> 2
-    }
-}
-
-
