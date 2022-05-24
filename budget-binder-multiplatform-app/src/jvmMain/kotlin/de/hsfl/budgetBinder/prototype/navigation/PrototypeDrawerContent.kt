@@ -7,6 +7,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
@@ -15,6 +16,8 @@ import androidx.compose.ui.unit.dp
 import de.hsfl.budgetBinder.prototype.StateManager.screenState
 import de.hsfl.budgetBinder.prototype.PrototypeScreen
 import de.hsfl.budgetBinder.prototype.StateManager.darkMode
+import de.hsfl.budgetBinder.prototype.StateManager.drawerState
+import kotlinx.coroutines.launch
 
 
 @Composable
@@ -47,19 +50,29 @@ private fun DrawerUser() {
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun DrawerList() {
+    val scope = rememberCoroutineScope()
     Column {
         ListItem(modifier = Modifier.align(Alignment.CenterHorizontally).clickable(
-            onClick = { screenState.value = PrototypeScreen.Home }
+            onClick = {
+                screenState.value = PrototypeScreen.Home
+                scope.launch { drawerState.close() }
+            }
         ),
             text = { Text("Übersicht") },
             icon = { Icon(Icons.Filled.Home, contentDescription = null) })
         ListItem(modifier = Modifier.align(Alignment.CenterHorizontally).clickable(
-            onClick = { screenState.value = PrototypeScreen.Categories }
+            onClick = {
+                screenState.value = PrototypeScreen.Categories
+                scope.launch { drawerState.close() }
+            }
         ),
             text = { Text("Kategorien") },
             icon = { Icon(Icons.Filled.ShoppingCart, contentDescription = null) })
         ListItem(modifier = Modifier.align(Alignment.CenterHorizontally).clickable(
-            onClick = { screenState.value = PrototypeScreen.Settings }
+            onClick = {
+                screenState.value = PrototypeScreen.Settings
+                scope.launch { drawerState.close() }
+            }
         ),
             text = { Text("Einstellungen") },
             icon = { Icon(Icons.Filled.Info, contentDescription = null) })

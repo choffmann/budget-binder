@@ -4,6 +4,7 @@ import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import de.hsfl.budgetBinder.prototype.StateManager.darkMode
+import de.hsfl.budgetBinder.prototype.StateManager.drawerState
 import de.hsfl.budgetBinder.prototype.navigation.DrawerContent
 import kotlinx.coroutines.launch
 
@@ -11,7 +12,6 @@ import kotlinx.coroutines.launch
 @Composable
 fun Prototype() {
     val scaffoldState = rememberScaffoldState()
-    val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     MaterialTheme(
         colors = if (darkMode.value) darkColors() else lightColors()
