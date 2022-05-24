@@ -1,10 +1,10 @@
-package de.hsfl.budgetBinder.prototype.screen2
+package de.hsfl.budgetBinder.prototype.screens.screen2
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import de.hsfl.budgetBinder.prototype.Constants.screenState
+import de.hsfl.budgetBinder.prototype.StateManager.screenState
 import de.hsfl.budgetBinder.prototype.PrototypeScreen
 
 @Composable
@@ -15,7 +15,7 @@ fun Screen2Component() {
 }
 
 @Composable
-fun Screen2View(msg: String, onButtonClicked: () -> Unit) {
+private fun Screen2View(msg: String, onButtonClicked: () -> Unit) {
     Column {
         Text(msg)
         Button(onClick = { onButtonClicked() }) {

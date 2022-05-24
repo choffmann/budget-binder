@@ -2,9 +2,9 @@ package de.hsfl.budgetBinder.prototype
 
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import de.hsfl.budgetBinder.prototype.StateManager.darkMode
+import de.hsfl.budgetBinder.prototype.navigation.DrawerContent
 import kotlinx.coroutines.launch
 
 // Root Component to handle View's

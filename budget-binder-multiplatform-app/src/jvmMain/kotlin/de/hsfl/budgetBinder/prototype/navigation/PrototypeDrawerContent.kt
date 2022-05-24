@@ -1,4 +1,4 @@
-package de.hsfl.budgetBinder.prototype
+package de.hsfl.budgetBinder.prototype.navigation
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -12,6 +12,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.unit.dp
+import de.hsfl.budgetBinder.prototype.StateManager.screenState
+import de.hsfl.budgetBinder.prototype.PrototypeScreen
+import de.hsfl.budgetBinder.prototype.StateManager.darkMode
 
 
 @Composable
@@ -46,17 +49,17 @@ private fun DrawerUser() {
 private fun DrawerList() {
     Column {
         ListItem(modifier = Modifier.align(Alignment.CenterHorizontally).clickable(
-            onClick = { /* ScreenState = Home */ }
+            onClick = { screenState.value = PrototypeScreen.Home }
         ),
             text = { Text("Übersicht") },
             icon = { Icon(Icons.Filled.Home, contentDescription = null) })
         ListItem(modifier = Modifier.align(Alignment.CenterHorizontally).clickable(
-            onClick = { /* ScreenState = Categories */ }
+            onClick = { screenState.value = PrototypeScreen.Categories }
         ),
             text = { Text("Kategorien") },
             icon = { Icon(Icons.Filled.ShoppingCart, contentDescription = null) })
         ListItem(modifier = Modifier.align(Alignment.CenterHorizontally).clickable(
-            onClick = { /* ScreenState = Settings */ }
+            onClick = { screenState.value = PrototypeScreen.Settings }
         ),
             text = { Text("Einstellungen") },
             icon = { Icon(Icons.Filled.Info, contentDescription = null) })
