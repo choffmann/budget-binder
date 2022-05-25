@@ -34,6 +34,7 @@ data class ConfigIntermediate(val server: Server, val dataBase: DataBase, val jw
         val refreshSecret: String,
         val accessMinutes: Int?,
         val refreshDays: Int?,
+        val realm: String?,
         val issuer: String?,
         val audience: String?
     )
@@ -93,6 +94,7 @@ data class ConfigIntermediate(val server: Server, val dataBase: DataBase, val jw
         val jwtRefreshSecret = jwt.refreshSecret
         val jwtAccessMinutes = jwt.accessMinutes ?: 15
         val jwtRefreshDays = jwt.refreshDays ?: 7
+        val jwtRealm = jwt.realm ?: "budget-binder-server"
         val jwtIssuer = jwt.issuer ?: "http://0.0.0.0:8080/"
         val jwtAudience = jwt.audience ?: "http://0.0.0.0:8080/"
 
@@ -121,6 +123,7 @@ data class ConfigIntermediate(val server: Server, val dataBase: DataBase, val jw
                 jwtRefreshSecret,
                 jwtAccessMinutes,
                 jwtRefreshDays,
+                jwtRealm,
                 jwtIssuer,
                 jwtAudience
             )
@@ -167,6 +170,7 @@ private fun getConfigIntermediateFromEnv(): ConfigIntermediate {
         refreshSecret,
         System.getenv("JWT_ACCESS_MINUTES")?.toIntOrNull(),
         System.getenv("JWT_REFRESH_DAYS")?.toIntOrNull(),
+        System.getenv("JWT_REALM"),
         System.getenv("JWT_ISSUER"),
         System.getenv("JWT_AUDIENCE")
     )

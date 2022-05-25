@@ -115,7 +115,7 @@ fun Application.mainModule(config: Config) {
 
         jwt("auth-jwt") {
             val jwtService: JWTService by this@mainModule.closestDI().instance()
-            realm = "Access to all your stuff"
+            realm = jwtService.getRealm()
             verifier(jwtService.getAccessTokenVerifier())
 
             validate {
@@ -146,9 +146,10 @@ fun Application.mainModule(config: Config) {
                 "/login" -> call.respond(status, APIResponse<String>(ErrorModel("Unauthorized")))
                 "/refresh_token" -> call.respond(status, APIResponse<String>(ErrorModel("False Refresh Cookie")))
                 else -> {
+                    val jwtService: JWTService by this@mainModule.closestDI().instance()
                     call.response.headers.append(
                         HttpHeaders.WWWAuthenticate,
-                        "Bearer realm=\"Access to all your stuff\""
+                        "Bearer realm=\"${jwtService.getRealm()}\""
                     )
                     call.respond(status, APIResponse<String>(ErrorModel("Unauthorized")))
                 }

@@ -38,6 +38,10 @@ class JWTService(private val config: Config) {
         return refreshTokenValidationTime
     }
 
+    fun getRealm(): String {
+        return config.jwt.realm
+    }
+
     private fun createJWTToken(id: Int, tokenVersion: Int, expiresAt: Date, secret: String): String {
         return JWT.create()
             .withAudience(config.jwt.audience)
