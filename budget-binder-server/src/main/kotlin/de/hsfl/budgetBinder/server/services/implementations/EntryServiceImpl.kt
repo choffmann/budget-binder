@@ -20,7 +20,7 @@ class EntryServiceImpl : EntryService {
     override fun getEntriesByPeriod(userId: Int, period: LocalDateTime?): List<Entry> = transaction {
         val user = UserEntity[userId]
 
-        val value = period?.let {
+        val value = period?.let { period ->
             user.entries.filter {
                 if (it.repeat)
                     isCreatedAndEndedInPeriod(it.created, it.ended, period)
@@ -106,15 +106,16 @@ class EntryServiceImpl : EntryService {
     ): APIResponse<List<Entry>> = transaction {
         val userEntity = UserEntity[userId]
 
-        val category = if (categoryId == "null") {
-            CategoryEntity[userEntity.category!!]
+        if (categoryId == "null") {
+            APIResponse(data = CategoryEntity[userEntity.category!!].entries.map { it.toDto() }, success = true)
         } else {
             categoryId?.toIntOrNull()?.let { id ->
                 userEntity.categories.firstOrNull { it.id.value == id && it.id != userEntity.category }
-                    ?: return@transaction APIResponse(ErrorModel("Category not found"))
-            } ?: return@transaction APIResponse(ErrorModel("path parameter is not a number"))
+                    ?.let { categoryEntity ->
+                        APIResponse(data = categoryEntity.entries.map { it.toDto() }, success = true)
+                    }
+                    ?: APIResponse(ErrorModel("Category not found"))
+            } ?: APIResponse(ErrorModel("path parameter is not a number"))
         }
-
-        APIResponse(data = category.entries.map { it.toDto() }, success = true)
     }
 }
