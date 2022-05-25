@@ -37,11 +37,11 @@ private fun SettingsView() {
             UserView()
             AnimatedContent(targetState = settingsScreenState.value, transitionSpec = {
                 if (targetState.weight > initialState.weight) {
-                    // If welcomeScreenState ID is larger than previous ID,
+                    // If settingsScreenState weight is larger than previous weight,
                     // slide in from right and slide out to left
                     slideInHorizontally { fullWidth -> fullWidth } + fadeIn() with slideOutHorizontally { fullWidth -> -fullWidth }
                 } else {
-                    // If welcomeScreenState ID is smaller than previous ID,
+                    // If settingsScreenState weight is smaller than previous weight,
                     // slide in from left and slide out to right
                     slideInHorizontally { fullWidth -> -fullWidth } + fadeIn() with slideOutHorizontally { fullWidth -> fullWidth }
                 }.using(SizeTransform(clip = false))
@@ -196,6 +196,8 @@ private fun ServerSettings() {
 expect fun AvatarImage(modifier: Modifier = Modifier)
 
 
+// weight 0 => Root
+// weight 1 => Child from 0
 sealed class SettingsScreens(val weight: Int) {
     object Menu : SettingsScreens(0)
     object Account : SettingsScreens(1)
