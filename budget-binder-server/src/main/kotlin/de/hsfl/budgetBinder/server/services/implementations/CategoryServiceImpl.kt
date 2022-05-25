@@ -89,10 +89,8 @@ class CategoryServiceImpl : CategoryService {
         if (categoryEntity.ended != null) {
             return@transaction null
         }
-        if (categoryPatch.budget != null) {
-            categoryEntity = createOrChangeCategory(categoryEntity, categoryPatch.budget!!)
-        }
 
+        categoryPatch.budget?.let { categoryEntity = createOrChangeCategory(categoryEntity, it) }
         categoryPatch.name?.let { categoryEntity.name = it }
         categoryPatch.color?.let { categoryEntity.color = it }
         categoryPatch.image?.let { categoryEntity.image = it }
