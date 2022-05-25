@@ -44,14 +44,16 @@ fun Application.mainModule(config: Config) {
     when (config.dataBase.dbType) {
         Config.DBType.SQLITE -> {
             url = "jdbc:sqlite:${config.dataBase.sqlitePath}"
+            driver = "org.sqlite.JDBC"
+
+            /*
+            * The url is used in the tests to not create or alter the normal database.
+            * the connection must be held because exposed closes the connection to the db
+            * after every transaction and if no connection is alive the memory database will be deleted
+            * */
             if (url == "jdbc:sqlite:file:test?mode=memory&cache=shared") {
-                // This is used to hold a connection
-                // if not specified the database will be deleted
-                // after each transaction because it will be closed
                 DriverManager.getConnection(url)
             }
-
-            driver = "org.sqlite.JDBC"
         }
         Config.DBType.MYSQL -> {
             url = "jdbc:mysql://${config.dataBase.serverAddress}:${config.dataBase.serverPort}/${config.dataBase.name}"
