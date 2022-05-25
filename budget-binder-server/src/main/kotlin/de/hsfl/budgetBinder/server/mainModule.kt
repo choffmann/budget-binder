@@ -6,6 +6,7 @@ import de.hsfl.budgetBinder.server.config.Config
 import de.hsfl.budgetBinder.server.models.Categories
 import de.hsfl.budgetBinder.server.models.Entries
 import de.hsfl.budgetBinder.server.models.Users
+import de.hsfl.budgetBinder.server.repository.UnauthorizedException
 import de.hsfl.budgetBinder.server.routes.*
 import de.hsfl.budgetBinder.server.services.*
 import de.hsfl.budgetBinder.server.services.implementations.CategoryServiceImpl
@@ -135,23 +136,38 @@ fun Application.mainModule(config: Config) {
 
     install(StatusPages) {
         exception<Throwable> { call, cause ->
-            call.respond(
-                HttpStatusCode.InternalServerError,
-                APIResponse<String>(ErrorModel("Internal Server Error"))
-            )
-            throw cause
+            when (cause) {
+                is UnauthorizedException -> {
+                    call.respond(
+                        HttpStatusCode.Unauthorized,
+                        APIResponse<String>(ErrorModel(cause.message))
+                    )
+                }
+                else -> {
+                    call.respond(
+                        HttpStatusCode.InternalServerError,
+                        APIResponse<String>(ErrorModel("Internal Server Error"))
+                    )
+                    throw cause
+                }
+            }
         }
         status(HttpStatusCode.Unauthorized) { call, status ->
             when (call.request.uri) {
-                "/login" -> call.respond(status, APIResponse<String>(ErrorModel("Unauthorized")))
-                "/refresh_token" -> call.respond(status, APIResponse<String>(ErrorModel("False Refresh Cookie")))
+                "/login" -> call.respond(
+                    status,
+                    APIResponse<String>(ErrorModel("Your username and/or password do not match."))
+                )
                 else -> {
                     val jwtService: JWTService by this@mainModule.closestDI().instance()
                     call.response.headers.append(
                         HttpHeaders.WWWAuthenticate,
                         "Bearer realm=\"${jwtService.getRealm()}\""
                     )
-                    call.respond(status, APIResponse<String>(ErrorModel("Unauthorized")))
+                    call.respond(
+                        status,
+                        APIResponse<String>(ErrorModel("Your accessToken is absent or does not match."))
+                    )
                 }
             }
         }

@@ -129,7 +129,7 @@ class EntryTest {
         client.get("/entries").let { response ->
             assertEquals(HttpStatusCode.Unauthorized, response.status)
             val responseBody: APIResponse<Entry> = response.body()
-            val shouldResponse: APIResponse<Entry> = wrapFailure("Unauthorized")
+            val shouldResponse: APIResponse<Entry> = wrapFailure("Your accessToken is absent or does not match.")
             assertEquals(shouldResponse, responseBody)
         }
 
@@ -168,7 +168,7 @@ class EntryTest {
         client.get("/entries").let { response ->
             assertEquals(HttpStatusCode.Unauthorized, response.status)
             val responseBody: APIResponse<List<Entry>> = response.body()
-            val shouldResponse: APIResponse<List<Entry>> = wrapFailure("Unauthorized")
+            val shouldResponse: APIResponse<List<Entry>> = wrapFailure("Your accessToken is absent or does not match.")
             assertEquals(shouldResponse, responseBody)
         }
 
@@ -290,7 +290,7 @@ class EntryTest {
         client.get("/entries/1").let { response ->
             assertEquals(HttpStatusCode.Unauthorized, response.status)
             val responseBody: APIResponse<Entry> = response.body()
-            val shouldResponse: APIResponse<Entry> = wrapFailure("Unauthorized")
+            val shouldResponse: APIResponse<Entry> = wrapFailure("Your accessToken is absent or does not match.")
             assertEquals(shouldResponse, responseBody)
         }
 
@@ -324,7 +324,7 @@ class EntryTest {
         client.patch("/entries/1").let { response ->
             assertEquals(HttpStatusCode.Unauthorized, response.status)
             val responseBody: APIResponse<Entry> = response.body()
-            val shouldResponse: APIResponse<Entry> = wrapFailure("Unauthorized")
+            val shouldResponse: APIResponse<Entry> = wrapFailure("Your accessToken is absent or does not match.")
             assertEquals(shouldResponse, responseBody)
         }
 
@@ -453,7 +453,7 @@ class EntryTest {
         client.delete("/entries/1").let { response ->
             assertEquals(HttpStatusCode.Unauthorized, response.status)
             val responseBody: APIResponse<Entry> = response.body()
-            val shouldResponse: APIResponse<Entry> = wrapFailure("Unauthorized")
+            val shouldResponse: APIResponse<Entry> = wrapFailure("Your accessToken is absent or does not match.")
             assertEquals(shouldResponse, responseBody)
         }
 

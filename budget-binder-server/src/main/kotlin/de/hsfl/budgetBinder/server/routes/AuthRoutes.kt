@@ -6,6 +6,7 @@ import de.hsfl.budgetBinder.common.ErrorModel
 import de.hsfl.budgetBinder.common.User
 import de.hsfl.budgetBinder.server.config.Config
 import de.hsfl.budgetBinder.server.models.UserPrincipal
+import de.hsfl.budgetBinder.server.repository.UnauthorizedException
 import de.hsfl.budgetBinder.server.services.JWTService
 import de.hsfl.budgetBinder.server.services.interfaces.UserService
 import io.ktor.server.application.*
@@ -78,7 +79,7 @@ fun Route.refreshCookie() {
         val userService: UserService by closestDI().instance()
         val config: Config by closestDI().instance()
 
-        val (status, response) = call.request.cookies["jwt"]?.let { tokenToCheck ->
+        val response = call.request.cookies["jwt"]?.let { tokenToCheck ->
             val token = jwtService.getRefreshTokenVerifier().verify(tokenToCheck)
             val id = token.getClaim("userid").asInt()
             val tokenVersion = token.getClaim("token_version").asInt()
@@ -92,10 +93,11 @@ fun Route.refreshCookie() {
                         config.server.ssl
                     )
                 )
-                HttpStatusCode.OK to APIResponse(data = AuthToken(token = accessToken), success = true)
-            } ?: (HttpStatusCode.Unauthorized to APIResponse(ErrorModel("Token Version is different")))
-        } ?: (HttpStatusCode.Unauthorized to APIResponse(ErrorModel("No Refresh Cookie")))
-        call.respond(status, response)
+                APIResponse(data = AuthToken(token = accessToken), success = true)
+            } ?: throw UnauthorizedException("Your refreshToken does not match.")
+        } ?: throw UnauthorizedException("Your refreshToken is absent.")
+
+        call.respond(response)
     }
 }
 
@@ -112,7 +114,6 @@ fun Route.register() {
     }
 }
 
-// install all previous Routes
 fun Application.authRoutes() {
     routing {
         login()

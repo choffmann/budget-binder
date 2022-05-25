@@ -58,7 +58,7 @@ class ApplicationTest {
         client.post("/login").let { response ->
             assertEquals(HttpStatusCode.Unauthorized, response.status)
             val responseBody: APIResponse<AuthToken> = response.body()
-            val shouldResponse: APIResponse<AuthToken> = wrapFailure("Unauthorized")
+            val shouldResponse: APIResponse<AuthToken> = wrapFailure("Your username and/or password do not match.")
             assertEquals(shouldResponse, responseBody)
         }
 
@@ -73,7 +73,7 @@ class ApplicationTest {
         }.let { response ->
             assertEquals(HttpStatusCode.Unauthorized, response.status)
             val responseBody: APIResponse<AuthToken> = response.body()
-            val shouldResponse: APIResponse<AuthToken> = wrapFailure("Unauthorized")
+            val shouldResponse: APIResponse<AuthToken> = wrapFailure("Your username and/or password do not match.")
             assertEquals(shouldResponse, responseBody)
         }
 
@@ -90,7 +90,7 @@ class ApplicationTest {
         client.get("/me").let { response ->
             assertEquals(HttpStatusCode.Unauthorized, response.status)
             val responseBody: APIResponse<User> = response.body()
-            val shouldResponse: APIResponse<User> = wrapFailure("Unauthorized")
+            val shouldResponse: APIResponse<User> = wrapFailure("Your accessToken is absent or does not match.")
             assertEquals(shouldResponse, responseBody)
         }
 
@@ -101,7 +101,7 @@ class ApplicationTest {
         }.let { response ->
             assertEquals(HttpStatusCode.Unauthorized, response.status)
             val responseBody: APIResponse<User> = response.body()
-            val shouldResponse: APIResponse<User> = wrapFailure("Unauthorized")
+            val shouldResponse: APIResponse<User> = wrapFailure("Your accessToken is absent or does not match.")
             assertEquals(shouldResponse, responseBody)
         }
 
@@ -117,7 +117,7 @@ class ApplicationTest {
         client.get("/logout").let { response ->
             assertEquals(HttpStatusCode.Unauthorized, response.status)
             val responseBody: APIResponse<AuthToken> = response.body()
-            val shouldResponse: APIResponse<AuthToken> = wrapFailure("Unauthorized")
+            val shouldResponse: APIResponse<AuthToken> = wrapFailure("Your accessToken is absent or does not match.")
             assertEquals(shouldResponse, responseBody)
         }
 
@@ -147,7 +147,7 @@ class ApplicationTest {
         val response = client.get("/refresh_token")
         assertEquals(HttpStatusCode.Unauthorized, response.status)
         val responseBody: APIResponse<AuthToken> = response.body()
-        val shouldResponse: APIResponse<AuthToken> = wrapFailure("False Refresh Cookie")
+        val shouldResponse: APIResponse<AuthToken> = wrapFailure("Your refreshToken is absent.")
         assertEquals(shouldResponse, responseBody)
     }
 
@@ -185,7 +185,8 @@ class ApplicationTest {
         client.get("/refresh_token").let { response ->
             assertEquals(HttpStatusCode.Unauthorized, response.status)
             val responseBody: APIResponse<AuthToken> = response.body()
-            val shouldResponse: APIResponse<AuthToken> = wrapFailure("False Refresh Cookie")
+            val shouldResponse: APIResponse<AuthToken> =
+                wrapFailure("Your refreshToken does not match.")
             assertEquals(shouldResponse, responseBody)
         }
     }
@@ -212,7 +213,7 @@ class ApplicationTest {
         }.let { response ->
             assertEquals(HttpStatusCode.Unauthorized, response.status)
             val responseBody: APIResponse<User> = response.body()
-            val shouldResponse: APIResponse<User> = wrapFailure("Unauthorized")
+            val shouldResponse: APIResponse<User> = wrapFailure("Your accessToken is absent or does not match.")
             assertEquals(shouldResponse, responseBody)
         }
 
@@ -242,7 +243,7 @@ class ApplicationTest {
         }.let { response ->
             assertEquals(HttpStatusCode.Unauthorized, response.status)
             val responseBody: APIResponse<User> = response.body()
-            val shouldResponse: APIResponse<User> = wrapFailure("Unauthorized")
+            val shouldResponse: APIResponse<User> = wrapFailure("Your username and/or password do not match.")
             assertEquals(shouldResponse, responseBody)
         }
 
@@ -265,7 +266,7 @@ class ApplicationTest {
         client.delete("/me").let { response ->
             assertEquals(HttpStatusCode.Unauthorized, response.status)
             val responseBody: APIResponse<User> = response.body()
-            val shouldResponse: APIResponse<User> = wrapFailure("Unauthorized")
+            val shouldResponse: APIResponse<User> = wrapFailure("Your accessToken is absent or does not match.")
             assertEquals(shouldResponse, responseBody)
         }
 
@@ -286,7 +287,7 @@ class ApplicationTest {
         }.let { response ->
             assertEquals(HttpStatusCode.Unauthorized, response.status)
             val responseBody: APIResponse<User> = response.body()
-            val shouldResponse: APIResponse<User> = wrapFailure("Unauthorized")
+            val shouldResponse: APIResponse<User> = wrapFailure("Your accessToken is absent or does not match.")
             assertEquals(shouldResponse, responseBody)
         }
 
@@ -301,7 +302,7 @@ class ApplicationTest {
         }.let { response ->
             assertEquals(HttpStatusCode.Unauthorized, response.status)
             val responseBody: APIResponse<AuthToken> = response.body()
-            val shouldResponse: APIResponse<AuthToken> = wrapFailure("Unauthorized")
+            val shouldResponse: APIResponse<AuthToken> = wrapFailure("Your username and/or password do not match.")
             assertEquals(shouldResponse, responseBody)
         }
     }
