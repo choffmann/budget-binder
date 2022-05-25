@@ -178,7 +178,7 @@ private fun ServerSettings() {
     val serverUrlState = remember { mutableStateOf(serverState.value.serverUrl) }
     Column(modifier = Modifier.fillMaxSize().padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
         TextField(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.padding(16.dp).fillMaxWidth(),
             value = serverUrlState.value,
             enabled = false,
             onValueChange = { serverUrlState.value = it },
