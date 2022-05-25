@@ -14,35 +14,34 @@ import org.kodein.di.instance
 import org.kodein.di.ktor.closestDI
 
 fun Route.meRoute() {
-    authenticate("auth-jwt") {
-        route("/me") {
-            get {
-                val userPrincipal: UserPrincipal = call.principal()!!
-                val userService: UserService by closestDI().instance()
-                call.respond(APIResponse(data = userService.findUserByID(userPrincipal.getUserID()), success = true))
-            }
-            patch {
-                val userPrincipal: UserPrincipal = call.principal()!!
-                val userService: UserService by closestDI().instance()
+    route("/me") {
+        get {
+            val userPrincipal: UserPrincipal = call.principal()!!
+            val userService: UserService by closestDI().instance()
+            call.respond(APIResponse(data = userService.findUserByID(userPrincipal.getUserID()), success = true))
+        }
+        patch {
+            val userPrincipal: UserPrincipal = call.principal()!!
+            val userService: UserService by closestDI().instance()
 
-                val response = call.receiveOrNull<User.Put>()?.let { userPut ->
-                    APIResponse(data = userService.changeUser(userPrincipal.getUserID(), userPut), success = true)
-                } ?: APIResponse(ErrorModel("not the right Parameters provided"))
+            val response = call.receiveOrNull<User.Put>()?.let { userPut ->
+                APIResponse(data = userService.changeUser(userPrincipal.getUserID(), userPut), success = true)
+            } ?: APIResponse(ErrorModel("not the right Parameters provided"))
 
-                call.respond(response)
-            }
-            delete {
-                val userPrincipal: UserPrincipal = call.principal()!!
-                val userService: UserService by closestDI().instance()
-                call.respond(APIResponse(data = userService.deleteUser(userPrincipal.getUserID()), success = true))
-            }
+            call.respond(response)
+        }
+        delete {
+            val userPrincipal: UserPrincipal = call.principal()!!
+            val userService: UserService by closestDI().instance()
+            call.respond(APIResponse(data = userService.deleteUser(userPrincipal.getUserID()), success = true))
         }
     }
 }
 
-// install all previous Routes
 fun Application.userRoutes() {
     routing {
-        meRoute()
+        authenticate("auth-jwt") {
+            meRoute()
+        }
     }
 }
