@@ -43,17 +43,17 @@ class UserServiceImpl : UserService {
     }
 
     override fun insertNewUserOrNull(userIn: User.In): User? {
-        val userEntity = transaction {
-            try {
+        val userEntity = try {
+            transaction {
                 UserEntity.new {
                     firstName = userIn.firstName
                     name = userIn.name
                     email = userIn.email
                     passwordHash = BCrypt.hashpw(userIn.password, BCrypt.gensalt())
                 }
-            } catch (_: ExposedSQLException) {
-                null
             }
+        } catch (_: ExposedSQLException) {
+            null
         }
 
         return userEntity?.let {

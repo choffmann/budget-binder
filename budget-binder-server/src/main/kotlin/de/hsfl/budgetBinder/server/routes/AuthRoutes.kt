@@ -84,7 +84,7 @@ fun Route.register() {
         val response = call.receiveOrNull<User.In>()?.let { userIn ->
             userService.insertNewUserOrNull(userIn)?.let { user ->
                 APIResponse(data = user, success = true)
-            } ?: APIResponse(ErrorModel("Email already assigned"))
+            } ?: APIResponse(ErrorModel("Email already assigned. Please choose another."))
         } ?: APIResponse(ErrorModel("not the right format"))
         call.respond(response)
     }

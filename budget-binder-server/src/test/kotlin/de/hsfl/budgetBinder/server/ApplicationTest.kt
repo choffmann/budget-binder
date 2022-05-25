@@ -61,6 +61,16 @@ class ApplicationTest {
             install(HttpCookies)
         }
 
+        client.post("/register") {
+            contentType(ContentType.Application.Json)
+            setBody(TestUser.userIn)
+        }.let { response ->
+            assertEquals(HttpStatusCode.OK, response.status)
+            val responseBody: APIResponse<User> = response.body()
+            val shouldResponse: APIResponse<User> = wrapFailure("Email already assigned. Please choose another.")
+            assertEquals(shouldResponse, responseBody)
+        }
+
         client.get("/login").let { response ->
             assertEquals(HttpStatusCode.MethodNotAllowed, response.status)
             val responseBody: APIResponse<AuthToken> = response.body()
