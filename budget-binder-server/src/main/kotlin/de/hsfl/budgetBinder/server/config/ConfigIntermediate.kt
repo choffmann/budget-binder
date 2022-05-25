@@ -64,30 +64,24 @@ data class ConfigIntermediate(val server: Server, val dataBase: DataBase, val jw
         }
 
         val dev = server.dev ?: false
-        val sslState = server.dev?.let {
-            Config.SSLState.DEV
-        } ?: server.ssl?.let {
-            Config.SSLState.SSL
-        } ?: Config.SSLState.NONE
+        val ssl = server.ssl ?: false
 
         val host = server.host ?: "0.0.0.0"
         val port = server.port ?: 8080
         val sslHost = server.sslHost ?: "0.0.0.0"
         val sslPort = server.sslPort ?: 8443
 
-        val keyStorePassword = server.keyStorePassword
-            ?: (if (sslState == Config.SSLState.SSL) {
-                throw Exception("No KeystorePassword provided")
-            } else {
-                "budget-binder-server"
-            })
-
-        val keyStorePath = server.keyStorePath
-            ?: (if (sslState == Config.SSLState.SSL) {
-                throw Exception("No KeystorePath provided")
-            } else {
-                "data/dev_keystore.jks"
-            })
+        val keyStorePassword: String
+        val keyStorePath: String
+        if (ssl) {
+            keyStorePassword = server.keyStorePassword
+                ?: if (dev) "budget-binder-server" else throw Exception("No KeystorePassword provided")
+            keyStorePath = server.keyStorePath
+                ?: if (dev) "data/dev_keystore.jks" else throw Exception("No KeystorePath provided")
+        } else {
+            keyStorePassword = ""
+            keyStorePath = ""
+        }
 
         val frontendAddresses = server.frontendAddresses?.replace(" ", "")
             ?.split(",")
@@ -113,7 +107,7 @@ data class ConfigIntermediate(val server: Server, val dataBase: DataBase, val jw
                 dbPassword
             ), server = Config.Server(
                 dev,
-                sslState,
+                ssl,
                 host,
                 port,
                 sslHost,

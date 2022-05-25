@@ -20,28 +20,15 @@ import io.netty.handler.codec.http.cookie.CookieHeaderNames.SameSite
 import org.kodein.di.instance
 import org.kodein.di.ktor.closestDI
 
-fun createRefreshCookie(token: String, timestamp: Long, sslState: Config.SSLState): Cookie {
-    val secure: Boolean
-    val sameSite: String
-    when (sslState) {
-        Config.SSLState.SSL,
-        Config.SSLState.DEV -> {
-            secure = true
-            sameSite = SameSite.None.toString()
-        }
-        Config.SSLState.NONE -> {
-            secure = false
-            sameSite = SameSite.Lax.toString()
-        }
-    }
+fun createRefreshCookie(token: String, timestamp: Long, ssl: Boolean): Cookie {
     return Cookie(
         "jwt",
         token,
         expires = GMTDate(timestamp),
         path = "/refresh_token",
         httpOnly = true,
-        secure = secure,
-        extensions = hashMapOf(SAMESITE to sameSite)
+        secure = ssl,
+        extensions = hashMapOf(SAMESITE to if (ssl) SameSite.None.toString() else SameSite.Lax.toString())
     )
 }
 
@@ -60,7 +47,7 @@ fun Route.login() {
                 createRefreshCookie(
                     refreshToken,
                     System.currentTimeMillis() + jwtService.getRefreshTokenValidationTime(),
-                    config.server.sslState
+                    config.server.ssl
                 )
             )
             call.respond(APIResponse(data = AuthToken(token = token), success = true))
@@ -102,7 +89,7 @@ fun Route.refreshCookie() {
                     createRefreshCookie(
                         refreshToken,
                         System.currentTimeMillis() + jwtService.getRefreshTokenValidationTime(),
-                        config.server.sslState
+                        config.server.ssl
                     )
                 )
                 HttpStatusCode.OK to APIResponse(data = AuthToken(token = accessToken), success = true)

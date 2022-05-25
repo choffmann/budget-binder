@@ -3,7 +3,6 @@ package de.hsfl.budgetBinder.server
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.types.file
-import de.hsfl.budgetBinder.server.config.Config
 import de.hsfl.budgetBinder.server.config.getServerConfig
 import io.ktor.network.tls.certificates.*
 import io.ktor.server.engine.*
@@ -25,17 +24,21 @@ class ServerMain : CliktCommand() {
     override fun run(): Unit = runBlocking {
         val config = getServerConfig(configFile = configFile)
 
-        val keyStore = when (config.server.sslState) {
-            Config.SSLState.DEV -> generateCertificate(
-                file = File("data/dev_keystore.jks"),
-                keyAlias = "Budget Binder Server",
-                keyPassword = config.server.keyStorePassword,
-                jksPassword = config.server.keyStorePassword
-            )
-            Config.SSLState.SSL -> withContext(Dispatchers.IO) {
-                KeyStore.getInstance(File(config.server.keyStorePath), config.server.keyStorePassword.toCharArray())
+        val keyStore = when {
+            config.server.dev && config.server.ssl -> {
+                generateCertificate(
+                    file = File(config.server.keyStorePath),
+                    keyAlias = "Budget Binder Server",
+                    keyPassword = config.server.keyStorePassword,
+                    jksPassword = config.server.keyStorePassword
+                )
             }
-            Config.SSLState.NONE -> null
+            config.server.ssl -> {
+                withContext(Dispatchers.IO) {
+                    KeyStore.getInstance(File(config.server.keyStorePath), config.server.keyStorePassword.toCharArray())
+                }
+            }
+            else -> null
         }
 
         val environment = applicationEngineEnvironment {
@@ -48,9 +51,9 @@ class ServerMain : CliktCommand() {
                 host = config.server.host
                 port = config.server.port
             }
-            if (config.server.sslState > Config.SSLState.NONE) {
+            if (keyStore != null) {
                 sslConnector(
-                    keyStore = keyStore!!,
+                    keyStore = keyStore,
                     keyAlias = "Budget Binder Server",
                     keyStorePassword = { config.server.keyStorePassword.toCharArray() },
                     privateKeyPassword = { config.server.keyStorePassword.toCharArray() }
@@ -59,22 +62,12 @@ class ServerMain : CliktCommand() {
                     port = config.server.sslPort
                 }
             }
-            if (config.server.sslState == Config.SSLState.DEV) {
+            if (config.server.dev) {
                 watchPaths = listOf("build/classes", "build/resources")
             }
         }
 
-        embeddedServer(Netty, environment = environment, configure = {
-            /*  https://ktor.io/docs/engines.html#engine-main-configure
-            *   https://api.ktor.io/ktor-server/ktor-server-netty/io.ktor.server.netty/-netty-application-engine/-configuration/index.html#2119802284%2FProperties%2F1117634132
-            *   requestQueueLimit = 16
-            *   shareWorkGroup = false
-            *   configureBootstrap = {
-            *       // ...
-            *   }
-            *   responseWriteTimeoutSeconds = 10
-            */
-        }).start(wait = true)
+        embeddedServer(Netty, environment = environment).start(wait = true)
     }
 }
 

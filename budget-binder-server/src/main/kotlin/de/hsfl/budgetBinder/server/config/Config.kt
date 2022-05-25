@@ -2,15 +2,9 @@ package de.hsfl.budgetBinder.server.config
 
 
 data class Config(val server: Server, val dataBase: DataBase, val jwt: JWT) {
-    enum class SSLState {
-        NONE,
-        SSL,
-        DEV,
-    }
-
     data class Server(
         val dev: Boolean,
-        val sslState: SSLState,
+        val ssl: Boolean,
         val host: String,
         val port: Int,
         val sslHost: String,
