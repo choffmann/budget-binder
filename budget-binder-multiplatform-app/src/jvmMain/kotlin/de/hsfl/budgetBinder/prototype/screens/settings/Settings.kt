@@ -1,5 +1,6 @@
 package de.hsfl.budgetBinder.prototype.screens.settings
 
+import androidx.compose.animation.*
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
@@ -28,25 +29,38 @@ fun SettingsComponent() {
     SettingsView()
 }
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 private fun SettingsView() {
     Box(modifier = Modifier.fillMaxSize()) {
         Column {
             UserView()
-            when (settingsScreenState.value) {
-                is SettingsScreens.Menu -> {
-                    MenuView(modifier = Modifier.padding(top = 16.dp), onListClick = {
-                        when (it) {
-                            "Account" -> settingsScreenState.value = SettingsScreens.Account
-                            "Server" -> settingsScreenState.value = SettingsScreens.Server
-                        }
-                    })
-                }
-                is SettingsScreens.Account -> {
-                    UserSettings()
-                }
-                is SettingsScreens.Server -> {
-                    ServerSettings()
+            AnimatedContent(targetState = settingsScreenState.value, transitionSpec = {
+                if (targetState.weight > initialState.weight) {
+                    // If welcomeScreenState ID is larger than previous ID,
+                    // slide in from right and slide out to left
+                    slideInHorizontally { fullWidth -> fullWidth } + fadeIn() with slideOutHorizontally { fullWidth -> -fullWidth }
+                } else {
+                    // If welcomeScreenState ID is smaller than previous ID,
+                    // slide in from left and slide out to right
+                    slideInHorizontally { fullWidth -> -fullWidth } + fadeIn() with slideOutHorizontally { fullWidth -> fullWidth }
+                }.using(SizeTransform(clip = false))
+            }) { state ->
+                when (state) {
+                    is SettingsScreens.Menu -> {
+                        MenuView(modifier = Modifier.padding(top = 16.dp), onListClick = {
+                            when (it) {
+                                "Account" -> settingsScreenState.value = SettingsScreens.Account
+                                "Server" -> settingsScreenState.value = SettingsScreens.Server
+                            }
+                        })
+                    }
+                    is SettingsScreens.Account -> {
+                        UserSettings()
+                    }
+                    is SettingsScreens.Server -> {
+                        ServerSettings()
+                    }
                 }
             }
         }
@@ -150,6 +164,7 @@ private fun UserSettings() {
                         email = emailState.value,
                         password = passwordState.value
                     )
+                    settingsScreenState.value = SettingsScreens.Menu
                 }) {
                     Text("Update")
                 }
@@ -162,7 +177,8 @@ private fun UserSettings() {
 private fun ServerSettings() {
     val serverUrlState = remember { mutableStateOf(serverState.value.serverUrl) }
     Column(modifier = Modifier.fillMaxSize().padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-        TextField(modifier = Modifier.padding(16.dp),
+        TextField(
+            modifier = Modifier.padding(16.dp),
             value = serverUrlState.value,
             enabled = false,
             onValueChange = { serverUrlState.value = it },
@@ -180,8 +196,8 @@ private fun ServerSettings() {
 expect fun AvatarImage(modifier: Modifier = Modifier)
 
 
-sealed class SettingsScreens {
-    object Menu : SettingsScreens()
-    object Account : SettingsScreens()
-    object Server : SettingsScreens()
+sealed class SettingsScreens(val weight: Int) {
+    object Menu : SettingsScreens(0)
+    object Account : SettingsScreens(1)
+    object Server : SettingsScreens(1)
 }
