@@ -6,7 +6,7 @@ import de.hsfl.budgetBinder.common.ErrorModel
 import de.hsfl.budgetBinder.server.models.CategoryEntity
 import de.hsfl.budgetBinder.server.models.EntryEntity
 import de.hsfl.budgetBinder.server.models.UserEntity
-import de.hsfl.budgetBinder.server.repository.isCreatedAndEndedCorrectPeriod
+import de.hsfl.budgetBinder.server.repository.isCreatedAndEndedInPeriod
 import de.hsfl.budgetBinder.server.services.interfaces.EntryService
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.time.LocalDateTime
@@ -23,7 +23,7 @@ class EntryServiceImpl : EntryService {
         val value = period?.let {
             user.entries.filter {
                 if (it.repeat)
-                    isCreatedAndEndedCorrectPeriod(it.created, it.ended, period)
+                    isCreatedAndEndedInPeriod(it.created, it.ended, period)
                 else
                     it.created > period && it.created < period.plusMonths(1)
             }

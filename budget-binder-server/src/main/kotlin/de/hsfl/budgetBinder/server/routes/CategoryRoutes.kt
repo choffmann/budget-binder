@@ -4,7 +4,7 @@ import de.hsfl.budgetBinder.common.APIResponse
 import de.hsfl.budgetBinder.common.Category
 import de.hsfl.budgetBinder.common.ErrorModel
 import de.hsfl.budgetBinder.server.models.UserPrincipal
-import de.hsfl.budgetBinder.server.repository.parseParameterToLocalDateTime
+import de.hsfl.budgetBinder.server.repository.parseParameterToLocalDateTimeOrErrorMessage
 import de.hsfl.budgetBinder.server.services.interfaces.CategoryService
 import de.hsfl.budgetBinder.server.services.interfaces.EntryService
 import io.ktor.server.application.*
@@ -21,7 +21,7 @@ fun Route.categoriesRoute() {
             val userPrincipal: UserPrincipal = call.principal()!!
             val categoryService: CategoryService by closestDI().instance()
 
-            val (error, period) = parseParameterToLocalDateTime(
+            val (error, period) = parseParameterToLocalDateTimeOrErrorMessage(
                 call.request.queryParameters["current"].toBoolean(),
                 call.request.queryParameters["period"]
             )
