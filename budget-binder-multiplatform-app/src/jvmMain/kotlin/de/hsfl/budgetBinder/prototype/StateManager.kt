@@ -6,6 +6,8 @@ import androidx.compose.runtime.mutableStateOf
 
 object StateManager {
     val screenState = mutableStateOf<PrototypeScreen>(PrototypeScreen.Welcome)
-    val darkMode = mutableStateOf(false)
     val drawerState = DrawerState(DrawerValue.Closed)
+    val darkMode = mutableStateOf(false)
+    val userState = mutableStateOf(User())
+    val server = mutableStateOf(Server())
 }
