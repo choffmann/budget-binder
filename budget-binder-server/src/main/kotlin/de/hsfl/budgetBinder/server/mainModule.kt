@@ -172,7 +172,7 @@ fun Application.mainModule(config: Config) {
             }
         }
         status(HttpStatusCode.MethodNotAllowed) { call, status ->
-            call.respond(status, APIResponse<String>(ErrorModel("Method Not Allowed")))
+            call.respond(status, APIResponse<String>(ErrorModel("Method Not Allowed.")))
         }
     }
 

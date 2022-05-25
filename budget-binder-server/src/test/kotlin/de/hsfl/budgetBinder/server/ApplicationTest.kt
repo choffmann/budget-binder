@@ -61,6 +61,13 @@ class ApplicationTest {
             install(HttpCookies)
         }
 
+        client.post("/register").let { response ->
+            assertEquals(HttpStatusCode.OK, response.status)
+            val responseBody: APIResponse<User> = response.body()
+            val shouldResponse: APIResponse<User> = wrapFailure("The object you provided has not the right format.")
+            assertEquals(shouldResponse, responseBody)
+        }
+
         client.post("/register") {
             contentType(ContentType.Application.Json)
             setBody(TestUser.userIn)
@@ -74,7 +81,7 @@ class ApplicationTest {
         client.get("/login").let { response ->
             assertEquals(HttpStatusCode.MethodNotAllowed, response.status)
             val responseBody: APIResponse<AuthToken> = response.body()
-            val shouldResponse: APIResponse<AuthToken> = wrapFailure("Method Not Allowed")
+            val shouldResponse: APIResponse<AuthToken> = wrapFailure("Method Not Allowed.")
             assertEquals(shouldResponse, responseBody)
         }
 
