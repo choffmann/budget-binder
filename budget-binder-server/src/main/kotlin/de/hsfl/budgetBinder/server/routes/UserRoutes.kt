@@ -20,6 +20,7 @@ fun Route.meRoute() {
             val userService: UserService by closestDI().instance()
             call.respond(APIResponse(data = userService.findUserByID(userPrincipal.getUserID()), success = true))
         }
+
         patch {
             val userPrincipal: UserPrincipal = call.principal()!!
             val userService: UserService by closestDI().instance()
@@ -30,6 +31,7 @@ fun Route.meRoute() {
 
             call.respond(response)
         }
+
         delete {
             val userPrincipal: UserPrincipal = call.principal()!!
             val userService: UserService by closestDI().instance()

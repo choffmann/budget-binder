@@ -37,6 +37,7 @@ fun Route.entriesRoute() {
                 )
             }
         }
+
         post {
             val userPrincipal: UserPrincipal = call.principal()!!
             val entryService: EntryService by closestDI().instance()

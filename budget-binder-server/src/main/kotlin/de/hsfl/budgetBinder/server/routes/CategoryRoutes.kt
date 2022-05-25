@@ -37,6 +37,7 @@ fun Route.categoriesRoute() {
                 )
             }
         }
+
         post {
             val userPrincipal: UserPrincipal = call.principal()!!
             val categoryService: CategoryService by closestDI().instance()

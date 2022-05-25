@@ -9,7 +9,6 @@ import io.ktor.client.call.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.cookies.*
 import io.ktor.client.request.*
-import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -30,14 +29,28 @@ class ApplicationTest {
         }
     }
 
-
     @Test
     fun testRoot() = customTestApplication { client ->
-        val response = client.get("/")
-        assertEquals(HttpStatusCode.OK, response.status)
-        assertEquals("{Accept=[application/json], Accept-Charset=[UTF-8], Content-Length=[0]}", response.bodyAsText())
-    }
+        client.get("/").let { response ->
+            assertEquals(HttpStatusCode.OK, response.status)
+            assertEquals(ContentType.Text.Html.withCharset(Charsets.UTF_8), response.contentType())
+        }
 
+        client.get("/docs").let { response ->
+            assertEquals(HttpStatusCode.OK, response.status)
+            assertEquals(ContentType.Text.Html.withCharset(Charsets.UTF_8), response.contentType())
+        }
+
+        client.get("/favicon.ico").let { response ->
+            assertEquals(HttpStatusCode.OK, response.status)
+            assertEquals(ContentType.Image.XIcon, response.contentType())
+        }
+
+        client.get("/openapi.json").let { response ->
+            assertEquals(HttpStatusCode.OK, response.status)
+            assertEquals(ContentType.Application.Json, response.contentType())
+        }
+    }
 
     @Test
     fun testRegisterLoginAndLogout() = customTestApplication {
@@ -140,7 +153,6 @@ class ApplicationTest {
         TestUser.accessToken = null
         checkMeFailure(client)
     }
-
 
     @Test
     fun testRefreshTokenWithoutCookie() = customTestApplication { client ->
