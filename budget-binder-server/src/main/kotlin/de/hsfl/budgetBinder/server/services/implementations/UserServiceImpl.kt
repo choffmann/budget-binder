@@ -28,7 +28,7 @@ class UserServiceImpl : UserService {
         UserEntity.findById(id)!!.toDto()
     }
 
-    override fun changeUser(userId: Int, userPut: User.Put): User = transaction {
+    override fun changeUser(userId: Int, userPut: User.Patch): User = transaction {
         val user = UserEntity[userId]
 
         userPut.name?.let { user.name = it }

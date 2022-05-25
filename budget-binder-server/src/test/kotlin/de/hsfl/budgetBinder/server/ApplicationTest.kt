@@ -205,7 +205,7 @@ class ApplicationTest {
             assertEquals(shouldUser, user)
         }
 
-        val patchedUser = User.Put("changedTest", "changedSurname", "newPassword")
+        val patchedUser = User.Patch("changedTest", "changedSurname", "newPassword")
 
         client.patch("/me") {
             header(HttpHeaders.ContentType, ContentType.Application.Json)

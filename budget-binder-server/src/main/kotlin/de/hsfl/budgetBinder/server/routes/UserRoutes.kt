@@ -24,7 +24,7 @@ fun Route.meRoute() {
             val userPrincipal: UserPrincipal = call.principal()!!
             val userService: UserService by closestDI().instance()
 
-            val response = call.receiveOrNull<User.Put>()?.let { userPut ->
+            val response = call.receiveOrNull<User.Patch>()?.let { userPut ->
                 APIResponse(data = userService.changeUser(userPrincipal.getUserID(), userPut), success = true)
             } ?: APIResponse(ErrorModel("not the right Parameters provided"))
 
