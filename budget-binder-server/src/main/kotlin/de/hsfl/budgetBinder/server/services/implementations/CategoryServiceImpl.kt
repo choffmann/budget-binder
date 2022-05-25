@@ -24,7 +24,8 @@ class CategoryServiceImpl : CategoryService {
 
     override fun findCategoryByID(userId: Int, id: Int): Category? = transaction {
         val user = UserEntity[userId]
-        user.categories.firstOrNull { it.id.value == id && it.id != user.category }?.toDto()
+        if (id == user.category!!.value) null else
+            user.categories.firstOrNull { it.id.value == id }?.toDto()
     }
 
     override fun createCategory(userId: Int, category: Category.In): Category = transaction {
