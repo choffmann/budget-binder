@@ -146,7 +146,7 @@ fun Application.mainModule(config: Config) {
                 else -> {
                     call.respond(
                         HttpStatusCode.InternalServerError,
-                        APIResponse<String>(ErrorModel("Internal Server Error"))
+                        APIResponse<String>(ErrorModel("An Internal-Server-Error occurred. Please contact your Administrator or see the Server-Logs."))
                     )
                     throw cause
                 }
@@ -172,7 +172,7 @@ fun Application.mainModule(config: Config) {
             }
         }
         status(HttpStatusCode.MethodNotAllowed) { call, status ->
-            call.respond(status, APIResponse<String>(ErrorModel("Method Not Allowed.")))
+            call.respond(status, APIResponse<String>(ErrorModel("The used HTTP-Method is not allowed on this Endpoint.")))
         }
     }
 

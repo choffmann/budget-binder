@@ -64,7 +64,7 @@ class ApplicationTest {
         client.post("/register").let { response ->
             assertEquals(HttpStatusCode.OK, response.status)
             val responseBody: APIResponse<User> = response.body()
-            val shouldResponse: APIResponse<User> = wrapFailure("The object you provided has not the right format.")
+            val shouldResponse: APIResponse<User> = wrapFailure("The object you provided it not in the right format.")
             assertEquals(shouldResponse, responseBody)
         }
 
@@ -81,7 +81,7 @@ class ApplicationTest {
         client.get("/login").let { response ->
             assertEquals(HttpStatusCode.MethodNotAllowed, response.status)
             val responseBody: APIResponse<AuthToken> = response.body()
-            val shouldResponse: APIResponse<AuthToken> = wrapFailure("Method Not Allowed.")
+            val shouldResponse: APIResponse<AuthToken> = wrapFailure("The used HTTP-Method is not allowed on this Endpoint.")
             assertEquals(shouldResponse, responseBody)
         }
 
@@ -230,7 +230,7 @@ class ApplicationTest {
             assertEquals(HttpStatusCode.OK, response.status)
 
             val user: APIResponse<User> = response.body()
-            val shouldUser: APIResponse<User> = wrapFailure("not the right Parameters provided")
+            val shouldUser: APIResponse<User> = wrapFailure("The object you provided it not in the right format.")
             assertEquals(shouldUser, user)
         }
 

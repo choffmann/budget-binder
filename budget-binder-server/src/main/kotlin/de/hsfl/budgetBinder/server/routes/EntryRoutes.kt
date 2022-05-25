@@ -44,7 +44,7 @@ fun Route.entriesRoute() {
 
             val response = call.receiveOrNull<Entry.In>()?.let {
                 APIResponse(data = entryService.createEntry(userPrincipal.getUserID(), it), success = true)
-            } ?: APIResponse(ErrorModel("not the right Parameters provided"))
+            } ?: APIResponse(ErrorModel("The object you provided it not in the right format."))
             call.respond(response)
         }
     }
@@ -77,7 +77,7 @@ fun Route.entryByIdRoute() {
                     entryService.changeEntry(userPrincipal.getUserID(), entry.id, changeEntry)?.let {
                         APIResponse(data = it, success = true)
                     } ?: APIResponse(ErrorModel("you can't change this Entry"))
-                } ?: APIResponse(ErrorModel("not the right Parameters provided"))
+                } ?: APIResponse(ErrorModel("The object you provided it not in the right format."))
             }
             call.respond(response)
         }

@@ -21,7 +21,7 @@ interface EntryService {
         return id?.let {
             findEntryByID(userId, it)?.let { entry ->
                 callback(entry)
-            } ?: APIResponse(ErrorModel("Entry not found"))
-        } ?: APIResponse(ErrorModel("path parameter is not a number"))
+            } ?: APIResponse(ErrorModel("Your entry was not found."))
+        } ?: APIResponse(ErrorModel("The ID you provided is not a number."))
     }
 }

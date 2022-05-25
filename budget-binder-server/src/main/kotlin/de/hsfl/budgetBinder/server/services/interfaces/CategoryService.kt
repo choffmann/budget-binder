@@ -20,7 +20,7 @@ interface CategoryService {
         return id?.let {
             findCategoryByID(userId, it)?.let { category ->
                 callback(category)
-            } ?: APIResponse(ErrorModel("Category not found"))
-        } ?: APIResponse(ErrorModel("path parameter is not a number"))
+            } ?: APIResponse(ErrorModel("Your category was not found."))
+        } ?: APIResponse(ErrorModel("The ID you provided is not a number."))
     }
 }

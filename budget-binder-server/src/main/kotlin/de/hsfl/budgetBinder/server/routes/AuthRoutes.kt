@@ -85,7 +85,7 @@ fun Route.register() {
             userService.insertNewUserOrNull(userIn)?.let { user ->
                 APIResponse(data = user, success = true)
             } ?: APIResponse(ErrorModel("Email already assigned. Please choose another."))
-        } ?: APIResponse(ErrorModel("The object you provided has not the right format."))
+        } ?: APIResponse(ErrorModel("The object you provided it not in the right format."))
         call.respond(response)
     }
 }

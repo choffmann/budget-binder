@@ -44,7 +44,7 @@ fun Route.categoriesRoute() {
 
             val response = call.receiveOrNull<Category.In>()?.let {
                 APIResponse(data = categoryService.createCategory(userPrincipal.getUserID(), it), success = true)
-            } ?: APIResponse(ErrorModel("not the right Parameters provided"))
+            } ?: APIResponse(ErrorModel("The object you provided it not in the right format."))
             call.respond(response)
         }
     }
@@ -76,8 +76,8 @@ fun Route.categoryByIdRoute() {
                 call.receiveOrNull<Category.Patch>()?.let { changeCategory ->
                     categoryService.changeCategory(userPrincipal.getUserID(), category.id, changeCategory)?.let {
                         APIResponse(data = it, success = true)
-                    } ?: APIResponse(ErrorModel("you can't change this Category"))
-                } ?: APIResponse(ErrorModel("not the right Parameters provided"))
+                    } ?: APIResponse(ErrorModel("you can't change an old category."))
+                } ?: APIResponse(ErrorModel("The object you provided it not in the right format."))
             }
             call.respond(response)
         }
@@ -92,7 +92,7 @@ fun Route.categoryByIdRoute() {
             ) { category ->
                 categoryService.deleteCategory(category.id)?.let {
                     APIResponse(data = it, success = true)
-                } ?: APIResponse(ErrorModel("you can't delete this Category"))
+                } ?: APIResponse(ErrorModel("you can't delete an old category."))
             }
             call.respond(response)
         }

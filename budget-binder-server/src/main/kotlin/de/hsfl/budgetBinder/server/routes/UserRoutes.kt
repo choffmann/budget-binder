@@ -27,7 +27,7 @@ fun Route.meRoute() {
 
             val response = call.receiveOrNull<User.Patch>()?.let { userPut ->
                 APIResponse(data = userService.changeUser(userPrincipal.getUserID(), userPut), success = true)
-            } ?: APIResponse(ErrorModel("not the right Parameters provided"))
+            } ?: APIResponse(ErrorModel("The object you provided it not in the right format."))
 
             call.respond(response)
         }
