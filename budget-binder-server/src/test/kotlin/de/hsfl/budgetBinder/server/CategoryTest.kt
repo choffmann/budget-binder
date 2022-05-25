@@ -98,7 +98,7 @@ class CategoryTest {
         client.get("/categories").let { response ->
             assertEquals(HttpStatusCode.Unauthorized, response.status)
             val responseBody: APIResponse<Category> = response.body()
-            val shouldResponse: APIResponse<Category> = wrapFailure("Unauthorized")
+            val shouldResponse: APIResponse<Category> = wrapFailure("Your accessToken is absent or does not match.")
             assertEquals(shouldResponse, responseBody)
         }
 
@@ -106,7 +106,7 @@ class CategoryTest {
             assertEquals(HttpStatusCode.OK, response.status)
 
             val responseBody: APIResponse<Category> = response.body()
-            val shouldResponse: APIResponse<Category> = wrapFailure("not the right Parameters provided")
+            val shouldResponse: APIResponse<Category> = wrapFailure("The object you provided it not in the right format.")
             assertEquals(shouldResponse, responseBody)
         }
 
@@ -139,7 +139,7 @@ class CategoryTest {
         client.get("/categories").let { response ->
             assertEquals(HttpStatusCode.Unauthorized, response.status)
             val responseBody: APIResponse<List<Category>> = response.body()
-            val shouldResponse: APIResponse<List<Category>> = wrapFailure("Unauthorized")
+            val shouldResponse: APIResponse<List<Category>> = wrapFailure("Your accessToken is absent or does not match.")
             assertEquals(shouldResponse, responseBody)
         }
 
@@ -273,28 +273,28 @@ class CategoryTest {
         client.get("/categories/1").let { response ->
             assertEquals(HttpStatusCode.Unauthorized, response.status)
             val responseBody: APIResponse<Category> = response.body()
-            val shouldResponse: APIResponse<Category> = wrapFailure("Unauthorized")
+            val shouldResponse: APIResponse<Category> = wrapFailure("Your accessToken is absent or does not match.")
             assertEquals(shouldResponse, responseBody)
         }
 
         sendAuthenticatedRequest(client, HttpMethod.Get, "/categories/test") { response ->
             assertEquals(HttpStatusCode.OK, response.status)
             val responseBody: APIResponse<Category> = response.body()
-            val shouldResponse: APIResponse<Category> = wrapFailure("path parameter is not a number")
+            val shouldResponse: APIResponse<Category> = wrapFailure("The ID you provided is not a number.")
             assertEquals(shouldResponse, responseBody)
         }
 
         sendAuthenticatedRequest(client, HttpMethod.Get, "/categories/null") { response ->
             assertEquals(HttpStatusCode.OK, response.status)
             val responseBody: APIResponse<Category> = response.body()
-            val shouldResponse: APIResponse<Category> = wrapFailure("path parameter is not a number")
+            val shouldResponse: APIResponse<Category> = wrapFailure("The ID you provided is not a number.")
             assertEquals(shouldResponse, responseBody)
         }
 
         sendAuthenticatedRequest(client, HttpMethod.Get, "/categories/5000") { response ->
             assertEquals(HttpStatusCode.OK, response.status)
             val responseBody: APIResponse<Category> = response.body()
-            val shouldResponse: APIResponse<Category> = wrapFailure("Category not found")
+            val shouldResponse: APIResponse<Category> = wrapFailure("Your category was not found.")
             assertEquals(shouldResponse, responseBody)
         }
 
@@ -303,7 +303,7 @@ class CategoryTest {
         sendAuthenticatedRequest(client, HttpMethod.Get, "/categories/${id - 1}") { response ->
             assertEquals(HttpStatusCode.OK, response.status)
             val responseBody: APIResponse<Category> = response.body()
-            val shouldResponse: APIResponse<Category> = wrapFailure("Category not found")
+            val shouldResponse: APIResponse<Category> = wrapFailure("Your category was not found.")
             assertEquals(shouldResponse, responseBody)
         }
 
@@ -321,28 +321,28 @@ class CategoryTest {
         client.patch("/categories/1").let { response ->
             assertEquals(HttpStatusCode.Unauthorized, response.status)
             val responseBody: APIResponse<Category> = response.body()
-            val shouldResponse: APIResponse<Category> = wrapFailure("Unauthorized")
+            val shouldResponse: APIResponse<Category> = wrapFailure("Your accessToken is absent or does not match.")
             assertEquals(shouldResponse, responseBody)
         }
 
         sendAuthenticatedRequest(client, HttpMethod.Patch, "/categories/test") { response ->
             assertEquals(HttpStatusCode.OK, response.status)
             val responseBody: APIResponse<Category> = response.body()
-            val shouldResponse: APIResponse<Category> = wrapFailure("path parameter is not a number")
+            val shouldResponse: APIResponse<Category> = wrapFailure("The ID you provided is not a number.")
             assertEquals(shouldResponse, responseBody)
         }
 
         sendAuthenticatedRequest(client, HttpMethod.Patch, "/categories/null") { response ->
             assertEquals(HttpStatusCode.OK, response.status)
             val responseBody: APIResponse<Category> = response.body()
-            val shouldResponse: APIResponse<Category> = wrapFailure("path parameter is not a number")
+            val shouldResponse: APIResponse<Category> = wrapFailure("The ID you provided is not a number.")
             assertEquals(shouldResponse, responseBody)
         }
 
         sendAuthenticatedRequest(client, HttpMethod.Patch, "/categories/5000") { response ->
             assertEquals(HttpStatusCode.OK, response.status)
             val responseBody: APIResponse<Category> = response.body()
-            val shouldResponse: APIResponse<Category> = wrapFailure("Category not found")
+            val shouldResponse: APIResponse<Category> = wrapFailure("Your category was not found.")
             assertEquals(shouldResponse, responseBody)
         }
 
@@ -351,7 +351,7 @@ class CategoryTest {
         sendAuthenticatedRequest(client, HttpMethod.Patch, "/categories/${id}") { response ->
             assertEquals(HttpStatusCode.OK, response.status)
             val responseBody: APIResponse<Category> = response.body()
-            val shouldResponse: APIResponse<Category> = wrapFailure("not the right Parameters provided")
+            val shouldResponse: APIResponse<Category> = wrapFailure("The object you provided it not in the right format.")
             assertEquals(shouldResponse, responseBody)
         }
 
@@ -363,7 +363,7 @@ class CategoryTest {
         ) { response ->
             assertEquals(HttpStatusCode.OK, response.status)
             val responseBody: APIResponse<Category> = response.body()
-            val shouldResponse: APIResponse<Category> = wrapFailure("you can't change this Category")
+            val shouldResponse: APIResponse<Category> = wrapFailure("you can't change an old category.")
             assertEquals(shouldResponse, responseBody)
         }
 
@@ -375,7 +375,7 @@ class CategoryTest {
         ) { response ->
             assertEquals(HttpStatusCode.OK, response.status)
             val responseBody: APIResponse<Category> = response.body()
-            val shouldResponse: APIResponse<Category> = wrapFailure("Category not found")
+            val shouldResponse: APIResponse<Category> = wrapFailure("Your category was not found.")
             assertEquals(shouldResponse, responseBody)
         }
 
@@ -426,28 +426,28 @@ class CategoryTest {
         client.get("categories/1").let { response ->
             assertEquals(HttpStatusCode.Unauthorized, response.status)
             val responseBody: APIResponse<Category> = response.body()
-            val shouldResponse: APIResponse<Category> = wrapFailure("Unauthorized")
+            val shouldResponse: APIResponse<Category> = wrapFailure("Your accessToken is absent or does not match.")
             assertEquals(shouldResponse, responseBody)
         }
 
         sendAuthenticatedRequest(client, HttpMethod.Delete, "/categories/test") { response ->
             assertEquals(HttpStatusCode.OK, response.status)
             val responseBody: APIResponse<Category> = response.body()
-            val shouldResponse: APIResponse<Category> = wrapFailure("path parameter is not a number")
+            val shouldResponse: APIResponse<Category> = wrapFailure("The ID you provided is not a number.")
             assertEquals(shouldResponse, responseBody)
         }
 
         sendAuthenticatedRequest(client, HttpMethod.Delete, "/categories/null") { response ->
             assertEquals(HttpStatusCode.OK, response.status)
             val responseBody: APIResponse<Category> = response.body()
-            val shouldResponse: APIResponse<Category> = wrapFailure("path parameter is not a number")
+            val shouldResponse: APIResponse<Category> = wrapFailure("The ID you provided is not a number.")
             assertEquals(shouldResponse, responseBody)
         }
 
         sendAuthenticatedRequest(client, HttpMethod.Delete, "/categories/5000") { response ->
             assertEquals(HttpStatusCode.OK, response.status)
             val responseBody: APIResponse<Category> = response.body()
-            val shouldResponse: APIResponse<Category> = wrapFailure("Category not found")
+            val shouldResponse: APIResponse<Category> = wrapFailure("Your category was not found.")
             assertEquals(shouldResponse, responseBody)
         }
 
@@ -456,14 +456,14 @@ class CategoryTest {
         sendAuthenticatedRequest(client, HttpMethod.Delete, "/categories/${id - 1}") { response ->
             assertEquals(HttpStatusCode.OK, response.status)
             val responseBody: APIResponse<Category> = response.body()
-            val shouldResponse: APIResponse<Category> = wrapFailure("Category not found")
+            val shouldResponse: APIResponse<Category> = wrapFailure("Your category was not found.")
             assertEquals(shouldResponse, responseBody)
         }
 
         sendAuthenticatedRequest(client, HttpMethod.Delete, "/categories/${id}") { response ->
             assertEquals(HttpStatusCode.OK, response.status)
             val responseBody: APIResponse<Category> = response.body()
-            val shouldResponse: APIResponse<Category> = wrapFailure("you can't delete this Category")
+            val shouldResponse: APIResponse<Category> = wrapFailure("you can't delete an old category.")
             assertEquals(shouldResponse, responseBody)
         }
 

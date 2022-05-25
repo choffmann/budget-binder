@@ -6,7 +6,7 @@ import de.hsfl.budgetBinder.common.ErrorModel
 import de.hsfl.budgetBinder.server.models.CategoryEntity
 import de.hsfl.budgetBinder.server.models.EntryEntity
 import de.hsfl.budgetBinder.server.models.UserEntity
-import de.hsfl.budgetBinder.server.repository.isCreatedAndEndedCorrectPeriod
+import de.hsfl.budgetBinder.server.repository.isCreatedAndEndedInPeriod
 import de.hsfl.budgetBinder.server.services.interfaces.EntryService
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.time.LocalDateTime
@@ -20,10 +20,10 @@ class EntryServiceImpl : EntryService {
     override fun getEntriesByPeriod(userId: Int, period: LocalDateTime?): List<Entry> = transaction {
         val user = UserEntity[userId]
 
-        val value = period?.let {
+        val value = period?.let { period ->
             user.entries.filter {
                 if (it.repeat)
-                    isCreatedAndEndedCorrectPeriod(it.created, it.ended, period)
+                    isCreatedAndEndedInPeriod(it.created, it.ended, period)
                 else
                     it.created > period && it.created < period.plusMonths(1)
             }
@@ -36,7 +36,7 @@ class EntryServiceImpl : EntryService {
         UserEntity[userId].entries.firstOrNull { it.id.value == id }?.toDto()
     }
 
-    override fun insertEntryForUser(userId: Int, entry: Entry.In): Entry = transaction {
+    override fun createEntry(userId: Int, entry: Entry.In): Entry = transaction {
         EntryEntity.new {
             name = entry.name
             amount = entry.amount
@@ -106,15 +106,16 @@ class EntryServiceImpl : EntryService {
     ): APIResponse<List<Entry>> = transaction {
         val userEntity = UserEntity[userId]
 
-        val category = if (categoryId == "null") {
-            CategoryEntity[userEntity.category!!]
+        if (categoryId == "null") {
+            APIResponse(data = CategoryEntity[userEntity.category!!].entries.map { it.toDto() }, success = true)
         } else {
             categoryId?.toIntOrNull()?.let { id ->
                 userEntity.categories.firstOrNull { it.id.value == id && it.id != userEntity.category }
-                    ?: return@transaction APIResponse(ErrorModel("Category not found"))
-            } ?: return@transaction APIResponse(ErrorModel("path parameter is not a number"))
+                    ?.let { categoryEntity ->
+                        APIResponse(data = categoryEntity.entries.map { it.toDto() }, success = true)
+                    }
+                    ?: APIResponse(ErrorModel("Your category was not found."))
+            } ?: APIResponse(ErrorModel("The ID you provided is not a number."))
         }
-
-        APIResponse(data = category.entries.map { it.toDto() }, success = true)
     }
 }

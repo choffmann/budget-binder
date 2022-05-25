@@ -121,21 +121,21 @@ class CategoryEntryTest {
         client.get("/categories/1/entries").let { response ->
             assertEquals(HttpStatusCode.Unauthorized, response.status)
             val responseBody: APIResponse<List<Entry>> = response.body()
-            val shouldResponse: APIResponse<List<Entry>> = wrapFailure("Unauthorized")
+            val shouldResponse: APIResponse<List<Entry>> = wrapFailure("Your accessToken is absent or does not match.")
             assertEquals(shouldResponse, responseBody)
         }
 
         sendAuthenticatedRequest(client, HttpMethod.Get, "/categories/test/entries") { response ->
             assertEquals(HttpStatusCode.OK, response.status)
             val responseBody: APIResponse<List<Entry>> = response.body()
-            val shouldResponse: APIResponse<List<Entry>> = wrapFailure("path parameter is not a number")
+            val shouldResponse: APIResponse<List<Entry>> = wrapFailure("The ID you provided is not a number.")
             assertEquals(shouldResponse, responseBody)
         }
 
         sendAuthenticatedRequest(client, HttpMethod.Get, "/categories/5000/entries") { response ->
             assertEquals(HttpStatusCode.OK, response.status)
             val responseBody: APIResponse<List<Entry>> = response.body()
-            val shouldResponse: APIResponse<List<Entry>> = wrapFailure("Category not found")
+            val shouldResponse: APIResponse<List<Entry>> = wrapFailure("Your category was not found.")
             assertEquals(shouldResponse, responseBody)
         }
 
@@ -153,7 +153,7 @@ class CategoryEntryTest {
         sendAuthenticatedRequest(client, HttpMethod.Get, "/categories/${categoryId - 1}/entries") { response ->
             assertEquals(HttpStatusCode.OK, response.status)
             val responseBody: APIResponse<List<Entry>> = response.body()
-            val shouldResponse: APIResponse<List<Entry>> = wrapFailure("Category not found")
+            val shouldResponse: APIResponse<List<Entry>> = wrapFailure("Your category was not found.")
             assertEquals(shouldResponse, responseBody)
         }
 

@@ -5,7 +5,6 @@ import io.ktor.server.html.*
 import io.ktor.http.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import io.ktor.util.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.html.*
@@ -13,8 +12,9 @@ import kotlinx.html.*
 fun Application.baseRoutes() {
     routing {
         get("/") {
-            call.respondText(call.request.headers.toMap().toString())
+            call.respondRedirect("/docs", permanent = true)
         }
+
         get("/favicon.ico") {
             val classLoader = javaClass.classLoader
             val inputStream = classLoader.getResourceAsStream("ico/BudgetBinderRounded.ico")!!
@@ -24,6 +24,7 @@ fun Application.baseRoutes() {
                 }
             }
         }
+
         get("/openapi.json") {
             val classLoader = javaClass.classLoader
             val inputStream = classLoader.getResourceAsStream("openapi.json")!!
@@ -33,6 +34,7 @@ fun Application.baseRoutes() {
                 }
             }
         }
+
         get("/docs") {
             call.respondHtml {
                 head {

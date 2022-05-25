@@ -3,7 +3,7 @@ package de.hsfl.budgetBinder.server.services.implementations
 import de.hsfl.budgetBinder.common.Category
 import de.hsfl.budgetBinder.server.models.CategoryEntity
 import de.hsfl.budgetBinder.server.models.UserEntity
-import de.hsfl.budgetBinder.server.repository.isCreatedAndEndedCorrectPeriod
+import de.hsfl.budgetBinder.server.repository.isCreatedAndEndedInPeriod
 import de.hsfl.budgetBinder.server.services.interfaces.CategoryService
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.time.LocalDateTime
@@ -15,7 +15,7 @@ class CategoryServiceImpl : CategoryService {
 
             val value = period?.let { period ->
                 user.categories.filter {
-                    it.id != user.category && isCreatedAndEndedCorrectPeriod(it.created, it.ended, period)
+                    it.id != user.category && isCreatedAndEndedInPeriod(it.created, it.ended, period)
                 }
             } ?: user.categories.filter { it.id != user.category }
 
@@ -24,10 +24,11 @@ class CategoryServiceImpl : CategoryService {
 
     override fun findCategoryByID(userId: Int, id: Int): Category? = transaction {
         val user = UserEntity[userId]
-        user.categories.firstOrNull { it.id.value == id && it.id != user.category }?.toDto()
+        if (id == user.category!!.value) null else
+            user.categories.firstOrNull { it.id.value == id }?.toDto()
     }
 
-    override fun insertCategoryForUser(userId: Int, category: Category.In): Category = transaction {
+    override fun createCategory(userId: Int, category: Category.In): Category = transaction {
         CategoryEntity.new {
             name = category.name
             color = category.color
@@ -88,10 +89,8 @@ class CategoryServiceImpl : CategoryService {
         if (categoryEntity.ended != null) {
             return@transaction null
         }
-        if (categoryPatch.budget != null) {
-            categoryEntity = createOrChangeCategory(categoryEntity, categoryPatch.budget!!)
-        }
 
+        categoryPatch.budget?.let { categoryEntity = createOrChangeCategory(categoryEntity, it) }
         categoryPatch.name?.let { categoryEntity.name = it }
         categoryPatch.color?.let { categoryEntity.color = it }
         categoryPatch.image?.let { categoryEntity.image = it }
