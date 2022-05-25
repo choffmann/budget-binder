@@ -36,7 +36,7 @@ class EntryServiceImpl : EntryService {
         UserEntity[userId].entries.firstOrNull { it.id.value == id }?.toDto()
     }
 
-    override fun insertEntryForUser(userId: Int, entry: Entry.In): Entry = transaction {
+    override fun createEntry(userId: Int, entry: Entry.In): Entry = transaction {
         EntryEntity.new {
             name = entry.name
             amount = entry.amount

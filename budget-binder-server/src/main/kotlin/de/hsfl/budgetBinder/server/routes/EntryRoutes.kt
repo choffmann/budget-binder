@@ -42,7 +42,7 @@ fun Route.entriesRoute() {
             val entryService: EntryService by closestDI().instance()
 
             val response = call.receiveOrNull<Entry.In>()?.let {
-                APIResponse(data = entryService.insertEntryForUser(userPrincipal.getUserID(), it), success = true)
+                APIResponse(data = entryService.createEntry(userPrincipal.getUserID(), it), success = true)
             } ?: APIResponse(ErrorModel("not the right Parameters provided"))
             call.respond(response)
         }

@@ -42,7 +42,7 @@ fun Route.categoriesRoute() {
             val categoryService: CategoryService by closestDI().instance()
 
             val response = call.receiveOrNull<Category.In>()?.let {
-                APIResponse(data = categoryService.insertCategoryForUser(userPrincipal.getUserID(), it), success = true)
+                APIResponse(data = categoryService.createCategory(userPrincipal.getUserID(), it), success = true)
             } ?: APIResponse(ErrorModel("not the right Parameters provided"))
             call.respond(response)
         }

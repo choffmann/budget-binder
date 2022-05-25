@@ -27,7 +27,7 @@ class CategoryServiceImpl : CategoryService {
         user.categories.firstOrNull { it.id.value == id && it.id != user.category }?.toDto()
     }
 
-    override fun insertCategoryForUser(userId: Int, category: Category.In): Category = transaction {
+    override fun createCategory(userId: Int, category: Category.In): Category = transaction {
         CategoryEntity.new {
             name = category.name
             color = category.color

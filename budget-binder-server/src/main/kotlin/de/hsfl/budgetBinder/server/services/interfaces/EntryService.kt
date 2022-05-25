@@ -8,7 +8,7 @@ import java.time.LocalDateTime
 interface EntryService {
     fun getEntriesByPeriod(userId: Int, period: LocalDateTime?): List<Entry>
     fun findEntryByID(userId: Int, id: Int): Entry?
-    fun insertEntryForUser(userId: Int, entry: Entry.In): Entry
+    fun createEntry(userId: Int, entry: Entry.In): Entry
     fun changeEntry(userId: Int, entryId: Int, entry: Entry.Patch): Entry?
     fun deleteEntry(entryId: Int): Entry?
     fun getAllEntriesForCategoryIdParam(userId: Int, categoryId: String?): APIResponse<List<Entry>>
@@ -24,5 +24,4 @@ interface EntryService {
             } ?: APIResponse(ErrorModel("Entry not found"))
         } ?: APIResponse(ErrorModel("path parameter is not a number"))
     }
-
 }

@@ -8,7 +8,7 @@ import java.time.LocalDateTime
 interface CategoryService {
     fun getCategoriesByPeriod(userId: Int, period: LocalDateTime?): List<Category>
     fun findCategoryByID(userId: Int, id: Int): Category?
-    fun insertCategoryForUser(userId: Int, category: Category.In): Category
+    fun createCategory(userId: Int, category: Category.In): Category
     fun changeCategory(userId: Int, categoryId: Int, categoryPatch: Category.Patch): Category?
     fun deleteCategory(categoryId: Int): Category?
 
