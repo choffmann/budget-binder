@@ -11,15 +11,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.modifier.modifierLocalOf
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import de.hsfl.budgetBinder.prototype.StateManager.darkMode
-import de.hsfl.budgetBinder.prototype.StateManager.screenState
+import de.hsfl.budgetBinder.prototype.StateManager.serverState
 import de.hsfl.budgetBinder.prototype.StateManager.userState
 import de.hsfl.budgetBinder.prototype.User
 
@@ -48,10 +46,55 @@ private fun SettingsView() {
                     UserSettings()
                 }
                 is SettingsScreens.Server -> {
-                    Text("Server Settings")
+                    ServerSettings()
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun UserView() {
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        AvatarImage(modifier = Modifier.padding(16.dp).align(Alignment.CenterHorizontally).size(128.dp))
+        Text(
+            text = "${userState.value.firstName} ${userState.value.lastName}",
+            style = MaterialTheme.typography.h6,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center
+        )
+        Text(text = userState.value.email, style = MaterialTheme.typography.subtitle1, textAlign = TextAlign.Center)
+    }
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+private fun MenuView(
+    modifier: Modifier = Modifier, onListClick: (String) -> Unit
+) {
+    Column(modifier = modifier) {
+        Divider()
+        ListItem(text = { Text("Dark Mode") },
+            icon = { Icon(Icons.Filled.Build, contentDescription = null) },
+            trailing = {
+                Switch(modifier = Modifier.padding(start = 8.dp),
+                    checked = darkMode.value,
+                    onCheckedChange = { darkMode.value = it })
+            })
+        Divider()
+        ListItem(modifier = Modifier.clickable(onClick = { onListClick("Account") }),
+            text = { Text("Account") },
+            icon = { Icon(Icons.Filled.AccountCircle, contentDescription = null) },
+            trailing = { Icon(Icons.Filled.KeyboardArrowRight, contentDescription = null) })
+        Divider()
+        ListItem(modifier = Modifier.clickable(onClick = { onListClick("Server") }),
+            text = { Text("Server") },
+            icon = { Icon(Icons.Filled.Edit, contentDescription = null) },
+            trailing = { Icon(Icons.Filled.KeyboardArrowRight, contentDescription = null) })
     }
 }
 
@@ -116,48 +159,21 @@ private fun UserSettings() {
 }
 
 @Composable
-private fun UserView() {
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        AvatarImage(modifier = Modifier.padding(16.dp).align(Alignment.CenterHorizontally).size(128.dp))
-        Text(
-            text = "${userState.value.firstName} ${userState.value.lastName}",
-            style = MaterialTheme.typography.h6,
-            fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Center
+private fun ServerSettings() {
+    val serverUrlState = remember { mutableStateOf(serverState.value.serverUrl) }
+    Column(modifier = Modifier.fillMaxSize().padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+        TextField(modifier = Modifier.padding(16.dp),
+            value = serverUrlState.value,
+            enabled = false,
+            onValueChange = { serverUrlState.value = it },
+            label = { Text("Server URL") },
+            singleLine = true
         )
-        Text(text = userState.value.email, style = MaterialTheme.typography.subtitle1, textAlign = TextAlign.Center)
+        Button(onClick = { settingsScreenState.value = SettingsScreens.Menu }) {
+            Text("Back")
+        }
     }
-}
 
-@OptIn(ExperimentalMaterialApi::class)
-@Composable
-private fun MenuView(
-    modifier: Modifier = Modifier, onListClick: (String) -> Unit
-) {
-    Column(modifier = modifier) {
-        Divider()
-        ListItem(text = { Text("Dark Mode") },
-            icon = { Icon(Icons.Filled.Build, contentDescription = null) },
-            trailing = {
-                Switch(modifier = Modifier.padding(start = 8.dp),
-                    checked = darkMode.value,
-                    onCheckedChange = { darkMode.value = it })
-            })
-        Divider()
-        ListItem(modifier = Modifier.clickable(onClick = { onListClick("Account") }),
-            text = { Text("Account") },
-            icon = { Icon(Icons.Filled.AccountCircle, contentDescription = null) },
-            trailing = { Icon(Icons.Filled.KeyboardArrowRight, contentDescription = null) })
-        Divider()
-        ListItem(modifier = Modifier.clickable(onClick = { onListClick("Server") }),
-            text = { Text("Server") },
-            icon = { Icon(Icons.Filled.Edit, contentDescription = null) },
-            trailing = { Icon(Icons.Filled.KeyboardArrowRight, contentDescription = null) })
-    }
 }
 
 @Composable

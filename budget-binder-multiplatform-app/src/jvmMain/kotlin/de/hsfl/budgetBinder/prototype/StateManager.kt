@@ -9,5 +9,5 @@ object StateManager {
     val drawerState = DrawerState(DrawerValue.Closed)
     val darkMode = mutableStateOf(false)
     val userState = mutableStateOf(User())
-    val server = mutableStateOf(Server())
+    val serverState = mutableStateOf(Server())
 }
