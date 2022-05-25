@@ -30,15 +30,11 @@ class UserServiceImpl : UserService {
 
     override fun changeUser(userId: Int, userPut: User.Put): User = transaction {
         val user = UserEntity[userId]
-        userPut.name?.let {
-            user.name = it
-        }
-        userPut.firstName?.let {
-            user.firstName = it
-        }
-        userPut.password?.let {
-            user.passwordHash = BCrypt.hashpw(it, BCrypt.gensalt())
-        }
+
+        userPut.name?.let { user.name = it }
+        userPut.firstName?.let { user.firstName = it }
+        userPut.password?.let { user.passwordHash = BCrypt.hashpw(it, BCrypt.gensalt()) }
+
         user.toDto()
     }
 
@@ -61,22 +57,19 @@ class UserServiceImpl : UserService {
         }
 
         return userEntity?.let {
-            val category = transaction {
-                CategoryEntity.new {
+            transaction {
+                val category = CategoryEntity.new {
                     name = "default"
                     color = "000000"
                     image = Category.Image.DEFAULT
                     budget = 0.0f
                     user = it
                 }
-            }
-            transaction {
                 it.category = category.id
+                it.toDto()
             }
-            it.toDto()
         }
     }
-
 
     override fun deleteUser(userId: Int): User = transaction {
         val user = UserEntity[userId]
