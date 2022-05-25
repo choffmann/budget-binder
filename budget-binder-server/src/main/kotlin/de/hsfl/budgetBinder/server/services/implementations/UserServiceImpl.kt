@@ -24,8 +24,8 @@ class UserServiceImpl : UserService {
         }
     }
 
-    override fun findUserByID(id: Int): User? = transaction {
-        UserEntity.findById(id)?.toDto()
+    override fun findUserByID(id: Int): User = transaction {
+        UserEntity.findById(id)!!.toDto()
     }
 
     override fun changeUser(userId: Int, userPut: User.Put): User = transaction {
