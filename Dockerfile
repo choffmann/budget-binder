@@ -4,8 +4,7 @@ WORKDIR /home/gradle/src
 RUN gradle :budget-binder-multiplatform-app:jsBrowserDistribution :budget-binder-server:shadowJar --no-daemon
 
 FROM openjdk:17
-RUN mkdir -p /app/data
-RUN mkdir -p /app/files
+RUN mkdir -p /app/data && mkdir -p /app/files
 WORKDIR /app
 
 VOLUME /app/data
