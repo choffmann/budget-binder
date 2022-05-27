@@ -108,7 +108,30 @@ POST /login
 ```
 
 ### REST API bauen
-**Ziel:** 
+**Ziel:** Budget-Binder-Server als RESTApi implementieren, die Datenmodelle verwenden und die Schnittstellen als Endpunkte erstellen.
+
+### 15.04.
+Das Serverprojekt wurde angelegt und eine erste Implementation des Ktor-Servers erstellt.
+Dann wurde ein Dockerfile erstellt, um den Server so auf jeglichen Linux-Servern starten zu können. 
+
+### 21.04.
+Es wurde eine erste Projektstruktur aufgebaut. Zudem wurde Jetbrains/Exposed hinzugefügt und eine erste Version eines Users als Schema definiert.
+
+### 22.04.
+Man kann sich nun zwischen einer SQLITE, MYSQL und POSTGRES Datenbank entscheiden, indem man die nötigen ENV-Variablen setzt.
+Passwörter werden jetzt mit bcrypt gehasht.
+Weiterhin wurde die Möglichkeit geschaffen sich mit Username und Passwort zu authentifizieren, indem die Daten mit der Datenbank verglichen werden 
+oder mit JWT (JSON-Web-Tokens), welchen man beim Login erhält. 
+Es wurden zwei DTOs (Data-Transfer-Objects) in budget-binder-common definiert, die zwischen Server und Client ausgetauscht werden.
+Der Endpunkt zum Einloggen wurde definiert der einen JWT für die Authentifizierung schickt, welcher 15min hält, und ein Refresh-Cookie, um sich beim Endpunkt /refresh_token einen neuen Access-Token zu erhalten.
+
+### 23.04.
+Eine erste README für den Server erstellt und einige Zeit damit verbracht mithilfe einer TestWebseite CORS richtig zu definieren.
+Zudem wurde die Möglichkeit geschaffen über die Config zu definieren, wie lange die jeweiligen JWT für Access und Refresh gültig sind.
+Zum Schluss wurde die token-Version dem User als neues Feld hinzugefügt, um zu überprüfen, ob der aktuelle Token noch gültig ist, den der User mitgeschickt hat.
+
+### 24.04.
+
 
 #### REST API Testen
 **Ziel:** 
