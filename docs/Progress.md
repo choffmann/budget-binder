@@ -58,18 +58,54 @@ Das Projekt ist verfügbar für die Endgeräte **Desktop, Android, Web**, mit **
 **Ziel:** Usertests wurden durchgeführt
 
 ## Meileinstein 2 - bis 20.05.2022
-- [ ] Datenmodelle definieren
-- [ ] Schnittstelle definieren
+- [x] Datenmodelle definieren
+- [x] Schnittstelle definieren
 - [ ] REST API bauen
     - [ ] REST API testen
 - [ ] Fontend Design entwicklung starten
 - [ ] Dokumentation starten
 
 ### Datenmodelle definieren
-**Ziel:** 
+**Ziel:** Ein UML-Diagramm mit dem Datenmodell erstellen
+
+### 02.05.
+Es wurde in der gesamten Gruppe diskutiert, wie unser Datenmodell aussehen soll.
+Zuerst haben wir die grundsätzlichen Felder besprochen. Dann haben wir definiert, dass es wiederholende Einträge gibt. 
+Es wurde entschieden, das man in unserer App in die Vergangenheit gucken kann und demnach brauchen wir eine Versionierung von wiederholenden Einträgen und Kategorien, was wir durch eine Parent-Child Beziehung abgebildet haben.
+Nach der Besprechung wurde folgendes UML-Diagram abgefertigt.
+![](img/progress/db_uml.png)
 
 ### Schnittstelle definieren
 **Ziel:** 
+
+### 02.05.
+Es wurde in der gesamten Gruppe diskutiert, wie unsere Schnittstellen aussehen sollen.
+Und wir sind zu folgendem Ergebnis gekommen:
+```
+# All Query Params are optional
+GET /entries?current=true&perdiod="MM-YYYY"
+POST /entries
+
+GET /entries/{entryId}
+PATCH /entries/{entryId}
+DELETE /entries/{entryId}
+
+GET /categories?current=true&perdiod="MM-YYYY"
+POST /categories
+
+GET /categories{categoryID}
+PATCH /categories{categoryID}
+DELETE /categories{categoryID}
+
+GET /categories{categoryID}/entries
+
+GET /me
+PATCH /me
+DELETE /me
+
+POST /register
+POST /login
+```
 
 ### REST API bauen
 **Ziel:** 
