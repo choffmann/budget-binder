@@ -17,6 +17,7 @@ import de.hsfl.budgetBinder.prototype.StateManager.screenState
 import de.hsfl.budgetBinder.prototype.PrototypeScreen
 import de.hsfl.budgetBinder.prototype.StateManager.darkMode
 import de.hsfl.budgetBinder.prototype.StateManager.drawerState
+import de.hsfl.budgetBinder.prototype.StateManager.userState
 import kotlinx.coroutines.launch
 
 
@@ -38,10 +39,10 @@ private fun DrawerUser() {
         Spacer(modifier = Modifier.size(8.dp))
         Column {
             Text(
-                text = "Hoffmann, Cedrik", style = MaterialTheme.typography.h6
+                text = "${userState.value.firstName} ${userState.value.lastName}", style = MaterialTheme.typography.h6
             )
             Text(
-                text = "hoffmann@mail.com", style = MaterialTheme.typography.subtitle1
+                text = userState.value.email, style = MaterialTheme.typography.subtitle1
             )
         }
     }
@@ -63,7 +64,7 @@ private fun DrawerList() {
         ListItem(modifier = Modifier.align(Alignment.CenterHorizontally).clickable(onClick = {
             screenState.value = PrototypeScreen.Settings
             scope.launch { drawerState.close() }
-        }), text = { Text("Einstellungen") }, icon = { Icon(Icons.Filled.Info, contentDescription = null) })
+        }), text = { Text("Einstellungen") }, icon = { Icon(Icons.Filled.Settings, contentDescription = null) })
         Row(verticalAlignment = Alignment.CenterVertically) {
             Switch(modifier = Modifier.padding(start = 8.dp),
                 checked = darkMode.value,
