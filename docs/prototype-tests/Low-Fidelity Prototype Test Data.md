@@ -63,3 +63,14 @@ Die Notizen sind im Format:
     - 1.) 4 und 5 sind to much. Optisch 2 am besten. 1 ist am minimalistischten. Wenn man kennzeichnet, das man durch ein klick auf die anzeige den betrag und das Budget sehen kann, dann 1 in kombination mit 2, ansonsten 3.
     - 2.) 1 ist besser,sieht dynamischer und moderner aus; 2 nicht so gut.
 
+<hr>
+
+- Kajsa, 25, Steuerfachangestellte
+  - Aufgaben:
+  - 1.) keine Probleme
+  - 2.) hat sich gefragt, ob wiederholen für wiederholende Zahlungen steht
+  - 3.) Zuerst unter Burgermenü geschaut, etwas verwirrt, Pfeilhitbox zu klein, unintuitives Wechseln der ansichten, gesamtbudget auch nicht klar zu unterscheiden
+  - 4.) keine Probleme
+- Fragen:
+  - 1.) [4,5,3,2,1], bei 2 zu viel los
+  - 2.) Favorit 1
