@@ -25,7 +25,7 @@ import de.hsfl.budgetBinder.prototype.StateManager.userState
 import de.hsfl.budgetBinder.prototype.User
 import kotlinx.coroutines.launch
 
-val settingsScreenState = mutableStateOf<SettingsScreens>(SettingsScreens.Menu)
+private val settingsScreenState = mutableStateOf<SettingsScreens>(SettingsScreens.Menu)
 
 @Composable
 fun SettingsComponent() {
@@ -96,6 +96,7 @@ private fun MenuView(
     Column(modifier = modifier) {
         Divider()
         ListItem(text = { Text("Dark Mode") },
+            modifier = Modifier.clickable(onClick = { darkMode.value = !darkMode.value }),
             icon = { Icon(Icons.Filled.Build, contentDescription = null) },
             trailing = {
                 Switch(modifier = Modifier.padding(start = 8.dp),
