@@ -1,13 +1,15 @@
 FROM gradle:7-jdk17 AS build
 COPY --chown=gradle:gradle . /home/gradle/src
-WORKDIR /home/gradle/src/budget-binder-server
-RUN gradle shadowJar --no-daemon
+WORKDIR /home/gradle/src
+RUN gradle :budget-binder-multiplatform-app:jsBrowserDistribution :budget-binder-server:shadowJar --no-daemon
 
 FROM openjdk:17
-RUN mkdir -p /app/data
+RUN mkdir -p /app/data && mkdir -p /app/files
 WORKDIR /app
 
 VOLUME /app/data
+COPY --from=build /home/gradle/src/budget-binder-server/files /app/files/
+COPY --from=build /home/gradle/src/budget-binder-multiplatform-app/build/distributions/ /app/files/
 COPY --from=build /home/gradle/src/budget-binder-server/build/libs/*.jar /app/ktor-docker-server.jar
 
 ENV \

@@ -2,37 +2,17 @@ package de.hsfl.budgetBinder.server.routes
 
 import io.ktor.server.application.*
 import io.ktor.server.html.*
-import io.ktor.http.*
-import io.ktor.server.response.*
+import io.ktor.server.http.content.*
 import io.ktor.server.routing.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import kotlinx.html.*
+import java.io.File
 
 fun Application.baseRoutes() {
     routing {
-        get("/") {
-            call.respondRedirect("/docs", permanent = true)
-        }
-
-        get("/favicon.ico") {
-            val classLoader = javaClass.classLoader
-            val inputStream = classLoader.getResourceAsStream("ico/BudgetBinderRounded.ico")!!
-            call.respondBytes(contentType = ContentType.defaultForFileExtension("ico")) {
-                withContext(Dispatchers.IO) {
-                    inputStream.readAllBytes()
-                }
-            }
-        }
-
-        get("/openapi.json") {
-            val classLoader = javaClass.classLoader
-            val inputStream = classLoader.getResourceAsStream("openapi.json")!!
-            call.respondBytes(contentType = ContentType.defaultForFileExtension("json")) {
-                withContext(Dispatchers.IO) {
-                    inputStream.readAllBytes()
-                }
-            }
+        static("/") {
+            staticRootFolder = File("files")
+            files(".")
+            default("index.html")
         }
 
         get("/docs") {

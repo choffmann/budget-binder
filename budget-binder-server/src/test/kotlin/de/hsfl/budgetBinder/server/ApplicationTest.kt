@@ -31,11 +31,6 @@ class ApplicationTest {
 
     @Test
     fun testRoot() = customTestApplication { client ->
-        client.get("/").let { response ->
-            assertEquals(HttpStatusCode.OK, response.status)
-            assertEquals(ContentType.Text.Html.withCharset(Charsets.UTF_8), response.contentType())
-        }
-
         client.get("/docs").let { response ->
             assertEquals(HttpStatusCode.OK, response.status)
             assertEquals(ContentType.Text.Html.withCharset(Charsets.UTF_8), response.contentType())
@@ -75,13 +70,6 @@ class ApplicationTest {
             assertEquals(HttpStatusCode.OK, response.status)
             val responseBody: APIResponse<User> = response.body()
             val shouldResponse: APIResponse<User> = wrapFailure("Email already assigned. Please choose another.")
-            assertEquals(shouldResponse, responseBody)
-        }
-
-        client.get("/login").let { response ->
-            assertEquals(HttpStatusCode.MethodNotAllowed, response.status)
-            val responseBody: APIResponse<AuthToken> = response.body()
-            val shouldResponse: APIResponse<AuthToken> = wrapFailure("The used HTTP-Method is not allowed on this Endpoint.")
             assertEquals(shouldResponse, responseBody)
         }
 
