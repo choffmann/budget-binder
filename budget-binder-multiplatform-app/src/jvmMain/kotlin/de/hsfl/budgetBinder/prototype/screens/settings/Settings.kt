@@ -10,6 +10,7 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -18,9 +19,12 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import de.hsfl.budgetBinder.prototype.StateManager.darkMode
+import de.hsfl.budgetBinder.prototype.StateManager.scaffoldState
 import de.hsfl.budgetBinder.prototype.StateManager.serverState
+import de.hsfl.budgetBinder.prototype.StateManager.snackbarHostState
 import de.hsfl.budgetBinder.prototype.StateManager.userState
 import de.hsfl.budgetBinder.prototype.User
+import kotlinx.coroutines.launch
 
 val settingsScreenState = mutableStateOf<SettingsScreens>(SettingsScreens.Menu)
 
@@ -114,6 +118,7 @@ private fun MenuView(
 
 @Composable
 private fun UserSettings() {
+    val scope = rememberCoroutineScope()
     val firstNameState = remember { mutableStateOf(userState.value.firstName) }
     val lastNameState = remember { mutableStateOf(userState.value.lastName) }
     val emailState = remember { mutableStateOf(userState.value.email) }
@@ -158,12 +163,20 @@ private fun UserSettings() {
                     Text("Back")
                 }
                 Button(modifier = Modifier.weight(1F).padding(16.dp), onClick = {
+
                     userState.value = User(
                         firstName = firstNameState.value,
                         lastName = lastNameState.value,
                         email = emailState.value,
                         password = passwordState.value
                     )
+                    scope.launch {
+                        snackbarHostState.showSnackbar(
+                            message = "Update User Settings",
+                            actionLabel = "Dismiss",
+                            duration = SnackbarDuration.Indefinite
+                        )
+                    }
                     settingsScreenState.value = SettingsScreens.Menu
                 }) {
                     Text("Update")
