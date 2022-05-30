@@ -19,7 +19,6 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import de.hsfl.budgetBinder.prototype.StateManager.darkMode
-import de.hsfl.budgetBinder.prototype.StateManager.scaffoldState
 import de.hsfl.budgetBinder.prototype.StateManager.serverState
 import de.hsfl.budgetBinder.prototype.StateManager.snackbarHostState
 import de.hsfl.budgetBinder.prototype.StateManager.userState
@@ -170,6 +169,7 @@ private fun UserSettings() {
                         email = emailState.value,
                         password = passwordState.value
                     )
+                    settingsScreenState.value = SettingsScreens.Menu
                     scope.launch {
                         snackbarHostState.showSnackbar(
                             message = "Update User Settings",
@@ -177,7 +177,6 @@ private fun UserSettings() {
                             duration = SnackbarDuration.Indefinite
                         )
                     }
-                    settingsScreenState.value = SettingsScreens.Menu
                 }) {
                     Text("Update")
                 }
@@ -191,12 +190,17 @@ private fun ServerSettings() {
     val serverUrlState = remember { mutableStateOf(serverState.value.serverUrl) }
     Column(modifier = Modifier.fillMaxSize().padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
         TextField(
-            modifier = Modifier.padding(16.dp).fillMaxWidth(),
+            modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp).fillMaxWidth(),
             value = serverUrlState.value,
             enabled = false,
             onValueChange = { serverUrlState.value = it },
             label = { Text("Server URL") },
             singleLine = true
+        )
+        Text(
+            modifier = Modifier.padding(bottom = 16.dp),
+            text = "You can't change the Server URL when you are logged in",
+            style = MaterialTheme.typography.caption
         )
         Button(onClick = { settingsScreenState.value = SettingsScreens.Menu }) {
             Text("Back")
