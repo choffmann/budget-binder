@@ -20,6 +20,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 private val loginState = mutableStateOf<LoginState>(LoginState.Nothing)
+private val emailTextFieldState = mutableStateOf<EmailTextFieldState>(EmailTextFieldState.Nothing)
 
 @Composable
 fun LoginComponent() {
@@ -104,12 +105,23 @@ private fun Header() {
 private fun LoginTextField(modifier: Modifier = Modifier, onButtonClicked: (String, String) -> Unit) {
     val emailTextState = remember { mutableStateOf("") }
     val passwordTextState = remember { mutableStateOf("") }
+    val emailRegex =
+        "(?:[a-z0-9!#\$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#\$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])".toRegex()
     Column(modifier = modifier) {
         OutlinedTextField(
             value = emailTextState.value,
-            onValueChange = { emailTextState.value = it },
+            onValueChange = {
+                emailTextState.value = it
+                emailTextFieldState.value = EmailTextFieldState.Nothing
+            },
             label = { Text("Email") },
-            singleLine = true
+            singleLine = true,
+            isError = emailTextFieldState.value is EmailTextFieldState.Error
+        )
+        if (emailTextFieldState.value is EmailTextFieldState.Error) Text(
+            text = (emailTextFieldState.value as EmailTextFieldState.Error).msg,
+            style = MaterialTheme.typography.caption,
+            color = MaterialTheme.colors.error
         )
         OutlinedTextField(
             value = passwordTextState.value,
@@ -119,8 +131,13 @@ private fun LoginTextField(modifier: Modifier = Modifier, onButtonClicked: (Stri
             visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
         )
-        Button(modifier = Modifier.align(Alignment.CenterHorizontally).padding(16.dp),
-            onClick = { onButtonClicked(emailTextState.value, passwordTextState.value) }) {
+        Button(modifier = Modifier.align(Alignment.CenterHorizontally).padding(16.dp), onClick = {
+            if (emailRegex.matches(emailTextState.value)) {
+                onButtonClicked(emailTextState.value, passwordTextState.value)
+            } else {
+                emailTextFieldState.value = EmailTextFieldState.Error("Please enter an actual email address")
+            }
+        }) {
             Text("Login")
         }
     }
@@ -138,4 +155,9 @@ private sealed class LoginState {
     object Loading : LoginState()
     object Success : LoginState()
     data class Error(val msg: String) : LoginState()
+}
+
+private sealed class EmailTextFieldState {
+    object Nothing : EmailTextFieldState()
+    data class Error(val msg: String) : EmailTextFieldState()
 }
