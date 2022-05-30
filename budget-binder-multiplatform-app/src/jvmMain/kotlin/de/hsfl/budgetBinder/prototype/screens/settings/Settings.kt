@@ -10,6 +10,7 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -19,10 +20,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import de.hsfl.budgetBinder.prototype.StateManager.darkMode
 import de.hsfl.budgetBinder.prototype.StateManager.serverState
+import de.hsfl.budgetBinder.prototype.StateManager.snackbarHostState
 import de.hsfl.budgetBinder.prototype.StateManager.userState
 import de.hsfl.budgetBinder.prototype.User
+import kotlinx.coroutines.launch
 
-val settingsScreenState = mutableStateOf<SettingsScreens>(SettingsScreens.Menu)
+private val settingsScreenState = mutableStateOf<SettingsScreens>(SettingsScreens.Menu)
 
 @Composable
 fun SettingsComponent() {
@@ -93,6 +96,7 @@ private fun MenuView(
     Column(modifier = modifier) {
         Divider()
         ListItem(text = { Text("Dark Mode") },
+            modifier = Modifier.clickable(onClick = { darkMode.value = !darkMode.value }),
             icon = { Icon(Icons.Filled.Build, contentDescription = null) },
             trailing = {
                 Switch(modifier = Modifier.padding(start = 8.dp),
@@ -114,6 +118,7 @@ private fun MenuView(
 
 @Composable
 private fun UserSettings() {
+    val scope = rememberCoroutineScope()
     val firstNameState = remember { mutableStateOf(userState.value.firstName) }
     val lastNameState = remember { mutableStateOf(userState.value.lastName) }
     val emailState = remember { mutableStateOf(userState.value.email) }
@@ -158,6 +163,7 @@ private fun UserSettings() {
                     Text("Back")
                 }
                 Button(modifier = Modifier.weight(1F).padding(16.dp), onClick = {
+
                     userState.value = User(
                         firstName = firstNameState.value,
                         lastName = lastNameState.value,
@@ -165,6 +171,13 @@ private fun UserSettings() {
                         password = passwordState.value
                     )
                     settingsScreenState.value = SettingsScreens.Menu
+                    scope.launch {
+                        snackbarHostState.showSnackbar(
+                            message = "Update User Settings",
+                            actionLabel = "Dismiss",
+                            duration = SnackbarDuration.Indefinite
+                        )
+                    }
                 }) {
                     Text("Update")
                 }
@@ -178,12 +191,17 @@ private fun ServerSettings() {
     val serverUrlState = remember { mutableStateOf(serverState.value.serverUrl) }
     Column(modifier = Modifier.fillMaxSize().padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
         TextField(
-            modifier = Modifier.padding(16.dp).fillMaxWidth(),
+            modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp).fillMaxWidth(),
             value = serverUrlState.value,
             enabled = false,
             onValueChange = { serverUrlState.value = it },
             label = { Text("Server URL") },
             singleLine = true
+        )
+        Text(
+            modifier = Modifier.padding(bottom = 16.dp),
+            text = "You can't change the Server URL when you are logged in",
+            style = MaterialTheme.typography.caption
         )
         Button(onClick = { settingsScreenState.value = SettingsScreens.Menu }) {
             Text("Back")
