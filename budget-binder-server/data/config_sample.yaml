@@ -24,5 +24,6 @@ jwt:
     refreshSecret: secret2
     accessMinutes: 15
     refreshDays: 7
+    realm: budget-binder
     issuer: http://0.0.0.0:8080
     audience: http://0.0.0.0:8080

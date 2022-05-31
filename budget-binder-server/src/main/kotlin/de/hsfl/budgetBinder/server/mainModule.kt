@@ -6,6 +6,7 @@ import de.hsfl.budgetBinder.server.config.Config
 import de.hsfl.budgetBinder.server.models.Categories
 import de.hsfl.budgetBinder.server.models.Entries
 import de.hsfl.budgetBinder.server.models.Users
+import de.hsfl.budgetBinder.server.repository.UnauthorizedException
 import de.hsfl.budgetBinder.server.routes.*
 import de.hsfl.budgetBinder.server.services.*
 import de.hsfl.budgetBinder.server.services.implementations.CategoryServiceImpl
@@ -44,14 +45,16 @@ fun Application.mainModule(config: Config) {
     when (config.dataBase.dbType) {
         Config.DBType.SQLITE -> {
             url = "jdbc:sqlite:${config.dataBase.sqlitePath}"
+            driver = "org.sqlite.JDBC"
+
+            /*
+            * The url is used in the tests to not create or alter the normal database.
+            * the connection must be held because exposed closes the connection to the db
+            * after every transaction and if no connection is alive the memory database will be deleted
+            * */
             if (url == "jdbc:sqlite:file:test?mode=memory&cache=shared") {
-                // This is used to hold a connection
-                // if not specified the database will be deleted
-                // after each transaction because it will be closed
                 DriverManager.getConnection(url)
             }
-
-            driver = "org.sqlite.JDBC"
         }
         Config.DBType.MYSQL -> {
             url = "jdbc:mysql://${config.dataBase.serverAddress}:${config.dataBase.serverPort}/${config.dataBase.name}"
@@ -113,7 +116,7 @@ fun Application.mainModule(config: Config) {
 
         jwt("auth-jwt") {
             val jwtService: JWTService by this@mainModule.closestDI().instance()
-            realm = "Access to all your stuff"
+            realm = jwtService.getRealm()
             verifier(jwtService.getAccessTokenVerifier())
 
             validate {
@@ -133,27 +136,43 @@ fun Application.mainModule(config: Config) {
 
     install(StatusPages) {
         exception<Throwable> { call, cause ->
-            call.respond(
-                HttpStatusCode.InternalServerError,
-                APIResponse<String>(ErrorModel("Internal Server Error"))
-            )
-            throw cause
+            when (cause) {
+                is UnauthorizedException -> {
+                    call.respond(
+                        HttpStatusCode.Unauthorized,
+                        APIResponse<String>(ErrorModel(cause.message))
+                    )
+                }
+                else -> {
+                    call.respond(
+                        HttpStatusCode.InternalServerError,
+                        APIResponse<String>(ErrorModel("An Internal-Server-Error occurred. Please contact your Administrator or see the Server-Logs."))
+                    )
+                    throw cause
+                }
+            }
         }
         status(HttpStatusCode.Unauthorized) { call, status ->
             when (call.request.uri) {
-                "/login" -> call.respond(status, APIResponse<String>(ErrorModel("Unauthorized")))
-                "/refresh_token" -> call.respond(status, APIResponse<String>(ErrorModel("False Refresh Cookie")))
+                "/login" -> call.respond(
+                    status,
+                    APIResponse<String>(ErrorModel("Your username and/or password do not match."))
+                )
                 else -> {
+                    val jwtService: JWTService by this@mainModule.closestDI().instance()
                     call.response.headers.append(
                         HttpHeaders.WWWAuthenticate,
-                        "Bearer realm=\"Access to all your stuff\""
+                        "Bearer realm=\"${jwtService.getRealm()}\""
                     )
-                    call.respond(status, APIResponse<String>(ErrorModel("Unauthorized")))
+                    call.respond(
+                        status,
+                        APIResponse<String>(ErrorModel("Your accessToken is absent or does not match."))
+                    )
                 }
             }
         }
         status(HttpStatusCode.MethodNotAllowed) { call, status ->
-            call.respond(status, APIResponse<String>(ErrorModel("Method Not Allowed")))
+            call.respond(status, APIResponse<String>(ErrorModel("The used HTTP-Method is not allowed on this Endpoint.")))
         }
     }
 

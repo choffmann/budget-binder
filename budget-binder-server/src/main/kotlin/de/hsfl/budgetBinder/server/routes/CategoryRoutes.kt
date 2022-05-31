@@ -4,7 +4,7 @@ import de.hsfl.budgetBinder.common.APIResponse
 import de.hsfl.budgetBinder.common.Category
 import de.hsfl.budgetBinder.common.ErrorModel
 import de.hsfl.budgetBinder.server.models.UserPrincipal
-import de.hsfl.budgetBinder.server.repository.parseParameterToLocalDateTime
+import de.hsfl.budgetBinder.server.repository.parseParameterToLocalDateTimeOrErrorMessage
 import de.hsfl.budgetBinder.server.services.interfaces.CategoryService
 import de.hsfl.budgetBinder.server.services.interfaces.EntryService
 import io.ktor.server.application.*
@@ -21,7 +21,7 @@ fun Route.categoriesRoute() {
             val userPrincipal: UserPrincipal = call.principal()!!
             val categoryService: CategoryService by closestDI().instance()
 
-            val (error, period) = parseParameterToLocalDateTime(
+            val (error, period) = parseParameterToLocalDateTimeOrErrorMessage(
                 call.request.queryParameters["current"].toBoolean(),
                 call.request.queryParameters["period"]
             )
@@ -37,13 +37,14 @@ fun Route.categoriesRoute() {
                 )
             }
         }
+
         post {
             val userPrincipal: UserPrincipal = call.principal()!!
             val categoryService: CategoryService by closestDI().instance()
 
             val response = call.receiveOrNull<Category.In>()?.let {
-                APIResponse(data = categoryService.insertCategoryForUser(userPrincipal.getUserID(), it), success = true)
-            } ?: APIResponse(ErrorModel("not the right Parameters provided"))
+                APIResponse(data = categoryService.createCategory(userPrincipal.getUserID(), it), success = true)
+            } ?: APIResponse(ErrorModel("The object you provided it not in the right format."))
             call.respond(response)
         }
     }
@@ -75,8 +76,8 @@ fun Route.categoryByIdRoute() {
                 call.receiveOrNull<Category.Patch>()?.let { changeCategory ->
                     categoryService.changeCategory(userPrincipal.getUserID(), category.id, changeCategory)?.let {
                         APIResponse(data = it, success = true)
-                    } ?: APIResponse(ErrorModel("you can't change this Category"))
-                } ?: APIResponse(ErrorModel("not the right Parameters provided"))
+                    } ?: APIResponse(ErrorModel("you can't change an old category."))
+                } ?: APIResponse(ErrorModel("The object you provided it not in the right format."))
             }
             call.respond(response)
         }
@@ -91,7 +92,7 @@ fun Route.categoryByIdRoute() {
             ) { category ->
                 categoryService.deleteCategory(category.id)?.let {
                     APIResponse(data = it, success = true)
-                } ?: APIResponse(ErrorModel("you can't delete this Category"))
+                } ?: APIResponse(ErrorModel("you can't delete an old category."))
             }
             call.respond(response)
         }

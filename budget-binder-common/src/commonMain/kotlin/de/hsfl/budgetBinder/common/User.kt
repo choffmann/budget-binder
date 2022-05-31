@@ -14,7 +14,7 @@ data class User(
     data class In(val firstName: String, val name: String, val email: String, val password: String)
 
     @Serializable
-    data class Put(
+    data class Patch(
         val firstName: String? = null,
         val name: String? = null,
         val password: String? = null
