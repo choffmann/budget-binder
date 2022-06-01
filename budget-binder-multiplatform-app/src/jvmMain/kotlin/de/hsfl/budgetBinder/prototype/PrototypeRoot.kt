@@ -33,7 +33,7 @@ fun Prototype() {
             isFloatingActionButtonDocked = false,
         ) {
             ModalDrawer(drawerState = drawerState,
-                gesturesEnabled = false,
+                gesturesEnabled = isLoggedIn.value,
                 drawerContent = { DrawerContent() },
                 content = { Router() })
         }
