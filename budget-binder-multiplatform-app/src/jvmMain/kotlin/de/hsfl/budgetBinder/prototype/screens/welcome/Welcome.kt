@@ -94,7 +94,9 @@ private fun Screen3() {
             title = "So, let's get started",
             subtitle = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At"
         )
-        GetStartedButton(onLogin = { screenState.value = PrototypeScreen.Login }, onRegister = {})
+        GetStartedButton(
+            onLogin = { screenState.value = PrototypeScreen.Login },
+            onRegister = { screenState.value = PrototypeScreen.Register })
     }
 }
 

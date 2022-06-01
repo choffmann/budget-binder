@@ -34,7 +34,7 @@ private fun LoginView() {
     val emailState = remember { mutableStateOf("") }
     val passwordState = remember { mutableStateOf("") }
     val scope = rememberCoroutineScope()
-    Header()
+    Header(text = "Welcome back!")
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -88,7 +88,7 @@ private fun LoginView() {
 }
 
 @Composable
-private fun Header() {
+fun Header(text: String) {
     Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
         AppIcon(
             modifier = Modifier.align(Alignment.CenterHorizontally).fillMaxWidth()
@@ -96,7 +96,7 @@ private fun Header() {
         )
         Text(
             modifier = Modifier.padding(16.dp),
-            text = "Welcome back!",
+            text = text,
             style = MaterialTheme.typography.h4,
             fontWeight = FontWeight.Bold
         )
