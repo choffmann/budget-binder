@@ -12,6 +12,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import de.hsfl.budgetBinder.prototype.PrototypeScreen
 import de.hsfl.budgetBinder.prototype.Server
+import de.hsfl.budgetBinder.prototype.StateManager.isLoggedIn
 import de.hsfl.budgetBinder.prototype.StateManager.scaffoldState
 import de.hsfl.budgetBinder.prototype.StateManager.screenState
 import de.hsfl.budgetBinder.prototype.StateManager.serverState
@@ -76,6 +77,7 @@ private fun LoginView() {
             loginState.value = LoginState.Loading
             delay(2000L)
             if (userState.value.email == emailState.value && userState.value.password == passwordState.value) {
+                isLoggedIn.value = true
                 loginState.value = LoginState.Success
             } else {
                 // Error message, wich should come from Backend

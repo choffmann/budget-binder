@@ -7,7 +7,7 @@ data class User(
     val firstName: String = "Jeeve",
     val lastName: String = "Philodendren",
     val password: String = "geheim",
-    val email: String = "philodendren@plants.com"
+    val email: String = "jeeve@plants.com"
 )
 
 data class Server(

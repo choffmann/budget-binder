@@ -8,6 +8,7 @@ object StateManager {
     val drawerState = DrawerState(DrawerValue.Closed)
     val snackbarHostState = SnackbarHostState()
     val scaffoldState = ScaffoldState(drawerState = drawerState, snackbarHostState = snackbarHostState)
+    val isLoggedIn = mutableStateOf(false)
 
     // Settings
     val darkMode = mutableStateOf(false)
