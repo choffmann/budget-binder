@@ -1,6 +1,7 @@
 package de.hsfl.budgetBinder.prototype
 
 import androidx.compose.material.*
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 
 object StateManager {
@@ -14,4 +15,7 @@ object StateManager {
     val darkMode = mutableStateOf(false)
     val userState = mutableStateOf(User())
     val serverState = mutableStateOf(Server())
+
+    // Categories
+    val selectedCategories = mutableStateListOf<Category>()
 }

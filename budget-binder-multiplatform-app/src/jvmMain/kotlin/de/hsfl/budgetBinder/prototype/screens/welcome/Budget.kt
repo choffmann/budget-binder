@@ -13,18 +13,14 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import de.hsfl.budgetBinder.prototype.Category
+import de.hsfl.budgetBinder.prototype.StateManager.selectedCategories
 import de.hsfl.budgetBinder.prototype.allCategories
-import kotlinx.coroutines.launch
-
-val selectedCategories = mutableStateListOf<Category>()
 
 @Composable
 fun ChooseCategories() {
