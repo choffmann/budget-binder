@@ -1,5 +1,6 @@
 package de.hsfl.budgetBinder.prototype.screens.welcome
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -7,6 +8,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
+import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -15,6 +17,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import de.hsfl.budgetBinder.prototype.PrototypeScreen
+import de.hsfl.budgetBinder.prototype.StateManager
 
 @Composable
 fun RegisterComponent() {
@@ -26,6 +30,12 @@ private fun RegisterView() {
     Column {
         Header(text = "Hello!")
         RegisterTextField()
+    }
+    Box(modifier = Modifier.fillMaxSize()) {
+        TextButton(modifier = Modifier.align(Alignment.BottomCenter),
+            onClick = { StateManager.screenState.value = PrototypeScreen.Login }) {
+            Text("Or Login with your Account")
+        }
     }
 }
 
