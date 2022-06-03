@@ -9,12 +9,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import de.hsfl.budgetBinder.prototype.StateManager.screenState
 import de.hsfl.budgetBinder.prototype.PrototypeScreen
+import de.hsfl.budgetBinder.prototype.screens.CategoriesListView
 
 @Composable
 fun Screen1Component() {
-    Screen1View { msg ->
+    CategoriesListView()
+    /*Screen1View { msg ->
         screenState.value = PrototypeScreen.Screen2(msg)
-    }
+    }*/
 }
 
 @Composable

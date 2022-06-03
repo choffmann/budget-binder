@@ -4,11 +4,11 @@ import androidx.compose.material.*
 import androidx.compose.runtime.mutableStateOf
 
 object StateManager {
-    val screenState = mutableStateOf<PrototypeScreen>(PrototypeScreen.Welcome)
+    val screenState = mutableStateOf<PrototypeScreen>(PrototypeScreen.FTUX)
     val drawerState = DrawerState(DrawerValue.Closed)
     val snackbarHostState = SnackbarHostState()
     val scaffoldState = ScaffoldState(drawerState = drawerState, snackbarHostState = snackbarHostState)
-    val isLoggedIn = mutableStateOf(false)
+    val isLoggedIn = mutableStateOf(true)
 
     // Settings
     val darkMode = mutableStateOf(false)
