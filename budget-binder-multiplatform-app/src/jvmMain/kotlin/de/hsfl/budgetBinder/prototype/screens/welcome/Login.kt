@@ -17,11 +17,13 @@ import de.hsfl.budgetBinder.prototype.StateManager.scaffoldState
 import de.hsfl.budgetBinder.prototype.StateManager.screenState
 import de.hsfl.budgetBinder.prototype.StateManager.serverState
 import de.hsfl.budgetBinder.prototype.StateManager.userState
+import de.hsfl.budgetBinder.prototype.screens.TextFieldState
+import de.hsfl.budgetBinder.prototype.screens.UiState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-private val loginState = mutableStateOf<LoginState>(LoginState.Nothing)
-private val emailTextFieldState = mutableStateOf<EmailTextFieldState>(EmailTextFieldState.Nothing)
+private val loginState = mutableStateOf<UiState>(UiState.Nothing)
+private val emailTextFieldState = mutableStateOf<TextFieldState>(TextFieldState.Nothing)
 
 @Composable
 fun LoginComponent() {
@@ -53,35 +55,35 @@ private fun LoginView() {
         }
     }
     when (loginState.value) {
-        is LoginState.Loading -> {
+        is UiState.Loading -> {
             LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
         }
-        is LoginState.Success -> {
+        is UiState.Success -> {
             screenState.value = PrototypeScreen.Home
         }
-        is LoginState.Error -> {
+        is UiState.Error -> {
             scope.launch {
                 scaffoldState.snackbarHostState.showSnackbar(
-                    message = "Error: ${(loginState.value as LoginState.Error).msg}",
+                    message = "Error: ${(loginState.value as UiState.Error).msg}",
                     actionLabel = "Dismiss",
                     duration = SnackbarDuration.Long
                 )
             }
         }
-        is LoginState.Nothing -> {}
+        is UiState.Nothing -> {}
     }
     ServerUrlDialog(openDialog = openDialog, onConfirm = {
         serverState.value = Server(serverUrl = it)
         scope.launch {
             // Fake loading
-            loginState.value = LoginState.Loading
+            loginState.value = UiState.Loading
             delay(2000L)
             if (userState.value.email == emailState.value && userState.value.password == passwordState.value) {
                 isLoggedIn.value = true
-                loginState.value = LoginState.Success
+                loginState.value = UiState.Success
             } else {
                 // Error message, wich should come from Backend
-                loginState.value = LoginState.Error(msg = "Wrong Email or Password")
+                loginState.value = UiState.Error(msg = "Wrong Email or Password")
             }
         }
     })
@@ -114,14 +116,14 @@ private fun LoginTextField(modifier: Modifier = Modifier, onButtonClicked: (Stri
             value = emailTextState.value,
             onValueChange = {
                 emailTextState.value = it
-                emailTextFieldState.value = EmailTextFieldState.Nothing
+                emailTextFieldState.value = TextFieldState.Nothing
             },
             label = { Text("Email") },
             singleLine = true,
-            isError = emailTextFieldState.value is EmailTextFieldState.Error
+            isError = emailTextFieldState.value is TextFieldState.Error
         )
-        if (emailTextFieldState.value is EmailTextFieldState.Error) Text(
-            text = (emailTextFieldState.value as EmailTextFieldState.Error).msg,
+        if (emailTextFieldState.value is TextFieldState.Error) Text(
+            text = (emailTextFieldState.value as TextFieldState.Error).msg,
             style = MaterialTheme.typography.caption,
             color = MaterialTheme.colors.error
         )
@@ -137,7 +139,7 @@ private fun LoginTextField(modifier: Modifier = Modifier, onButtonClicked: (Stri
             if (emailRegex.matches(emailTextState.value)) {
                 onButtonClicked(emailTextState.value, passwordTextState.value)
             } else {
-                emailTextFieldState.value = EmailTextFieldState.Error("Please enter an actual email address")
+                emailTextFieldState.value = TextFieldState.Error("Please enter an actual email address")
             }
         }) {
             Text("Login")
@@ -151,15 +153,3 @@ expect fun ServerUrlDialog(openDialog: MutableState<Boolean>, onConfirm: (String
 
 @Composable
 expect fun AppIcon(modifier: Modifier = Modifier)
-
-private sealed class LoginState {
-    object Nothing : LoginState()
-    object Loading : LoginState()
-    object Success : LoginState()
-    data class Error(val msg: String) : LoginState()
-}
-
-private sealed class EmailTextFieldState {
-    object Nothing : EmailTextFieldState()
-    data class Error(val msg: String) : EmailTextFieldState()
-}

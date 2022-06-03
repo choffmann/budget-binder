@@ -1,17 +1,12 @@
 package de.hsfl.budgetBinder.prototype.screens.welcome
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Button
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Text
-import androidx.compose.material.TextButton
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
@@ -19,6 +14,16 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import de.hsfl.budgetBinder.prototype.PrototypeScreen
 import de.hsfl.budgetBinder.prototype.StateManager
+import de.hsfl.budgetBinder.prototype.StateManager.isLoggedIn
+import de.hsfl.budgetBinder.prototype.StateManager.userState
+import de.hsfl.budgetBinder.prototype.User
+import de.hsfl.budgetBinder.prototype.screens.TextFieldState
+import de.hsfl.budgetBinder.prototype.screens.UiState
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+
+private val registerState = mutableStateOf<UiState>(UiState.Nothing)
+private val emailTextFieldState = mutableStateOf<TextFieldState>(TextFieldState.Nothing)
 
 @Composable
 fun RegisterComponent() {
@@ -27,15 +32,47 @@ fun RegisterComponent() {
 
 @Composable
 private fun RegisterView() {
+    val scope = rememberCoroutineScope()
     Column {
         Header(text = "Hello!")
-        RegisterTextField(onRegister = { userState.value = it })
+        RegisterTextField(onRegister = {
+            scope.launch {
+                registerState.value = UiState.Loading
+                delay(2000L)
+                if (it.firstName.isNotBlank() && it.lastName.isNotBlank() && it.email.isNotBlank() && it.password.isNotBlank()) {
+                    userState.value = it
+                    registerState.value = UiState.Success
+                } else {
+                    registerState.value = UiState.Error(msg = "Please Enter all TextFields")
+                }
+
+            }
+        })
     }
     Box(modifier = Modifier.fillMaxSize()) {
         TextButton(modifier = Modifier.align(Alignment.BottomCenter),
             onClick = { StateManager.screenState.value = PrototypeScreen.Login }) {
             Text("Or Login with your Account")
         }
+    }
+    when (registerState.value) {
+        is UiState.Loading -> {
+            LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+        }
+        is UiState.Success -> {
+            isLoggedIn.value = true
+            StateManager.screenState.value = PrototypeScreen.Home
+        }
+        is UiState.Error -> {
+            scope.launch {
+                StateManager.scaffoldState.snackbarHostState.showSnackbar(
+                    message = "Error: ${(registerState.value as UiState.Error).msg}",
+                    actionLabel = "Dismiss",
+                    duration = SnackbarDuration.Long
+                )
+            }
+        }
+        is UiState.Nothing -> {}
     }
 }
 
@@ -48,26 +85,22 @@ private fun RegisterTextField(onRegister: (User) -> Unit) {
     Column(
         modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        OutlinedTextField(
-            value = firstNameTextState.value,
+        OutlinedTextField(value = firstNameTextState.value,
             onValueChange = { firstNameTextState.value = it },
             label = { Text("Firstname") },
             singleLine = true
         )
-        OutlinedTextField(
-            value = lastNameTextState.value,
+        OutlinedTextField(value = lastNameTextState.value,
             onValueChange = { lastNameTextState.value = it },
             label = { Text("Lastname") },
             singleLine = true
         )
-        OutlinedTextField(
-            value = emailTextState.value,
+        OutlinedTextField(value = emailTextState.value,
             onValueChange = { emailTextState.value = it },
             label = { Text("Email") },
             singleLine = true
         )
-        OutlinedTextField(
-            value = passwordTextState.value,
+        OutlinedTextField(value = passwordTextState.value,
             onValueChange = { passwordTextState.value = it },
             label = { Text("Password") },
             singleLine = true,
