@@ -1,4 +1,4 @@
-package de.hsfl.budgetBinder.prototype.screens.welcome
+package de.hsfl.budgetBinder.prototype.screens.ftux
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -12,44 +12,33 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import de.hsfl.budgetBinder.prototype.Category
-import de.hsfl.budgetBinder.prototype.StateManager.selectedCategories
+import de.hsfl.budgetBinder.prototype.StateManager
 import de.hsfl.budgetBinder.prototype.allCategories
 
 @Composable
-fun ChooseCategories() {
+fun ChooseCategories(onContinue: () -> Unit) {
     Column(modifier = Modifier.fillMaxSize()) {
-        TextHeader(modifier = Modifier.fillMaxWidth().padding(16.dp))
+        TextHeader(
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
+            title = "Kategorie",
+            text = "Wähle die Kategorie, für die du ein Budget erstellen möchtest"
+        )
         CategoriesListView(modifier = Modifier.fillMaxWidth().padding(16.dp).weight(1F), onItemClick = {
-            if (!selectedCategories.contains(it)) {
-                selectedCategories.add(it)
+            if (!StateManager.selectedCategories.contains(it)) {
+                StateManager.selectedCategories.add(it)
             } else {
-                selectedCategories.remove(it)
+                StateManager.selectedCategories.remove(it)
             }
-
         })
-        Button(modifier = Modifier.fillMaxWidth().padding(16.dp), onClick = {}) {
+        Button(modifier = Modifier.fillMaxWidth().padding(16.dp), onClick = { onContinue() }) {
             Text(modifier = Modifier.padding(8.dp), text = "Weiter")
         }
-    }
-}
-
-@Composable
-private fun TextHeader(modifier: Modifier = Modifier) {
-    Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(
-            modifier = Modifier.padding(bottom = 16.dp),
-            text = "Kategorie",
-            style = MaterialTheme.typography.h4,
-            fontWeight = FontWeight.Bold
-        )
-        Text(text = "Wähle die Kategorie, für die du ein Budget erstellen möchtest", textAlign = TextAlign.Center)
     }
 }
 
@@ -69,6 +58,8 @@ private fun CategoryRow(category: Category, onItemClick: (Category) -> Unit) {
         icon = { Icon(imageVector = Icons.Filled.ShoppingCart, contentDescription = null) },
         text = { Text(category.name) },
         trailing = {
-            if (selectedCategories.contains(category)) Icon(imageVector = Icons.Filled.Check, contentDescription = null)
+            if (StateManager.selectedCategories.contains(category)) Icon(
+                imageVector = Icons.Filled.Check, contentDescription = null
+            )
         })
 }
