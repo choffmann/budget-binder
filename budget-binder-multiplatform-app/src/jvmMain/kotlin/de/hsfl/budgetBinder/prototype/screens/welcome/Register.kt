@@ -29,7 +29,7 @@ fun RegisterComponent() {
 private fun RegisterView() {
     Column {
         Header(text = "Hello!")
-        RegisterTextField()
+        RegisterTextField(onRegister = { userState.value = it })
     }
     Box(modifier = Modifier.fillMaxSize()) {
         TextButton(modifier = Modifier.align(Alignment.BottomCenter),
@@ -40,7 +40,7 @@ private fun RegisterView() {
 }
 
 @Composable
-private fun RegisterTextField() {
+private fun RegisterTextField(onRegister: (User) -> Unit) {
     val firstNameTextState = remember { mutableStateOf("") }
     val lastNameTextState = remember { mutableStateOf("") }
     val emailTextState = remember { mutableStateOf("") }
@@ -74,7 +74,16 @@ private fun RegisterTextField() {
             visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
         )
-        Button(modifier = Modifier.padding(16.dp), onClick = {}) {
+        Button(modifier = Modifier.padding(16.dp), onClick = {
+            onRegister(
+                User(
+                    firstName = firstNameTextState.value,
+                    lastName = lastNameTextState.value,
+                    email = emailTextState.value,
+                    password = passwordTextState.value
+                )
+            )
+        }) {
             Text("Register")
         }
     }
