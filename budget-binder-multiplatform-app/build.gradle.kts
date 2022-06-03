@@ -109,7 +109,7 @@ android {
 
     defaultConfig {
         applicationId = "de.hsfl.budgetBinder.android"
-        minSdk = 21
+        minSdk = 24
         targetSdk = 31
         versionCode = 1
         versionName = "1.0"

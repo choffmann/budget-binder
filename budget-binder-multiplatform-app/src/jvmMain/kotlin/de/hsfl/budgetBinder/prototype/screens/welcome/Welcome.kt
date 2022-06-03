@@ -15,6 +15,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import de.hsfl.budgetBinder.prototype.PrototypeScreen
+import de.hsfl.budgetBinder.prototype.StateManager.screenState
 
 
 private val welcomeScreenState: MutableState<WelcomeScreen> = mutableStateOf(WelcomeScreen.Screen1())
@@ -92,7 +94,9 @@ private fun Screen3() {
             title = "So, let's get started",
             subtitle = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At"
         )
-        GetStartedButton(onLogin = {}, onRegister = {})
+        GetStartedButton(
+            onLogin = { screenState.value = PrototypeScreen.Login },
+            onRegister = { screenState.value = PrototypeScreen.Register })
     }
 }
 
