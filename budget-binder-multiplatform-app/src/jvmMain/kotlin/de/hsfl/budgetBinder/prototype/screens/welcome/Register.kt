@@ -39,13 +39,12 @@ private fun RegisterView() {
             scope.launch {
                 registerState.value = UiState.Loading
                 delay(2000L)
-                if (it.firstName.isNotBlank() && it.lastName.isNotBlank() && it.email.isNotBlank() && it.password.isNotBlank()) {
+                if (it.firstName.isNotBlank() && it.lastName.isNotBlank() && it.email.isNotBlank() && it.password.isNotBlank() && emailTextFieldState.value is TextFieldState.Nothing) {
                     userState.value = it
                     registerState.value = UiState.Success
                 } else {
                     registerState.value = UiState.Error(msg = "Please Enter all TextFields")
                 }
-
             }
         })
     }
@@ -82,6 +81,8 @@ private fun RegisterTextField(onRegister: (User) -> Unit) {
     val lastNameTextState = remember { mutableStateOf("") }
     val emailTextState = remember { mutableStateOf("") }
     val passwordTextState = remember { mutableStateOf("") }
+    val emailRegex =
+        "(?:[a-z0-9!#\$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#\$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])".toRegex()
     Column(
         modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -95,10 +96,15 @@ private fun RegisterTextField(onRegister: (User) -> Unit) {
             label = { Text("Lastname") },
             singleLine = true
         )
-        OutlinedTextField(value = emailTextState.value,
-            onValueChange = { emailTextState.value = it },
-            label = { Text("Email") },
-            singleLine = true
+        OutlinedTextField(value = emailTextState.value, onValueChange = {
+            emailTextState.value = it
+            emailTextFieldState.value = TextFieldState.Nothing
+        }, label = { Text("Email") }, singleLine = true, isError = emailTextFieldState.value is TextFieldState.Error
+        )
+        if (emailTextFieldState.value is TextFieldState.Error) Text(
+            text = (emailTextFieldState.value as TextFieldState.Error).msg,
+            style = MaterialTheme.typography.caption,
+            color = MaterialTheme.colors.error
         )
         OutlinedTextField(value = passwordTextState.value,
             onValueChange = { passwordTextState.value = it },
@@ -108,14 +114,18 @@ private fun RegisterTextField(onRegister: (User) -> Unit) {
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
         )
         Button(modifier = Modifier.padding(16.dp), onClick = {
-            onRegister(
-                User(
-                    firstName = firstNameTextState.value,
-                    lastName = lastNameTextState.value,
-                    email = emailTextState.value,
-                    password = passwordTextState.value
+            if (emailRegex.matches(emailTextState.value)) {
+                onRegister(
+                    User(
+                        firstName = firstNameTextState.value,
+                        lastName = lastNameTextState.value,
+                        email = emailTextState.value,
+                        password = passwordTextState.value
+                    )
                 )
-            )
+            } else {
+                emailTextFieldState.value = TextFieldState.Error("Please enter an actual email address")
+            }
         }) {
             Text("Register")
         }
