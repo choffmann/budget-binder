@@ -19,7 +19,7 @@ data class Settings(
 )
 
 // Categories
-data class Category(val name: String)
+data class Category(val name: String, val budget: Double = 0.0)
 
 val allCategories = listOf(
     Category(name = "Lebensmittel"),
