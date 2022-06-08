@@ -2,6 +2,7 @@ package de.hsfl.budgetBinder.compose.register
 
 
 import androidx.compose.runtime.*
+import de.hsfl.budgetBinder.presentation.Screen
 import de.hsfl.budgetBinder.presentation.UiState
 import org.jetbrains.compose.web.attributes.InputType
 import org.jetbrains.compose.web.dom.*
@@ -10,7 +11,7 @@ import org.jetbrains.compose.web.dom.*
 fun RegisterView(
     state: State<Any>,
     onRegisterButtonPressed: (firstName: String, lastName: String, email: String, password: String) -> Unit,
-    onRegisterSuccess: () -> Unit
+    onChangeToLogin: () -> Unit
 ) {
     var firstNameTextFieldState by remember { mutableStateOf("") }
     var lastNameTextFieldState by remember { mutableStateOf("") }
@@ -30,7 +31,12 @@ fun RegisterView(
         Form(attrs = { //Probably possible with just a button OnClick instead of Form&Submit
             this.addEventListener("submit") {
                 console.log("$firstNameTextFieldState, $lastNameTextFieldState, $emailTextFieldState, $passwordTextFieldState")
-                onRegisterButtonPressed(firstNameTextFieldState,lastNameTextFieldState,emailTextFieldState, passwordTextFieldState)
+                onRegisterButtonPressed(
+                    firstNameTextFieldState,
+                    lastNameTextFieldState,
+                    emailTextFieldState,
+                    passwordTextFieldState
+                )
                 it.preventDefault()
             }
         }) {
@@ -67,11 +73,16 @@ fun RegisterView(
                 value("Submit")
             })
         }
+        Button(
+            attrs = {
+                onClick { onChangeToLogin() }
+            }
+        ) { Text("Login Instead") }
 
         // -- Register Request Management --
         when (viewState) {
             is UiState.Success<*> -> {
-                onRegisterSuccess()
+                onChangeToLogin()
             }
             is UiState.Error -> {
                 Text((viewState as UiState.Error).error)

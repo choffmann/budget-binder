@@ -8,8 +8,9 @@ import org.jetbrains.compose.web.dom.*
 fun LoginView(
     state: State<Any>,
     onLoginButtonPressed: (email: String, password: String) -> Unit,
-    onLoginSuccess: () -> Unit
-){
+    onLoginSuccess: () -> Unit,
+    onChangeToRegister: () -> Unit
+) {
     var emailTextFieldState by remember { mutableStateOf("") }
     var passwordTextFieldState by remember { mutableStateOf("") }
     val viewState by remember { state }
@@ -19,7 +20,6 @@ fun LoginView(
         attrs = {
             classes()
             style {
-
             }
         }
     ) {
@@ -45,10 +45,15 @@ fun LoginView(
                         passwordTextFieldState = it.value
                     }
                 })
-            SubmitInput (attrs = {
+            SubmitInput(attrs = {
                 value("Submit")
             })
         }
+        Button(
+            attrs = {
+                onClick { onChangeToRegister() }
+            }
+        ) { Text("Register Instead") }
 
         // -- Login Request Management --
         when (viewState) {
@@ -63,8 +68,5 @@ fun LoginView(
             }
             else -> {}
         }
-
-
-
     }
 }

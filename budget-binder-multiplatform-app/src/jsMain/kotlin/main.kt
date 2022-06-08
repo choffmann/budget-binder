@@ -38,6 +38,6 @@ fun main() {
 }
 @Composable
 fun App() = withDI(di) {
-    val screenState = remember { mutableStateOf<Screen>(Screen.Register) }
+    val screenState = remember { mutableStateOf<Screen>(Screen.Login) }
     Router(screenState = screenState)
 }

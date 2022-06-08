@@ -23,6 +23,6 @@ fun RegisterComponent(screenState: MutableState<Screen>) {
         onRegisterButtonPressed = { firstName, lastName, email, password ->
             viewModel.register(firstName, lastName, email, password)
         },
-        onRegisterSuccess = { screenState.value = Screen.Login }
+        onChangeToLogin = { screenState.value = Screen.Login }
     )
 }
