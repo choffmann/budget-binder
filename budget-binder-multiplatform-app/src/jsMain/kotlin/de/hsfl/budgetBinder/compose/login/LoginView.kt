@@ -31,19 +31,23 @@ fun LoginView(
             }
         })
         {
+            Label { Text("Email") }
             EmailInput(value = emailTextFieldState,
                 attrs = {
                     onInput {
                         emailTextFieldState = it.value
                     }
                 })
+            Label { Text("Password") }
             PasswordInput(value = passwordTextFieldState,
                 attrs = {
                     onInput {
                         passwordTextFieldState = it.value
                     }
                 })
-            SubmitInput {  }
+            SubmitInput (attrs = {
+                value("Submit")
+            })
         }
 
         // -- Login Request Management --
