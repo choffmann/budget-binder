@@ -24,6 +24,7 @@ fun LoginComponent(screenState: MutableState<Screen>) = withDI(di) {
         onLoginButtonPressed = { email, password ->
             viewModel.auth(email, password)
         },
-        onLoginSuccess = { screenState.value = Screen.User }
+        onLoginSuccess = { screenState.value = Screen.User },
+        onChangeToRegister = { screenState.value = Screen.Register }
     )
 }
