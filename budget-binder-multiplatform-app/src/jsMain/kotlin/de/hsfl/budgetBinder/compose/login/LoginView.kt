@@ -1,14 +1,20 @@
 package de.hsfl.budgetBinder.compose.login
 
 import androidx.compose.runtime.*
+import de.hsfl.budgetBinder.presentation.UiState
 import org.jetbrains.compose.web.dom.*
 
 @Composable
-fun LoginView(state: State<Any>,
-              onLoginButtonPressed: (email: String, password: String) -> Unit,
-              onLoginSuccess: () -> Unit){
+fun LoginView(
+    state: State<Any>,
+    onLoginButtonPressed: (email: String, password: String) -> Unit,
+    onLoginSuccess: () -> Unit
+){
     var emailTextFieldState by remember { mutableStateOf("") }
     var passwordTextFieldState by remember { mutableStateOf("") }
+    val viewState by remember { state }
+
+    // -- Login Form --
     Div(
         attrs = {
             classes()
@@ -39,6 +45,22 @@ fun LoginView(state: State<Any>,
                 })
             SubmitInput {  }
         }
+
+        // -- Login Request Management --
+        when (viewState) {
+            is UiState.Success<*> -> {
+                onLoginSuccess()
+            }
+            is UiState.Error -> {
+                Text((viewState as UiState.Error).error)
+            }
+            is UiState.Loading -> {
+                //CircularProgressIndicator()
+            }
+            else -> {}
+        }
+
+
 
     }
 }
