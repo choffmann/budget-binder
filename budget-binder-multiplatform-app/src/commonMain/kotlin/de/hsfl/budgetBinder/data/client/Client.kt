@@ -19,7 +19,7 @@ interface ApiClient {
 
     // Auth
     suspend fun login(email: String, password: String): APIResponse<AuthToken>
-    suspend fun register(firstName: String, lastName: String, email: String, password: String): APIResponse<User>
+    suspend fun register(user: User.In): APIResponse<User>
     suspend fun logout(onAllDevice: Boolean)
 
     // User
@@ -45,7 +45,7 @@ interface ApiClient {
     suspend fun removeEntryById(entry: Entry.In, id: Int): APIResponse<Entry>
 }
 
-class Client : ApiClient {
+class Client(private val severUrl: String = Constants.BASE_URL) : ApiClient {
     private val client = HttpClient {
         install(ContentNegotiation) {
             json()
@@ -73,7 +73,7 @@ class Client : ApiClient {
         install(HttpCookies)
 
         defaultRequest {
-            url(Constants.BASE_URL)
+            url(severUrl)
         }
     }
 
@@ -86,15 +86,10 @@ class Client : ApiClient {
         ).body()
     }
 
-    override suspend fun register(
-        firstName: String,
-        lastName: String,
-        email: String,
-        password: String
-    ): APIResponse<User> {
+    override suspend fun register(user: User.In): APIResponse<User> {
         return client.post("/register") {
             contentType(ContentType.Application.Json)
-            setBody(User.In(firstName, lastName, email, password))
+            setBody(user)
         }.body()
     }
 

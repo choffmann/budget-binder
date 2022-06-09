@@ -11,8 +11,8 @@ class AuthRepositoryImpl(
         return client.login(email, password)
     }
 
-    override suspend fun register(firstName: String, lastName: String, email: String, password: String): APIResponse<User> {
-        return client.register(firstName, lastName, email, password)
+    override suspend fun register(user: User.In): APIResponse<User> {
+        return client.register(user)
     }
 
     override suspend fun logout(onAllDevice: Boolean) {

@@ -9,10 +9,10 @@ import kotlinx.coroutines.flow.flow
 class RegisterUseCase(
     private val repository: AuthRepository
 ) {
-    operator fun invoke(firstName: String, lastName: String, email: String, password: String): Flow<DataResponse<User>> = flow {
+    operator fun invoke(user: User.In): Flow<DataResponse<User>> = flow {
         try {
             emit(DataResponse.Loading())
-            repository.register(firstName, lastName, email, password).let { response ->
+            repository.register(user).let { response ->
                 response.data?.let { 
                     emit(DataResponse.Success(it))
                 } ?: emit(DataResponse.Error(response.error!!.message))
