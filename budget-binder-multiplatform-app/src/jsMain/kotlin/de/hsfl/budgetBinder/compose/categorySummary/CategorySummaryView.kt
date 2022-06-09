@@ -10,7 +10,8 @@ import org.jetbrains.compose.web.dom.Text
 @Composable
 fun CategorySummaryView(
     state: State<Any>,
-    onBackButton: () -> Unit
+    onBackButton: () -> Unit,
+    onEditButton: () -> Unit
 ) {
     val viewState by remember { state }
     Div {
@@ -29,6 +30,11 @@ fun CategorySummaryView(
             onClick { onBackButton() }
         }) {
             Text("Back to Dashboard")
+        }
+        Button(attrs = {
+            onClick { onEditButton() }
+        }) {
+            Text("Edit Category (Needs to be set for each category)")
         }
     }
 }
