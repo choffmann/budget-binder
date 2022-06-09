@@ -9,6 +9,6 @@ interface CategoryRepository {
     suspend fun createNewCategory(category: Category.In): APIResponse<Category>
     suspend fun getCategoryById(id: Int): APIResponse<Category>
     suspend fun changeCategoryById(category: Category.In, id: Int): APIResponse<Category>
-    suspend fun removeCategoryById(category: Category.In, id: Int): APIResponse<Category>
+    suspend fun removeCategoryById(id: Int): APIResponse<Category>
     suspend fun getEntriesFromCategory(id: Int): APIResponse<List<Category>>
 }

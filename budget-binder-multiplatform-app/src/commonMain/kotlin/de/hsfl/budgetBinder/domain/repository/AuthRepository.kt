@@ -7,5 +7,5 @@ interface AuthRepository {
 
     suspend fun register(user: User.In): APIResponse<User>
 
-    suspend fun logout(onAllDevice: Boolean)
+    suspend fun logout(onAllDevice: Boolean): APIResponse<AuthToken>
 }

@@ -9,5 +9,5 @@ interface EntryRepository {
     suspend fun createNewEntry(entry: Entry.In): APIResponse<Entry>
     suspend fun getEntryById(id: Int): APIResponse<Entry>
     suspend fun changeEntryById(entry: Entry.In, id: Int): APIResponse<Entry>
-    suspend fun removeEntryById(entry: Entry.In, id: Int): APIResponse<Entry>
+    suspend fun removeEntryById(id: Int): APIResponse<Entry>
 }

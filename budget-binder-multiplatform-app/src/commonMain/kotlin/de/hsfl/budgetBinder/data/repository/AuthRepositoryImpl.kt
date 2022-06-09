@@ -15,7 +15,7 @@ class AuthRepositoryImpl(
         return client.register(user)
     }
 
-    override suspend fun logout(onAllDevice: Boolean) {
+    override suspend fun logout(onAllDevice: Boolean): APIResponse<AuthToken> {
         return client.logout(onAllDevice)
     }
 }

@@ -20,12 +20,12 @@ interface ApiClient {
     // Auth
     suspend fun login(email: String, password: String): APIResponse<AuthToken>
     suspend fun register(user: User.In): APIResponse<User>
-    suspend fun logout(onAllDevice: Boolean)
+    suspend fun logout(onAllDevice: Boolean): APIResponse<AuthToken>
 
     // User
     suspend fun getMyUser(): APIResponse<User>
     suspend fun changeMyUser(user: User.In): APIResponse<User>
-    suspend fun removeMyUser(user: User.In): APIResponse<User>
+    suspend fun removeMyUser(): APIResponse<User>
 
     // Categories
     suspend fun getAllCategories(): APIResponse<List<Category>>
@@ -33,7 +33,7 @@ interface ApiClient {
     suspend fun createNewCategory(category: Category.In): APIResponse<Category>
     suspend fun getCategoryById(id: Int): APIResponse<Category>
     suspend fun changeCategoryById(category: Category.In, id: Int): APIResponse<Category>
-    suspend fun removeCategoryById(category: Category.In, id: Int): APIResponse<Category>
+    suspend fun removeCategoryById(id: Int): APIResponse<Category>
     suspend fun getEntriesFromCategory(id: Int): APIResponse<List<Category>>
 
     // Entries
@@ -42,7 +42,7 @@ interface ApiClient {
     suspend fun createNewEntry(entry: Entry.In): APIResponse<Entry>
     suspend fun getEntryById(id: Int): APIResponse<Entry>
     suspend fun changeEntryById(entry: Entry.In, id: Int): APIResponse<Entry>
-    suspend fun removeEntryById(entry: Entry.In, id: Int): APIResponse<Entry>
+    suspend fun removeEntryById(id: Int): APIResponse<Entry>
 }
 
 class Client(private val severUrl: String = Constants.BASE_URL) : ApiClient {
@@ -93,12 +93,12 @@ class Client(private val severUrl: String = Constants.BASE_URL) : ApiClient {
         }.body()
     }
 
-    override suspend fun logout(onAllDevice: Boolean) {
-        client.submitForm(
+    override suspend fun logout(onAllDevice: Boolean): APIResponse<AuthToken> {
+        return client.submitForm(
             url = "/logout", formParameters = Parameters.build {
                 append("all", onAllDevice.toString())
             }, encodeInQuery = true
-        )
+        ).body()
     }
 
     override suspend fun getMyUser(): APIResponse<User> {
@@ -112,10 +112,9 @@ class Client(private val severUrl: String = Constants.BASE_URL) : ApiClient {
         }.body()
     }
 
-    override suspend fun removeMyUser(user: User.In): APIResponse<User> {
+    override suspend fun removeMyUser(): APIResponse<User> {
         return client.delete(urlString = "/me") {
             contentType(ContentType.Application.Json)
-            setBody(user)
         }.body()
     }
 
@@ -149,10 +148,9 @@ class Client(private val severUrl: String = Constants.BASE_URL) : ApiClient {
         }.body()
     }
 
-    override suspend fun removeCategoryById(category: Category.In, id: Int): APIResponse<Category> {
+    override suspend fun removeCategoryById(id: Int): APIResponse<Category> {
         return client.delete(urlString = "/categories/$id") {
             contentType(ContentType.Application.Json)
-            setBody(category)
         }.body()
     }
 
@@ -190,10 +188,9 @@ class Client(private val severUrl: String = Constants.BASE_URL) : ApiClient {
         }.body()
     }
 
-    override suspend fun removeEntryById(entry: Entry.In, id: Int): APIResponse<Entry> {
+    override suspend fun removeEntryById(id: Int): APIResponse<Entry> {
         return client.delete(urlString = "/entries/$id") {
             contentType(ContentType.Application.Json)
-            setBody(entry)
         }.body()
     }
 }
