@@ -16,13 +16,33 @@ import io.ktor.serialization.kotlinx.json.*
 
 // Define API Interfaces
 interface ApiClient {
+
+    // Auth
     suspend fun login(email: String, password: String): APIResponse<AuthToken>
-
     suspend fun register(firstName: String, lastName: String, email: String, password: String): APIResponse<User>
-
     suspend fun logout(onAllDevice: Boolean)
 
+    // User
     suspend fun getMyUser(): APIResponse<User>
+    suspend fun changeMyUser(user: User.In): APIResponse<User>
+    suspend fun removeMyUser(user: User.In): APIResponse<User>
+
+    // Categories
+    suspend fun getAllCategories(): APIResponse<List<Category>>
+    suspend fun getAllCategories(period: String): APIResponse<Category>
+    suspend fun createNewCategory(category: Category.In): APIResponse<Category>
+    suspend fun getCategoryById(id: Int): APIResponse<Category>
+    suspend fun changeCategoryById(category: Category.In, id: Int): APIResponse<Category>
+    suspend fun removeCategoryById(category: Category.In, id: Int): APIResponse<Category>
+    suspend fun getEntriesFromCategory(id: Int): APIResponse<List<Category>>
+
+    // Entries
+    suspend fun getAllEntries(): APIResponse<List<Entry>>
+    suspend fun getAllEntries(period: String): APIResponse<List<Entry>>
+    suspend fun createNewEntry(entry: Entry.In): APIResponse<Entry>
+    suspend fun getEntryById(id: Int): APIResponse<Entry>
+    suspend fun changeEntryById(entry: Entry.In, id: Int): APIResponse<Entry>
+    suspend fun removeEntryById(entry: Entry.In, id: Int): APIResponse<Entry>
 }
 
 class Client : ApiClient {
@@ -88,5 +108,97 @@ class Client : ApiClient {
 
     override suspend fun getMyUser(): APIResponse<User> {
         return client.get("/me").body()
+    }
+
+    override suspend fun changeMyUser(user: User.In): APIResponse<User> {
+        return client.patch(urlString = "/me") {
+            contentType(ContentType.Application.Json)
+            setBody(user)
+        }.body()
+    }
+
+    override suspend fun removeMyUser(user: User.In): APIResponse<User> {
+        return client.delete(urlString = "/me") {
+            contentType(ContentType.Application.Json)
+            setBody(user)
+        }.body()
+    }
+
+    override suspend fun getAllCategories(): APIResponse<List<Category>> {
+        return client.submitForm(url = "/categories", formParameters = Parameters.build {
+            append("current", "true")
+        }, encodeInQuery = true).body()
+    }
+
+    override suspend fun getAllCategories(period: String): APIResponse<Category> {
+        return client.submitForm(url = "/categories", formParameters = Parameters.build {
+            append("period", period)
+        }, encodeInQuery = true).body()
+    }
+
+    override suspend fun createNewCategory(category: Category.In): APIResponse<Category> {
+        return client.post(urlString = "/categories") {
+            contentType(ContentType.Application.Json)
+            setBody(category)
+        }.body()
+    }
+
+    override suspend fun getCategoryById(id: Int): APIResponse<Category> {
+        return client.get(urlString = "/categories/$id").body()
+    }
+
+    override suspend fun changeCategoryById(category: Category.In, id: Int): APIResponse<Category> {
+        return client.patch(urlString = "/categories/$id") {
+            contentType(ContentType.Application.Json)
+            setBody(category)
+        }.body()
+    }
+
+    override suspend fun removeCategoryById(category: Category.In, id: Int): APIResponse<Category> {
+        return client.delete(urlString = "/categories/$id") {
+            contentType(ContentType.Application.Json)
+            setBody(category)
+        }.body()
+    }
+
+    override suspend fun getEntriesFromCategory(id: Int): APIResponse<List<Category>> {
+        return client.get(urlString = "/categories/$id/entries").body()
+    }
+
+    override suspend fun getAllEntries(): APIResponse<List<Entry>> {
+        return client.submitForm(url = "/entries", formParameters = Parameters.build {
+            append("current", "true")
+        }, encodeInQuery = true).body()
+    }
+
+    override suspend fun getAllEntries(period: String): APIResponse<List<Entry>> {
+        return client.submitForm(url = "/categories", formParameters = Parameters.build {
+            append("period", period)
+        }, encodeInQuery = true).body()
+    }
+
+    override suspend fun createNewEntry(entry: Entry.In): APIResponse<Entry> {
+        return client.post(urlString = "/entries") {
+            contentType(ContentType.Application.Json)
+            setBody(entry)
+        }.body()
+    }
+
+    override suspend fun getEntryById(id: Int): APIResponse<Entry> {
+        return client.get(urlString = "/entries/$id").body()
+    }
+
+    override suspend fun changeEntryById(entry: Entry.In, id: Int): APIResponse<Entry> {
+        return client.patch(urlString = "/entries/$id") {
+            contentType(ContentType.Application.Json)
+            setBody(entry)
+        }.body()
+    }
+
+    override suspend fun removeEntryById(entry: Entry.In, id: Int): APIResponse<Entry> {
+        return client.delete(urlString = "/entries/$id") {
+            contentType(ContentType.Application.Json)
+            setBody(entry)
+        }.body()
     }
 }
