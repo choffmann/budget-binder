@@ -1,11 +1,12 @@
-package de.hsfl.budgetBinder.compose.user
+package de.hsfl.budgetBinder.compose.dashboard
 
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.Button
+import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
 import de.hsfl.budgetBinder.presentation.UiState
-import org.jetbrains.compose.web.dom.Button
-import org.jetbrains.compose.web.dom.Div
-import org.jetbrains.compose.web.dom.Text
-
 
 @Composable
 fun UserView(
@@ -14,7 +15,8 @@ fun UserView(
     onLogout: () -> Unit
 ) {
     val viewState by remember { state }
-    Div {
+    Box(modifier = Modifier.fillMaxSize())
+    Column {
         when (viewState) {
             is UiState.Success<*> -> {
                 Text((viewState as UiState.Success<*>).element.toString())
@@ -23,18 +25,17 @@ fun UserView(
                 Text((viewState as UiState.Error).error)
             }
             is UiState.Loading -> {
-                //CircularProgressIndicator()
+                CircularProgressIndicator()
             }
         }
-        Button(attrs = {
-            onClick { onUpdate() }
-        }) {
-            Text("Update")
+        Row {
+            Button(onClick = { onUpdate() }) {
+                Text("Update")
+            }
+            Button(onClick = { onLogout() }) {
+                Text("Logout")
+            }
         }
-        Button(attrs = {
-            onClick { onLogout() }
-        }) {
-            Text("LogOut")
-        }
+
     }
 }

@@ -1,4 +1,4 @@
-package de.hsfl.budgetBinder.compose.user
+package de.hsfl.budgetBinder.compose.dashboard
 
 import androidx.compose.runtime.*
 import de.hsfl.budgetBinder.domain.use_case.auth_user.LogoutUseCase
