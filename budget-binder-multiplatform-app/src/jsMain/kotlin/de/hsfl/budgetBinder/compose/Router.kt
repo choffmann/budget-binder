@@ -6,6 +6,7 @@ import de.hsfl.budgetBinder.compose.categoryEdit.CategoryEditComponent
 import de.hsfl.budgetBinder.compose.categorySummary.CategorySummaryComponent
 import de.hsfl.budgetBinder.compose.dashboard.DashboardComponent
 import de.hsfl.budgetBinder.compose.entryCreate.EntryCreateComponent
+import de.hsfl.budgetBinder.compose.entryEdit.EntryEditComponent
 import de.hsfl.budgetBinder.compose.login.LoginComponent
 import de.hsfl.budgetBinder.compose.register.RegisterComponent
 import de.hsfl.budgetBinder.compose.settings.SettingsComponent
@@ -22,5 +23,7 @@ fun Router(screenState: MutableState<Screen>) {
         is Screen.CategorySummary -> CategorySummaryComponent(screenState = screenState)
         is Screen.CategoryEdit -> CategoryEditComponent(screenState = screenState)
         is Screen.EntryCreate -> EntryCreateComponent(screenState = screenState)
+        is Screen.EntryEdit -> EntryEditComponent(screenState = screenState)
+
     }
 }
