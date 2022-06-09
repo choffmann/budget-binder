@@ -13,7 +13,9 @@ fun DashboardView(
     onUpdate: () -> Unit,
     onLogout: () -> Unit,
     onCategorySummaryButton: () -> Unit,
-    onSettingsButton: () -> Unit
+    onSettingsButton: () -> Unit,
+    onEntryCreateButton: () -> Unit,
+    onEntryEditButton: () -> Unit
 ) {
     val viewState by remember { state }
     Div {
@@ -47,6 +49,16 @@ fun DashboardView(
             onClick { onCategorySummaryButton() }
         }) {
             Text("Open Category List (Summary of every Category)")
+        }
+        Button(attrs = {
+            onClick { onEntryCreateButton() }
+        }) {
+            Text("Create Entry")
+        }
+        Button(attrs = {
+            onClick { onEntryEditButton() }
+        }) {
+            Text("Edit Entry (Needs to be there for every Entry shown)")
         }
     }
 }
