@@ -18,20 +18,12 @@ fun CategorySummaryComponent(screenState: MutableState<Screen>) {
     val scope = CoroutineScope(Dispatchers.Unconfined + SupervisorJob())
     val di = localDI()
     val userUseCase: UserUseCase by di.instance()
-    val logoutUseCase: LogoutUseCase by di.instance()
     val userViewModel = UserViewModel(userUseCase, scope)
-    val logoutViewModel = LogoutViewModel(logoutUseCase, scope)
     val viewState = userViewModel.state.collectAsState(scope)
-    val logOutState = logoutViewModel.state.collectAsState(scope)
 
     CategorySummaryView(
         state = viewState,
-        onBackButton = { screenState.value = Screen.Dashboard}
+        onBackButton = { screenState.value = Screen.Dashboard},
+        onEditButton = { screenState.value = Screen.Dashboard}
     )
-
-    when (logOutState) {
-        is UiState.Success<*> -> {
-            screenState.value = Screen.Login
-        }
-    }
 }
