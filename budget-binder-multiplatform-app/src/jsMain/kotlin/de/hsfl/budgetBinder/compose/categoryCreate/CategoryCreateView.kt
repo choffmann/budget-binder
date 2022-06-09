@@ -4,6 +4,7 @@ import androidx.compose.runtime.*
 import de.hsfl.budgetBinder.presentation.UiState
 import org.jetbrains.compose.web.dom.Button
 import org.jetbrains.compose.web.dom.Div
+import org.jetbrains.compose.web.dom.H1
 import org.jetbrains.compose.web.dom.Text
 
 
@@ -13,6 +14,7 @@ fun CategoryCreateView(
     onBackButton: () -> Unit
 ) {
     val viewState by remember { state }
+    H1{Text("CategoryCreateView")}
     Div {
         when (viewState) {
             is UiState.Success<*> -> {
@@ -28,7 +30,7 @@ fun CategoryCreateView(
         Button(attrs = {
             onClick { onBackButton() }
         }) {
-            Text("Back to Dashboard")
+            Text("Back to To Category Overview")
         }
     }
 }
