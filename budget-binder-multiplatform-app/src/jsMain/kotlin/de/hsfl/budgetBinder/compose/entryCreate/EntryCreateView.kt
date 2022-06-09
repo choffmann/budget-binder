@@ -10,7 +10,8 @@ import org.jetbrains.compose.web.dom.Text
 @Composable
 fun EntryCreateView(
     state: State<Any>,
-    onBackButton: () -> Unit
+    onBackButton: () -> Unit,
+    onCategoryCreateButton: () -> Unit
 ) {
     val viewState by remember { state }
     Div {
@@ -29,6 +30,11 @@ fun EntryCreateView(
             onClick { onBackButton() }
         }) {
             Text("Back to Dashboard")
+        }
+        Button(attrs = {
+            onClick { onCategoryCreateButton() }
+        }) {
+            Text("Create new Category (Needs to be put as the last option when selecting a category for an entry)")
         }
     }
 }

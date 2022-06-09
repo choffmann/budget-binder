@@ -23,6 +23,7 @@ fun EntryCreateComponent(screenState: MutableState<Screen>) {
 
     EntryCreateView(
         state = viewState,
-        onBackButton = { screenState.value = Screen.Dashboard}
+        onBackButton = { screenState.value = Screen.Dashboard},
+        onCategoryCreateButton = { screenState.value = Screen.CategoryCreate}
     )
 }
