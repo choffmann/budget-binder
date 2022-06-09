@@ -1,12 +1,12 @@
 package de.hsfl.budgetBinder.data.client
 
 import de.hsfl.budgetBinder.common.*
+import de.hsfl.budgetBinder.data.client.plugins.AuthPlugin
+import de.hsfl.budgetBinder.data.client.plugins.FileCookieStorage
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.client.plugins.auth.*
-import io.ktor.client.plugins.auth.providers.*
 import io.ktor.client.plugins.cookies.*
 import io.ktor.client.plugins.logging.*
 import io.ktor.client.request.*
@@ -30,27 +30,20 @@ class Client : ApiClient {
         install(ContentNegotiation) {
             json()
         }
-        install(Auth) {
-            bearer {
-                loadTokens {
-                    BearerTokens("", "")
-                }
-                refreshTokens {
-                    val refreshToken: APIResponse<AuthToken> =
-                        client.get("/refresh_token") {
-                            markAsRefreshTokenRequest()
-                        }.body()
-                    refreshToken.data?.let {
-                        BearerTokens(it.token, "")
-                    }
-                }
-            }
+
+        install(AuthPlugin) {
+            loginPath = "/login"
+            logoutPath = "/logout"
+            refreshPath = "/refresh_token"
         }
+
         install(Logging) {
             logger = Logger.DEFAULT
             level = LogLevel.HEADERS
         }
-        install(HttpCookies)
+        install(HttpCookies) {
+            storage = FileCookieStorage()
+        }
 
         defaultRequest {
             url(Constants.BASE_URL)
