@@ -20,6 +20,7 @@ fun RegisterView(
     val viewState by remember { state }
 
     // -- Register Form --
+    H1{Text("RegisterView")}
     Div(
         attrs = {
             classes()

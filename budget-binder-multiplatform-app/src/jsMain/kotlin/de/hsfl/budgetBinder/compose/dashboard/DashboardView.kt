@@ -4,6 +4,7 @@ import androidx.compose.runtime.*
 import de.hsfl.budgetBinder.presentation.UiState
 import org.jetbrains.compose.web.dom.Button
 import org.jetbrains.compose.web.dom.Div
+import org.jetbrains.compose.web.dom.H1
 import org.jetbrains.compose.web.dom.Text
 
 
@@ -18,6 +19,7 @@ fun DashboardView(
     onEntryEditButton: () -> Unit
 ) {
     val viewState by remember { state }
+    H1{Text("DashboardView")}
     Div {
         when (viewState) {
             is UiState.Success<*> -> {
