@@ -7,7 +7,9 @@ server:
     sslPort: 8443
     keyStorePassword: null
     keyStorePath: null
-    frontendAddresses: http://localhost:8081
+    frontendAddresses:
+      - http://localhost:8080
+      - http://localhost:8081
     noForwardedHeaderSupport: false
 dataBase:
     dbType: SQLITE

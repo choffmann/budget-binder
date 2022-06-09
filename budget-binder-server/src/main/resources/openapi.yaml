@@ -2,34 +2,8 @@ openapi: 3.0.3
 info:
   description: Budget-Binder-Server API
   title: Budget-Binder-Server API
-  version: 0.1.0
+  version: 0.5.0
 paths:
-  /:
-    get:
-      responses:
-        200:
-          description: OK
-      summary: 'GET '
-  /login:
-    post:
-      tags:
-        - Auth
-      summary: Login a User
-      requestBody:
-        content:
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/Login'
-        required: true
-      responses:
-        200:
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Access-Token'
-        401:
-          description: Not-Authorized
   /register:
     post:
       tags:
@@ -50,6 +24,72 @@ paths:
                 $ref: '#/components/schemas/UserResponse'
         401:
           description: Not-Authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedError'
+  /login:
+    post:
+      tags:
+        - Auth
+      summary: Login a User
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Login'
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Access-Token'
+        401:
+          description: Not-Authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedError'
+  /logout:
+    get:
+      tags:
+        - Auth
+      summary: Logout
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Access-Token'
+        401:
+          description: Not-Authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedError'
+      security:
+        - LoginBearer: [ ]
+  /refresh_token:
+    get:
+      tags:
+        - Auth
+      summary: Get a new AccessToken with your Refresh Cookie
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Access-Token'
+        401:
+          description: Not-Authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedError'
   /me:
     get:
       tags:
@@ -64,6 +104,10 @@ paths:
                 $ref: '#/components/schemas/UserResponse'
         401:
           description: Not-Authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedError'
       security:
         - LoginBearer: [ ]
     patch:
@@ -74,7 +118,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UserPut'
+              $ref: '#/components/schemas/UserPatch'
         required: true
       responses:
         200:
@@ -85,6 +129,10 @@ paths:
                 $ref: '#/components/schemas/UserResponse'
         401:
           description: Not-Authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedError'
       security:
         - LoginBearer: [ ]
     delete:
@@ -100,6 +148,334 @@ paths:
                 $ref: '#/components/schemas/UserResponse'
         401:
           description: Not-Authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedError'
+      security:
+        - LoginBearer: [ ]
+  /categories:
+    get:
+      tags:
+        - Categories
+      summary: Get all your categories
+      parameters:
+        - name: current
+          in: query
+          description: only get current categories
+          allowEmptyValue: true
+          schema:
+            type: boolean
+        - name: period
+          in: query
+          description: get all categories in the given period
+          allowEmptyValue: true
+          schema:
+            type: string
+            example: "12-2022"
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CategoriesResponse"
+        401:
+          description: Not-Authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedError'
+      security:
+        - LoginBearer: [ ]
+    post:
+      tags:
+        - Categories
+      summary: create your new Category
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Category'
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CategoryResponse"
+        401:
+          description: Not-Authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedError'
+      security:
+        - LoginBearer: [ ]
+  /categories/{categoryId}:
+    get:
+      tags:
+        - Categories
+      summary: Get your Category
+      parameters:
+        - name: categoryId
+          in: path
+          description: ID of your Category
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CategoryResponse"
+        401:
+          description: Not-Authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedError'
+      security:
+        - LoginBearer: [ ]
+    patch:
+      tags:
+        - Categories
+      summary: Change your Category
+      parameters:
+        - name: categoryId
+          in: path
+          description: ID of your Category
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CategoryPatch'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CategoryResponse"
+        401:
+          description: Not-Authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedError'
+      security:
+        - LoginBearer: [ ]
+    delete:
+      tags:
+        - Categories
+      summary: Delete your Category
+      parameters:
+        - name: categoryId
+          in: path
+          description: ID of your Category
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CategoryResponse"
+        401:
+          description: Not-Authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedError'
+      security:
+        - LoginBearer: [ ]
+  /categories/{categoryId}/entries:
+    get:
+      tags:
+        - Categories
+      summary: Get all Entries from Category
+      parameters:
+        - name: categoryId
+          in: path
+          description: ID of your Category
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EntriesResponse"
+        401:
+          description: Not-Authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedError'
+      security:
+        - LoginBearer: [ ]
+
+
+
+
+
+
+
+
+
+
+
+  /entries:
+    get:
+      tags:
+        - Entries
+      summary: Get all your entries
+      parameters:
+        - name: current
+          in: query
+          description: only get current entries
+          allowEmptyValue: true
+          schema:
+            type: boolean
+        - name: period
+          in: query
+          description: get all entries in the given period
+          allowEmptyValue: true
+          schema:
+            type: string
+            example: "12-2022"
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EntriesResponse"
+        401:
+          description: Not-Authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedError'
+      security:
+        - LoginBearer: [ ]
+    post:
+      tags:
+        - Entries
+      summary: create your new Entry
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Entry'
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EntryResponse"
+        401:
+          description: Not-Authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedError'
+      security:
+        - LoginBearer: [ ]
+  /entries/{entryId}:
+    get:
+      tags:
+        - Entries
+      summary: Get your Entry
+      parameters:
+        - name: entryId
+          in: path
+          description: ID of your Entry
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EntryResponse"
+        401:
+          description: Not-Authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedError'
+      security:
+        - LoginBearer: [ ]
+    patch:
+      tags:
+        - Entries
+      summary: Change your Entry
+      parameters:
+        - name: entryId
+          in: path
+          description: ID of your Entry
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EntryPatch'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EntryResponse"
+        401:
+          description: Not-Authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedError'
+      security:
+        - LoginBearer: [ ]
+    delete:
+      tags:
+        - Entries
+      summary: Delete your Entry
+      parameters:
+        - name: entryId
+          in: path
+          description: ID of your Entry
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EntryResponse"
+        401:
+          description: Not-Authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedError'
       security:
         - LoginBearer: [ ]
 components:
@@ -110,6 +486,22 @@ components:
         message:
           title: Message
           type: string
+    UnauthorizedError:
+      title: Unauthorized-Error
+      required:
+        - success
+        - error
+      type: object
+      properties:
+        data:
+          title: Data
+          type: object
+          nullable: true
+        error:
+          $ref: '#/components/schemas/ErrorModel'
+        success:
+          title: Success
+          type: boolean
     Login:
       title: Login
       required:
@@ -163,8 +555,8 @@ components:
         password:
           type: string
           writeOnly: true
-    UserPut:
-      title: User Put
+    UserPatch:
+      title: User Patch
       type: object
       properties:
         firstName:
@@ -213,8 +605,8 @@ components:
         category_id:
           nullable: true
           type: integer
-    EntryPut:
-      title: Entry Put
+    EntryPatch:
+      title: Entry Patch
       type: object
       properties:
         name:
@@ -226,9 +618,13 @@ components:
         repeat:
           nullable: true
           type: boolean
-        category_id:
+        category:
           nullable: true
-          type: integer
+          type: object
+          properties:
+            id:
+              nullable: true
+              type: integer
     EntryResponse:
       title: Entry Response
       required:
@@ -237,6 +633,22 @@ components:
       properties:
         data:
           $ref: '#/components/schemas/Entry'
+        error:
+          $ref: '#/components/schemas/ErrorModel'
+        success:
+          title: Success
+          type: boolean
+    EntriesResponse:
+      title: Entries Response
+      required:
+        - success
+      type: object
+      properties:
+        data:
+          title: Entry Array
+          type: array
+          items:
+            $ref: '#/components/schemas/Entry'
         error:
           $ref: '#/components/schemas/ErrorModel'
         success:
@@ -258,20 +670,23 @@ components:
         name:
           type: string
         color:
-          $ref: '#/components/schemas/Color'
+          type: string
+          example: 111111
         image:
           $ref: '#/components/schemas/Image'
         budget:
           type: number
-    CategoryPut:
-      title: Category Put
+    CategoryPatch:
+      title: Category Patch
       type: object
       properties:
         name:
           nullable: true
           type: string
         color:
-          $ref: '#/components/schemas/Color'
+          nullable: true
+          type: string
+          example: 111111
         image:
           $ref: '#/components/schemas/Image'
         budget:
@@ -290,14 +705,22 @@ components:
         success:
           title: Success
           type: boolean
-    Color:
-      type: string
-      enum:
-        - BLACK
-        - WHITE
-        - RED
-        - GREEN
-        - BLUE
+    CategoriesResponse:
+      title: Categories Response
+      required:
+        - success
+      type: object
+      properties:
+        data:
+          title: Category Array
+          type: array
+          items:
+            $ref: '#/components/schemas/Category'
+        error:
+          $ref: '#/components/schemas/ErrorModel'
+        success:
+          title: Success
+          type: boolean
     Image:
       type: string
       enum:

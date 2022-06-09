@@ -3,17 +3,47 @@
   "info": {
     "description": "Budget-Binder-Server API",
     "title": "Budget-Binder-Server API",
-    "version": "0.1.0"
+    "version": "0.5.0"
   },
   "paths": {
-    "/": {
-      "get": {
+    "/register": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Register a User",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not-Authorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
           }
-        },
-        "summary": "GET "
+        }
       }
     },
     "/login": {
@@ -44,40 +74,79 @@
             }
           },
           "401": {
-            "description": "Not-Authorized"
+            "description": "Not-Authorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
           }
         }
       }
     },
-    "/register": {
-      "post": {
+    "/logout": {
+      "get": {
         "tags": [
           "Auth"
         ],
-        "summary": "Register a User",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/User"
-              }
-            }
-          },
-          "required": true
-        },
+        "summary": "Logout",
         "responses": {
           "200": {
             "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/UserResponse"
+                  "$ref": "#/components/schemas/Access-Token"
                 }
               }
             }
           },
           "401": {
-            "description": "Not-Authorized"
+            "description": "Not-Authorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "LoginBearer": []
+          }
+        ]
+      }
+    },
+    "/refresh_token": {
+      "get": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Get a new AccessToken with your Refresh Cookie",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Access-Token"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not-Authorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
           }
         }
       }
@@ -100,7 +169,14 @@
             }
           },
           "401": {
-            "description": "Not-Authorized"
+            "description": "Not-Authorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -118,7 +194,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UserPut"
+                "$ref": "#/components/schemas/UserPatch"
               }
             }
           },
@@ -136,7 +212,14 @@
             }
           },
           "401": {
-            "description": "Not-Authorized"
+            "description": "Not-Authorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -162,7 +245,544 @@
             }
           },
           "401": {
-            "description": "Not-Authorized"
+            "description": "Not-Authorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "LoginBearer": []
+          }
+        ]
+      }
+    },
+    "/categories": {
+      "get": {
+        "tags": [
+          "Categories"
+        ],
+        "summary": "Get all your categories",
+        "parameters": [
+          {
+            "name": "current",
+            "in": "query",
+            "description": "only get current categories",
+            "allowEmptyValue": true,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "period",
+            "in": "query",
+            "description": "get all categories in the given period",
+            "allowEmptyValue": true,
+            "schema": {
+              "type": "string",
+              "example": "12-2022"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoriesResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not-Authorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "LoginBearer": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Categories"
+        ],
+        "summary": "create your new Category",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Category"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not-Authorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "LoginBearer": []
+          }
+        ]
+      }
+    },
+    "/categories/{categoryId}": {
+      "get": {
+        "tags": [
+          "Categories"
+        ],
+        "summary": "Get your Category",
+        "parameters": [
+          {
+            "name": "categoryId",
+            "in": "path",
+            "description": "ID of your Category",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not-Authorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "LoginBearer": []
+          }
+        ]
+      },
+      "patch": {
+        "tags": [
+          "Categories"
+        ],
+        "summary": "Change your Category",
+        "parameters": [
+          {
+            "name": "categoryId",
+            "in": "path",
+            "description": "ID of your Category",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CategoryPatch"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not-Authorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "LoginBearer": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Categories"
+        ],
+        "summary": "Delete your Category",
+        "parameters": [
+          {
+            "name": "categoryId",
+            "in": "path",
+            "description": "ID of your Category",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not-Authorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "LoginBearer": []
+          }
+        ]
+      }
+    },
+    "/categories/{categoryId}/entries": {
+      "get": {
+        "tags": [
+          "Categories"
+        ],
+        "summary": "Get all Entries from Category",
+        "parameters": [
+          {
+            "name": "categoryId",
+            "in": "path",
+            "description": "ID of your Category",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EntriesResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not-Authorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "LoginBearer": []
+          }
+        ]
+      }
+    },
+    "/entries": {
+      "get": {
+        "tags": [
+          "Entries"
+        ],
+        "summary": "Get all your entries",
+        "parameters": [
+          {
+            "name": "current",
+            "in": "query",
+            "description": "only get current entries",
+            "allowEmptyValue": true,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "period",
+            "in": "query",
+            "description": "get all entries in the given period",
+            "allowEmptyValue": true,
+            "schema": {
+              "type": "string",
+              "example": "12-2022"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EntriesResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not-Authorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "LoginBearer": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Entries"
+        ],
+        "summary": "create your new Entry",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Entry"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EntryResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not-Authorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "LoginBearer": []
+          }
+        ]
+      }
+    },
+    "/entries/{entryId}": {
+      "get": {
+        "tags": [
+          "Entries"
+        ],
+        "summary": "Get your Entry",
+        "parameters": [
+          {
+            "name": "entryId",
+            "in": "path",
+            "description": "ID of your Entry",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EntryResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not-Authorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "LoginBearer": []
+          }
+        ]
+      },
+      "patch": {
+        "tags": [
+          "Entries"
+        ],
+        "summary": "Change your Entry",
+        "parameters": [
+          {
+            "name": "entryId",
+            "in": "path",
+            "description": "ID of your Entry",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EntryPatch"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EntryResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not-Authorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "LoginBearer": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Entries"
+        ],
+        "summary": "Delete your Entry",
+        "parameters": [
+          {
+            "name": "entryId",
+            "in": "path",
+            "description": "ID of your Entry",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EntryResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not-Authorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -181,6 +801,28 @@
           "message": {
             "title": "Message",
             "type": "string"
+          }
+        }
+      },
+      "UnauthorizedError": {
+        "title": "Unauthorized-Error",
+        "required": [
+          "success",
+          "error"
+        ],
+        "type": "object",
+        "properties": {
+          "data": {
+            "title": "Data",
+            "type": "object",
+            "nullable": true
+          },
+          "error": {
+            "$ref": "#/components/schemas/ErrorModel"
+          },
+          "success": {
+            "title": "Success",
+            "type": "boolean"
           }
         }
       },
@@ -258,8 +900,8 @@
           }
         }
       },
-      "UserPut": {
-        "title": "User Put",
+      "UserPatch": {
+        "title": "User Patch",
         "type": "object",
         "properties": {
           "firstName": {
@@ -328,8 +970,8 @@
           }
         }
       },
-      "EntryPut": {
-        "title": "Entry Put",
+      "EntryPatch": {
+        "title": "Entry Patch",
         "type": "object",
         "properties": {
           "name": {
@@ -344,9 +986,15 @@
             "nullable": true,
             "type": "boolean"
           },
-          "category_id": {
+          "category": {
             "nullable": true,
-            "type": "integer"
+            "type": "object",
+            "properties": {
+              "id": {
+                "nullable": true,
+                "type": "integer"
+              }
+            }
           }
         }
       },
@@ -359,6 +1007,29 @@
         "properties": {
           "data": {
             "$ref": "#/components/schemas/Entry"
+          },
+          "error": {
+            "$ref": "#/components/schemas/ErrorModel"
+          },
+          "success": {
+            "title": "Success",
+            "type": "boolean"
+          }
+        }
+      },
+      "EntriesResponse": {
+        "title": "Entries Response",
+        "required": [
+          "success"
+        ],
+        "type": "object",
+        "properties": {
+          "data": {
+            "title": "Entry Array",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Entry"
+            }
           },
           "error": {
             "$ref": "#/components/schemas/ErrorModel"
@@ -388,7 +1059,8 @@
             "type": "string"
           },
           "color": {
-            "$ref": "#/components/schemas/Color"
+            "type": "string",
+            "example": 111111
           },
           "image": {
             "$ref": "#/components/schemas/Image"
@@ -398,8 +1070,8 @@
           }
         }
       },
-      "CategoryPut": {
-        "title": "Category Put",
+      "CategoryPatch": {
+        "title": "Category Patch",
         "type": "object",
         "properties": {
           "name": {
@@ -407,7 +1079,9 @@
             "type": "string"
           },
           "color": {
-            "$ref": "#/components/schemas/Color"
+            "nullable": true,
+            "type": "string",
+            "example": 111111
           },
           "image": {
             "$ref": "#/components/schemas/Image"
@@ -437,15 +1111,28 @@
           }
         }
       },
-      "Color": {
-        "type": "string",
-        "enum": [
-          "BLACK",
-          "WHITE",
-          "RED",
-          "GREEN",
-          "BLUE"
-        ]
+      "CategoriesResponse": {
+        "title": "Categories Response",
+        "required": [
+          "success"
+        ],
+        "type": "object",
+        "properties": {
+          "data": {
+            "title": "Category Array",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Category"
+            }
+          },
+          "error": {
+            "$ref": "#/components/schemas/ErrorModel"
+          },
+          "success": {
+            "title": "Success",
+            "type": "boolean"
+          }
+        }
       },
       "Image": {
         "type": "string",
