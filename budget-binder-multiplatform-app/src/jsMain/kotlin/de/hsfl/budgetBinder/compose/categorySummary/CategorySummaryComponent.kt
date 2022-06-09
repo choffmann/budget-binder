@@ -24,6 +24,7 @@ fun CategorySummaryComponent(screenState: MutableState<Screen>) {
     CategorySummaryView(
         state = viewState,
         onBackButton = { screenState.value = Screen.Dashboard},
-        onEditButton = { screenState.value = Screen.Dashboard}
+        onEditButton = { screenState.value = Screen.CategoryEdit},
+        onCategoryCreateButton = { screenState.value = Screen.CategoryCreate},
     )
 }
