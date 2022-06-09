@@ -2,6 +2,7 @@ package de.hsfl.budgetBinder.compose
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import de.hsfl.budgetBinder.compose.categoryCreate.CategoryCreateComponent
 import de.hsfl.budgetBinder.compose.categoryEdit.CategoryEditComponent
 import de.hsfl.budgetBinder.compose.categorySummary.CategorySummaryComponent
 import de.hsfl.budgetBinder.compose.dashboard.DashboardComponent
@@ -22,6 +23,7 @@ fun Router(screenState: MutableState<Screen>) {
         is Screen.Settings -> SettingsComponent(screenState = screenState)
         is Screen.CategorySummary -> CategorySummaryComponent(screenState = screenState)
         is Screen.CategoryEdit -> CategoryEditComponent(screenState = screenState)
+        is Screen.CategoryCreate -> CategoryCreateComponent(screenState = screenState)
         is Screen.EntryCreate -> EntryCreateComponent(screenState = screenState)
         is Screen.EntryEdit -> EntryEditComponent(screenState = screenState)
 
