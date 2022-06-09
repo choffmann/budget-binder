@@ -5,6 +5,7 @@ import androidx.compose.runtime.MutableState
 import de.hsfl.budgetBinder.compose.dashboard.DashboardComponent
 import de.hsfl.budgetBinder.compose.login.LoginComponent
 import de.hsfl.budgetBinder.compose.register.RegisterComponent
+import de.hsfl.budgetBinder.compose.settings.SettingsComponent
 import de.hsfl.budgetBinder.presentation.Screen
 
 @Composable
@@ -14,5 +15,7 @@ fun Router(screenState: MutableState<Screen>) {
         is Screen.Register -> RegisterComponent(screenState = screenState)
         is Screen.Login -> LoginComponent(screenState = screenState)
         is Screen.Dashboard -> DashboardComponent(screenState = screenState)
+        is Screen.Settings -> SettingsComponent(screenState = screenState)
+
     }
 }
