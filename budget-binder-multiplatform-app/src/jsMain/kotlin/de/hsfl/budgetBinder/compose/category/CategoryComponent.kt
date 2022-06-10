@@ -52,17 +52,14 @@ fun Icon(category: Category){
         Category.Image.DEFAULT -> "cart.png"
         Category.Image.SHOPPING -> "cart.png"
     }
-    Img(imagePath, "imagePath", attrs = {
-        classes("mdc-icon-button")
-        style { padding(0.px) }
-    })
+    Img(imagePath, "imagePath", attrs = {classes("mdc-icon-button")})
 }
 
 @OptIn(ExperimentalComposeWebSvgApi::class)
 @Composable
 fun Bar(category: Category, entryList: List<Entry>){
     val width = 200
-    val height = 40
+    val height = 80
     val budget = category.budget
     var usedBudget = 0f
     for (entry in entryList) {
