@@ -1,4 +1,4 @@
-package de.hsfl.budgetBinder.domain.use_case
+package de.hsfl.budgetBinder.domain.usecase
 
 import de.hsfl.budgetBinder.common.DataResponse
 import de.hsfl.budgetBinder.common.User
@@ -7,10 +7,8 @@ import io.ktor.utils.io.errors.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
-class UserUseCase(
-    private val repository: UserRepository
-) {
-    fun getMyUser(): Flow<DataResponse<User>> = flow {
+class GetMyUserUseCase(private val repository: UserRepository) {
+    operator fun invoke(): Flow<DataResponse<User>> = flow {
         try {
             emit(DataResponse.Loading())
             repository.getMyUser().let { response ->
@@ -25,8 +23,10 @@ class UserUseCase(
             emit(DataResponse.Error(e.message.toString()))
         }
     }
+}
 
-    fun changeMyUser(user: User.In): Flow<DataResponse<User>> = flow {
+class ChangeMyUserUseCase(private val repository: UserRepository) {
+    operator fun invoke(user: User.In): Flow<DataResponse<User>> = flow {
         try {
             emit(DataResponse.Loading())
             repository.changeMyUser(user).let { response ->
@@ -41,8 +41,10 @@ class UserUseCase(
             emit(DataResponse.Error(e.message.toString()))
         }
     }
+}
 
-    fun removeMyUser(): Flow<DataResponse<User>> = flow {
+class RemoveMyUserUseCase(private val repository: UserRepository) {
+    operator fun invoke(): Flow<DataResponse<User>> = flow {
         try {
             emit(DataResponse.Loading())
             repository.removeMyUser().let { response ->

@@ -28,8 +28,8 @@ class CategoryRepositoryImpl(
         return client.changeCategoryById(category, id)
     }
 
-    override suspend fun removeCategoryById(category: Category.In, id: Int): APIResponse<Category> {
-        return client.removeCategoryById(category, id)
+    override suspend fun removeCategoryById(id: Int): APIResponse<Category> {
+        return client.removeCategoryById(id)
     }
 
     override suspend fun getEntriesFromCategory(id: Int): APIResponse<List<Category>> {

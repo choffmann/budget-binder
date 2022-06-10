@@ -1,19 +1,17 @@
-package de.hsfl.budgetBinder.domain.use_case
+package de.hsfl.budgetBinder.domain.usecase
 
-import de.hsfl.budgetBinder.common.Category
 import de.hsfl.budgetBinder.common.DataResponse
-import de.hsfl.budgetBinder.domain.repository.CategoryRepository
+import de.hsfl.budgetBinder.common.Entry
+import de.hsfl.budgetBinder.domain.repository.EntryRepository
 import io.ktor.utils.io.errors.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
-class CategoriesUseCase(
-    private val repository: CategoryRepository
-) {
-    fun getAllCategories(): Flow<DataResponse<List<Category>>> = flow {
+class GetAllEntriesUseCase(private val repository: EntryRepository) {
+    fun entries(): Flow<DataResponse<List<Entry>>> = flow {
         try {
             emit(DataResponse.Loading())
-            repository.getAllCategories().let { response ->
+            repository.getAllEntries().let { response ->
                 response.data?.let {
                     emit(DataResponse.Success(it))
                 } ?: emit(DataResponse.Error(response.error!!.message))
@@ -26,10 +24,10 @@ class CategoriesUseCase(
         }
     }
 
-    fun getAllCategories(period: String): Flow<DataResponse<Category>> = flow {
+    fun entries(period: String): Flow<DataResponse<List<Entry>>> = flow {
         try {
             emit(DataResponse.Loading())
-            repository.getAllCategories(period).let { response ->
+            repository.getAllEntries(period).let { response ->
                 response.data?.let {
                     emit(DataResponse.Success(it))
                 } ?: emit(DataResponse.Error(response.error!!.message))
@@ -41,11 +39,13 @@ class CategoriesUseCase(
             emit(DataResponse.Error(e.message.toString()))
         }
     }
+}
 
-    fun createNewCategory(category: Category.In): Flow<DataResponse<Category>> = flow {
+class CreateNewEntryUseCase(private val repository: EntryRepository) {
+    operator fun invoke(entry: Entry.In): Flow<DataResponse<Entry>> = flow {
         try {
             emit(DataResponse.Loading())
-            repository.createNewCategory(category).let { response ->
+            repository.createNewEntry(entry).let { response ->
                 response.data?.let {
                     emit(DataResponse.Success(it))
                 } ?: emit(DataResponse.Error(response.error!!.message))
@@ -57,11 +57,13 @@ class CategoriesUseCase(
             emit(DataResponse.Error(e.message.toString()))
         }
     }
+}
 
-    fun getCategoryById(id: Int): Flow<DataResponse<Category>> = flow {
+class GetEntryByIdUseCase(private val repository: EntryRepository) {
+    operator fun invoke(id: Int): Flow<DataResponse<Entry>> = flow {
         try {
             emit(DataResponse.Loading())
-            repository.getCategoryById(id).let { response ->
+            repository.getEntryById(id).let { response ->
                 response.data?.let {
                     emit(DataResponse.Success(it))
                 } ?: emit(DataResponse.Error(response.error!!.message))
@@ -73,11 +75,13 @@ class CategoriesUseCase(
             emit(DataResponse.Error(e.message.toString()))
         }
     }
+}
 
-    fun changeCategoryById(category: Category.In, id: Int): Flow<DataResponse<Category>> = flow {
+class ChangeEntryByIdUseCase(private val repository: EntryRepository) {
+    operator fun invoke(entry: Entry.In, id: Int): Flow<DataResponse<Entry>> = flow {
         try {
             emit(DataResponse.Loading())
-            repository.changeCategoryById(category, id).let { response ->
+            repository.changeEntryById(entry, id).let { response ->
                 response.data?.let {
                     emit(DataResponse.Success(it))
                 } ?: emit(DataResponse.Error(response.error!!.message))
@@ -89,27 +93,13 @@ class CategoriesUseCase(
             emit(DataResponse.Error(e.message.toString()))
         }
     }
+}
 
-    fun removeCategoryById(id: Int): Flow<DataResponse<Category>> = flow {
+class RemoveEntryByIdUseCase(private val repository: EntryRepository) {
+    operator fun invoke(id: Int): Flow<DataResponse<Entry>> = flow {
         try {
             emit(DataResponse.Loading())
-            repository.removeCategoryById(id).let { response ->
-                response.data?.let {
-                    emit(DataResponse.Success(it))
-                } ?: emit(DataResponse.Error(response.error!!.message))
-            }
-        } catch (e: IOException) {
-            emit(DataResponse.Error("Couldn't reach the server"))
-        } catch (e: Exception) {
-            e.printStackTrace()
-            emit(DataResponse.Error(e.message.toString()))
-        }
-    }
-
-    fun getAllEntriesFromCategory(id: Int): Flow<DataResponse<List<Category>>> = flow {
-        try {
-            emit(DataResponse.Loading())
-            repository.getEntriesFromCategory(id).let { response ->
+            repository.removeEntryById(id).let { response ->
                 response.data?.let {
                     emit(DataResponse.Success(it))
                 } ?: emit(DataResponse.Error(response.error!!.message))
