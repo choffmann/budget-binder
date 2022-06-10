@@ -1,4 +1,4 @@
-package de.hsfl.budgetBinder.compose.entryCreate
+package de.hsfl.budgetBinder.compose.entry
 
 import androidx.compose.runtime.*
 import de.hsfl.budgetBinder.presentation.UiState
