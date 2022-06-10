@@ -4,6 +4,7 @@ import androidx.compose.runtime.*
 import de.hsfl.budgetBinder.presentation.UiState
 import org.jetbrains.compose.web.dom.Button
 import org.jetbrains.compose.web.dom.Div
+import org.jetbrains.compose.web.dom.H1
 import org.jetbrains.compose.web.dom.Text
 
 
@@ -13,9 +14,12 @@ fun DashboardView(
     onUpdate: () -> Unit,
     onLogout: () -> Unit,
     onCategorySummaryButton: () -> Unit,
-    onSettingsButton: () -> Unit
+    onSettingsButton: () -> Unit,
+    onEntryCreateButton: () -> Unit,
+    onEntryEditButton: () -> Unit
 ) {
     val viewState by remember { state }
+    H1{Text("DashboardView")}
     Div {
         when (viewState) {
             is UiState.Success<*> -> {
@@ -47,6 +51,16 @@ fun DashboardView(
             onClick { onCategorySummaryButton() }
         }) {
             Text("Open Category List (Summary of every Category)")
+        }
+        Button(attrs = {
+            onClick { onEntryCreateButton() }
+        }) {
+            Text("Create Entry")
+        }
+        Button(attrs = {
+            onClick { onEntryEditButton() }
+        }) {
+            Text("Edit Entry (Needs to be there for every Entry shown)")
         }
     }
 }
