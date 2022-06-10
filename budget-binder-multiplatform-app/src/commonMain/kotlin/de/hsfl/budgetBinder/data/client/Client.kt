@@ -3,6 +3,7 @@ package de.hsfl.budgetBinder.data.client
 import de.hsfl.budgetBinder.common.*
 import io.ktor.client.*
 import io.ktor.client.call.*
+import io.ktor.client.engine.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.auth.*
@@ -45,8 +46,8 @@ interface ApiClient {
     suspend fun removeEntryById(id: Int): APIResponse<Entry>
 }
 
-class Client(private val severUrl: String = Constants.BASE_URL) : ApiClient {
-    private val client = HttpClient {
+class Client( engine: HttpClientEngine, private val severUrl: String = Constants.BASE_URL) : ApiClient {
+    private val client = HttpClient(engine) {
         install(ContentNegotiation) {
             json()
         }

@@ -51,16 +51,9 @@ kotlin {
             }
         }
 
-        val commonTest by getting {
-            dependencies {
-                implementation("org.jetbrains.kotlin:kotlin-test:1.6.21")
-                implementation("io.ktor:ktor-client-mock:$ktorVersion")
-            }
-        }
-
         val jvmMain by creating {
             dependencies {
-                implementation("io.ktor:ktor-client-java:$ktorVersion")
+                implementation("io.ktor:ktor-client-cio:$ktorVersion")
                 implementation("org.kodein.di:kodein-di-framework-compose:7.11.0")
                 implementation(compose.foundation)
                 implementation(compose.material)

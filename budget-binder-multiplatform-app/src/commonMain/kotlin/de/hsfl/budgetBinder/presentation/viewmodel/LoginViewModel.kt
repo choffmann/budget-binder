@@ -1,7 +1,6 @@
 package de.hsfl.budgetBinder.presentation.viewmodel
 
 import de.hsfl.budgetBinder.common.DataResponse
-import de.hsfl.budgetBinder.common.User
 import de.hsfl.budgetBinder.domain.usecase.GetMyUserUseCase
 import de.hsfl.budgetBinder.domain.usecase.LoginUseCase
 import de.hsfl.budgetBinder.presentation.UiState
@@ -26,7 +25,7 @@ class LoginViewModel(
                 is DataResponse.Success<*> -> getMyUser()
                 is DataResponse.Error -> _state.value = UiState.Error(it.message!!)
             }
-        }
+        }.launchIn(scope)
     }
 
     private fun getMyUser() {
@@ -36,6 +35,6 @@ class LoginViewModel(
                 is DataResponse.Success<*> -> _state.value = UiState.Success(it.data)
                 is DataResponse.Error -> _state.value = UiState.Error(it.message!!)
             }
-        }
+        }.launchIn(scope)
     }
 }

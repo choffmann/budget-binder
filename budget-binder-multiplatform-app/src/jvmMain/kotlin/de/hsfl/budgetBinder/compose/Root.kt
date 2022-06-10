@@ -18,6 +18,7 @@ import de.hsfl.budgetBinder.domain.repository.UserRepository
 import de.hsfl.budgetBinder.domain.usecase.*
 import de.hsfl.budgetBinder.presentation.Screen
 import de.hsfl.budgetBinder.presentation.viewmodel.*
+import io.ktor.client.engine.cio.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -31,7 +32,7 @@ val di = DI {
     bindSingleton { CoroutineScope(Dispatchers.Unconfined + SupervisorJob()) }
 
     // Client
-    bindSingleton { Client() }
+    bindSingleton { Client(engine = CIO.create()) }
 
     // Repositories
     bindSingleton<AuthRepository> { AuthRepositoryImpl(instance()) }
@@ -68,10 +69,19 @@ val di = DI {
     bindSingleton { LoginViewModel(instance(), instance(), instance()) }
     bindSingleton { RegisterViewModel(instance(), instance(), instance(), instance()) }
     bindSingleton { SettingsViewModel(instance(), instance(), instance()) }
-    bindSingleton { CategoryViewModel(instance(), instance(), instance(), instance(), instance(), instance(), instance()) }
+    bindSingleton {
+        CategoryViewModel(
+            instance(),
+            instance(),
+            instance(),
+            instance(),
+            instance(),
+            instance(),
+            instance()
+        )
+    }
     bindSingleton { EntryViewModel(instance(), instance(), instance(), instance(), instance(), instance()) }
     bindSingleton { DashboardViewModel(instance(), instance(), instance(), instance()) }
-
 }
 
 @Composable
