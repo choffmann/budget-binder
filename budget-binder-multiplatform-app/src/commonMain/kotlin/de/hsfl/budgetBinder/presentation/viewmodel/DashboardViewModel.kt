@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.*
 class DashboardViewModel(
     private val getAllEntriesUseCase: GetAllEntriesUseCase,
     private val getAllCategoriesUseCase: GetAllCategoriesUseCase,
+    private val logoutUseCase: LogoutUseCase,
     private val scope: CoroutineScope = CoroutineScope(Dispatchers.Unconfined + SupervisorJob())
 ) {
     private val _state = MutableStateFlow<UiState>(UiState.Empty)
@@ -40,6 +41,22 @@ class DashboardViewModel(
                 is DataResponse.Success -> _state.value = UiState.Success(it.data)
                 is DataResponse.Error -> _state.value = UiState.Error(it.message!!)
                 is DataResponse.Loading -> _state.value = UiState.Loading
+            }
+        }.launchIn(scope)
+    }
+
+    fun logOut(onAllDevices: Boolean) {
+        logoutUseCase(onAllDevices).onEach {
+            when (it) {
+                is DataResponse.Success -> {
+                    _state.value = UiState.Success(it.data)
+                }
+                is DataResponse.Error -> {
+                    _state.value = UiState.Error(error = it.message ?: "Something went wrong")
+                }
+                is DataResponse.Loading -> {
+                    _state.value = UiState.Loading
+                }
             }
         }.launchIn(scope)
     }

@@ -17,9 +17,7 @@ import de.hsfl.budgetBinder.domain.repository.EntryRepository
 import de.hsfl.budgetBinder.domain.repository.UserRepository
 import de.hsfl.budgetBinder.domain.usecase.*
 import de.hsfl.budgetBinder.presentation.Screen
-import de.hsfl.budgetBinder.presentation.viewmodel.LoginViewModel
-import de.hsfl.budgetBinder.presentation.viewmodel.RegisterViewModel
-import de.hsfl.budgetBinder.presentation.viewmodel.SettingsViewModel
+import de.hsfl.budgetBinder.presentation.viewmodel.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -70,6 +68,10 @@ val di = DI {
     bindSingleton { LoginViewModel(instance(), instance(), instance()) }
     bindSingleton { RegisterViewModel(instance(), instance(), instance(), instance()) }
     bindSingleton { SettingsViewModel(instance(), instance(), instance()) }
+    bindSingleton { CategoryViewModel(instance(), instance(), instance(), instance(), instance(), instance(), instance()) }
+    bindSingleton { EntryViewModel(instance(), instance(), instance(), instance(), instance(), instance()) }
+    bindSingleton { DashboardViewModel(instance(), instance(), instance(), instance()) }
+
 }
 
 @Composable

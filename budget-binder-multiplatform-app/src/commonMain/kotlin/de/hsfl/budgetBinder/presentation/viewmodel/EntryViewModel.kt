@@ -11,20 +11,19 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.*
 
-class CategoryViewModel(
-    private val getAllCategoriesUseCase: GetAllCategoriesUseCase,
-    private val getCategoryByIdUseCase: GetCategoryByIdUseCase,
-    private val createCategoryUseCase: CreateCategoryUseCase,
-    private val changeCategoryByIdUseCase: ChangeCategoryByIdUseCase,
-    private val removeCategoryByIdUseCase: RemoveCategoryByIdUseCase,
-    private val getAllEntriesByCategoryUseCase: GetAllEntriesByCategoryUseCase,
+class EntryViewModel(
+    private val getAllEntriesUseCase: GetAllEntriesUseCase,
+    private val getEntryByIdUseCase: GetEntryByIdUseCase,
+    private val createNewEntryUseCase: CreateNewEntryUseCase,
+    private val changeEntryByIdUseCase: ChangeEntryByIdUseCase,
+    private val removeEntryByIdUseCase: RemoveEntryByIdUseCase,
     private val scope: CoroutineScope = CoroutineScope(Dispatchers.Unconfined + SupervisorJob())
 ) {
     private val _state = MutableStateFlow<UiState>(UiState.Empty)
     val state: StateFlow<UiState> = _state
 
-    fun getAllCategories() {
-        getAllCategoriesUseCase.categories().onEach {
+    fun getAllEntries() {
+        getAllEntriesUseCase.entries().onEach {
             when (it) {
                 is DataResponse.Success -> _state.value = UiState.Success(it.data)
                 is DataResponse.Error -> _state.value = UiState.Error(it.message!!)
@@ -33,8 +32,8 @@ class CategoryViewModel(
         }.launchIn(scope)
     }
 
-    fun getCategoryById(id: Int) {
-        getCategoryByIdUseCase(id).onEach {
+    fun getEntryById(id: Int) {
+        getEntryByIdUseCase(id).onEach {
             when (it) {
                 is DataResponse.Success -> _state.value = UiState.Success(it.data)
                 is DataResponse.Error -> _state.value = UiState.Error(it.message!!)
@@ -43,8 +42,8 @@ class CategoryViewModel(
         }.launchIn(scope)
     }
 
-    fun createCategory(category: Category.In) {
-        createCategoryUseCase(category).onEach {
+    fun createEntry(entry: Entry.In) {
+        createNewEntryUseCase(entry).onEach {
             when (it) {
                 is DataResponse.Success -> _state.value = UiState.Success(it.data)
                 is DataResponse.Error -> _state.value = UiState.Error(it.message!!)
@@ -53,8 +52,8 @@ class CategoryViewModel(
         }.launchIn(scope)
     }
 
-    fun changeCategory(category: Category.In,id: Int) {
-        changeCategoryByIdUseCase(category, id).onEach {
+    fun changeEntry(entry: Entry.In, id: Int) {
+        changeEntryByIdUseCase(entry, id).onEach {
             when (it) {
                 is DataResponse.Success -> _state.value = UiState.Success(it.data)
                 is DataResponse.Error -> _state.value = UiState.Error(it.message!!)
@@ -63,18 +62,8 @@ class CategoryViewModel(
         }.launchIn(scope)
     }
 
-    fun removeCategory(id: Int) {
-        removeCategoryByIdUseCase(id).onEach {
-            when (it) {
-                is DataResponse.Success -> _state.value = UiState.Success(it.data)
-                is DataResponse.Error -> _state.value = UiState.Error(it.message!!)
-                is DataResponse.Loading -> _state.value = UiState.Loading
-            }
-        }.launchIn(scope)
-    }
-
-    fun getEntriesByCategory(id: Int) {
-        getAllEntriesByCategoryUseCase(id).onEach {
+    fun removeEntry(id: Int) {
+        removeEntryByIdUseCase(id).onEach {
             when (it) {
                 is DataResponse.Success -> _state.value = UiState.Success(it.data)
                 is DataResponse.Error -> _state.value = UiState.Error(it.message!!)
