@@ -1,4 +1,4 @@
-package de.hsfl.budgetBinder.compose.categoryCreate
+package de.hsfl.budgetBinder.compose.category
 
 import androidx.compose.runtime.*
 import de.hsfl.budgetBinder.presentation.UiState
@@ -9,12 +9,12 @@ import org.jetbrains.compose.web.dom.Text
 
 
 @Composable
-fun CategoryCreateView(
+fun CategoryEditView(
     state: State<Any>,
     onBackButton: () -> Unit
 ) {
     val viewState by remember { state }
-    H1{Text("CategoryCreateView")}
+    H1{Text("CategoryEditView")}
     Div {
         when (viewState) {
             is UiState.Success<*> -> {
@@ -30,7 +30,7 @@ fun CategoryCreateView(
         Button(attrs = {
             onClick { onBackButton() }
         }) {
-            Text("Back to To Category Overview")
+            Text("Back to Category Overview")
         }
     }
 }

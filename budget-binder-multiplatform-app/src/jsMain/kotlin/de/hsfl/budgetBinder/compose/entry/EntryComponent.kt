@@ -1,11 +1,8 @@
-package de.hsfl.budgetBinder.compose.entryEdit
+package de.hsfl.budgetBinder.compose.entry
 
 import androidx.compose.runtime.*
-import de.hsfl.budgetBinder.domain.use_case.auth_user.LogoutUseCase
 import de.hsfl.budgetBinder.domain.use_case.get_user.UserUseCase
-import de.hsfl.budgetBinder.presentation.LogoutViewModel
 import de.hsfl.budgetBinder.presentation.Screen
-import de.hsfl.budgetBinder.presentation.UiState
 import de.hsfl.budgetBinder.presentation.UserViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -14,15 +11,23 @@ import org.kodein.di.compose.localDI
 import org.kodein.di.instance
 
 @Composable
-fun EntryEditComponent(screenState: MutableState<Screen>) {
+fun EntryComponent(screenState: MutableState<Screen>) {
     val scope = CoroutineScope(Dispatchers.Unconfined + SupervisorJob())
     val di = localDI()
     val userUseCase: UserUseCase by di.instance()
     val userViewModel = UserViewModel(userUseCase, scope)
     val viewState = userViewModel.state.collectAsState(scope)
 
-    EntryEditView(
-        state = viewState,
-        onBackButton = { screenState.value = Screen.Dashboard}
-    )
+    when (screenState.value) {
+        Screen.EntryCreate -> EntryCreateView(
+            state = viewState,
+            onBackButton = { screenState.value = Screen.Dashboard },
+            onCategoryCreateButton = { screenState.value = Screen.CategoryCreate }
+        )
+        Screen.EntryEdit -> EntryEditView(
+            state = viewState,
+            onBackButton = { screenState.value = Screen.Dashboard}
+        )
+        else -> {}
+    }
 }

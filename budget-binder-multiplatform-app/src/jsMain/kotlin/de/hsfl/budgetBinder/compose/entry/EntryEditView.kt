@@ -1,4 +1,4 @@
-package de.hsfl.budgetBinder.compose.categorySummary
+package de.hsfl.budgetBinder.compose.entry
 
 import androidx.compose.runtime.*
 import de.hsfl.budgetBinder.presentation.UiState
@@ -9,14 +9,12 @@ import org.jetbrains.compose.web.dom.Text
 
 
 @Composable
-fun CategorySummaryView(
+fun EntryEditView(
     state: State<Any>,
-    onBackButton: () -> Unit,
-    onEditButton: () -> Unit,
-    onCategoryCreateButton: () -> Unit
+    onBackButton: () -> Unit
 ) {
     val viewState by remember { state }
-    H1{Text("CategorySummaryView")}
+    H1{Text("EntryEditView")}
     Div {
         when (viewState) {
             is UiState.Success<*> -> {
@@ -33,16 +31,6 @@ fun CategorySummaryView(
             onClick { onBackButton() }
         }) {
             Text("Back to Dashboard")
-        }
-        Button(attrs = {
-            onClick { onEditButton() }
-        }) {
-            Text("Edit Category (Needs to be set for each category)")
-        }
-        Button(attrs = {
-            onClick { onCategoryCreateButton() }
-        }) {
-            Text("Create Category")
         }
     }
 }
