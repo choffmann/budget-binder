@@ -1,6 +1,7 @@
 package de.hsfl.budgetBinder.compose
 
 import androidx.compose.runtime.Composable
+import de.hsfl.budgetBinder.compose.theme.AppStylesheet
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.Div
 
@@ -10,27 +11,14 @@ import org.jetbrains.compose.web.dom.Div
 fun MainFlexContainer(content: @Composable () -> Unit){
     Div (
         attrs = {
-            classes()
-            style {
-                display(DisplayStyle("flex"))
-            }
+            classes("mdc-top-app-bar--fixed-adjust", AppStylesheet.flexContainer)
         }
             ){
-        Div (attrs = {
-            style {
-                flex("25%")
-            }})
-        Div (attrs = {
-            style {
-                justifyContent(JustifyContent.Center)
-                flex("50%")
-            }})
+        Div (attrs = { classes(AppStylesheet.pufferFlexContainer) })
+        Div (attrs = { classes(AppStylesheet.contentFlexContainer)})
         {
             content()
         }
-        Div (attrs = {
-            style {
-                flex("25%")
-            }})
+        Div (attrs = { classes(AppStylesheet.pufferFlexContainer)})
     }
 }

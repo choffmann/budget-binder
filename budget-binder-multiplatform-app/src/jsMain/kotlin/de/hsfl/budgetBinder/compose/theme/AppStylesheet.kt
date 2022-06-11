@@ -31,19 +31,32 @@ object AppStylesheet : StyleSheet() {
         }
     }
 
-    // A convenient way to create a class selector
-    // AppStylesheet.container can be used as a class in component attrs
 
-    val container by style {
-        flex(50.percent)
-    }
-
+    //* MainFlexContainer *//
+    //Container for flex elements, used in MainFlexContainer
     val flexContainer by style {
         display(DisplayStyle.Flex)
     }
+    //Container for empty sides, used in MainFlexContainer
+    val pufferFlexContainer by style {
+        media(mediaMaxWidth(1000.px)) {
+            self style {
+                display(DisplayStyle.None)
+            }
+        }
+        flex("25%")
+    }
+    //Container for main content, used in MainFlexContainer
+    val contentFlexContainer by style {
+        justifyContent(JustifyContent.Center)
+        flex("50%")
+    }
+
 
     val card by style {
+        margin(10.px)
         marginTop(25.px)
+
     }
 
     val image by style {
