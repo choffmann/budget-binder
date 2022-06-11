@@ -3,6 +3,7 @@ package de.hsfl.budgetBinder.compose.category
 import androidx.compose.runtime.*
 import de.hsfl.budgetBinder.common.Category
 import de.hsfl.budgetBinder.common.Entry
+import de.hsfl.budgetBinder.common.StateManager.categoryList
 import de.hsfl.budgetBinder.domain.use_case.auth_user.LoginUseCase
 import de.hsfl.budgetBinder.presentation.LoginViewModel
 import de.hsfl.budgetBinder.presentation.Screen
@@ -54,10 +55,27 @@ fun Icon(category: Category){
     }
     Img(imagePath, "imagePath", attrs = {classes("mdc-icon-button")})
 }
+@Composable
+fun Icon(id: Int?){
+    var categoryImage = Category.Image.DEFAULT
+    if (id != null) {
+        categoryImage = categoryList[id].image
+    }
+    val imagePath =
+        when (categoryImage) {
+            Category.Image.DEFAULT -> "cart.png"
+            Category.Image.SHOPPING -> "cart.png"
+        }
+    Img(imagePath, "imagePath", attrs = {
+        classes("mdc-icon-button")
+        style { padding(0.px) }
+    })
+}
 
 @OptIn(ExperimentalComposeWebSvgApi::class)
 @Composable
 fun Bar(category: Category, entryList: List<Entry>){
+    //width and height are for aspect ratio - tries to fill out wherever its in, so its more like
     val width = 200
     val height = 80
     val budget = category.budget
@@ -76,7 +94,7 @@ fun Bar(category: Category, entryList: List<Entry>){
                 Div{Text(budget.toString()+"€")}
             }
             //Bar
-            Svg(viewBox = "0 0 200 80"){//For aspect ratio - tries to fill out wherever its in
+            Svg(viewBox = "0 0 $width $height"){//For aspect ratio - tries to fill out wherever its in
                 Rect(x = 0, y = 0, width = width, height = height, {
                     attr("fill", Color.lightgray.toString())
                 })
@@ -94,7 +112,7 @@ fun Bar(category: Category, entryList: List<Entry>){
                 Div{Text("Budget limit for "+category.name+" reached! "+usedBudget.toString()+"€ of "+budget.toString()+"€ Budget spent")}
             }
             //Bar
-            Svg(viewBox = "0 0 200 80"){//For aspect ratio - tries to fill out wherever its in
+            Svg(viewBox = "0 0 $width $height"){//For aspect ratio - tries to fill out wherever its in
                 Rect(x = 0, y = 0, width = width, height = height, {
                     attr("fill", Color.red.toString())
                 })

@@ -52,6 +52,10 @@ object AppStylesheet : StyleSheet() {
         flex("50%")
     }
 
+    //EntryList
+    val entryListElement by style{
+
+    }
 
     val card by style {
         margin(10.px)

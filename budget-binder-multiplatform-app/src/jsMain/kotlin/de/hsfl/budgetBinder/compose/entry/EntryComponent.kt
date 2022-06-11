@@ -2,6 +2,7 @@ package de.hsfl.budgetBinder.compose.entry
 
 import androidx.compose.runtime.*
 import de.hsfl.budgetBinder.common.Entry
+import de.hsfl.budgetBinder.compose.category.Icon
 import de.hsfl.budgetBinder.domain.use_case.get_user.UserUseCase
 import de.hsfl.budgetBinder.presentation.Screen
 import de.hsfl.budgetBinder.presentation.UserViewModel
@@ -39,7 +40,7 @@ fun EntryComponent(screenState: MutableState<Screen>) {
 @Composable
 fun EntryListElement(entry: Entry){
     Div {
-        //TODO: Icon der Kategorie hier anzeigen: Category.Icon(entry.category_id)
+        Icon(entry.category_id)
         Text(entry.name)
         Text(entry.amount.toString()+"€")
     }
