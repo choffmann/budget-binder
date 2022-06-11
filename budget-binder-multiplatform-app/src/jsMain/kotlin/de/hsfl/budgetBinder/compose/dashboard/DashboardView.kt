@@ -60,11 +60,14 @@ fun DashboardView(
         }) {
             Text("Edit Entry (Needs to be there for every Entry shown)")
         }
+
+
         val category = Category(0,"","FFFFFF",Category.Image.SHOPPING, 12f)
         val entryList = listOf(
             Entry(0,"Flowers",10f,false,0),
             Entry(1,"Food",12f,false,0)
         )
+
         Icon(category)
         Bar(category,entryList)
     }
