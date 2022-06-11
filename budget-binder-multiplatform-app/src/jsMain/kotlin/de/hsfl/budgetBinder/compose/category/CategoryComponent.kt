@@ -22,13 +22,13 @@ import org.kodein.di.instance
 fun CategoryComponent(screenState: MutableState<Screen>) {
     val scope = CoroutineScope(Dispatchers.Unconfined + SupervisorJob())
     val di = localDI()
-    val getAllCategoryUseCase: GetAllCategoriesUseCase by di.instance()
+    val getAllCategoriesUseCase: GetAllCategoriesUseCase by di.instance()
     val createCategoryUseCase: CreateCategoryUseCase by di.instance()
     val getCategoryByIdUseCase: GetCategoryByIdUseCase by di.instance()
     val changeCategoryByIdUseCase: ChangeCategoryByIdUseCase by di.instance()
     val deleteCategoryByIdUseCase: DeleteCategoryByIdUseCase by di.instance()
     val getAllEntriesByCategoryUseCase: GetAllEntriesByCategoryUseCase by di.instance()
-    val categoryViewModel = CategoryViewModel(getAllCategoryUseCase, getCategoryByIdUseCase,createCategoryUseCase, changeCategoryByIdUseCase, deleteCategoryByIdUseCase, getAllEntriesByCategoryUseCase, scope)
+    val categoryViewModel = CategoryViewModel(getAllCategoriesUseCase, getCategoryByIdUseCase,createCategoryUseCase, changeCategoryByIdUseCase, deleteCategoryByIdUseCase, getAllEntriesByCategoryUseCase, scope)
     val viewState = categoryViewModel.state.collectAsState(scope)
 
     when (screenState.value) {
@@ -45,6 +45,10 @@ fun CategoryComponent(screenState: MutableState<Screen>) {
         Screen.CategoryEdit -> CategoryEditView(
             state = viewState,
             onBackButton = { screenState.value = Screen.CategorySummary}
+        )
+        Screen.CategoryCreateOnRegister -> CategoryCreateOnRegisterView(
+            state = viewState,
+            onFinishedButton = { screenState.value = Screen.Dashboard} //Should go back to the previous Screen, which could be CategorySummary or EntryCreate.
         )
         else -> {}
     }

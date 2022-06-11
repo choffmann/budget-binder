@@ -1,4 +1,4 @@
-package de.hsfl.budgetBinder.compose.categoryCreateOnRegister
+package de.hsfl.budgetBinder.compose.category
 
 import androidx.compose.runtime.*
 import de.hsfl.budgetBinder.presentation.UiState
