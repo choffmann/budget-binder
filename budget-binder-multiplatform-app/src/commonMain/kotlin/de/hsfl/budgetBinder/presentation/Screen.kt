@@ -4,5 +4,7 @@ sealed class Screen {
     object Welcome : Screen()
     object Login : Screen()
     object Register : Screen()
-    object User : Screen()
+    object Home : Screen()
+    object Settings : Screen()
+    object Categories : Screen()
 }

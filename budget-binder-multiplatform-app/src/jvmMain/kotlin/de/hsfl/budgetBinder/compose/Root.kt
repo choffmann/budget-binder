@@ -1,11 +1,11 @@
 package de.hsfl.budgetBinder.compose
 
 import androidx.compose.material.*
-import androidx.compose.material.Icon
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.graphics.Color
+import de.hsfl.budgetBinder.compose.StateManager.darkMode
+import de.hsfl.budgetBinder.compose.StateManager.scaffoldState
+import de.hsfl.budgetBinder.compose.navigation.AppBarComponent
+import de.hsfl.budgetBinder.compose.navigation.DrawerContent
 import de.hsfl.budgetBinder.data.client.Client
 import de.hsfl.budgetBinder.data.repository.AuthRepositoryImpl
 import de.hsfl.budgetBinder.data.repository.CategoryRepositoryImpl
@@ -16,12 +16,12 @@ import de.hsfl.budgetBinder.domain.repository.CategoryRepository
 import de.hsfl.budgetBinder.domain.repository.EntryRepository
 import de.hsfl.budgetBinder.domain.repository.UserRepository
 import de.hsfl.budgetBinder.domain.usecase.*
-import de.hsfl.budgetBinder.presentation.Screen
 import de.hsfl.budgetBinder.presentation.viewmodel.*
 import io.ktor.client.engine.cio.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import org.kodein.di.DI
 import org.kodein.di.bindSingleton
 import org.kodein.di.compose.withDI
@@ -86,19 +86,32 @@ val di = DI {
 
 @Composable
 fun App() = withDI(di) {
-    val screenState = remember { mutableStateOf<Screen>(Screen.Login) }
-    val darkTheme = remember { mutableStateOf(false) }
+    val scaffold = remember { scaffoldState }
+    val scope = rememberCoroutineScope()
     MaterialTheme(
-        colors = if (darkTheme.value) darkColors() else lightColors()
+        colors = if (darkMode.value) darkColors() else lightColors()
     ) {
-        Router(screenState = screenState)
-
-        // Toggle Dark-mode
-        IconToggleButton(checked = darkTheme.value, onCheckedChange = { darkTheme.value = it }) {
-            if (darkTheme.value)
-                Icon(Icons.Filled.Info, contentDescription = null, tint = Color.White)
-            else
-                Icon(Icons.Filled.Info, contentDescription = null, tint = Color.Black)
+        Scaffold(
+            scaffoldState = scaffold,
+            topBar = {
+                if (!StateManager.isLoggedIn.value) AppBarComponent()
+                else AppBarComponent(onMenuClicked = { toggleDrawerNav(scope) })
+            },
+            floatingActionButton = {},
+            floatingActionButtonPosition = FabPosition.End,
+            isFloatingActionButtonDocked = false,
+        ) {
+            ModalDrawer(drawerState = StateManager.drawerState,
+                gesturesEnabled = StateManager.isLoggedIn.value,
+                drawerContent = { DrawerContent() },
+                content = { Router() })
         }
+    }
+}
+
+private fun toggleDrawerNav(scope: CoroutineScope) {
+    scope.launch {
+        if (StateManager.drawerState.isOpen) StateManager.drawerState.close()
+        else StateManager.drawerState.open()
     }
 }

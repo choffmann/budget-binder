@@ -1,18 +1,22 @@
 package de.hsfl.budgetBinder.compose
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import de.hsfl.budgetBinder.compose.login.LoginComponent
-import de.hsfl.budgetBinder.compose.register.RegisterComponent
-import de.hsfl.budgetBinder.compose.user.UserComponent
+import de.hsfl.budgetBinder.compose.StateManager.screenState
+import de.hsfl.budgetBinder.compose.screens.home.HomeComponent
+import de.hsfl.budgetBinder.compose.screens.settings.SettingsComponent
+import de.hsfl.budgetBinder.compose.screens.welcome.LoginComponent
+import de.hsfl.budgetBinder.compose.screens.welcome.RegisterComponent
+import de.hsfl.budgetBinder.compose.screens.welcome.WelcomeComponent
 import de.hsfl.budgetBinder.presentation.Screen
 
 @Composable
-fun Router(screenState: MutableState<Screen>) {
+fun Router() {
     when (screenState.value) {
-        is Screen.Welcome -> {}
-        is Screen.Register -> RegisterComponent(screenState = screenState)
-        is Screen.Login -> LoginComponent(screenState = screenState)
-        is Screen.User -> UserComponent(screenState = screenState)
+        is Screen.Welcome -> WelcomeComponent()
+        is Screen.Register -> RegisterComponent()
+        is Screen.Login -> LoginComponent()
+        is Screen.Home -> HomeComponent()
+        is Screen.Settings -> SettingsComponent()
+        is Screen.Categories -> {}
     }
 }
