@@ -2,6 +2,7 @@ package de.hsfl.budgetBinder.domain.usecase
 
 import de.hsfl.budgetBinder.common.Category
 import de.hsfl.budgetBinder.common.DataResponse
+import de.hsfl.budgetBinder.common.Entry
 import de.hsfl.budgetBinder.domain.repository.CategoryRepository
 import io.ktor.utils.io.errors.*
 import kotlinx.coroutines.flow.Flow
@@ -24,7 +25,7 @@ class GetAllCategoriesUseCase(private val repository: CategoryRepository) {
         }
     }
 
-    fun categories(period: String): Flow<DataResponse<Category>> = flow {
+    fun categories(period: String): Flow<DataResponse<List<Category>>> = flow {
         try {
             emit(DataResponse.Loading())
             repository.getAllCategories(period).let { response ->
@@ -114,7 +115,7 @@ class RemoveCategoryByIdUseCase(private val repository: CategoryRepository) {
 }
 
 class GetAllEntriesByCategoryUseCase(private val repository: CategoryRepository) {
-    operator fun invoke(id: Int): Flow<DataResponse<List<Category>>> = flow {
+    operator fun invoke(id: Int): Flow<DataResponse<List<Entry>>> = flow {
         try {
             emit(DataResponse.Loading())
             repository.getEntriesFromCategory(id).let { response ->

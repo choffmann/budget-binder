@@ -2,6 +2,7 @@ package de.hsfl.budgetBinder.data.repository
 
 import de.hsfl.budgetBinder.common.APIResponse
 import de.hsfl.budgetBinder.common.Category
+import de.hsfl.budgetBinder.common.Entry
 import de.hsfl.budgetBinder.data.client.Client
 import de.hsfl.budgetBinder.domain.repository.CategoryRepository
 
@@ -12,7 +13,7 @@ class CategoryRepositoryImpl(
         return client.getAllCategories()
     }
 
-    override suspend fun getAllCategories(period: String): APIResponse<Category> {
+    override suspend fun getAllCategories(period: String): APIResponse<List<Category>> {
         return client.getAllCategories(period)
     }
 
@@ -32,7 +33,7 @@ class CategoryRepositoryImpl(
         return client.removeCategoryById(id)
     }
 
-    override suspend fun getEntriesFromCategory(id: Int): APIResponse<List<Category>> {
+    override suspend fun getEntriesFromCategory(id: Int): APIResponse<List<Entry>> {
         return client.getEntriesFromCategory(id)
     }
 }
