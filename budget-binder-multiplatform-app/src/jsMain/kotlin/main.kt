@@ -1,9 +1,8 @@
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import de.hsfl.budgetBinder.compose.ApplicationView
 import de.hsfl.budgetBinder.compose.Router
-import de.hsfl.budgetBinder.compose.login.LoginView
+import de.hsfl.budgetBinder.compose.theme.AppStylesheet
 import de.hsfl.budgetBinder.data.client.Client
 import de.hsfl.budgetBinder.data.repository.AuthRepositoryImpl
 import de.hsfl.budgetBinder.data.repository.UserRepositoryImpl
@@ -14,6 +13,7 @@ import de.hsfl.budgetBinder.domain.use_case.auth_user.LogoutUseCase
 import de.hsfl.budgetBinder.domain.use_case.auth_user.RegisterUseCase
 import de.hsfl.budgetBinder.domain.use_case.get_user.UserUseCase
 import de.hsfl.budgetBinder.presentation.Screen
+import org.jetbrains.compose.web.css.Style
 import org.jetbrains.compose.web.renderComposable
 import org.kodein.di.DI
 import org.kodein.di.bindSingleton
@@ -33,6 +33,7 @@ val di = DI {
 }
 fun main() {
     renderComposable("root") {
+        Style(AppStylesheet)
         App() // Opens
     }
 }

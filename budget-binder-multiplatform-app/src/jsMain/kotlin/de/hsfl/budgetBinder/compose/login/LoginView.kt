@@ -1,7 +1,9 @@
 package de.hsfl.budgetBinder.compose.login
 
 import androidx.compose.runtime.*
+import de.hsfl.budgetBinder.compose.theme.AppStylesheet
 import de.hsfl.budgetBinder.presentation.UiState
+import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
 
 @Composable
@@ -15,58 +17,193 @@ fun LoginView(
     var passwordTextFieldState by remember { mutableStateOf("") }
     val viewState by remember { state }
 
-    // -- Login Form --
-    Div(
+    Header(
         attrs = {
-            classes()
-            style {
-            }
+            classes("mdc-top-app-bar")
         }
     ) {
-        Form(attrs = {
-            this.addEventListener("submit") {
-                console.log("${emailTextFieldState}, ${passwordTextFieldState}")
-                onLoginButtonPressed(emailTextFieldState, passwordTextFieldState)
-                it.preventDefault()
-            }
-        })
-        {
-            Label { Text("Email") }
-            EmailInput(value = emailTextFieldState,
-                attrs = {
-                    onInput {
-                        emailTextFieldState = it.value
-                    }
-                })
-            Label { Text("Password") }
-            PasswordInput(value = passwordTextFieldState,
-                attrs = {
-                    onInput {
-                        passwordTextFieldState = it.value
-                    }
-                })
-            SubmitInput(attrs = {
-                value("Submit")
-            })
-        }
-        Button(
+        Div(
             attrs = {
-                onClick { onChangeToRegister() }
+                classes("mdc-top-app-bar__row")
             }
-        ) { Text("Register Instead") }
-
-        // -- Login Request Management --
-        when (viewState) {
-            is UiState.Success<*> -> {
-                onLoginSuccess()
+        ) {
+            Section(
+                attrs = {
+                    classes("mdc-top-app-bar__section", "mdc-top-app-bar__section--align-start")
+                }
+            ) {
+                Img(
+                    src = "images/Logo.png", alt = "Logo", attrs = {
+                        classes("mdc-icon-button", AppStylesheet.image)
+                    }
+                )
+                Span(
+                    attrs = {
+                        classes("mdc-top-app-bar__title")
+                    }
+                ) {
+                    Text("Budget-Binder")
+                }
             }
-            is UiState.Error -> {
-                Text((viewState as UiState.Error).error)
+            Section(
+                attrs = {
+                    classes("mdc-top-app-bar__section", "mdc-top-app-bar__section--align-end")
+                }
+            ) {
+                Button(
+                    attrs = {
+                        classes("mdc-button", "mdc-button--raised", "mdc-top-app-bar__navigation-icon")
+                        onClick { onChangeToRegister() }
+                    }
+                ) {
+                    Span(
+                        attrs = {
+                            classes("mdc-button__label")
+                        }
+                    ) {
+                        Text("Register Instead")
+                    }
+                }
             }
-            is UiState.Loading -> {
-                //CircularProgressIndicator()
-            }
-            else -> {}
         }
     }
+
+    Main(
+        attrs = {
+            classes("mdc-top-app-bar--fixed-adjust", AppStylesheet.flexContainer)
+        }
+    ) {
+        Div(
+            attrs = {
+                style { flex(25.percent) }
+            }
+        ) {  }
+        // -- Login Form --
+        Div(
+            attrs = {
+                classes(AppStylesheet.container)
+            }
+        ) {
+            Div(
+                attrs = {
+                    classes("mdc-card", AppStylesheet.card)
+                }
+            ) {
+                H1 { Text(" Login") }
+                Form(
+                    attrs = {
+                        this.addEventListener("submit") {
+                            console.log("${emailTextFieldState}, ${passwordTextFieldState}")
+                            onLoginButtonPressed(emailTextFieldState, passwordTextFieldState)
+                            it.preventDefault()
+                        }
+                    }
+                ) {
+                    Div(
+                        attrs = {
+                            classes(AppStylesheet.margin)
+                        }
+                    ) {
+                        Label(
+                            attrs = {
+                                classes("mdc-text-field", "mdc-text-field--filled")
+                                style { width(100.percent) }
+                            }
+                        ) {
+                            Span(
+                                attrs = {
+                                    classes("mdc-text-field__ripple")
+                                }
+                            ) { }
+                            Span(
+                                attrs = {
+                                    classes("mdc-floating-label", "mdc-floating-label--float-above")
+                                }
+                            ) { Text("Email") }
+                            EmailInput(value = emailTextFieldState,
+                                attrs = {
+                                    classes("mdc-text-field__input")
+                                    onInput {
+                                        emailTextFieldState = it.value
+
+                                    }
+                                })
+                            Span(
+                                attrs = {
+                                    classes("mdc-line-ripple")
+                                }
+                            ) { }
+                        }
+                    }
+                    Div(
+                        attrs = {
+                            classes(AppStylesheet.margin)
+                        }
+                    ) {
+                        Label(
+                            attrs = {
+                                classes("mdc-text-field", "mdc-text-field--filled")
+                                style { width(100.percent) }
+                            }
+                        ) {
+                            Span(
+                                attrs = {
+                                    classes("mdc-text-field__ripple")
+                                }
+                            ) { }
+                            Span(
+                                attrs = {
+                                    classes("mdc-floating-label", "mdc-floating-label--float-above")
+                                }
+                            ) { Text("Password") }
+                            PasswordInput(value = passwordTextFieldState,
+                                attrs = {
+                                    classes("mdc-text-field__input")
+                                    onInput {
+                                        passwordTextFieldState = it.value
+                                    }
+                                })
+                            Span(
+                                attrs = {
+                                    classes("mdc-line-ripple")
+                                }
+                            ) { }
+                        }
+                    }
+                    Div(
+                        attrs = {
+                            classes(AppStylesheet.margin)
+                        }
+                    ) {
+                        SubmitInput(
+                            attrs = {
+                                classes("mdc-button", "mdc-button--raised")
+                                value("Submit")
+                            })
+                    }
+                    // -- Login Request Management --
+                    when (viewState) {
+                        is UiState.Success<*> -> {
+                            onLoginSuccess()
+                        }
+                        is UiState.Error -> {
+                            Text((viewState as UiState.Error).error)
+                        }
+                        is UiState.Loading -> {
+                            //CircularProgressIndicator()
+                        }
+                        else -> {}
+                    }
+                }
+            }
+
+        }
+        Div(
+            attrs = {
+                style { flex(25.percent) }
+            }
+        ) {  }
+    }
+
+
 }
