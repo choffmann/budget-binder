@@ -7,7 +7,9 @@ server:
     sslPort: 8443
     keyStorePassword: null
     keyStorePath: null
-    frontendAddresses: http://localhost:8081
+    frontendAddresses:
+      - http://localhost:8080
+      - http://localhost:8081
     noForwardedHeaderSupport: false
 dataBase:
     dbType: SQLITE
@@ -22,5 +24,6 @@ jwt:
     refreshSecret: secret2
     accessMinutes: 15
     refreshDays: 7
+    realm: budget-binder
     issuer: http://0.0.0.0:8080
     audience: http://0.0.0.0:8080

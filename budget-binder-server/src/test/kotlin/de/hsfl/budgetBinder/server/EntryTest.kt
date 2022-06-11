@@ -129,14 +129,14 @@ class EntryTest {
         client.get("/entries").let { response ->
             assertEquals(HttpStatusCode.Unauthorized, response.status)
             val responseBody: APIResponse<Entry> = response.body()
-            val shouldResponse: APIResponse<Entry> = wrapFailure("Unauthorized")
+            val shouldResponse: APIResponse<Entry> = wrapFailure("Your accessToken is absent or does not match.")
             assertEquals(shouldResponse, responseBody)
         }
 
         sendAuthenticatedRequest(client, HttpMethod.Post, "/entries") { response ->
             assertEquals(HttpStatusCode.OK, response.status)
             val responseBody: APIResponse<Entry> = response.body()
-            val shouldResponse: APIResponse<Entry> = wrapFailure("not the right Parameters provided")
+            val shouldResponse: APIResponse<Entry> = wrapFailure("The object you provided it not in the right format.")
             assertEquals(shouldResponse, responseBody)
         }
 
@@ -168,7 +168,7 @@ class EntryTest {
         client.get("/entries").let { response ->
             assertEquals(HttpStatusCode.Unauthorized, response.status)
             val responseBody: APIResponse<List<Entry>> = response.body()
-            val shouldResponse: APIResponse<List<Entry>> = wrapFailure("Unauthorized")
+            val shouldResponse: APIResponse<List<Entry>> = wrapFailure("Your accessToken is absent or does not match.")
             assertEquals(shouldResponse, responseBody)
         }
 
@@ -290,21 +290,21 @@ class EntryTest {
         client.get("/entries/1").let { response ->
             assertEquals(HttpStatusCode.Unauthorized, response.status)
             val responseBody: APIResponse<Entry> = response.body()
-            val shouldResponse: APIResponse<Entry> = wrapFailure("Unauthorized")
+            val shouldResponse: APIResponse<Entry> = wrapFailure("Your accessToken is absent or does not match.")
             assertEquals(shouldResponse, responseBody)
         }
 
         sendAuthenticatedRequest(client, HttpMethod.Get, "/entries/test") { response ->
             assertEquals(HttpStatusCode.OK, response.status)
             val responseBody: APIResponse<Entry> = response.body()
-            val shouldResponse: APIResponse<Entry> = wrapFailure("path parameter is not a number")
+            val shouldResponse: APIResponse<Entry> = wrapFailure("The ID you provided is not a number.")
             assertEquals(shouldResponse, responseBody)
         }
 
         sendAuthenticatedRequest(client, HttpMethod.Get, "/entries/5000") { response ->
             assertEquals(HttpStatusCode.OK, response.status)
             val responseBody: APIResponse<Entry> = response.body()
-            val shouldResponse: APIResponse<Entry> = wrapFailure("Entry not found")
+            val shouldResponse: APIResponse<Entry> = wrapFailure("Your entry was not found.")
             assertEquals(shouldResponse, responseBody)
         }
 
@@ -324,21 +324,21 @@ class EntryTest {
         client.patch("/entries/1").let { response ->
             assertEquals(HttpStatusCode.Unauthorized, response.status)
             val responseBody: APIResponse<Entry> = response.body()
-            val shouldResponse: APIResponse<Entry> = wrapFailure("Unauthorized")
+            val shouldResponse: APIResponse<Entry> = wrapFailure("Your accessToken is absent or does not match.")
             assertEquals(shouldResponse, responseBody)
         }
 
         sendAuthenticatedRequest(client, HttpMethod.Patch, "/entries/test") { response ->
             assertEquals(HttpStatusCode.OK, response.status)
             val responseBody: APIResponse<Entry> = response.body()
-            val shouldResponse: APIResponse<Entry> = wrapFailure("path parameter is not a number")
+            val shouldResponse: APIResponse<Entry> = wrapFailure("The ID you provided is not a number.")
             assertEquals(shouldResponse, responseBody)
         }
 
         sendAuthenticatedRequest(client, HttpMethod.Patch, "/entries/5000") { response ->
             assertEquals(HttpStatusCode.OK, response.status)
             val responseBody: APIResponse<Entry> = response.body()
-            val shouldResponse: APIResponse<Entry> = wrapFailure("Entry not found")
+            val shouldResponse: APIResponse<Entry> = wrapFailure("Your entry was not found.")
             assertEquals(shouldResponse, responseBody)
         }
 
@@ -347,7 +347,7 @@ class EntryTest {
         sendAuthenticatedRequest(client, HttpMethod.Patch, "/entries/$id") { response ->
             assertEquals(HttpStatusCode.OK, response.status)
             val responseBody: APIResponse<Entry> = response.body()
-            val shouldResponse: APIResponse<Entry> = wrapFailure("not the right Parameters provided")
+            val shouldResponse: APIResponse<Entry> = wrapFailure("The object you provided it not in the right format.")
             assertEquals(shouldResponse, responseBody)
         }
 
@@ -453,21 +453,21 @@ class EntryTest {
         client.delete("/entries/1").let { response ->
             assertEquals(HttpStatusCode.Unauthorized, response.status)
             val responseBody: APIResponse<Entry> = response.body()
-            val shouldResponse: APIResponse<Entry> = wrapFailure("Unauthorized")
+            val shouldResponse: APIResponse<Entry> = wrapFailure("Your accessToken is absent or does not match.")
             assertEquals(shouldResponse, responseBody)
         }
 
         sendAuthenticatedRequest(client, HttpMethod.Delete, "/entries/test") { response ->
             assertEquals(HttpStatusCode.OK, response.status)
             val responseBody: APIResponse<Entry> = response.body()
-            val shouldResponse: APIResponse<Entry> = wrapFailure("path parameter is not a number")
+            val shouldResponse: APIResponse<Entry> = wrapFailure("The ID you provided is not a number.")
             assertEquals(shouldResponse, responseBody)
         }
 
         sendAuthenticatedRequest(client, HttpMethod.Delete, "/entries/5000") { response ->
             assertEquals(HttpStatusCode.OK, response.status)
             val responseBody: APIResponse<Entry> = response.body()
-            val shouldResponse: APIResponse<Entry> = wrapFailure("Entry not found")
+            val shouldResponse: APIResponse<Entry> = wrapFailure("Your entry was not found.")
             assertEquals(shouldResponse, responseBody)
         }
 

@@ -1,8 +1,6 @@
 Dockerfile
 .gitignore
 /docs/
-/kotlin-js-store/
-/budget-binder-multiplatform-app/
 
 */**/data.db
 # Created by https://www.toptal.com/developers/gitignore/api/windows,linux,macos,gradle,kotlin,intellij,intellij+iml,intellij+all,android,androidstudio,swift,xcode,xcodeinjection,swiftpm,swiftpackagemanager

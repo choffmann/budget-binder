@@ -5,7 +5,7 @@ import de.hsfl.budgetBinder.common.Category
 import de.hsfl.budgetBinder.common.Entry
 import de.hsfl.budgetBinder.common.ErrorModel
 import de.hsfl.budgetBinder.server.models.UserPrincipal
-import de.hsfl.budgetBinder.server.repository.parseParameterToLocalDateTime
+import de.hsfl.budgetBinder.server.repository.parseParameterToLocalDateTimeOrErrorMessage
 import de.hsfl.budgetBinder.server.services.interfaces.EntryService
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
@@ -21,7 +21,7 @@ fun Route.entriesRoute() {
             val userPrincipal: UserPrincipal = call.principal()!!
             val entryService: EntryService by closestDI().instance()
 
-            val (error, period) = parseParameterToLocalDateTime(
+            val (error, period) = parseParameterToLocalDateTimeOrErrorMessage(
                 call.request.queryParameters["current"].toBoolean(),
                 call.request.queryParameters["period"]
             )
@@ -37,13 +37,14 @@ fun Route.entriesRoute() {
                 )
             }
         }
+
         post {
             val userPrincipal: UserPrincipal = call.principal()!!
             val entryService: EntryService by closestDI().instance()
 
             val response = call.receiveOrNull<Entry.In>()?.let {
-                APIResponse(data = entryService.insertEntryForUser(userPrincipal.getUserID(), it), success = true)
-            } ?: APIResponse(ErrorModel("not the right Parameters provided"))
+                APIResponse(data = entryService.createEntry(userPrincipal.getUserID(), it), success = true)
+            } ?: APIResponse(ErrorModel("The object you provided it not in the right format."))
             call.respond(response)
         }
     }
@@ -76,7 +77,7 @@ fun Route.entryByIdRoute() {
                     entryService.changeEntry(userPrincipal.getUserID(), entry.id, changeEntry)?.let {
                         APIResponse(data = it, success = true)
                     } ?: APIResponse(ErrorModel("you can't change this Entry"))
-                } ?: APIResponse(ErrorModel("not the right Parameters provided"))
+                } ?: APIResponse(ErrorModel("The object you provided it not in the right format."))
             }
             call.respond(response)
         }

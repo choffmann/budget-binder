@@ -4,6 +4,9 @@ import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import com.auth0.jwt.interfaces.JWTVerifier
 import de.hsfl.budgetBinder.server.config.Config
+import io.ktor.http.*
+import io.ktor.util.date.*
+import io.netty.handler.codec.http.cookie.CookieHeaderNames
 import java.util.Date
 
 class JWTService(private val config: Config) {
@@ -34,8 +37,8 @@ class JWTService(private val config: Config) {
         return refreshTokenVerifier
     }
 
-    fun getRefreshTokenValidationTime(): Int {
-        return refreshTokenValidationTime
+    fun getRealm(): String {
+        return config.jwt.realm
     }
 
     private fun createJWTToken(id: Int, tokenVersion: Int, expiresAt: Date, secret: String): String {
@@ -64,6 +67,18 @@ class JWTService(private val config: Config) {
             tokenVersion,
             Date(System.currentTimeMillis() + refreshTokenValidationTime),
             config.jwt.refreshSecret
+        )
+    }
+
+    fun createRefreshCookie(id: Int, tokenVersion: Int): Cookie {
+        return Cookie(
+            "jwt",
+            createRefreshToken(id, tokenVersion),
+            expires = GMTDate(System.currentTimeMillis() + refreshTokenValidationTime),
+            path = "/refresh_token",
+            httpOnly = true,
+            secure = config.server.ssl,
+            extensions = hashMapOf(CookieHeaderNames.SAMESITE to if (config.server.ssl) CookieHeaderNames.SameSite.None.toString() else CookieHeaderNames.SameSite.Lax.toString())
         )
     }
 }
