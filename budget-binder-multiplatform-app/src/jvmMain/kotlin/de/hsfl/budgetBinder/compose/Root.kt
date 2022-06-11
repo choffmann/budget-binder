@@ -48,14 +48,14 @@ val di = DI {
     // UserUseCase
     bindSingleton { GetMyUserUseCase(instance()) }
     bindSingleton { ChangeMyUserUseCase(instance()) }
-    bindSingleton { RemoveMyUserUseCase(instance()) }
+    bindSingleton { DeleteMyUserUseCase(instance()) }
 
     // CategoriesUseCase
     bindSingleton { GetAllCategoriesUseCase(instance()) }
     bindSingleton { CreateCategoryUseCase(instance()) }
     bindSingleton { GetCategoryByIdUseCase(instance()) }
     bindSingleton { ChangeCategoryByIdUseCase(instance()) }
-    bindSingleton { RemoveCategoryByIdUseCase(instance()) }
+    bindSingleton { DeleteCategoryByIdUseCase(instance()) }
     bindSingleton { GetAllEntriesByCategoryUseCase(instance()) }
 
     // Entries
@@ -63,7 +63,7 @@ val di = DI {
     bindSingleton { CreateNewEntryUseCase(instance()) }
     bindSingleton { GetEntryByIdUseCase(instance()) }
     bindSingleton { ChangeEntryByIdUseCase(instance()) }
-    bindSingleton { RemoveEntryByIdUseCase(instance()) }
+    bindSingleton { DeleteEntryByIdUseCase(instance()) }
 
     // ViewModels
     bindSingleton { LoginViewModel(instance(), instance(), instance()) }

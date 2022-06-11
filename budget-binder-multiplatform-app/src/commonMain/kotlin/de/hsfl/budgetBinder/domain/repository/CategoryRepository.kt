@@ -45,7 +45,7 @@ interface CategoryRepository {
      * @param id ID from category to remove
      * @author Cedrik Hoffmann
      */
-    suspend fun removeCategoryById(id: Int): APIResponse<Category>
+    suspend fun deleteCategoryById(id: Int): APIResponse<Category>
 
     /**
      * Get all entries from a category

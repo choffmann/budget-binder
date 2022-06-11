@@ -95,11 +95,11 @@ class ChangeEntryByIdUseCase(private val repository: EntryRepository) {
     }
 }
 
-class RemoveEntryByIdUseCase(private val repository: EntryRepository) {
+class DeleteEntryByIdUseCase(private val repository: EntryRepository) {
     operator fun invoke(id: Int): Flow<DataResponse<Entry>> = flow {
         try {
             emit(DataResponse.Loading())
-            repository.removeEntryById(id).let { response ->
+            repository.deleteEntryById(id).let { response ->
                 response.data?.let {
                     emit(DataResponse.Success(it))
                 } ?: emit(DataResponse.Error(response.error!!.message))

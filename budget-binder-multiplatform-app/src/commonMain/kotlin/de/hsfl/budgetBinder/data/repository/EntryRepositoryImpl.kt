@@ -28,7 +28,7 @@ class EntryRepositoryImpl(
         return client.changeEntryById(entry, id)
     }
 
-    override suspend fun removeEntryById(id: Int): APIResponse<Entry> {
-        return client.removeEntryById(id)
+    override suspend fun deleteEntryById(id: Int): APIResponse<Entry> {
+        return client.deleteEntryById(id)
     }
 }

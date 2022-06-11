@@ -43,11 +43,11 @@ class ChangeMyUserUseCase(private val repository: UserRepository) {
     }
 }
 
-class RemoveMyUserUseCase(private val repository: UserRepository) {
+class DeleteMyUserUseCase(private val repository: UserRepository) {
     operator fun invoke(): Flow<DataResponse<User>> = flow {
         try {
             emit(DataResponse.Loading())
-            repository.removeMyUser().let { response ->
+            repository.deleteMyUser().let { response ->
                 response.data?.let {
                     emit(DataResponse.Success(it))
                 } ?: emit(DataResponse.Error(response.error!!.message))

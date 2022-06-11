@@ -44,5 +44,5 @@ interface EntryRepository {
      * @param id ID from entry to remove
      * @author Cedrik Hoffmann
      */
-    suspend fun removeEntryById(id: Int): APIResponse<Entry>
+    suspend fun deleteEntryById(id: Int): APIResponse<Entry>
 }

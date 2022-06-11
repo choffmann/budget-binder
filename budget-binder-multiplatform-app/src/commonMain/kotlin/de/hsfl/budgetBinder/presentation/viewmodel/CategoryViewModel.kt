@@ -2,8 +2,6 @@ package de.hsfl.budgetBinder.presentation.viewmodel
 
 import de.hsfl.budgetBinder.common.Category
 import de.hsfl.budgetBinder.common.DataResponse
-import de.hsfl.budgetBinder.common.Entry
-import de.hsfl.budgetBinder.common.User
 import de.hsfl.budgetBinder.domain.usecase.*
 import de.hsfl.budgetBinder.presentation.UiState
 import kotlinx.coroutines.CoroutineScope
@@ -16,7 +14,7 @@ class CategoryViewModel(
     private val getCategoryByIdUseCase: GetCategoryByIdUseCase,
     private val createCategoryUseCase: CreateCategoryUseCase,
     private val changeCategoryByIdUseCase: ChangeCategoryByIdUseCase,
-    private val removeCategoryByIdUseCase: RemoveCategoryByIdUseCase,
+    private val deleteCategoryByIdUseCase: DeleteCategoryByIdUseCase,
     private val getAllEntriesByCategoryUseCase: GetAllEntriesByCategoryUseCase,
     private val scope: CoroutineScope = CoroutineScope(Dispatchers.Unconfined + SupervisorJob())
 ) {
@@ -64,7 +62,7 @@ class CategoryViewModel(
     }
 
     fun removeCategory(id: Int) {
-        removeCategoryByIdUseCase(id).onEach {
+        deleteCategoryByIdUseCase(id).onEach {
             when (it) {
                 is DataResponse.Success -> _state.value = UiState.Success(it.data)
                 is DataResponse.Error -> _state.value = UiState.Error(it.message!!)

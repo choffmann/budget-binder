@@ -16,7 +16,7 @@ class UserRepositoryImpl(
         return client.changeMyUser(user)
     }
 
-    override suspend fun removeMyUser(): APIResponse<User> {
-        return client.removeMyUser()
+    override suspend fun deleteMyUser(): APIResponse<User> {
+        return client.deleteMyUser()
     }
 }

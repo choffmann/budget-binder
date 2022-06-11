@@ -21,5 +21,5 @@ interface UserRepository {
      * Remove the user
      * @author Cedrik Hoffmann
      */
-    suspend fun removeMyUser(): APIResponse<User>
+    suspend fun deleteMyUser(): APIResponse<User>
 }

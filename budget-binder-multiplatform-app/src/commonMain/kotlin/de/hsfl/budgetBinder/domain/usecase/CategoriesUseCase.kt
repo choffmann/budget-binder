@@ -96,11 +96,11 @@ class ChangeCategoryByIdUseCase(private val repository: CategoryRepository) {
     }
 }
 
-class RemoveCategoryByIdUseCase(private val repository: CategoryRepository) {
+class DeleteCategoryByIdUseCase(private val repository: CategoryRepository) {
     operator fun invoke(id: Int): Flow<DataResponse<Category>> = flow {
         try {
             emit(DataResponse.Loading())
-            repository.removeCategoryById(id).let { response ->
+            repository.deleteCategoryById(id).let { response ->
                 response.data?.let {
                     emit(DataResponse.Success(it))
                 } ?: emit(DataResponse.Error(response.error!!.message))

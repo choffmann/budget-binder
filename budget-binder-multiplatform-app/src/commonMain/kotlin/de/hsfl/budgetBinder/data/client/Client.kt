@@ -55,10 +55,10 @@ interface ApiClient {
     suspend fun changeMyUser(user: User.In): APIResponse<User>
 
     /**
-     * Remove the current logged in user
+     * Delete the current logged in user
      * @author Cedrik Hoffmann
      */
-    suspend fun removeMyUser(): APIResponse<User>
+    suspend fun deleteMyUser(): APIResponse<User>
 
     /**
      * Get all Categories from current month. The request has a query in the link ?current
@@ -96,11 +96,11 @@ interface ApiClient {
     suspend fun changeCategoryById(category: Category.In, id: Int): APIResponse<Category>
 
     /**
-     * Remove Category by ID
+     * Delete Category by ID
      * @param id ID from Category to delete
      * @author Cedrik Hoffmann
      */
-    suspend fun removeCategoryById(id: Int): APIResponse<Category>
+    suspend fun deleteCategoryById(id: Int): APIResponse<Category>
 
     /**
      * Get Entries from a Category ID
@@ -144,11 +144,11 @@ interface ApiClient {
     suspend fun changeEntryById(entry: Entry.In, id: Int): APIResponse<Entry>
 
     /**
-     * Remove Entry by ID
+     * Delete Entry by ID
      * @param id ID from Entry to delete
      * @author Cedrik Hoffmann
      */
-    suspend fun removeEntryById(id: Int): APIResponse<Entry>
+    suspend fun deleteEntryById(id: Int): APIResponse<Entry>
 }
 
 /**
@@ -227,7 +227,7 @@ class Client( engine: HttpClientEngine) : ApiClient {
         }.body()
     }
 
-    override suspend fun removeMyUser(): APIResponse<User> {
+    override suspend fun deleteMyUser(): APIResponse<User> {
         return client.delete(urlString = "/me") {
             contentType(ContentType.Application.Json)
         }.body()
@@ -263,7 +263,7 @@ class Client( engine: HttpClientEngine) : ApiClient {
         }.body()
     }
 
-    override suspend fun removeCategoryById(id: Int): APIResponse<Category> {
+    override suspend fun deleteCategoryById(id: Int): APIResponse<Category> {
         return client.delete(urlString = "/categories/$id") {
             contentType(ContentType.Application.Json)
         }.body()
@@ -303,7 +303,7 @@ class Client( engine: HttpClientEngine) : ApiClient {
         }.body()
     }
 
-    override suspend fun removeEntryById(id: Int): APIResponse<Entry> {
+    override suspend fun deleteEntryById(id: Int): APIResponse<Entry> {
         return client.delete(urlString = "/entries/$id") {
             contentType(ContentType.Application.Json)
         }.body()
