@@ -3,9 +3,9 @@ package de.hsfl.budgetBinder.compose.entry
 import androidx.compose.runtime.*
 import de.hsfl.budgetBinder.common.Entry
 import de.hsfl.budgetBinder.compose.category.Icon
-import de.hsfl.budgetBinder.domain.use_case.get_user.UserUseCase
+import de.hsfl.budgetBinder.domain.usecase.*
 import de.hsfl.budgetBinder.presentation.Screen
-import de.hsfl.budgetBinder.presentation.UserViewModel
+import de.hsfl.budgetBinder.presentation.viewmodel.EntryViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -18,8 +18,12 @@ import org.kodein.di.instance
 fun EntryComponent(screenState: MutableState<Screen>) {
     val scope = CoroutineScope(Dispatchers.Unconfined + SupervisorJob())
     val di = localDI()
-    val userUseCase: UserUseCase by di.instance()
-    val userViewModel = UserViewModel(userUseCase, scope)
+    val getAllEntriesUseCase: GetAllEntriesUseCase by di.instance()
+    val getEntryByIdUseCase: GetEntryByIdUseCase by di.instance()
+    val changeEntryByIdUseCase: ChangeEntryByIdUseCase by di.instance()
+    val deleteEntryByIdUseCase: DeleteEntryByIdUseCase by di.instance()
+    val createNewEntryUseCase: CreateNewEntryUseCase by di.instance()
+    val userViewModel = EntryViewModel(getAllEntriesUseCase, getEntryByIdUseCase, createNewEntryUseCase,changeEntryByIdUseCase,deleteEntryByIdUseCase, scope)
     val viewState = userViewModel.state.collectAsState(scope)
 
     when (screenState.value) {
