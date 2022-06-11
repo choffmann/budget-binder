@@ -4,9 +4,9 @@ import androidx.compose.runtime.*
 import de.hsfl.budgetBinder.common.Category
 import de.hsfl.budgetBinder.common.Entry
 import de.hsfl.budgetBinder.common.StateManager.categoryList
-import de.hsfl.budgetBinder.domain.use_case.auth_user.LoginUseCase
-import de.hsfl.budgetBinder.presentation.LoginViewModel
+import de.hsfl.budgetBinder.domain.usecase.*
 import de.hsfl.budgetBinder.presentation.Screen
+import de.hsfl.budgetBinder.presentation.viewmodel.CategoryViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -22,8 +22,13 @@ import org.kodein.di.instance
 fun CategoryComponent(screenState: MutableState<Screen>) {
     val scope = CoroutineScope(Dispatchers.Unconfined + SupervisorJob())
     val di = localDI()
-    val categoryUseCase: LoginUseCase by di.instance() //TODO
-    val categoryViewModel = LoginViewModel(categoryUseCase, scope) //TODO
+    val getAllCategoryUseCase: GetAllCategoriesUseCase by di.instance()
+    val createCategoryUseCase: CreateCategoryUseCase by di.instance()
+    val getCategoryByIdUseCase: GetCategoryByIdUseCase by di.instance()
+    val changeCategoryByIdUseCase: ChangeCategoryByIdUseCase by di.instance()
+    val deleteCategoryByIdUseCase: DeleteCategoryByIdUseCase by di.instance()
+    val getAllEntriesByCategoryUseCase: GetAllEntriesByCategoryUseCase by di.instance()
+    val categoryViewModel = CategoryViewModel(getAllCategoryUseCase, getCategoryByIdUseCase,createCategoryUseCase, changeCategoryByIdUseCase, deleteCategoryByIdUseCase, getAllEntriesByCategoryUseCase, scope)
     val viewState = categoryViewModel.state.collectAsState(scope)
 
     when (screenState.value) {
@@ -49,10 +54,10 @@ fun CategoryComponent(screenState: MutableState<Screen>) {
 @Composable
 fun Icon(category: Category){
     val imagePath =
-    when (category.image) {
-        Category.Image.DEFAULT -> "cart.png"
-        Category.Image.SHOPPING -> "cart.png"
-    }
+        when (category.image) {
+            Category.Image.DEFAULT -> "cart.png"
+            Category.Image.SHOPPING -> "cart.png"
+        }
     Img(imagePath, "imagePath", attrs = {classes("mdc-icon-button")})
 }
 @Composable
@@ -120,3 +125,4 @@ fun Bar(category: Category, entryList: List<Entry>){
         }
     }
 }
+
