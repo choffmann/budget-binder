@@ -2,7 +2,8 @@ package de.hsfl.budgetBinder.prototype
 
 import androidx.compose.runtime.Composable
 import de.hsfl.budgetBinder.prototype.StateManager.screenState
-import de.hsfl.budgetBinder.prototype.screens.categories.CategoriesComponent
+import de.hsfl.budgetBinder.prototype.screens.CategoriesComponent
+import de.hsfl.budgetBinder.prototype.screens.ftux.FTUXComponent
 import de.hsfl.budgetBinder.prototype.screens.home.HomeComponent
 import de.hsfl.budgetBinder.prototype.screens.screen1.Screen1Component
 import de.hsfl.budgetBinder.prototype.screens.screen2.Screen2Component
@@ -15,6 +16,7 @@ import de.hsfl.budgetBinder.prototype.screens.welcome.WelcomeComponent
 fun Router() {
     when (screenState.value) {
         is PrototypeScreen.Welcome -> WelcomeComponent()
+        is PrototypeScreen.FTUX -> FTUXComponent()
         is PrototypeScreen.Login -> LoginComponent()
         is PrototypeScreen.Register -> RegisterComponent()
         is PrototypeScreen.Home -> HomeComponent()

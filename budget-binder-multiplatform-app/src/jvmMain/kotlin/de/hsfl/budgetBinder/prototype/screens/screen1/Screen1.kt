@@ -7,8 +7,8 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import de.hsfl.budgetBinder.prototype.StateManager.screenState
 import de.hsfl.budgetBinder.prototype.PrototypeScreen
+import de.hsfl.budgetBinder.prototype.StateManager.screenState
 
 @Composable
 fun Screen1Component() {

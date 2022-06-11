@@ -4,6 +4,7 @@ package de.hsfl.budgetBinder.prototype
 // Define the Screens
 sealed class PrototypeScreen {
     object Welcome : PrototypeScreen()
+    object FTUX : PrototypeScreen()
     object Login : PrototypeScreen()
     object Register : PrototypeScreen()
     object Home : PrototypeScreen()
