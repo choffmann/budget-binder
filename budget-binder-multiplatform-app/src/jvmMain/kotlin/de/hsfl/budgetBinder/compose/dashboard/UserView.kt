@@ -1,4 +1,4 @@
-package de.hsfl.budgetBinder.compose.user
+package de.hsfl.budgetBinder.compose.dashboard
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button

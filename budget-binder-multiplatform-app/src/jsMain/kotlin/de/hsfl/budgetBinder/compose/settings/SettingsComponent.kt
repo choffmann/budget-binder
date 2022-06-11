@@ -1,4 +1,4 @@
-package de.hsfl.budgetBinder.compose.user
+package de.hsfl.budgetBinder.compose.settings
 
 import androidx.compose.runtime.*
 import de.hsfl.budgetBinder.domain.use_case.auth_user.LogoutUseCase
@@ -14,7 +14,7 @@ import org.kodein.di.compose.localDI
 import org.kodein.di.instance
 
 @Composable
-fun UserComponent(screenState: MutableState<Screen>) {
+fun SettingsComponent(screenState: MutableState<Screen>) {
     val scope = CoroutineScope(Dispatchers.Unconfined + SupervisorJob())
     val di = localDI()
     val userUseCase: UserUseCase by di.instance()
@@ -24,12 +24,9 @@ fun UserComponent(screenState: MutableState<Screen>) {
     val viewState = userViewModel.state.collectAsState(scope)
     val logOutState = logoutViewModel.state.collectAsState(scope)
 
-    UserView(
+    SettingsView(
         state = viewState,
-        onUpdate = { userViewModel.getMyUser() },
-        onLogout = {
-            logoutViewModel.logOut(false)
-        }
+        onBackButton = { screenState.value = Screen.Dashboard}
     )
 
     when (logOutState) {

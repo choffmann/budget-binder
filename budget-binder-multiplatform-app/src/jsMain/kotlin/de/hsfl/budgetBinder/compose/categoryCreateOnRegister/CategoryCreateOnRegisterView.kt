@@ -1,19 +1,20 @@
-package de.hsfl.budgetBinder.compose.user
+package de.hsfl.budgetBinder.compose.categoryCreateOnRegister
 
 import androidx.compose.runtime.*
 import de.hsfl.budgetBinder.presentation.UiState
 import org.jetbrains.compose.web.dom.Button
 import org.jetbrains.compose.web.dom.Div
+import org.jetbrains.compose.web.dom.H1
 import org.jetbrains.compose.web.dom.Text
 
 
 @Composable
-fun UserView(
+fun CategoryCreateOnRegisterView(
     state: State<Any>,
-    onUpdate: () -> Unit,
-    onLogout: () -> Unit
+    onFinishedButton: () -> Unit
 ) {
     val viewState by remember { state }
+    H1{Text("CategoryCreateOnRegisterView")}
     Div {
         when (viewState) {
             is UiState.Success<*> -> {
@@ -27,14 +28,9 @@ fun UserView(
             }
         }
         Button(attrs = {
-            onClick { onUpdate() }
+            onClick { onFinishedButton() }
         }) {
-            Text("Update")
-        }
-        Button(attrs = {
-            onClick { onLogout() }
-        }) {
-            Text("LogOut")
+            Text("Proceed to Dashboard")
         }
     }
 }
