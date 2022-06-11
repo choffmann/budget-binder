@@ -1,12 +1,10 @@
 package de.hsfl.budgetBinder.compose.settings
 
 import androidx.compose.runtime.*
-import de.hsfl.budgetBinder.domain.use_case.auth_user.LogoutUseCase
-import de.hsfl.budgetBinder.domain.use_case.get_user.UserUseCase
-import de.hsfl.budgetBinder.presentation.LogoutViewModel
+import de.hsfl.budgetBinder.domain.usecase.ChangeMyUserUseCase
+import de.hsfl.budgetBinder.domain.usecase.DeleteMyUserUseCase
 import de.hsfl.budgetBinder.presentation.Screen
-import de.hsfl.budgetBinder.presentation.UiState
-import de.hsfl.budgetBinder.presentation.UserViewModel
+import de.hsfl.budgetBinder.presentation.viewmodel.SettingsViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -17,21 +15,13 @@ import org.kodein.di.instance
 fun SettingsComponent(screenState: MutableState<Screen>) {
     val scope = CoroutineScope(Dispatchers.Unconfined + SupervisorJob())
     val di = localDI()
-    val userUseCase: UserUseCase by di.instance()
-    val logoutUseCase: LogoutUseCase by di.instance()
-    val userViewModel = UserViewModel(userUseCase, scope)
-    val logoutViewModel = LogoutViewModel(logoutUseCase, scope)
-    val viewState = userViewModel.state.collectAsState(scope)
-    val logOutState = logoutViewModel.state.collectAsState(scope)
+    val changeMyUserUseCase: ChangeMyUserUseCase by di.instance()
+    val deleteMyUserUseCase: DeleteMyUserUseCase by di.instance()
+    val settingsViewModel = SettingsViewModel(changeMyUserUseCase,deleteMyUserUseCase, scope)
+    val viewState = settingsViewModel.state.collectAsState(scope)
 
     SettingsView(
         state = viewState,
         onBackButton = { screenState.value = Screen.Dashboard}
     )
-
-    when (logOutState) {
-        is UiState.Success<*> -> {
-            screenState.value = Screen.Login
-        }
-    }
 }
