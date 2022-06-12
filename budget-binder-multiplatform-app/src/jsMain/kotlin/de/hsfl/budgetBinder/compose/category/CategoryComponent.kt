@@ -2,7 +2,7 @@ package de.hsfl.budgetBinder.compose.category
 
 import androidx.compose.runtime.*
 import de.hsfl.budgetBinder.common.Category
-import de.hsfl.budgetBinder.common.Constants.DEFAULTCATEGORY
+import de.hsfl.budgetBinder.common.Constants.DEFAULT_CATEGORY
 import de.hsfl.budgetBinder.common.Entry
 import de.hsfl.budgetBinder.domain.usecase.*
 import de.hsfl.budgetBinder.presentation.Screen
@@ -114,7 +114,7 @@ fun categoryIdToCategory(category_id: Int?,categoryList: List<Category>): Catego
     for (category in categoryList){
         if (category.id == category_id) return category
     }
-    return DEFAULTCATEGORY //If the category wasn't found (or is set to no category) return default
+    return DEFAULT_CATEGORY //If the category wasn't found (or is set to no category) return default
 }
 
 @OptIn(ExperimentalComposeWebSvgApi::class)
