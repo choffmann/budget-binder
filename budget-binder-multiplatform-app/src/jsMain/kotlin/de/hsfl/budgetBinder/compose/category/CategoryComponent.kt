@@ -65,7 +65,7 @@ fun Icon(category: Category){
             Category.Image.WRONG -> "dangerous"
             Category.Image.HOME -> "home"
             Category.Image.FOOD -> "bakery_dining"
-            Category.Image.FASTFOOD -> "bakery_dining"
+            Category.Image.FASTFOOD -> "fastfood"
             Category.Image.RESTAURANT -> "restaurant"
             Category.Image.FAMILY -> "people"
             Category.Image.MONEY -> "payments"
@@ -102,7 +102,7 @@ fun Icon(category: Category){
             Category.Image.FOREST -> "forest"
             Category.Image.HARDWARE -> "hardware"
             Category.Image.PEST -> "pest_control"
-            else -> {""} //Default will be this
+            else -> {"check_box_outline_blank"} //Default will be this
         }
     Span(
         attrs = {
