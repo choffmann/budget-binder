@@ -21,6 +21,6 @@ object TestUser {
 object TestCategories {
 
     const val color = "111111"
-    val image = Category.Image.SHOPPING
+    val image = Category.Image.DEFAULT
 
 }

@@ -15,6 +15,7 @@ class DashboardViewModel(
     private val getAllCategoriesUseCase: GetAllCategoriesUseCase,
     private val scope: CoroutineScope = CoroutineScope(Dispatchers.Unconfined + SupervisorJob())
 ) {
+
     private val _categoriesState = MutableStateFlow<UiState>(UiState.Empty)
     val categoriesState: StateFlow<UiState> = _categoriesState
 
