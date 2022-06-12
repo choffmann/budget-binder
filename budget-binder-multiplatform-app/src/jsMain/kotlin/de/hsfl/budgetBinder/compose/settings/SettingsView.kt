@@ -17,7 +17,8 @@ fun SettingsView(
     onChangeToDashboard: () -> Unit,
     onChangeToSettings: () -> Unit,
     onChangeToCategory: () -> Unit,
-    onDeleteButtonPressed: () -> Unit
+    onDeleteButtonPressed: () -> Unit,
+    onChangeButtonPressed: () -> Unit
 ) {
     val viewState by remember { state }
 
@@ -89,7 +90,7 @@ fun SettingsView(
                 Button(
                     attrs = {
                         classes("mdc-button", "mdc-button--raised")
-                        onClick { }
+                        onClick { onChangeButtonPressed() }
                         style { flex(100.percent) }
                     }
                 ) {

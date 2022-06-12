@@ -17,7 +17,7 @@ fun Router(screenState: MutableState<Screen>) {
         Screen.Register -> RegisterComponent(screenState = screenState)
         Screen.Login -> LoginComponent(screenState = screenState)
         Screen.Dashboard -> DashboardComponent(screenState = screenState)
-        Screen.Settings -> SettingsComponent(screenState = screenState)
+        Screen.Settings, Screen.SettingsChangeUserData -> SettingsComponent(screenState = screenState)
         Screen.CategorySummary,Screen.CategoryEdit,Screen.CategoryCreate, Screen.CategoryCreateOnRegister -> CategoryComponent(screenState = screenState)
         Screen.EntryCreate, Screen.EntryEdit -> EntryComponent(screenState = screenState)
     }

@@ -6,6 +6,7 @@ sealed class Screen {
     object Register : Screen()
     object Dashboard : Screen()
     object Settings : Screen()
+    object SettingsChangeUserData : Screen()
     object CategorySummary : Screen()
     object CategoryEdit : Screen()
     object CategoryCreate : Screen()
