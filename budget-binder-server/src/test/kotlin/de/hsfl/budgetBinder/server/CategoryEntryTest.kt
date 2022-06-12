@@ -121,7 +121,7 @@ class CategoryEntryTest {
         client.get("/categories/1/entries").let { response ->
             assertEquals(HttpStatusCode.Unauthorized, response.status)
             val responseBody: APIResponse<List<Entry>> = response.body()
-            val shouldResponse: APIResponse<List<Entry>> = wrapFailure("Your accessToken is absent or does not match.")
+            val shouldResponse: APIResponse<List<Entry>> = wrapFailure("Your accessToken is absent or does not match.", 401)
             assertEquals(shouldResponse, responseBody)
         }
 

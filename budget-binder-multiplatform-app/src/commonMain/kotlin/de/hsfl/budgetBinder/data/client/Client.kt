@@ -52,7 +52,7 @@ interface ApiClient {
      * @param user user object with the changes
      * @author Cedrik Hoffmann
      */
-    suspend fun changeMyUser(user: User.In): APIResponse<User>
+    suspend fun changeMyUser(user: User.Patch): APIResponse<User>
 
     /**
      * Delete the current logged in user
@@ -93,7 +93,7 @@ interface ApiClient {
      * @param id ID of category to change
      * @author Cedrik Hoffmann
      */
-    suspend fun changeCategoryById(category: Category.In, id: Int): APIResponse<Category>
+    suspend fun changeCategoryById(category: Category.Patch, id: Int): APIResponse<Category>
 
     /**
      * Delete Category by ID
@@ -141,7 +141,7 @@ interface ApiClient {
      * @param id ID of entry to change
      * @author Cedrik Hoffmann
      */
-    suspend fun changeEntryById(entry: Entry.In, id: Int): APIResponse<Entry>
+    suspend fun changeEntryById(entry: Entry.Patch, id: Int): APIResponse<Entry>
 
     /**
      * Delete Entry by ID
@@ -213,7 +213,7 @@ class Client( engine: HttpClientEngine) : ApiClient {
         return client.get("/me").body()
     }
 
-    override suspend fun changeMyUser(user: User.In): APIResponse<User> {
+    override suspend fun changeMyUser(user: User.Patch): APIResponse<User> {
         return client.patch(urlString = "/me") {
             contentType(ContentType.Application.Json)
             setBody(user)
@@ -249,7 +249,7 @@ class Client( engine: HttpClientEngine) : ApiClient {
         return client.get(urlString = "/categories/$id").body()
     }
 
-    override suspend fun changeCategoryById(category: Category.In, id: Int): APIResponse<Category> {
+    override suspend fun changeCategoryById(category: Category.Patch, id: Int): APIResponse<Category> {
         return client.patch(urlString = "/categories/$id") {
             contentType(ContentType.Application.Json)
             setBody(category)
@@ -289,7 +289,7 @@ class Client( engine: HttpClientEngine) : ApiClient {
         return client.get(urlString = "/entries/$id").body()
     }
 
-    override suspend fun changeEntryById(entry: Entry.In, id: Int): APIResponse<Entry> {
+    override suspend fun changeEntryById(entry: Entry.Patch, id: Int): APIResponse<Entry> {
         return client.patch(urlString = "/entries/$id") {
             contentType(ContentType.Application.Json)
             setBody(entry)
