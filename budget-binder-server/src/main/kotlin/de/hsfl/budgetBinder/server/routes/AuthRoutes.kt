@@ -10,6 +10,7 @@ import de.hsfl.budgetBinder.server.services.JWTService
 import de.hsfl.budgetBinder.server.services.interfaces.UserService
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
+import io.ktor.server.plugins.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -27,7 +28,8 @@ fun Route.login() {
             call.response.cookies.append(
                 jwtService.createRefreshCookie(
                     userPrincipal.getUserID(),
-                    userPrincipal.getUserTokenVersion()
+                    userPrincipal.getUserTokenVersion(),
+                    call.request.origin.scheme == "https"
                 )
             )
             call.respond(APIResponse(data = AuthToken(token = token), success = true))
@@ -66,7 +68,8 @@ fun Route.refreshCookie() {
                 call.response.cookies.append(
                     jwtService.createRefreshCookie(
                         userPrincipal.getUserID(),
-                        userPrincipal.getUserTokenVersion()
+                        userPrincipal.getUserTokenVersion(),
+                        call.request.origin.scheme == "https"
                     )
                 )
                 APIResponse(data = AuthToken(token = accessToken), success = true)
