@@ -912,10 +912,6 @@
             "nullable": true,
             "type": "string"
           },
-          "email": {
-            "nullable": true,
-            "type": "string"
-          },
           "password": {
             "nullable": true,
             "type": "string"
