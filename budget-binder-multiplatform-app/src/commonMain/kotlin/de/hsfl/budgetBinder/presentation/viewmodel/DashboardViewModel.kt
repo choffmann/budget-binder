@@ -33,6 +33,7 @@ class DashboardViewModel(
                 is DataResponse.Success -> _categoriesState.value = UiState.Success(it.data)
                 is DataResponse.Error -> _categoriesState.value = UiState.Error(it.message!!)
                 is DataResponse.Loading -> _categoriesState.value = UiState.Loading
+                is DataResponse.Unauthorized -> _categoriesState.value = UiState.Unauthorized
             }
         }.launchIn(scope)
     }
@@ -43,6 +44,7 @@ class DashboardViewModel(
                 is DataResponse.Success -> _entriesState.value = UiState.Success(it.data)
                 is DataResponse.Error -> _entriesState.value = UiState.Error(it.message!!)
                 is DataResponse.Loading -> _entriesState.value = UiState.Loading
+                is DataResponse.Unauthorized -> _entriesState.value = UiState.Unauthorized
             }
         }.launchIn(scope)
     }

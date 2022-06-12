@@ -4,6 +4,7 @@ import de.hsfl.budgetBinder.common.AuthToken
 import de.hsfl.budgetBinder.common.DataResponse
 import de.hsfl.budgetBinder.common.User
 import de.hsfl.budgetBinder.domain.repository.AuthRepository
+import io.ktor.http.*
 import io.ktor.utils.io.errors.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.*
@@ -15,7 +16,12 @@ class RegisterUseCase(private val repository: AuthRepository) {
             repository.register(user).let { response ->
                 response.data?.let {
                     emit(DataResponse.Success(it))
-                } ?: emit(DataResponse.Error(response.error!!.message))
+                } ?: response.error?.let { error ->
+                    when (error.code) {
+                        HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized())
+                        else -> emit(DataResponse.Error(error.message))
+                    }
+                }
             }
         } catch (e: IOException) {
             e.printStackTrace()
@@ -34,7 +40,12 @@ class LoginUseCase(private val repository: AuthRepository) {
             repository.authorize(email, password).let { response ->
                 response.data?.let {
                     emit(DataResponse.Success(it))
-                } ?: emit(DataResponse.Error(response.error!!.message))
+                } ?: response.error?.let { error ->
+                    when (error.code) {
+                        HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized())
+                        else -> emit(DataResponse.Error(error.message))
+                    }
+                }
             }
         } catch (e: IOException) {
             e.printStackTrace()
@@ -53,7 +64,12 @@ class LogoutUseCase(private val repository: AuthRepository) {
             repository.logout(onAllDevices).let { response ->
                 response.data?.let {
                     emit(DataResponse.Success(it))
-                } ?: emit(DataResponse.Error(response.error!!.message))
+                } ?: response.error?.let { error ->
+                    when (error.code) {
+                        HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized())
+                        else -> emit(DataResponse.Error(error.message))
+                    }
+                }
             }
         } catch (e: IOException) {
             e.printStackTrace()
