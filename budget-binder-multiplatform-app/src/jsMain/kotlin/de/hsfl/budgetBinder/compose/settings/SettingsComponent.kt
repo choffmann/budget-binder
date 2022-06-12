@@ -24,6 +24,7 @@ fun SettingsComponent(screenState: MutableState<Screen>) {
         state = viewState,
         onChangeToDashboard = { screenState.value = Screen.Dashboard} ,
         onChangeToSettings = { screenState.value = Screen.Settings},
-        onChangeToCategory = { screenState.value = Screen.CategorySummary}
+        onChangeToCategory = { screenState.value = Screen.CategorySummary},
+        onDeleteButtonPressed = { settingsViewModel.deleteMyUser(); screenState.value = Screen.Login }
     )
 }
