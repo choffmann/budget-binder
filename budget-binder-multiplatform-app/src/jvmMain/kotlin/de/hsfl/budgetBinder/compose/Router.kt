@@ -15,7 +15,7 @@ fun Router() {
         is Screen.Welcome -> WelcomeComponent()
         is Screen.Register -> RegisterComponent()
         is Screen.Login -> LoginComponent()
-        is Screen.Home -> HomeComponent()
+        is Screen.Dashboard -> HomeComponent()
         is Screen.Settings -> SettingsComponent()
         is Screen.Categories -> {}
     }

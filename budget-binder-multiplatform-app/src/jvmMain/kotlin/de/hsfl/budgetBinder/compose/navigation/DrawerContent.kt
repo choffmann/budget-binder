@@ -53,7 +53,7 @@ private fun DrawerList() {
     val scope = rememberCoroutineScope()
     Column {
         ListItem(modifier = Modifier.align(Alignment.CenterHorizontally).clickable(onClick = {
-            screenState.value = Screen.Home
+            screenState.value = Screen.Dashboard
             scope.launch { drawerState.close() }
         }), text = { Text("Übersicht") }, icon = { Icon(Icons.Filled.Home, contentDescription = null) })
         ListItem(modifier = Modifier.align(Alignment.CenterHorizontally).clickable(onClick = {

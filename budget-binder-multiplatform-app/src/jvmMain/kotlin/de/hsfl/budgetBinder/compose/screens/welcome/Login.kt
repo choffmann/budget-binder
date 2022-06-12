@@ -41,7 +41,7 @@ internal fun LoginComponent() {
     }, onLoginSuccess = { user ->
         userState.value = user
         isLoggedIn.value = true
-        screenState.value = Screen.Home
+        screenState.value = Screen.Dashboard
     })
 }
 
