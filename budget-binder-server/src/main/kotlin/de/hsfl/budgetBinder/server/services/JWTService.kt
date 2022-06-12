@@ -61,7 +61,7 @@ class JWTService(private val config: Config) {
         )
     }
 
-    fun createRefreshToken(id: Int, tokenVersion: Int): String {
+    private fun createRefreshToken(id: Int, tokenVersion: Int): String {
         return createJWTToken(
             id,
             tokenVersion,
@@ -70,15 +70,15 @@ class JWTService(private val config: Config) {
         )
     }
 
-    fun createRefreshCookie(id: Int, tokenVersion: Int): Cookie {
+    fun createRefreshCookie(id: Int, tokenVersion: Int, isHttps: Boolean): Cookie {
         return Cookie(
             "jwt",
             createRefreshToken(id, tokenVersion),
             expires = GMTDate(System.currentTimeMillis() + refreshTokenValidationTime),
             path = "/refresh_token",
             httpOnly = true,
-            secure = config.server.ssl,
-            extensions = hashMapOf(CookieHeaderNames.SAMESITE to if (config.server.ssl) CookieHeaderNames.SameSite.None.toString() else CookieHeaderNames.SameSite.Lax.toString())
+            secure = isHttps,
+            extensions = hashMapOf(CookieHeaderNames.SAMESITE to if (isHttps) CookieHeaderNames.SameSite.None.toString() else CookieHeaderNames.SameSite.Lax.toString())
         )
     }
 }
