@@ -56,7 +56,7 @@ class AuthPlugin private constructor(
         }
 
         private suspend fun checkLogout(plugin: AuthPlugin, call: HttpClientCall) {
-            if (call.request.url.fullPath.endsWith(plugin.logoutPath)) {
+            if ("/${call.request.url.pathSegments.last()}" == plugin.logoutPath) {
                 call.response.body<APIResponse<AuthToken>>().data?.let {
                     plugin.accessToken = it.token
                 }
@@ -69,9 +69,9 @@ class AuthPlugin private constructor(
                 if (firstRequest.attributes.contains(AuthPluginCircuitBreaker)) {
                     return@intercept execute(firstRequest)
                 }
-                val url = firstRequest.url.build().fullPath
+                val url = firstRequest.url.build()
 
-                if (url.endsWith(plugin.loginPath)) {
+                if ("/${url.pathSegments.last()}" == plugin.loginPath) {
                     val origin = execute(firstRequest)
                     if (origin.response.status == HttpStatusCode.OK) {
                         plugin.accessToken = scope.get(plugin.refreshPath) {
@@ -81,7 +81,7 @@ class AuthPlugin private constructor(
                     return@intercept origin
                 }
 
-                if (plugin.pathsWithoutAuthorization.any { url.endsWith(it) }) {
+                if (plugin.pathsWithoutAuthorization.any { url.fullPath.endsWith(it) }) {
                     return@intercept execute(firstRequest)
                 }
 
