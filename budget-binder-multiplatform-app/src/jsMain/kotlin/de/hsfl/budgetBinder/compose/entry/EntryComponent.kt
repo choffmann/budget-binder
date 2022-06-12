@@ -1,0 +1,58 @@
+package de.hsfl.budgetBinder.compose.entry
+
+import androidx.compose.runtime.*
+import de.hsfl.budgetBinder.common.Entry
+import de.hsfl.budgetBinder.compose.category.Icon
+import de.hsfl.budgetBinder.domain.usecase.*
+import de.hsfl.budgetBinder.presentation.Screen
+import de.hsfl.budgetBinder.presentation.viewmodel.EntryViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import org.jetbrains.compose.web.dom.Div
+import org.jetbrains.compose.web.dom.Text
+import org.kodein.di.compose.localDI
+import org.kodein.di.instance
+
+@Composable
+fun EntryComponent(screenState: MutableState<Screen>) {
+    val scope = CoroutineScope(Dispatchers.Unconfined + SupervisorJob())
+    val di = localDI()
+    val getAllEntriesUseCase: GetAllEntriesUseCase by di.instance()
+    val getEntryByIdUseCase: GetEntryByIdUseCase by di.instance()
+    val changeEntryByIdUseCase: ChangeEntryByIdUseCase by di.instance()
+    val deleteEntryByIdUseCase: DeleteEntryByIdUseCase by di.instance()
+    val createNewEntryUseCase: CreateNewEntryUseCase by di.instance()
+    val userViewModel = EntryViewModel(getAllEntriesUseCase, getEntryByIdUseCase, createNewEntryUseCase,changeEntryByIdUseCase,deleteEntryByIdUseCase, scope)
+    val viewState = userViewModel.state.collectAsState(scope)
+
+    when (screenState.value) {
+        Screen.EntryCreate -> EntryCreateView(
+            state = viewState,
+            onBackButton = { screenState.value = Screen.Dashboard },
+            onCategoryCreateButton = { screenState.value = Screen.CategoryCreate }
+        )
+        Screen.EntryEdit -> EntryEditView(
+            state = viewState,
+            onBackButton = { screenState.value = Screen.Dashboard}
+        )
+        else -> {}
+    }
+}
+
+//Should be put in own File
+@Composable
+fun EntryListElement(entry: Entry){
+    Div {
+        Icon(entry.category_id)
+        Text(entry.name)
+        Text(entry.amount.toString()+"€")
+    }
+}
+
+@Composable
+fun EntryList(list: List<Entry>){
+    for (entry in list){
+        EntryListElement(entry)
+    }
+}
