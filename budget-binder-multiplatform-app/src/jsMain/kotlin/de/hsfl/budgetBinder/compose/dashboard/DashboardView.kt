@@ -4,7 +4,6 @@ import androidx.compose.runtime.*
 import de.hsfl.budgetBinder.common.Category
 import de.hsfl.budgetBinder.common.Entry
 import de.hsfl.budgetBinder.compose.category.Bar
-import de.hsfl.budgetBinder.compose.category.Icon
 import de.hsfl.budgetBinder.compose.entry.EntryList
 import de.hsfl.budgetBinder.presentation.UiState
 import org.jetbrains.compose.web.dom.Button
