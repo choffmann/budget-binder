@@ -16,18 +16,23 @@ import org.jetbrains.compose.web.dom.Text
 @Composable
 fun DashboardView(
     state: State<Any>,
-    onUpdate: () -> Unit,
     onCategorySummaryButton: () -> Unit,
     onSettingsButton: () -> Unit,
     onEntryCreateButton: () -> Unit,
     onEntryEditButton: () -> Unit
 ) {
     val viewState by remember { state }
-    H1{Text("DashboardView")}
+    var categoryList : List<Category> = emptyList()
+    var entryList : List<Entry> = emptyList()
+
     Div {
         when (viewState) {
             is UiState.Success<*> -> {
-                Text((viewState as UiState.Success<*>).element.toString())
+                val element = (viewState as UiState.Success<*>).element
+                @Suppress("UNCHECKED_CAST") // https://stackoverflow.com/questions/36569421/kotlin-how-to-work-with-list-casts-unchecked-cast-kotlin-collections-listkot
+                categoryList = element as? List<Category> ?: categoryList
+                @Suppress("UNCHECKED_CAST")
+                entryList = element as? List<Entry> ?: entryList
             }
             is UiState.Error -> {
                 Text((viewState as UiState.Error).error)
@@ -36,11 +41,7 @@ fun DashboardView(
                 //CircularProgressIndicator()
             }
         }
-        Button(attrs = {
-            onClick { onUpdate() }
-        }) {
-            Text("Update")
-        }
+        H1{Text("DashboardView")}
         Button(attrs = {
             onClick { onSettingsButton() }
         }) {
@@ -61,13 +62,14 @@ fun DashboardView(
         }) {
             Text("Edit Entry (Needs to be there for every Entry shown)")
         }
-        val category = Category(0,"","FFFFFF",Category.Image.SHOPPING, 12f)
-        val entryList = listOf(
+        /*val category = Category(0,"","FFFFFF",Category.Image.SHOPPING, 12f)
+        val entryList2 = listOf(
             Entry(0,"Flowers",10f,false,0),
             Entry(1,"Food",12f,false,0)
-        )
-        Icon(category)
-        Bar(category,entryList)
+        )*/
+
+        Icon(categoryList[0])
+        Bar(categoryList[0],entryList)
         EntryList(entryList)
     }
 }
