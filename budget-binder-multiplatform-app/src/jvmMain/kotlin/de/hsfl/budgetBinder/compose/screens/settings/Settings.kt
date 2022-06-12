@@ -50,7 +50,7 @@ internal fun SettingsComponent() {
 @Composable
 private fun SettingsView(
     viewModelState: State<Any>,
-    onUserChangeClicked: (User.In) -> Unit,
+    onUserChangeClicked: (User.Patch) -> Unit,
     onUserChangeSuccess: (User) -> Unit
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
@@ -73,7 +73,11 @@ private fun SettingsView(
                         })
                     }
                     is SettingsScreens.Account -> {
-                        UserSettings(state = viewModelState,onUserChangeClicked = onUserChangeClicked, onSuccess = onUserChangeSuccess)
+                        UserSettings(
+                            state = viewModelState,
+                            onUserChangeClicked = onUserChangeClicked,
+                            onSuccess = onUserChangeSuccess
+                        )
                     }
                     is SettingsScreens.Server -> {
                         ServerSettings()
@@ -134,7 +138,7 @@ private fun MenuView(
 @Composable
 private fun UserSettings(
     state: State<Any>,
-    onUserChangeClicked: (User.In) -> Unit,
+    onUserChangeClicked: (User.Patch) -> Unit,
     onSuccess: (User) -> Unit
 ) {
     val firstNameState = remember { mutableStateOf(userState.value.firstName) }
@@ -182,12 +186,13 @@ private fun UserSettings(
                     Text("Back")
                 }
                 Button(modifier = Modifier.weight(1F).padding(16.dp), onClick = {
-                    onUserChangeClicked(User.In(
-                        firstName = firstNameState.value,
-                        name = lastNameState.value,
-                        email = emailState.value,
-                        password = passwordState.value
-                    ))
+                    onUserChangeClicked(
+                        User.Patch(
+                            firstName = firstNameState.value,
+                            name = lastNameState.value,
+                            password = passwordState.value
+                        )
+                    )
                 }) {
                     Text("Update")
                 }
@@ -222,10 +227,10 @@ private fun ServerSettings() {
 }
 
 @Composable
-private fun HandleViewState(viewState: State<Any>, onSuccess: (User) -> Unit ) {
+private fun HandleViewState(viewState: State<Any>, onSuccess: (User) -> Unit) {
     val state = remember { viewState }
     val scope = rememberCoroutineScope()
-    when(state.value) {
+    when (state.value) {
         is UiState.Loading -> {
             LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
         }
