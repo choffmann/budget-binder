@@ -3,6 +3,7 @@ package de.hsfl.budgetBinder.domain.usecase
 import de.hsfl.budgetBinder.common.DataResponse
 import de.hsfl.budgetBinder.common.Entry
 import de.hsfl.budgetBinder.domain.repository.EntryRepository
+import io.ktor.http.*
 import io.ktor.utils.io.errors.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -14,7 +15,12 @@ class GetAllEntriesUseCase(private val repository: EntryRepository) {
             repository.getAllEntries().let { response ->
                 response.data?.let {
                     emit(DataResponse.Success(it))
-                } ?: emit(DataResponse.Error(response.error!!.message))
+                } ?: response.error?.let { error ->
+                    when (error.code) {
+                        HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized())
+                        else -> emit(DataResponse.Error(error.message))
+                    }
+                }
             }
         } catch (e: IOException) {
             emit(DataResponse.Error("Couldn't reach the server"))
@@ -30,7 +36,12 @@ class GetAllEntriesUseCase(private val repository: EntryRepository) {
             repository.getAllEntries(period).let { response ->
                 response.data?.let {
                     emit(DataResponse.Success(it))
-                } ?: emit(DataResponse.Error(response.error!!.message))
+                } ?: response.error?.let { error ->
+                    when (error.code) {
+                        HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized())
+                        else -> emit(DataResponse.Error(error.message))
+                    }
+                }
             }
         } catch (e: IOException) {
             emit(DataResponse.Error("Couldn't reach the server"))
@@ -48,7 +59,12 @@ class CreateNewEntryUseCase(private val repository: EntryRepository) {
             repository.createNewEntry(entry).let { response ->
                 response.data?.let {
                     emit(DataResponse.Success(it))
-                } ?: emit(DataResponse.Error(response.error!!.message))
+                } ?: response.error?.let { error ->
+                    when (error.code) {
+                        HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized())
+                        else -> emit(DataResponse.Error(error.message))
+                    }
+                }
             }
         } catch (e: IOException) {
             emit(DataResponse.Error("Couldn't reach the server"))
@@ -66,7 +82,12 @@ class GetEntryByIdUseCase(private val repository: EntryRepository) {
             repository.getEntryById(id).let { response ->
                 response.data?.let {
                     emit(DataResponse.Success(it))
-                } ?: emit(DataResponse.Error(response.error!!.message))
+                } ?: response.error?.let { error ->
+                    when (error.code) {
+                        HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized())
+                        else -> emit(DataResponse.Error(error.message))
+                    }
+                }
             }
         } catch (e: IOException) {
             emit(DataResponse.Error("Couldn't reach the server"))
@@ -84,7 +105,12 @@ class ChangeEntryByIdUseCase(private val repository: EntryRepository) {
             repository.changeEntryById(entry, id).let { response ->
                 response.data?.let {
                     emit(DataResponse.Success(it))
-                } ?: emit(DataResponse.Error(response.error!!.message))
+                } ?: response.error?.let { error ->
+                    when (error.code) {
+                        HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized())
+                        else -> emit(DataResponse.Error(error.message))
+                    }
+                }
             }
         } catch (e: IOException) {
             emit(DataResponse.Error("Couldn't reach the server"))
@@ -102,7 +128,12 @@ class DeleteEntryByIdUseCase(private val repository: EntryRepository) {
             repository.deleteEntryById(id).let { response ->
                 response.data?.let {
                     emit(DataResponse.Success(it))
-                } ?: emit(DataResponse.Error(response.error!!.message))
+                } ?: response.error?.let { error ->
+                    when (error.code) {
+                        HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized())
+                        else -> emit(DataResponse.Error(error.message))
+                    }
+                }
             }
         } catch (e: IOException) {
             emit(DataResponse.Error("Couldn't reach the server"))

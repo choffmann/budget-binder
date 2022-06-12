@@ -29,6 +29,7 @@ class RegisterViewModel(
                 is DataResponse.Success -> login(user.email, user.password)
                 is DataResponse.Error -> _state.value = UiState.Error(it.message!!)
                 is DataResponse.Loading -> _state.value = UiState.Loading
+                is DataResponse.Unauthorized -> _state.value = UiState.Unauthorized
             }
         }.launchIn(scope)
     }
@@ -39,6 +40,7 @@ class RegisterViewModel(
                 is DataResponse.Success -> getMyUser()
                 is DataResponse.Error -> _state.value = UiState.Error(it.message!!)
                 is DataResponse.Loading -> _state.value = UiState.Loading
+                is DataResponse.Unauthorized -> _state.value = UiState.Unauthorized
             }
         }.launchIn(scope)
     }
@@ -49,6 +51,7 @@ class RegisterViewModel(
                 is DataResponse.Success -> _state.value = UiState.Success(it.data)
                 is DataResponse.Error -> _state.value = UiState.Error(it.message!!)
                 is DataResponse.Loading -> _state.value = UiState.Loading
+                is DataResponse.Unauthorized -> _state.value = UiState.Unauthorized
             }
         }.launchIn(scope)
     }

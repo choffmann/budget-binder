@@ -24,6 +24,7 @@ class LoginViewModel(
                 is DataResponse.Loading -> _state.value = UiState.Loading
                 is DataResponse.Success<*> -> getMyUser()
                 is DataResponse.Error -> _state.value = UiState.Error(it.message!!)
+                is DataResponse.Unauthorized -> _state.value = UiState.Unauthorized
             }
         }.launchIn(scope)
     }
@@ -34,6 +35,7 @@ class LoginViewModel(
                 is DataResponse.Loading -> _state.value = UiState.Loading
                 is DataResponse.Success<*> -> _state.value = UiState.Success(it.data)
                 is DataResponse.Error -> _state.value = UiState.Error(it.message!!)
+                is DataResponse.Unauthorized -> _state.value = UiState.Unauthorized
             }
         }.launchIn(scope)
     }
