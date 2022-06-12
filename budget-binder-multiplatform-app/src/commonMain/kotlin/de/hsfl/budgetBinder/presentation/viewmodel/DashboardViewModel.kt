@@ -13,15 +13,14 @@ import kotlinx.coroutines.flow.*
 class DashboardViewModel(
     private val getAllEntriesUseCase: GetAllEntriesUseCase,
     private val getAllCategoriesUseCase: GetAllCategoriesUseCase,
-    private val logoutUseCase: LogoutUseCase,
     private val scope: CoroutineScope = CoroutineScope(Dispatchers.Unconfined + SupervisorJob())
 ) {
-    private val _entriesState = MutableStateFlow<UiState>(UiState.Empty)
-    val entriesState: StateFlow<UiState> = _entriesState
+
     private val _categoriesState = MutableStateFlow<UiState>(UiState.Empty)
     val categoriesState: StateFlow<UiState> = _categoriesState
-    private val _logoutState = MutableStateFlow<UiState>(UiState.Empty)
-    val logoutState: StateFlow<UiState> = _logoutState
+
+    private val _entriesState = MutableStateFlow<UiState>(UiState.Empty)
+    val entriesState: StateFlow<UiState> = _entriesState
 
     // Everytime the View is open or only once?
     init {
@@ -45,22 +44,6 @@ class DashboardViewModel(
                 is DataResponse.Success -> _entriesState.value = UiState.Success(it.data)
                 is DataResponse.Error -> _entriesState.value = UiState.Error(it.message!!)
                 is DataResponse.Loading -> _entriesState.value = UiState.Loading
-            }
-        }.launchIn(scope)
-    }
-
-    fun logOut(onAllDevices: Boolean) {
-        logoutUseCase(onAllDevices).onEach {
-            when (it) {
-                is DataResponse.Success -> {
-                    _logoutState.value = UiState.Success(it.data)
-                }
-                is DataResponse.Error -> {
-                    _logoutState.value = UiState.Error(error = it.message ?: "Something went wrong")
-                }
-                is DataResponse.Loading -> {
-                    _logoutState.value = UiState.Loading
-                }
             }
         }.launchIn(scope)
     }

@@ -37,7 +37,7 @@ interface EntryRepository {
      * @param id ID from Entry to change
      * @author Cedrik Hoffmann
      */
-    suspend fun changeEntryById(entry: Entry.In, id: Int): APIResponse<Entry>
+    suspend fun changeEntryById(entry: Entry.Patch, id: Int): APIResponse<Entry>
 
     /**
      * Remove an entry by ID

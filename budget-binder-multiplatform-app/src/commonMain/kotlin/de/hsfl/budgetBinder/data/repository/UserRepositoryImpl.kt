@@ -12,7 +12,7 @@ class UserRepositoryImpl(
         return client.getMyUser()
     }
 
-    override suspend fun changeMyUser(user: User.In): APIResponse<User> {
+    override suspend fun changeMyUser(user: User.Patch): APIResponse<User> {
         return client.changeMyUser(user)
     }
 

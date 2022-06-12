@@ -106,7 +106,7 @@ suspend fun checkMeFailure(client: HttpClient) {
     sendAuthenticatedRequest(client, HttpMethod.Get, "/me") { response ->
         assertEquals(HttpStatusCode.Unauthorized, response.status)
         val responseBody: APIResponse<User> = response.body()
-        val shouldResponse: APIResponse<User> = wrapFailure("Your accessToken is absent or does not match.")
+        val shouldResponse: APIResponse<User> = wrapFailure("Your accessToken is absent or does not match.", 401)
         assertEquals(shouldResponse, responseBody)
     }
 }

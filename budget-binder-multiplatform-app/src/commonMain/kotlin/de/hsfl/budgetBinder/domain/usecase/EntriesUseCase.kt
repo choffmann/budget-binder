@@ -78,7 +78,7 @@ class GetEntryByIdUseCase(private val repository: EntryRepository) {
 }
 
 class ChangeEntryByIdUseCase(private val repository: EntryRepository) {
-    operator fun invoke(entry: Entry.In, id: Int): Flow<DataResponse<Entry>> = flow {
+    operator fun invoke(entry: Entry.Patch, id: Int): Flow<DataResponse<Entry>> = flow {
         try {
             emit(DataResponse.Loading())
             repository.changeEntryById(entry, id).let { response ->

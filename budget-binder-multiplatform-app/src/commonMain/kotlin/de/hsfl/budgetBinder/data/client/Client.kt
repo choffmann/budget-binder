@@ -2,13 +2,13 @@ package de.hsfl.budgetBinder.data.client
 
 import de.hsfl.budgetBinder.common.*
 import de.hsfl.budgetBinder.common.Constants.BASE_URL
+import de.hsfl.budgetBinder.data.client.plugins.AuthPlugin
+import de.hsfl.budgetBinder.data.client.plugins.FileCookieStorage
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.engine.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.client.plugins.auth.*
-import io.ktor.client.plugins.auth.providers.*
 import io.ktor.client.plugins.cookies.*
 import io.ktor.client.plugins.logging.*
 import io.ktor.client.request.*
@@ -52,7 +52,7 @@ interface ApiClient {
      * @param user user object with the changes
      * @author Cedrik Hoffmann
      */
-    suspend fun changeMyUser(user: User.In): APIResponse<User>
+    suspend fun changeMyUser(user: User.Patch): APIResponse<User>
 
     /**
      * Delete the current logged in user
@@ -93,7 +93,7 @@ interface ApiClient {
      * @param id ID of category to change
      * @author Cedrik Hoffmann
      */
-    suspend fun changeCategoryById(category: Category.In, id: Int): APIResponse<Category>
+    suspend fun changeCategoryById(category: Category.Patch, id: Int): APIResponse<Category>
 
     /**
      * Delete Category by ID
@@ -141,7 +141,7 @@ interface ApiClient {
      * @param id ID of entry to change
      * @author Cedrik Hoffmann
      */
-    suspend fun changeEntryById(entry: Entry.In, id: Int): APIResponse<Entry>
+    suspend fun changeEntryById(entry: Entry.Patch, id: Int): APIResponse<Entry>
 
     /**
      * Delete Entry by ID
@@ -165,27 +165,20 @@ class Client( engine: HttpClientEngine) : ApiClient {
         install(ContentNegotiation) {
             json()
         }
-        install(Auth) {
-            bearer {
-                loadTokens {
-                    BearerTokens("", "")
-                }
-                refreshTokens {
-                    val refreshToken: APIResponse<AuthToken> =
-                        client.get("/refresh_token") {
-                            markAsRefreshTokenRequest()
-                        }.body()
-                    refreshToken.data?.let {
-                        BearerTokens(it.token, "")
-                    }
-                }
-            }
+
+        install(AuthPlugin) {
+            loginPath = "/login"
+            logoutPath = "/logout"
+            refreshPath = "/refresh_token"
         }
+
         install(Logging) {
             logger = Logger.DEFAULT
             level = LogLevel.HEADERS
         }
-        install(HttpCookies)
+        install(HttpCookies) {
+            storage = FileCookieStorage()
+        }
 
         defaultRequest {
             url(BASE_URL)
@@ -220,7 +213,7 @@ class Client( engine: HttpClientEngine) : ApiClient {
         return client.get("/me").body()
     }
 
-    override suspend fun changeMyUser(user: User.In): APIResponse<User> {
+    override suspend fun changeMyUser(user: User.Patch): APIResponse<User> {
         return client.patch(urlString = "/me") {
             contentType(ContentType.Application.Json)
             setBody(user)
@@ -256,7 +249,7 @@ class Client( engine: HttpClientEngine) : ApiClient {
         return client.get(urlString = "/categories/$id").body()
     }
 
-    override suspend fun changeCategoryById(category: Category.In, id: Int): APIResponse<Category> {
+    override suspend fun changeCategoryById(category: Category.Patch, id: Int): APIResponse<Category> {
         return client.patch(urlString = "/categories/$id") {
             contentType(ContentType.Application.Json)
             setBody(category)
@@ -296,7 +289,7 @@ class Client( engine: HttpClientEngine) : ApiClient {
         return client.get(urlString = "/entries/$id").body()
     }
 
-    override suspend fun changeEntryById(entry: Entry.In, id: Int): APIResponse<Entry> {
+    override suspend fun changeEntryById(entry: Entry.Patch, id: Int): APIResponse<Entry> {
         return client.patch(urlString = "/entries/$id") {
             contentType(ContentType.Application.Json)
             setBody(entry)

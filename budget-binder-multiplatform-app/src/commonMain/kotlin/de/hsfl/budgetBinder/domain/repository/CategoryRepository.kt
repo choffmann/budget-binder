@@ -38,7 +38,7 @@ interface CategoryRepository {
      * @param id ID from Category to change
      * @author Cedrik Hoffmann
      */
-    suspend fun changeCategoryById(category: Category.In, id: Int): APIResponse<Category>
+    suspend fun changeCategoryById(category: Category.Patch, id: Int): APIResponse<Category>
 
     /**
      * Remove a Category by ID

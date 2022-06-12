@@ -15,7 +15,7 @@ interface UserRepository {
      * @param user User with changes
      * @author Cedrik Hoffmann
      */
-    suspend fun changeMyUser(user: User.In): APIResponse<User>
+    suspend fun changeMyUser(user: User.Patch): APIResponse<User>
 
     /**
      * Remove the user
