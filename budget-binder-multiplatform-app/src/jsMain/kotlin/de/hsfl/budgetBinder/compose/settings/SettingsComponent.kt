@@ -22,6 +22,8 @@ fun SettingsComponent(screenState: MutableState<Screen>) {
 
     SettingsView(
         state = viewState,
-        onBackButton = { screenState.value = Screen.Dashboard}
+        onChangeToDashboard = { screenState.value = Screen.Dashboard} ,
+        onChangeToSettings = { screenState.value = Screen.Settings},
+        onChangeToCategory = { screenState.value = Screen.CategorySummary}
     )
 }
