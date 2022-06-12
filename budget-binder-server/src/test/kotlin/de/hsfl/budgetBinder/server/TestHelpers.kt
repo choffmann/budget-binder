@@ -45,8 +45,8 @@ inline fun <reified T> wrapSuccess(value: T): APIResponse<T> {
     return APIResponse(data = value, success = true)
 }
 
-inline fun <reified T> wrapFailure(message: String): APIResponse<T> {
-    return APIResponse(error = ErrorModel(message = message), success = false)
+inline fun <reified T> wrapFailure(message: String, code: Int = 200): APIResponse<T> {
+    return APIResponse(error = ErrorModel(message = message, code), success = false)
 }
 
 fun formatToPeriod(time: LocalDateTime): String {
