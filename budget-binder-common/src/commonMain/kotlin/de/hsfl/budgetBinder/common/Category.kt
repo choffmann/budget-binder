@@ -10,9 +10,53 @@ data class Category(
     val image: Image,
     val budget: Float
 ) {
-    enum class Image {
+    enum class Image { //Should be regrouped, sorted
         DEFAULT,
-        SHOPPING
+        CHECKMARK,
+        WRONG,
+        SHOPPINGCART,
+        SHOPPINGBASKET,
+        FOOD,
+        FASTFOOD,
+        RESTAURANT,
+        MONEY,
+        HOME,
+        FAMILY,
+        HEALTH,
+        MEDICATION,
+        KEYBOARD,
+        PRINTER,
+        INVEST,
+        SPORT,
+        CLOTH,
+        GIFT,
+        WEALTH,
+        FLOWER,
+        PET,
+        BILLS,
+        WATER,
+        FIRE,
+        STAR,
+        SAVINGS,
+        CAR,
+        BIKE,
+        TRAIN,
+        MOTORCYCLE,
+        MOPED,
+        ELECTRONICS,
+        BOOK,
+        FLIGHT,
+        WORK,
+        MOON,
+        LOCK,
+        PHONE,
+        STORE,
+        BAR,
+        FOREST,
+        HARDWARE,
+        PEST
+
+
     }
 
     @Serializable
