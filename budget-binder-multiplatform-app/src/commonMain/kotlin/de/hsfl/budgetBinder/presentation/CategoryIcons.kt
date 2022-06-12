@@ -2,4 +2,4 @@ package de.hsfl.budgetBinder.presentation
 
 import de.hsfl.budgetBinder.common.Category
 
-expect fun CategoryToIcon(icon: Category.Image)
+expect fun CategoryImageToIcon(icon: Category.Image)

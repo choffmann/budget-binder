@@ -6,7 +6,7 @@ import org.jetbrains.compose.web.dom.Span
 import org.jetbrains.compose.web.dom.Text
 
 @Composable
-actual fun CategoryToIcon(icon: Category.Image) {
+actual fun CategoryImageToIcon(icon: Category.Image) {
     Span(
         attrs = {
             classes("material-icons")

@@ -7,7 +7,7 @@ import androidx.compose.runtime.Composable
 import de.hsfl.budgetBinder.common.Category
 
 @Composable
-actual fun CategoryToIcon(icon: Category.Image) {
+actual fun CategoryImageToIcon(icon: Category.Image) {
     when (icon) {
         Category.Image.DEFAULT -> Icon(imageVector = Icons.Default.ShoppingCart, contentDescription = null)
         Category.Image.SHOPPINGCART -> Icon(imageVector = Icons.Default.ShoppingCart, contentDescription = null)
