@@ -2,8 +2,8 @@ package de.hsfl.budgetBinder.compose.category
 
 import androidx.compose.runtime.*
 import de.hsfl.budgetBinder.common.Category
+import de.hsfl.budgetBinder.common.Constants.DEFAULTCATEGORY
 import de.hsfl.budgetBinder.common.Entry
-import de.hsfl.budgetBinder.common.StateManager.categoryList
 import de.hsfl.budgetBinder.domain.usecase.*
 import de.hsfl.budgetBinder.presentation.Screen
 import de.hsfl.budgetBinder.presentation.viewmodel.CategoryViewModel
@@ -57,28 +57,64 @@ fun CategoryComponent(screenState: MutableState<Screen>) {
 //Should be put in own File
 @Composable
 fun Icon(category: Category){
-    val imagePath =
+    val imageName =
         when (category.image) {
-            Category.Image.DEFAULT -> "cart.png"
-            Category.Image.SHOPPING -> "cart.png"
+            Category.Image.SHOPPINGCART -> "shopping_cart"
+            Category.Image.SHOPPINGBASKET -> "shopping_basket"
+            Category.Image.CHECKMARK -> "done"
+            Category.Image.WRONG -> "dangerous"
+            Category.Image.HOME -> "home"
+            Category.Image.FOOD -> "bakery_dining"
+            Category.Image.FASTFOOD -> "bakery_dining"
+            Category.Image.RESTAURANT -> "restaurant"
+            Category.Image.FAMILY -> "people"
+            Category.Image.MONEY -> "payments"
+            Category.Image.HEALTH -> "health_and_safety"
+            Category.Image.MEDICATION -> "medication"
+            Category.Image.INVEST -> "query_stats"
+            Category.Image.SPORT -> "sports_soccer"
+            Category.Image.CLOTH -> "checkroom"
+            Category.Image.GIFT -> "redeem"
+            Category.Image.WEALTH -> "monetization_on"
+            Category.Image.FLOWER -> "local_florist"
+            Category.Image.PET -> "pets"
+            Category.Image.BILLS -> "receipt"
+            Category.Image.KEYBOARD-> "redeem"
+            Category.Image.PRINTER-> "print"
+            Category.Image.WATER -> "water_drop"
+            Category.Image.FIRE -> "fire"
+            Category.Image.STAR -> "grade"
+            Category.Image.SAVINGS -> "savings"
+            Category.Image.CAR -> "minor_crash"
+            Category.Image.BIKE -> "pedal_bike"
+            Category.Image.TRAIN -> "directions_transit"
+            Category.Image.MOPED-> "moped"
+            Category.Image.MOTORCYCLE -> "two_wheeler"
+            Category.Image.ELECTRONICS -> "electrical_services"
+            Category.Image.BOOK -> "book"
+            Category.Image.FLIGHT -> "flight_takeoff"
+            Category.Image.WORK -> "work"
+            Category.Image.MOON -> "nightlight_round"
+            Category.Image.LOCK -> "https"
+            Category.Image.PHONE -> "perm_phone_msg"
+            Category.Image.STORE -> "store_mall_directory"
+            Category.Image.BAR -> "nightlife"
+            Category.Image.FOREST -> "forest"
+            Category.Image.HARDWARE -> "hardware"
+            Category.Image.PEST -> "pest_control"
+            else -> {""} //Default will be this
         }
-    Img(imagePath, "imagePath", attrs = {classes("mdc-icon-button")})
+    Span(
+        attrs = {
+            classes("material-icons")
+        }
+    ) {Text(imageName)}
 }
-@Composable
-fun Icon(id: Int?){
-    var categoryImage = Category.Image.DEFAULT
-    if (id != null) {
-        categoryImage = categoryList[id].image
+fun categoryIdToCategory(category_id: Int?,categoryList: List<Category>): Category {
+    for (category in categoryList){
+        if (category.id == category_id) return category
     }
-    val imagePath =
-        when (categoryImage) {
-            Category.Image.DEFAULT -> "cart.png"
-            Category.Image.SHOPPING -> "cart.png"
-        }
-    Img(imagePath, "imagePath", attrs = {
-        classes("mdc-icon-button")
-        style { padding(0.px) }
-    })
+    return DEFAULTCATEGORY //If the category wasn't found (or is set to no category) return default
 }
 
 @OptIn(ExperimentalComposeWebSvgApi::class)
