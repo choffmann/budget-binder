@@ -50,7 +50,7 @@ class EntryViewModel(
         }.launchIn(scope)
     }
 
-    fun changeEntry(entry: Entry.In, id: Int) {
+    fun changeEntry(entry: Entry.Patch, id: Int) {
         changeEntryByIdUseCase(entry, id).onEach {
             when (it) {
                 is DataResponse.Success -> _state.value = UiState.Success(it.data)

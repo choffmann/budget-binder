@@ -26,7 +26,7 @@ class GetMyUserUseCase(private val repository: UserRepository) {
 }
 
 class ChangeMyUserUseCase(private val repository: UserRepository) {
-    operator fun invoke(user: User.In): Flow<DataResponse<User>> = flow {
+    operator fun invoke(user: User.Patch): Flow<DataResponse<User>> = flow {
         try {
             emit(DataResponse.Loading())
             repository.changeMyUser(user).let { response ->

@@ -51,7 +51,7 @@ class CategoryViewModel(
         }.launchIn(scope)
     }
 
-    fun changeCategory(category: Category.In,id: Int) {
+    fun changeCategory(category: Category.Patch,id: Int) {
         changeCategoryByIdUseCase(category, id).onEach {
             when (it) {
                 is DataResponse.Success -> _state.value = UiState.Success(it.data)

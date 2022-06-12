@@ -79,7 +79,7 @@ class GetCategoryByIdUseCase(private val repository: CategoryRepository) {
 }
 
 class ChangeCategoryByIdUseCase(private val repository: CategoryRepository) {
-    operator fun invoke(category: Category.In, id: Int): Flow<DataResponse<Category>> = flow {
+    operator fun invoke(category: Category.Patch, id: Int): Flow<DataResponse<Category>> = flow {
         try {
             emit(DataResponse.Loading())
             repository.changeCategoryById(category, id).let { response ->

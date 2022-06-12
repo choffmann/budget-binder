@@ -81,7 +81,8 @@ val di = DI {
         )
     }
     bindSingleton { EntryViewModel(instance(), instance(), instance(), instance(), instance(), instance()) }
-    bindSingleton { DashboardViewModel(instance(), instance(), instance(), instance()) }
+    bindSingleton { DashboardViewModel(instance(), instance(), instance()) }
+    bindSingleton { NavDrawerViewModel(instance(), instance()) }
 }
 
 @Composable

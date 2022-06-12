@@ -20,7 +20,7 @@ class SettingsViewModel(
     private val _state = MutableStateFlow<UiState>(UiState.Empty)
     val state: StateFlow<UiState> = _state
 
-    fun changeMyUser(user: User.In) {
+    fun changeMyUser(user: User.Patch) {
         changeMyUserUseCase(user).onEach {
             when (it) {
                 is DataResponse.Success -> _state.value = UiState.Success(it.data)

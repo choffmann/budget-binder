@@ -25,7 +25,7 @@ class CategoryRepositoryImpl(
         return client.getCategoryById(id)
     }
 
-    override suspend fun changeCategoryById(category: Category.In, id: Int): APIResponse<Category> {
+    override suspend fun changeCategoryById(category: Category.Patch, id: Int): APIResponse<Category> {
         return client.changeCategoryById(category, id)
     }
 

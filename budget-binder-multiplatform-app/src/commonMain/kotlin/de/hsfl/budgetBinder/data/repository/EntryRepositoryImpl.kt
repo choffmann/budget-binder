@@ -24,7 +24,7 @@ class EntryRepositoryImpl(
         return client.getEntryById(id)
     }
 
-    override suspend fun changeEntryById(entry: Entry.In, id: Int): APIResponse<Entry> {
+    override suspend fun changeEntryById(entry: Entry.Patch, id: Int): APIResponse<Entry> {
         return client.changeEntryById(entry, id)
     }
 
