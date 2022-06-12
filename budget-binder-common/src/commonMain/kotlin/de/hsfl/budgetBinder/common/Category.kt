@@ -55,8 +55,6 @@ data class Category(
         FOREST,
         HARDWARE,
         PEST
-
-
     }
 
     @Serializable
