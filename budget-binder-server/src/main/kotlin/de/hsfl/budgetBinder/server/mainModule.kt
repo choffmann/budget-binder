@@ -140,13 +140,18 @@ fun Application.mainModule(config: Config) {
                 is UnauthorizedException -> {
                     call.respond(
                         HttpStatusCode.Unauthorized,
-                        APIResponse<String>(ErrorModel(cause.message))
+                        APIResponse<String>(ErrorModel(cause.message, HttpStatusCode.Unauthorized.value))
                     )
                 }
                 else -> {
                     call.respond(
                         HttpStatusCode.InternalServerError,
-                        APIResponse<String>(ErrorModel("An Internal-Server-Error occurred. Please contact your Administrator or see the Server-Logs."))
+                        APIResponse<String>(
+                            ErrorModel(
+                                "An Internal-Server-Error occurred. Please contact your Administrator or see the Server-Logs.",
+                                HttpStatusCode.InternalServerError.value
+                            )
+                        )
                     )
                     throw cause
                 }
@@ -156,7 +161,7 @@ fun Application.mainModule(config: Config) {
             when (call.request.uri) {
                 "/login" -> call.respond(
                     status,
-                    APIResponse<String>(ErrorModel("Your username and/or password do not match."))
+                    APIResponse<String>(ErrorModel("Your username and/or password do not match.", status.value))
                 )
                 else -> {
                     val jwtService: JWTService by this@mainModule.closestDI().instance()
@@ -166,13 +171,16 @@ fun Application.mainModule(config: Config) {
                     )
                     call.respond(
                         status,
-                        APIResponse<String>(ErrorModel("Your accessToken is absent or does not match."))
+                        APIResponse<String>(ErrorModel("Your accessToken is absent or does not match.", status.value))
                     )
                 }
             }
         }
         status(HttpStatusCode.MethodNotAllowed) { call, status ->
-            call.respond(status, APIResponse<String>(ErrorModel("The used HTTP-Method is not allowed on this Endpoint.")))
+            call.respond(
+                status,
+                APIResponse<String>(ErrorModel("The used HTTP-Method is not allowed on this Endpoint.", status.value))
+            )
         }
     }
 
