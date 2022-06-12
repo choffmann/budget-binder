@@ -6,6 +6,7 @@ import de.hsfl.budgetBinder.common.Entry
 import de.hsfl.budgetBinder.compose.category.Icon
 import de.hsfl.budgetBinder.compose.category.categoryIdToCategory
 import de.hsfl.budgetBinder.domain.usecase.*
+import de.hsfl.budgetBinder.presentation.CategoryToIcon
 import de.hsfl.budgetBinder.presentation.Screen
 import de.hsfl.budgetBinder.presentation.viewmodel.EntryViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -46,7 +47,7 @@ fun EntryComponent(screenState: MutableState<Screen>) {
 @Composable
 fun EntryListElement(entry: Entry, categoryList : List<Category>){
     Div {
-        Icon(categoryIdToCategory(entry.category_id,categoryList))
+        CategoryToIcon(categoryIdToCategory(entry.category_id,categoryList).image)
         Text(entry.name)
         Text(entry.amount.toString()+"€")
 

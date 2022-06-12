@@ -54,62 +54,6 @@ fun CategoryComponent(screenState: MutableState<Screen>) {
     }
 }
 
-//Should be put in own File
-@Composable
-fun Icon(category: Category){
-    val imageName =
-        when (category.image) {
-            Category.Image.SHOPPINGCART -> "shopping_cart"
-            Category.Image.SHOPPINGBASKET -> "shopping_basket"
-            Category.Image.CHECKMARK -> "done"
-            Category.Image.WRONG -> "dangerous"
-            Category.Image.HOME -> "home"
-            Category.Image.FOOD -> "bakery_dining"
-            Category.Image.FASTFOOD -> "fastfood"
-            Category.Image.RESTAURANT -> "restaurant"
-            Category.Image.FAMILY -> "people"
-            Category.Image.MONEY -> "payments"
-            Category.Image.HEALTH -> "health_and_safety"
-            Category.Image.MEDICATION -> "medication"
-            Category.Image.INVEST -> "query_stats"
-            Category.Image.SPORT -> "sports_soccer"
-            Category.Image.CLOTH -> "checkroom"
-            Category.Image.GIFT -> "redeem"
-            Category.Image.WEALTH -> "monetization_on"
-            Category.Image.FLOWER -> "local_florist"
-            Category.Image.PET -> "pets"
-            Category.Image.BILLS -> "receipt"
-            Category.Image.KEYBOARD-> "redeem"
-            Category.Image.PRINTER-> "print"
-            Category.Image.WATER -> "water_drop"
-            Category.Image.FIRE -> "fire"
-            Category.Image.STAR -> "grade"
-            Category.Image.SAVINGS -> "savings"
-            Category.Image.CAR -> "minor_crash"
-            Category.Image.BIKE -> "pedal_bike"
-            Category.Image.TRAIN -> "directions_transit"
-            Category.Image.MOPED-> "moped"
-            Category.Image.MOTORCYCLE -> "two_wheeler"
-            Category.Image.ELECTRONICS -> "electrical_services"
-            Category.Image.BOOK -> "book"
-            Category.Image.FLIGHT -> "flight_takeoff"
-            Category.Image.WORK -> "work"
-            Category.Image.MOON -> "nightlight_round"
-            Category.Image.LOCK -> "https"
-            Category.Image.PHONE -> "perm_phone_msg"
-            Category.Image.STORE -> "store_mall_directory"
-            Category.Image.BAR -> "nightlife"
-            Category.Image.FOREST -> "forest"
-            Category.Image.HARDWARE -> "hardware"
-            Category.Image.PEST -> "pest_control"
-            else -> {"check_box_outline_blank"} //Default will be this
-        }
-    Span(
-        attrs = {
-            classes("material-icons")
-        }
-    ) {Text(imageName)}
-}
 fun categoryIdToCategory(category_id: Int?,categoryList: List<Category>): Category {
     for (category in categoryList){
         if (category.id == category_id) return category

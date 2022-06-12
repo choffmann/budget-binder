@@ -14,7 +14,7 @@ actual fun CategoryToIcon(icon: Category.Image) {
     ) {
         Text(
             when (icon) {
-                Category.Image.DEFAULT -> "cart.png"
+                Category.Image.DEFAULT -> "check_box_outline_blank"
                 Category.Image.SHOPPINGCART -> "shopping_cart"
                 Category.Image.SHOPPINGBASKET -> "shopping_basket"
                 Category.Image.CHECKMARK -> "done"
