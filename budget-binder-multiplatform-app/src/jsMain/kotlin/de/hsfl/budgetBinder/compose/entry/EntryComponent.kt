@@ -1,8 +1,10 @@
 package de.hsfl.budgetBinder.compose.entry
 
 import androidx.compose.runtime.*
+import de.hsfl.budgetBinder.common.Category
 import de.hsfl.budgetBinder.common.Entry
 import de.hsfl.budgetBinder.compose.category.Icon
+import de.hsfl.budgetBinder.compose.category.categoryIdToCategory
 import de.hsfl.budgetBinder.domain.usecase.*
 import de.hsfl.budgetBinder.presentation.Screen
 import de.hsfl.budgetBinder.presentation.viewmodel.EntryViewModel
@@ -42,17 +44,18 @@ fun EntryComponent(screenState: MutableState<Screen>) {
 
 //Should be put in own File
 @Composable
-fun EntryListElement(entry: Entry){
+fun EntryListElement(entry: Entry, categoryList : List<Category>){
     Div {
-        Icon(entry.category_id)
+        Icon(categoryIdToCategory(entry.category_id,categoryList))
         Text(entry.name)
         Text(entry.amount.toString()+"€")
+
     }
 }
 
 @Composable
-fun EntryList(list: List<Entry>){
+fun EntryList(list: List<Entry>, categoryList : List<Category>){
     for (entry in list){
-        EntryListElement(entry)
+        EntryListElement(entry,categoryList)
     }
 }
