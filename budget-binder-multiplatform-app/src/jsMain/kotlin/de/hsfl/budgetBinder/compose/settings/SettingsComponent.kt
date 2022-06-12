@@ -34,7 +34,7 @@ fun SettingsComponent(screenState: MutableState<Screen>) {
         Screen.SettingsChangeUserData -> SettingsChangeUserDataView(
             state = viewState,
             onChangeDataButtonPressed = { firstName, lastName, password ->
-                settingsViewModel.changeMyUser(User.In(firstName, lastName, password)); screenState.value =
+                settingsViewModel.changeMyUser(User.Patch(firstName, lastName, password)); screenState.value =
                 Screen.Settings
             },
             onChangeToDashboard = { screenState.value = Screen.Dashboard },
