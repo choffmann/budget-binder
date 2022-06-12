@@ -113,5 +113,12 @@ fun SettingsView(
                 }
             }
         }
+        Div(
+            attrs = {
+                classes("mdc-dialog__scrim")
+            }
+        ) {
+
+        }
     }
 }
