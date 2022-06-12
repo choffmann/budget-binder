@@ -73,7 +73,11 @@ class AuthPlugin private constructor(
 
                 if (url.endsWith(plugin.loginPath)) {
                     val origin = execute(firstRequest)
-                    plugin.accessToken = origin.response.body<APIResponse<AuthToken>>().data?.token
+                    if (origin.response.status == HttpStatusCode.OK) {
+                        plugin.accessToken = scope.get(plugin.refreshPath) {
+                            attributes.put(AuthPluginCircuitBreaker, Unit)
+                        }.body<APIResponse<AuthToken>>().data?.token
+                    }
                     return@intercept origin
                 }
 
