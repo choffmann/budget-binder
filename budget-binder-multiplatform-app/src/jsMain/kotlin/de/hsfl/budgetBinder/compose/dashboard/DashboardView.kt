@@ -16,7 +16,6 @@ import kotlin.math.log
 
 @Composable
 fun DashboardView(
-    logoutState: State<Any>,
     categoriesState: State<Any>,
     entriesState: State<Any>,
     onCategorySummaryButton: () -> Unit,
@@ -24,7 +23,6 @@ fun DashboardView(
     onEntryCreateButton: () -> Unit,
     onEntryEditButton: () -> Unit
 ) {
-    val logoutViewState by remember { logoutState }
     val categoriesViewState by remember { categoriesState }
     val entriesViewState by remember { entriesState }
     var categoryList by remember { mutableStateOf<List<Category>>(emptyList()) }
