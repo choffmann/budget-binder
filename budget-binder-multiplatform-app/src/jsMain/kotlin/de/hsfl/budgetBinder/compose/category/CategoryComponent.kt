@@ -2,8 +2,8 @@ package de.hsfl.budgetBinder.compose.category
 
 import androidx.compose.runtime.*
 import de.hsfl.budgetBinder.common.Category
+import de.hsfl.budgetBinder.common.Constants.DEFAULTCATEGORY
 import de.hsfl.budgetBinder.common.Entry
-import de.hsfl.budgetBinder.common.StateManager.categoryList
 import de.hsfl.budgetBinder.domain.usecase.*
 import de.hsfl.budgetBinder.presentation.Screen
 import de.hsfl.budgetBinder.presentation.viewmodel.CategoryViewModel
@@ -64,21 +64,12 @@ fun Icon(category: Category){
         }
     Img(imagePath, "imagePath", attrs = {classes("mdc-icon-button")})
 }
-@Composable
-fun Icon(id: Int?){
-    var categoryImage = Category.Image.DEFAULT
-    if (id != null) {
-        categoryImage = categoryList[id].image
+
+fun categoryIdToCategory(category_id: Int?,categoryList: List<Category>): Category {
+    for (category in categoryList){
+        if (category.id == category_id) return category
     }
-    val imagePath =
-        when (categoryImage) {
-            Category.Image.DEFAULT -> "cart.png"
-            Category.Image.SHOPPING -> "cart.png"
-        }
-    Img(imagePath, "imagePath", attrs = {
-        classes("mdc-icon-button")
-        style { padding(0.px) }
-    })
+    return DEFAULTCATEGORY //If the category wasn't found (or is set to no category) return default
 }
 
 @OptIn(ExperimentalComposeWebSvgApi::class)

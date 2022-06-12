@@ -18,11 +18,14 @@ fun DashboardComponent(screenState: MutableState<Screen>) {
     val getAllCategoriesUseCase: GetAllCategoriesUseCase by di.instance()
     val logoutUseCase : LogoutUseCase by di.instance()
     val dashboardViewModel = DashboardViewModel(getAllEntriesUseCase,getAllCategoriesUseCase,logoutUseCase, scope)
-    val viewState = dashboardViewModel.state.collectAsState(scope)
+    val categoriesViewState = dashboardViewModel.categoriesState.collectAsState(scope)
+    val logoutViewState = dashboardViewModel.logoutState.collectAsState(scope)
+    val entriesViewState = dashboardViewModel.entriesState.collectAsState(scope)
 
     DashboardView(
-        state = viewState,
-        onUpdate = { },
+        categoriesState = categoriesViewState,
+        entriesState = entriesViewState,
+        logoutState = logoutViewState,
         onCategorySummaryButton = { screenState.value = Screen.CategorySummary},
         onSettingsButton = {screenState.value = Screen.Settings},
         onEntryCreateButton = {screenState.value = Screen.EntryCreate},
