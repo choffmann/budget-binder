@@ -27,6 +27,7 @@ class CategoryViewModel(
                 is DataResponse.Success -> _state.value = UiState.Success(it.data)
                 is DataResponse.Error -> _state.value = UiState.Error(it.message!!)
                 is DataResponse.Loading -> _state.value = UiState.Loading
+                is DataResponse.Unauthorized -> _state.value = UiState.Unauthorized
             }
         }.launchIn(scope)
     }
@@ -37,6 +38,7 @@ class CategoryViewModel(
                 is DataResponse.Success -> _state.value = UiState.Success(it.data)
                 is DataResponse.Error -> _state.value = UiState.Error(it.message!!)
                 is DataResponse.Loading -> _state.value = UiState.Loading
+                is DataResponse.Unauthorized -> _state.value = UiState.Unauthorized
             }
         }.launchIn(scope)
     }
@@ -47,6 +49,7 @@ class CategoryViewModel(
                 is DataResponse.Success -> _state.value = UiState.Success(it.data)
                 is DataResponse.Error -> _state.value = UiState.Error(it.message!!)
                 is DataResponse.Loading -> _state.value = UiState.Loading
+                is DataResponse.Unauthorized -> _state.value = UiState.Unauthorized
             }
         }.launchIn(scope)
     }
@@ -57,6 +60,7 @@ class CategoryViewModel(
                 is DataResponse.Success -> _state.value = UiState.Success(it.data)
                 is DataResponse.Error -> _state.value = UiState.Error(it.message!!)
                 is DataResponse.Loading -> _state.value = UiState.Loading
+                is DataResponse.Unauthorized -> _state.value = UiState.Unauthorized
             }
         }.launchIn(scope)
     }
@@ -67,6 +71,7 @@ class CategoryViewModel(
                 is DataResponse.Success -> _state.value = UiState.Success(it.data)
                 is DataResponse.Error -> _state.value = UiState.Error(it.message!!)
                 is DataResponse.Loading -> _state.value = UiState.Loading
+                is DataResponse.Unauthorized -> _state.value = UiState.Unauthorized
             }
         }.launchIn(scope)
     }
@@ -77,6 +82,7 @@ class CategoryViewModel(
                 is DataResponse.Success -> _state.value = UiState.Success(it.data)
                 is DataResponse.Error -> _state.value = UiState.Error(it.message!!)
                 is DataResponse.Loading -> _state.value = UiState.Loading
+                is DataResponse.Unauthorized -> _state.value = UiState.Unauthorized
             }
         }.launchIn(scope)
     }

@@ -4,6 +4,7 @@ import de.hsfl.budgetBinder.common.Category
 import de.hsfl.budgetBinder.common.DataResponse
 import de.hsfl.budgetBinder.common.Entry
 import de.hsfl.budgetBinder.domain.repository.CategoryRepository
+import io.ktor.http.*
 import io.ktor.utils.io.errors.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -15,7 +16,12 @@ class GetAllCategoriesUseCase(private val repository: CategoryRepository) {
             repository.getAllCategories().let { response ->
                 response.data?.let {
                     emit(DataResponse.Success(it))
-                } ?: emit(DataResponse.Error(response.error!!.message))
+                } ?: response.error?.let { error ->
+                    when (error.code) {
+                        HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized())
+                        else -> emit(DataResponse.Error(error.message))
+                    }
+                }
             }
         } catch (e: IOException) {
             emit(DataResponse.Error("Couldn't reach the server"))
@@ -31,7 +37,12 @@ class GetAllCategoriesUseCase(private val repository: CategoryRepository) {
             repository.getAllCategories(period).let { response ->
                 response.data?.let {
                     emit(DataResponse.Success(it))
-                } ?: emit(DataResponse.Error(response.error!!.message))
+                } ?: response.error?.let { error ->
+                    when (error.code) {
+                        HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized())
+                        else -> emit(DataResponse.Error(error.message))
+                    }
+                }
             }
         } catch (e: IOException) {
             emit(DataResponse.Error("Couldn't reach the server"))
@@ -49,7 +60,12 @@ class CreateCategoryUseCase(private val repository: CategoryRepository) {
             repository.createNewCategory(category).let { response ->
                 response.data?.let {
                     emit(DataResponse.Success(it))
-                } ?: emit(DataResponse.Error(response.error!!.message))
+                } ?: response.error?.let { error ->
+                    when (error.code) {
+                        HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized())
+                        else -> emit(DataResponse.Error(error.message))
+                    }
+                }
             }
         } catch (e: IOException) {
             emit(DataResponse.Error("Couldn't reach the server"))
@@ -67,7 +83,12 @@ class GetCategoryByIdUseCase(private val repository: CategoryRepository) {
             repository.getCategoryById(id).let { response ->
                 response.data?.let {
                     emit(DataResponse.Success(it))
-                } ?: emit(DataResponse.Error(response.error!!.message))
+                } ?: response.error?.let { error ->
+                    when (error.code) {
+                        HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized())
+                        else -> emit(DataResponse.Error(error.message))
+                    }
+                }
             }
         } catch (e: IOException) {
             emit(DataResponse.Error("Couldn't reach the server"))
@@ -85,7 +106,12 @@ class ChangeCategoryByIdUseCase(private val repository: CategoryRepository) {
             repository.changeCategoryById(category, id).let { response ->
                 response.data?.let {
                     emit(DataResponse.Success(it))
-                } ?: emit(DataResponse.Error(response.error!!.message))
+                } ?: response.error?.let { error ->
+                    when (error.code) {
+                        HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized())
+                        else -> emit(DataResponse.Error(error.message))
+                    }
+                }
             }
         } catch (e: IOException) {
             emit(DataResponse.Error("Couldn't reach the server"))
@@ -103,7 +129,12 @@ class DeleteCategoryByIdUseCase(private val repository: CategoryRepository) {
             repository.deleteCategoryById(id).let { response ->
                 response.data?.let {
                     emit(DataResponse.Success(it))
-                } ?: emit(DataResponse.Error(response.error!!.message))
+                } ?: response.error?.let { error ->
+                    when (error.code) {
+                        HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized())
+                        else -> emit(DataResponse.Error(error.message))
+                    }
+                }
             }
         } catch (e: IOException) {
             emit(DataResponse.Error("Couldn't reach the server"))
@@ -121,7 +152,12 @@ class GetAllEntriesByCategoryUseCase(private val repository: CategoryRepository)
             repository.getEntriesFromCategory(id).let { response ->
                 response.data?.let {
                     emit(DataResponse.Success(it))
-                } ?: emit(DataResponse.Error(response.error!!.message))
+                } ?: response.error?.let { error ->
+                    when (error.code) {
+                        HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized())
+                        else -> emit(DataResponse.Error(error.message))
+                    }
+                }
             }
         } catch (e: IOException) {
             emit(DataResponse.Error("Couldn't reach the server"))
