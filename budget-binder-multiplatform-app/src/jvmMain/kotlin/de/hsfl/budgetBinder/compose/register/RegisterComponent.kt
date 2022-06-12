@@ -2,8 +2,7 @@ package de.hsfl.budgetBinder.compose.register
 
 import androidx.compose.runtime.*
 import de.hsfl.budgetBinder.compose.di
-import de.hsfl.budgetBinder.domain.use_case.auth_user.RegisterUseCase
-import de.hsfl.budgetBinder.presentation.RegisterViewModel
+import de.hsfl.budgetBinder.presentation.viewmodel.RegisterViewModel
 import de.hsfl.budgetBinder.presentation.Screen
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -12,8 +11,7 @@ import org.kodein.di.instance
 
 @Composable
 fun RegisterComponent(screenState: MutableState<Screen>) {
-    val scope = CoroutineScope(Dispatchers.Unconfined + SupervisorJob())
-    val registerUseCase: RegisterUseCase by di.instance()
+    /*val scope = CoroutineScope(Dispatchers.Unconfined + SupervisorJob())
     val viewModel = RegisterViewModel(registerUseCase, scope)
     val viewState = viewModel.state.collectAsState(scope)
     RegisterView(
@@ -22,5 +20,5 @@ fun RegisterComponent(screenState: MutableState<Screen>) {
             viewModel.register(firstName, lastName, email, password)
         },
         onRegisterSuccess = { screenState.value = Screen.Login }
-    )
+    )*/
 }

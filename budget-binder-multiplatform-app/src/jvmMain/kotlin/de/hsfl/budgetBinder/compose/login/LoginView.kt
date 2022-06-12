@@ -10,13 +10,14 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import de.hsfl.budgetBinder.common.User
 import de.hsfl.budgetBinder.presentation.UiState
 
 @Composable
 fun LoginView(
     state: State<Any>,
     onLoginButtonPressed: (email: String, password: String) -> Unit,
-    onLoginSuccess: () -> Unit
+    onLoginSuccess: @Composable (User) -> Unit
 ) {
     var emailTextFieldState by remember { mutableStateOf("") }
     var passwordTextFieldState by remember { mutableStateOf("") }
@@ -46,7 +47,7 @@ fun LoginView(
 
         when (viewState) {
             is UiState.Success<*> -> {
-                onLoginSuccess()
+                onLoginSuccess((viewState as UiState.Success<*>).element as User)
             }
             is UiState.Error -> {
                 Text(

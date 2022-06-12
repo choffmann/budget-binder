@@ -52,7 +52,7 @@ kotlin {
 
         val jvmMain by creating {
             dependencies {
-                implementation("io.ktor:ktor-client-java:$ktorVersion")
+                implementation("io.ktor:ktor-client-cio:$ktorVersion")
                 implementation("org.kodein.di:kodein-di-framework-compose:7.11.0")
                 implementation(compose.foundation)
                 implementation(compose.material)

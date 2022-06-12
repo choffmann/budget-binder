@@ -15,7 +15,7 @@ data class ConfigIntermediate(val server: Server, val dataBase: DataBase, val jw
         val sslPort: Int?,
         val keyStorePassword: String?,
         val keyStorePath: String?,
-        val frontendAddresses: String?,
+        val frontendAddresses: List<String>?,
         val noForwardedHeaderSupport: Boolean?
     )
 
@@ -84,9 +84,7 @@ data class ConfigIntermediate(val server: Server, val dataBase: DataBase, val jw
             keyStorePath = ""
         }
 
-        val frontendAddresses = server.frontendAddresses?.replace(" ", "")
-            ?.split(",")
-            ?: listOf()
+        val frontendAddresses = server.frontendAddresses ?: emptyList()
 
         val forwardedHeaderSupport = !(server.noForwardedHeaderSupport ?: false)
 
@@ -141,7 +139,7 @@ private fun getConfigIntermediateFromEnv(): ConfigIntermediate {
         System.getenv("SSL_PORT")?.toIntOrNull(),
         System.getenv("KEYSTORE_PASSWORD"),
         System.getenv("KEYSTORE_PATH"),
-        System.getenv("FRONTEND_ADDRESSES"),
+        System.getenv("FRONTEND_ADDRESSES")?.replace(" ", "")?.split(","),
         System.getenv("NO_FORWARDED_HEADER") != null
     )
 
