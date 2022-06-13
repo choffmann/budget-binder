@@ -59,6 +59,7 @@ object AppStylesheet : StyleSheet() {
     //Container for arrow in BudgetBar
     val arrowFlexContainer by style {
         flex("0.1 0.1 5%")
+        height(auto)
     }
 
     val categoryListElement by style{
