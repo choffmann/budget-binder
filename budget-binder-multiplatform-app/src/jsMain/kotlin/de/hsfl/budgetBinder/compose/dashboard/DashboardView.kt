@@ -194,7 +194,7 @@ fun SwipeContainer(content: @Composable () -> Unit, onFocusCategoryChange: (Bool
             classes(AppStylesheet.flexContainer)
         }) {
         Div(attrs = {
-            classes(AppStylesheet.arrowFlexContainer)
+            classes(AppStylesheet.arrowFlexContainer, "mdc-button")
             onClick{onFocusCategoryChange(false)}
         }){
             Icon("arrow_back_ios_new")
@@ -204,7 +204,7 @@ fun SwipeContainer(content: @Composable () -> Unit, onFocusCategoryChange: (Bool
             content()
         }
         Div(attrs = {
-            classes(AppStylesheet.arrowFlexContainer)
+            classes(AppStylesheet.arrowFlexContainer, "mdc-button")
             onClick{onFocusCategoryChange(true)}
         }) {
             Icon("arrow_forward_ios_new")
