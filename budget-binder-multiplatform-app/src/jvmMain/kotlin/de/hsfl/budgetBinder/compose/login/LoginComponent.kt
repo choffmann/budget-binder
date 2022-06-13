@@ -1,26 +1,70 @@
 package de.hsfl.budgetBinder.compose.login
 
-import androidx.compose.material.Text
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import de.hsfl.budgetBinder.compose.di
-import de.hsfl.budgetBinder.presentation.viewmodel.LoginViewModel
-import de.hsfl.budgetBinder.presentation.Screen
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
+import de.hsfl.budgetBinder.presentation.login.LoginViewModel
+import de.hsfl.budgetBinder.presentation.login.LoginEvent
+import kotlinx.coroutines.flow.collectLatest
 import org.kodein.di.instance
 
 @Composable
-fun LoginComponent(screenState: MutableState<Screen>) {
-    val scope = CoroutineScope(Dispatchers.Unconfined + SupervisorJob())
+fun LoginComponent() {
+    val scope = rememberCoroutineScope()
     val viewModel: LoginViewModel by di.instance()
-    val viewState = viewModel.state.collectAsState(scope)
 
-    LoginView(
-        state = viewState,
-        onLoginButtonPressed = { email, password ->
-            viewModel.login(email, password)
-        },
-        onLoginSuccess = { Text(it.toString()) }
-    )
+    val emailTextState = viewModel.emailText.collectAsState(scope.coroutineContext)
+    val passwordTextState = viewModel.passwordText.collectAsState(scope.coroutineContext)
+    val localFocusManager = LocalFocusManager.current
+    val scaffoldState = rememberScaffoldState()
+
+    LaunchedEffect(key1 = true) {
+        viewModel.eventFlow.collectLatest { event ->
+            when (event) {
+                is LoginViewModel.UiEvent.ShowLoading -> scaffoldState.snackbarHostState.showSnackbar("Loading...")
+                is LoginViewModel.UiEvent.ShowError -> scaffoldState.snackbarHostState.showSnackbar(event.msg)
+                is LoginViewModel.UiEvent.GoToDashboard -> { /* TODO: Implement Router (call inside this function) */}
+                is LoginViewModel.UiEvent.GoToRegister -> { /* TODO: Implement Router (call inside this function)*/}
+            }
+        }
+    }
+
+    Scaffold(scaffoldState = scaffoldState) {
+
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            OutlinedTextField(
+                value = emailTextState.value.email,
+                onValueChange = { viewModel.onEvent(LoginEvent.EnteredEmail(it)) },
+                label = { Text("Email") },
+                singleLine = true
+            )
+            OutlinedTextField(
+                value = passwordTextState.value.password,
+                onValueChange = { viewModel.onEvent(LoginEvent.EnteredPassword(it)) },
+                label = { Text("Password") },
+                visualTransformation = PasswordVisualTransformation(),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                singleLine = true
+            )
+            Button(onClick = {
+                localFocusManager.clearFocus()
+                viewModel.onEvent(LoginEvent.OnLogin)
+            }) {
+                Text("Login")
+            }
+        }
+    }
 }
