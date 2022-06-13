@@ -1,7 +1,7 @@
 import androidx.compose.runtime.*
 import de.hsfl.budgetBinder.compose.Router
 import de.hsfl.budgetBinder.compose.theme.AppStylesheet
-import de.hsfl.budgetBinder.di.di
+import de.hsfl.budgetBinder.di.kodein
 import de.hsfl.budgetBinder.presentation.Screen
 import io.ktor.client.engine.js.*
 import org.jetbrains.compose.web.css.Style
@@ -15,8 +15,10 @@ fun main() {
     }
 }
 
+val di = kodein(ktorEngine = Js.create())
+
 @Composable
-fun App() = withDI(di(ktorEngine = Js.create())) {
+fun App() = withDI(di) {
     val screenState = remember { mutableStateOf<Screen>(Screen.Login) }
     Router(screenState = screenState)
 }

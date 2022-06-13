@@ -22,7 +22,7 @@ import org.kodein.di.DI
 import org.kodein.di.bindSingleton
 import org.kodein.di.instance
 
-fun di(ktorEngine: HttpClientEngine) = DI {
+fun kodein(ktorEngine: HttpClientEngine) = DI {
     // scope
     bindSingleton { CoroutineScope(Dispatchers.Unconfined + SupervisorJob()) }
 

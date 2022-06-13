@@ -6,12 +6,14 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.Color
-import de.hsfl.budgetBinder.di.di
+import de.hsfl.budgetBinder.di.kodein
 import io.ktor.client.engine.cio.*
 import org.kodein.di.compose.withDI
 
+val di = kodein(ktorEngine = CIO.create())
+
 @Composable
-fun App() = withDI(di(ktorEngine = CIO.create())) {
+fun App() = withDI(di) {
     val darkTheme = remember { mutableStateOf(false) }
     MaterialTheme(
         colors = if (darkTheme.value) darkColors() else lightColors()
