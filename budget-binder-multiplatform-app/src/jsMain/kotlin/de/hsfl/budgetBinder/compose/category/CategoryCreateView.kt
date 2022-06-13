@@ -135,7 +135,7 @@ fun CategoryCreateView(
                     Label(
                         attrs = {
                             classes("mdc-text-field", "mdc-text-field--outlined")
-                            style { width(50.percent) }
+                            style { width(100.percent) }
                         }
                     ) {
                         Span(
