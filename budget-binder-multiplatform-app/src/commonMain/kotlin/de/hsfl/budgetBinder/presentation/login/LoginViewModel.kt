@@ -2,9 +2,10 @@ package de.hsfl.budgetBinder.presentation.login
 
 import de.hsfl.budgetBinder.common.DataResponse
 import de.hsfl.budgetBinder.domain.usecase.LoginUseCases
-import de.hsfl.budgetBinder.presentation.RouterFlow
+import de.hsfl.budgetBinder.presentation.flow.RouterFlow
 import de.hsfl.budgetBinder.presentation.Screen
 import de.hsfl.budgetBinder.presentation.UiState
+import de.hsfl.budgetBinder.presentation.flow.DataFlow
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -12,6 +13,7 @@ import kotlinx.coroutines.launch
 class LoginViewModel(
     private val loginUseCases: LoginUseCases,
     private val routerFlow: RouterFlow,
+    private val dataFlow: DataFlow,
     private val scope: CoroutineScope
 ) {
 
@@ -41,7 +43,7 @@ class LoginViewModel(
             }
             is LoginEvent.OnChangeToRegister -> {
                 scope.launch {
-                    _eventFlow.emit(UiEvent.GoToRegister)
+                    routerFlow.navigateTo(Screen.Register)
                 }
             }
         }
@@ -63,9 +65,9 @@ class LoginViewModel(
             when (it) {
                 is DataResponse.Loading -> _eventFlow.emit(UiEvent.ShowLoading)
                 is DataResponse.Success<*> -> {
+                    dataFlow.saveUserState(it.data!!)
                     routerFlow.navigateTo(Screen.Dashboard)
-                    // TODO: Clear Flow?
-                    // TODO: Save User Data
+                    // TODO: Clear Flows?
                 }
                 is DataResponse.Error -> _eventFlow.emit(UiEvent.ShowError(it.message!!))
                 else -> _eventFlow.emit(UiEvent.ShowError("Something went wrong"))
@@ -105,8 +107,6 @@ class LoginViewModel(
 
     sealed class UiEvent {
         object ShowLoading : UiEvent()
-        object GoToDashboard : UiEvent()
-        object GoToRegister : UiEvent()
         data class ShowError(val msg: String) : UiEvent()
     }
 }
