@@ -4,8 +4,6 @@ import androidx.compose.runtime.*
 import de.hsfl.budgetBinder.common.Category
 import androidx.compose.runtime.Composable
 import de.hsfl.budgetBinder.compose.theme.AppStylesheet
-import de.hsfl.budgetBinder.presentation.CategoryImageToIcon
-import org.jetbrains.compose.web.ExperimentalComposeWebSvgApi
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
 import org.jetbrains.compose.web.svg.Circle
@@ -25,7 +23,7 @@ fun MainFlexContainer(content: @Composable () -> Unit) {
         {
             content()
         }
-        Div(attrs = { classes(AppStylesheet.pufferFlexContainer) })
+        Div(attrs = { classes(AppStylesheet.pufferFlexContainer)})
     }
 }
 
@@ -64,6 +62,18 @@ fun topBarMain(logoButton: @Composable () -> Unit, navButtons: @Composable () ->
             }
         }
     }
+}
+
+@Composable
+fun Icon (icon_name: String){
+    Span(
+        attrs = {
+            classes("material-icons")
+            style {
+                width(24.px)
+                height(24.px) }
+        }
+    ) {Text(icon_name)}
 }
 
 @Composable
