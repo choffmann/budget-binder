@@ -20,7 +20,7 @@ class EntryViewModel(
         entriesUseCases.getAllEntriesUseCase.entries().onEach {
             when (it) {
                 is DataResponse.Success -> _state.value = UiState.Success(it.data)
-                is DataResponse.Error -> _state.value = UiState.Error(it.message!!)
+                is DataResponse.Error -> _state.value = UiState.Error(it.error!!.message)
                 is DataResponse.Loading -> _state.value = UiState.Loading
                 is DataResponse.Unauthorized -> _state.value = UiState.Unauthorized
             }
@@ -31,7 +31,7 @@ class EntryViewModel(
         entriesUseCases.getEntryByIdUseCase(id).onEach {
             when (it) {
                 is DataResponse.Success -> _state.value = UiState.Success(it.data)
-                is DataResponse.Error -> _state.value = UiState.Error(it.message!!)
+                is DataResponse.Error -> _state.value = UiState.Error(it.error!!.message)
                 is DataResponse.Loading -> _state.value = UiState.Loading
                 is DataResponse.Unauthorized -> _state.value = UiState.Unauthorized
             }
@@ -42,7 +42,7 @@ class EntryViewModel(
         entriesUseCases.createNewEntryUseCase(entry).onEach {
             when (it) {
                 is DataResponse.Success -> _state.value = UiState.Success(it.data)
-                is DataResponse.Error -> _state.value = UiState.Error(it.message!!)
+                is DataResponse.Error -> _state.value = UiState.Error(it.error!!.message)
                 is DataResponse.Loading -> _state.value = UiState.Loading
                 is DataResponse.Unauthorized -> _state.value = UiState.Unauthorized
             }
@@ -53,7 +53,7 @@ class EntryViewModel(
         entriesUseCases.changeEntryByIdUseCase(entry, id).onEach {
             when (it) {
                 is DataResponse.Success -> _state.value = UiState.Success(it.data)
-                is DataResponse.Error -> _state.value = UiState.Error(it.message!!)
+                is DataResponse.Error -> _state.value = UiState.Error(it.error!!.message)
                 is DataResponse.Loading -> _state.value = UiState.Loading
                 is DataResponse.Unauthorized -> _state.value = UiState.Unauthorized
             }
@@ -64,7 +64,7 @@ class EntryViewModel(
         entriesUseCases.deleteEntryByIdUseCase(id).onEach {
             when (it) {
                 is DataResponse.Success -> _state.value = UiState.Success(it.data)
-                is DataResponse.Error -> _state.value = UiState.Error(it.message!!)
+                is DataResponse.Error -> _state.value = UiState.Error(it.error!!.message)
                 is DataResponse.Loading -> _state.value = UiState.Loading
                 is DataResponse.Unauthorized -> _state.value = UiState.Unauthorized
             }

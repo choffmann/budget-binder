@@ -23,7 +23,7 @@ class RegisterViewModel(
         registerUseCases.registerUseCase(user).onEach {
             when (it) {
                 is DataResponse.Success -> login(user.email, user.password)
-                is DataResponse.Error -> _state.value = UiState.Error(it.message!!)
+                is DataResponse.Error -> _state.value = UiState.Error(it.error!!.message)
                 is DataResponse.Loading -> _state.value = UiState.Loading
                 is DataResponse.Unauthorized -> _state.value = UiState.Unauthorized
             }
@@ -34,7 +34,7 @@ class RegisterViewModel(
         registerUseCases.loginUseCase(email, password).onEach {
             when (it) {
                 is DataResponse.Success -> getMyUser()
-                is DataResponse.Error -> _state.value = UiState.Error(it.message!!)
+                is DataResponse.Error -> _state.value = UiState.Error(it.error!!.message)
                 is DataResponse.Loading -> _state.value = UiState.Loading
                 is DataResponse.Unauthorized -> _state.value = UiState.Unauthorized
             }
@@ -45,7 +45,7 @@ class RegisterViewModel(
         registerUseCases.getMyUserUseCase().onEach {
             when (it) {
                 is DataResponse.Success -> _state.value = UiState.Success(it.data)
-                is DataResponse.Error -> _state.value = UiState.Error(it.message!!)
+                is DataResponse.Error -> _state.value = UiState.Error(it.error!!.message)
                 is DataResponse.Loading -> _state.value = UiState.Loading
                 is DataResponse.Unauthorized -> _state.value = UiState.Unauthorized
             }

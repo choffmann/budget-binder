@@ -53,7 +53,7 @@ class LoginViewModel(
         loginUseCases.loginUseCase(email, password).onEach {
             when (it) {
                 is DataResponse.Loading -> _eventFlow.emit(UiEvent.ShowLoading)
-                is DataResponse.Error -> _eventFlow.emit(UiEvent.ShowError(it.message!!))
+                is DataResponse.Error -> _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
                 is DataResponse.Success<*> -> getMyUser()
                 else -> _eventFlow.emit(UiEvent.ShowError("Something went wrong"))
             }
@@ -69,7 +69,7 @@ class LoginViewModel(
                     routerFlow.navigateTo(Screen.Dashboard)
                     // TODO: Clear Flows?
                 }
-                is DataResponse.Error -> _eventFlow.emit(UiEvent.ShowError(it.message!!))
+                is DataResponse.Error -> _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
                 else -> _eventFlow.emit(UiEvent.ShowError("Something went wrong"))
             }
         }.launchIn(scope)
@@ -86,7 +86,7 @@ class LoginViewModel(
             when (it) {
                 is DataResponse.Loading -> _state.value = UiState.Loading
                 is DataResponse.Success<*> -> getMyUserDeprecated()
-                is DataResponse.Error -> _state.value = UiState.Error(it.message!!)
+                is DataResponse.Error -> _state.value = UiState.Error(it.error!!.message)
                 is DataResponse.Unauthorized -> _state.value = UiState.Unauthorized
             }
         }.launchIn(scope)
@@ -98,7 +98,7 @@ class LoginViewModel(
             when (it) {
                 is DataResponse.Loading -> _state.value = UiState.Loading
                 is DataResponse.Success<*> -> _state.value = UiState.Success(it.data)
-                is DataResponse.Error -> _state.value = UiState.Error(it.message!!)
+                is DataResponse.Error -> _state.value = UiState.Error(it.error!!.message)
                 is DataResponse.Unauthorized -> _state.value = UiState.Unauthorized
             }
         }.launchIn(scope)

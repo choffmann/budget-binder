@@ -20,7 +20,7 @@ class CategoryViewModel(
         categoryUseCases.getAllCategoriesUseCase.categories().onEach {
             when (it) {
                 is DataResponse.Success -> _state.value = UiState.Success(it.data)
-                is DataResponse.Error -> _state.value = UiState.Error(it.message!!)
+                is DataResponse.Error -> _state.value = UiState.Error(it.error!!.message)
                 is DataResponse.Loading -> _state.value = UiState.Loading
                 is DataResponse.Unauthorized -> _state.value = UiState.Unauthorized
             }
@@ -31,7 +31,7 @@ class CategoryViewModel(
         categoryUseCases.getCategoryByIdUseCase(id).onEach {
             when (it) {
                 is DataResponse.Success -> _state.value = UiState.Success(it.data)
-                is DataResponse.Error -> _state.value = UiState.Error(it.message!!)
+                is DataResponse.Error -> _state.value = UiState.Error(it.error!!.message)
                 is DataResponse.Loading -> _state.value = UiState.Loading
                 is DataResponse.Unauthorized -> _state.value = UiState.Unauthorized
             }
@@ -42,7 +42,7 @@ class CategoryViewModel(
         categoryUseCases.createCategoryUseCase(category).onEach {
             when (it) {
                 is DataResponse.Success -> _state.value = UiState.Success(it.data)
-                is DataResponse.Error -> _state.value = UiState.Error(it.message!!)
+                is DataResponse.Error -> _state.value = UiState.Error(it.error!!.message)
                 is DataResponse.Loading -> _state.value = UiState.Loading
                 is DataResponse.Unauthorized -> _state.value = UiState.Unauthorized
             }
@@ -53,7 +53,7 @@ class CategoryViewModel(
         categoryUseCases.changeCategoryByIdUseCase(category, id).onEach {
             when (it) {
                 is DataResponse.Success -> _state.value = UiState.Success(it.data)
-                is DataResponse.Error -> _state.value = UiState.Error(it.message!!)
+                is DataResponse.Error -> _state.value = UiState.Error(it.error!!.message)
                 is DataResponse.Loading -> _state.value = UiState.Loading
                 is DataResponse.Unauthorized -> _state.value = UiState.Unauthorized
             }
@@ -64,7 +64,7 @@ class CategoryViewModel(
         categoryUseCases.deleteCategoryByIdUseCase(id).onEach {
             when (it) {
                 is DataResponse.Success -> _state.value = UiState.Success(it.data)
-                is DataResponse.Error -> _state.value = UiState.Error(it.message!!)
+                is DataResponse.Error -> _state.value = UiState.Error(it.error!!.message)
                 is DataResponse.Loading -> _state.value = UiState.Loading
                 is DataResponse.Unauthorized -> _state.value = UiState.Unauthorized
             }
@@ -75,7 +75,7 @@ class CategoryViewModel(
         categoryUseCases.getAllEntriesByCategoryUseCase(id).onEach {
             when (it) {
                 is DataResponse.Success -> _state.value = UiState.Success(it.data)
-                is DataResponse.Error -> _state.value = UiState.Error(it.message!!)
+                is DataResponse.Error -> _state.value = UiState.Error(it.error!!.message)
                 is DataResponse.Loading -> _state.value = UiState.Loading
                 is DataResponse.Unauthorized -> _state.value = UiState.Unauthorized
             }
