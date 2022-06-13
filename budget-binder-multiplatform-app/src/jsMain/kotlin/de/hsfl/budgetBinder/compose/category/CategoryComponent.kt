@@ -92,13 +92,13 @@ fun BudgetBar(category: Category, entryList: List<Entry>) {
     for (entry in entryList) {
         usedBudget -= entry.amount //Money spent negative, so we want to add the negative amount (- - = +)to usedBudget
     }
-    H1 { Text("${category.name} - Budget") }
+    H1(attrs={classes("mdc-typography--headline4")}) { Text("${category.name} - Budget") }
     Div {
         if (usedBudget <= budget && budget > 0) { //Normal not Spent Budget
             //Money Text
             MoneyTextDiv {
-                Div { Text(usedBudget.toString() + "€") }
-                Div { Text(budget.toString() + "€") }
+                Div(attrs = { classes("mdc-typography--headline5") }) { Text(usedBudget.toString() + "€") }
+                Div(attrs = { classes("mdc-typography--headline5") }) { Text(budget.toString() + "€") }
             }
             Svg(viewBox = "0 0 $width $height") {
                 Rect(x = 0, y = 0, width = width, height = height, {
@@ -111,7 +111,7 @@ fun BudgetBar(category: Category, entryList: List<Entry>) {
             }
         } else if (usedBudget > budget && budget > 0) { //Over Budget
             MoneyTextDiv {
-                Div { Text("Budget limit for " + category.name + " reached! " + usedBudget.toString() + "€ of " + budget.toString() + "€ Budget spent") }
+                Div(attrs = { classes("mdc-typography--headline5") }) { Text("Budget limit for " + category.name + " reached! " + usedBudget.toString() + "€ of " + budget.toString() + "€ Budget spent") }
             }
             Svg(viewBox = "0 0 $width $height") {
                 Rect(x = 0, y = 0, width = width, height = height, {
@@ -120,7 +120,7 @@ fun BudgetBar(category: Category, entryList: List<Entry>) {
             }
         } else if (budget <= 0f) { //No Category View or other unpredictable case
             MoneyTextDiv {
-                Div { Text(usedBudget.toString() + "€ without category spent") }
+                Div(attrs = { classes("mdc-typography--headline5") }) { Text(usedBudget.toString() + "€ without category spent") }
             }
             Svg(viewBox = "0 0 $width $height") {
                 Rect(x = 0, y = 0, width = width, height = height, {
