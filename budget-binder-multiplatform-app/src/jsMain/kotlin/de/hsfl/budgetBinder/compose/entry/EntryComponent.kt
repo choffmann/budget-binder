@@ -64,3 +64,6 @@ fun EntryList(list: List<Entry>, categoryList : List<Category>){
         EntryListElement(entry,categoryList)
     }
 }
+
+fun entriesFromCategory(list: List<Entry>, category_id: Int?):List<Entry> =
+    list.filter { it.category_id == category_id }
