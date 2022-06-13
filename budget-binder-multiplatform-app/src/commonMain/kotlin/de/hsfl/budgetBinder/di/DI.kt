@@ -15,6 +15,7 @@ import de.hsfl.budgetBinder.domain.usecase.storage.StoreUserStateUseCase
 import de.hsfl.budgetBinder.presentation.flow.DataFlow
 import de.hsfl.budgetBinder.presentation.flow.RouterFlow
 import de.hsfl.budgetBinder.presentation.login.LoginViewModel
+import de.hsfl.budgetBinder.presentation.register.RegisterViewModel
 import de.hsfl.budgetBinder.presentation.viewmodel.*
 import io.ktor.client.engine.*
 import kotlinx.coroutines.CoroutineScope
@@ -79,7 +80,7 @@ fun kodein(ktorEngine: HttpClientEngine) = DI {
 
     // ViewModels
     bindSingleton { LoginViewModel(instance(), instance(), instance(), instance()) }
-    bindSingleton { RegisterViewModel(instance(), instance()) }
+    bindSingleton { RegisterViewModel(instance(), instance(), instance(), instance()) }
     bindSingleton { SettingsViewModel(instance(), instance()) }
     bindSingleton { CategoryViewModel(instance(), instance()) }
     bindSingleton { EntryViewModel(instance(), instance()) }

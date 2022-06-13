@@ -1,13 +1,6 @@
 package de.hsfl.budgetBinder.compose.screens.register
 
 import androidx.compose.runtime.*
-import de.hsfl.budgetBinder.compose.di
-import de.hsfl.budgetBinder.presentation.viewmodel.RegisterViewModel
-import de.hsfl.budgetBinder.presentation.Screen
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import org.kodein.di.instance
 
 @Composable
 fun RegisterComponent() {
