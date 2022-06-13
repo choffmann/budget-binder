@@ -3,14 +3,15 @@ package de.hsfl.budgetBinder.compose.dashboard
 import androidx.compose.runtime.*
 import de.hsfl.budgetBinder.common.Category
 import de.hsfl.budgetBinder.common.Entry
-import de.hsfl.budgetBinder.compose.category.Bar
+import de.hsfl.budgetBinder.compose.Icon
+import de.hsfl.budgetBinder.compose.MainFlexContainer
+import de.hsfl.budgetBinder.compose.category.BudgetBar
 import de.hsfl.budgetBinder.compose.entry.EntryList
+import de.hsfl.budgetBinder.compose.entry.entriesFromCategory
+import de.hsfl.budgetBinder.compose.theme.AppStylesheet
 import de.hsfl.budgetBinder.presentation.UiState
-import org.jetbrains.compose.web.dom.Button
-import org.jetbrains.compose.web.dom.Div
-import org.jetbrains.compose.web.dom.H1
-import org.jetbrains.compose.web.dom.Text
-import kotlin.math.log
+import kotlinx.serialization.json.JsonNull.content
+import org.jetbrains.compose.web.dom.*
 
 
 @Composable
@@ -25,10 +26,9 @@ fun DashboardView(
     val categoriesViewState by remember { categoriesState }
     val entriesViewState by remember { entriesState }
     var categoryList by remember { mutableStateOf<List<Category>>(emptyList()) }
-
     var entryList by remember { mutableStateOf<List<Entry>>(emptyList()) }
 
-    Div {
+    MainFlexContainer {
         H1 { Text("DashboardView") }
         Button(attrs = {
             onClick { onSettingsButton() }
@@ -50,9 +50,10 @@ fun DashboardView(
         }) {
             Text("Edit Entry (Needs to be there for every Entry shown)")
         }
-    }
-    Div {
-        UpdateDashboardData(categoryList, entryList)
+        Div {
+            DashboardData(categoryList, entryList)
+        }
+        CreateNewEntryButton(onEntryCreateButton)
     }
     //Process new Category Data
     when (categoriesViewState) {
@@ -100,13 +101,118 @@ fun DashboardView(
             //CircularProgressIndicator()
         }
     }
+
+
 }
 
 @Composable
-fun UpdateDashboardData(categoryList: List<Category>, entryList: List<Entry>) {
+fun DashboardData(categoryList: List<Category>, entryList: List<Entry>) {
     console.log("Category $categoryList and Entry $entryList")
-    if (categoryList.isNotEmpty() && entryList.isNotEmpty()) {
-        Bar(categoryList[0], entryList) //Bar for first Category, needs to be changed later
-        EntryList(entryList, categoryList)
+    var focusedCategory by remember { mutableStateOf(-1) } //Variable from -1 (all) to categoryList.size
+    console.log("Focus:${focusedCategory}")
+    fun changeFocusedCategory(increase: Boolean): Int {
+        var newFocus = focusedCategory
+        if (increase) newFocus++
+        else newFocus--
+        newFocus =
+            when {
+                (newFocus) < -1 -> -1
+                (newFocus > categoryList.size) -> categoryList.size
+                else -> {
+                    newFocus
+                }
+            }
+        return newFocus
+    }
+
+    if (entryList.isNotEmpty()) {
+        when (focusedCategory) {
+            //Overall View
+            -1 -> {
+                var everyBudgetTogether = 0f
+                for (category in categoryList) {
+                    everyBudgetTogether += category.budget
+                }
+                val fakeOverallBudget =
+                    Category(0, "Overall", "111111", Category.Image.DEFAULT, everyBudgetTogether)
+                SwipeContainer (
+                    content = {BudgetBar(fakeOverallBudget, entryList)}, //Every CategoryBudget with every Entry's Budget
+                    onFocusCategoryChange = {focusedCategory = changeFocusedCategory(it)}
+                )
+
+                EntryList(entryList, categoryList) //List of Every Entry
+            }
+            //Normal Category View
+            in categoryList.indices -> {
+                val filteredEntryList =
+                    entriesFromCategory(entryList, categoryList[focusedCategory].id)
+                SwipeContainer (
+                    content = {BudgetBar(categoryList[focusedCategory], filteredEntryList)}, //Every Category with their Entries' Budget
+                    onFocusCategoryChange = {focusedCategory = changeFocusedCategory(it)}
+                )
+                EntryList(
+                    filteredEntryList,
+                    listOf(categoryList[focusedCategory])
+                ) //Only gives CategoryData of selected category, as everything else seems unnecessary
+            }
+
+            //No Category View
+            categoryList.size -> {
+                val filteredEntryList = entriesFromCategory(entryList, null)
+                val fakeNoCategory =
+                    Category(0, "No Category", "111111", Category.Image.DEFAULT, 0f)
+                SwipeContainer (
+                    content = {BudgetBar(fakeNoCategory, filteredEntryList)}, //"No Category" with their Entries' Budget
+                    onFocusCategoryChange = {focusedCategory = changeFocusedCategory(it)}
+                )
+                EntryList(
+                    filteredEntryList,
+                    emptyList()
+                ) //Needs no categoryList, as they have no category
+            }
+        }
+    } else {
+        //TODO: Show something like: NO DATA TO SHOW!
+    }
+
+}
+
+
+@Composable
+fun CreateNewEntryButton(onEntryCreateButton: () -> Unit) {
+    Button(attrs = {
+        onClick { onEntryCreateButton() }
+    }) {
+        Text("Create Entry")
     }
 }
+
+@Composable
+fun SwipeContainer(content: @Composable () -> Unit, onFocusCategoryChange: (Boolean) -> Unit) {
+    Div(
+        attrs = {
+            classes(AppStylesheet.flexContainer)
+        }) {
+        Div(attrs = {
+            classes(AppStylesheet.arrowFlexContainer)
+            onClick{onFocusCategoryChange(false)}
+        }){
+            Icon("arrow_back_ios_new")
+        }
+        Div(attrs = { classes(AppStylesheet.budgetBarContainer) })
+        {
+            content()
+        }
+        Div(attrs = {
+            classes(AppStylesheet.arrowFlexContainer)
+            onClick{onFocusCategoryChange(true)}
+        }) {
+            Icon("arrow_forward_ios_new")
+        }
+    }
+}
+
+
+
+
+
