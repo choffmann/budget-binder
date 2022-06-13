@@ -32,8 +32,6 @@ fun LoginComponent() {
             when (event) {
                 is LoginViewModel.UiEvent.ShowLoading -> scaffoldState.snackbarHostState.showSnackbar("Loading...")
                 is LoginViewModel.UiEvent.ShowError -> scaffoldState.snackbarHostState.showSnackbar(event.msg)
-                is LoginViewModel.UiEvent.GoToDashboard -> { /* TODO: Implement Router (call inside this function) */}
-                is LoginViewModel.UiEvent.GoToRegister -> { /* TODO: Implement Router (call inside this function)*/}
             }
         }
     }
