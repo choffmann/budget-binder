@@ -67,12 +67,17 @@ class LoginViewModel(
                 is DataResponse.Success<*> -> {
                     dataFlow.saveUserState(it.data!!)
                     routerFlow.navigateTo(Screen.Dashboard)
-                    // TODO: Clear Flows?
+                    clearStateFlows()
                 }
                 is DataResponse.Error -> _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
                 else -> _eventFlow.emit(UiEvent.ShowError("Something went wrong"))
             }
         }.launchIn(scope)
+    }
+
+    private fun clearStateFlows() {
+        _emailText.value = emailText.value.copy(email = "")
+        _passwordText.value = passwordText.value.copy(password = "")
     }
 
     private val _state = MutableStateFlow<UiState>(UiState.Empty)
