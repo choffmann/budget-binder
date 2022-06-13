@@ -77,6 +77,14 @@ object AppStylesheet : StyleSheet() {
     val categoryImageList by style{
         justifyContent(JustifyContent.Center)
     }
+    //Container for main content in BudgetBar
+    val budgetBarContainer by style {
+        flex("90%")
+    }
+    //Container for arrow in BudgetBar
+    val arrowFlexContainer by style {
+        flex("0.1 0.1 5%")
+    }
 
     //EntryList
     val entryListElement by style{
