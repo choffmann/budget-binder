@@ -1,4 +1,4 @@
-package de.hsfl.budgetBinder.domain.usecase
+package de.hsfl.budgetBinder.domain.usecase.storage
 
 import de.hsfl.budgetBinder.common.User
 import kotlinx.coroutines.flow.Flow

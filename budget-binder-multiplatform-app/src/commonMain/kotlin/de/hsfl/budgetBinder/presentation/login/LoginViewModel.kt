@@ -65,7 +65,7 @@ class LoginViewModel(
             when (it) {
                 is DataResponse.Loading -> _eventFlow.emit(UiEvent.ShowLoading)
                 is DataResponse.Success<*> -> {
-                    dataFlow.saveUserState(it.data!!)
+                    dataFlow.storeUserState(it.data!!)
                     routerFlow.navigateTo(Screen.Dashboard)
                     clearStateFlows()
                 }

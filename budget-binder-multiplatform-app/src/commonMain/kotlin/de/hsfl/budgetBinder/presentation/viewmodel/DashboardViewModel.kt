@@ -50,7 +50,7 @@ class DashboardViewModel(
         getMyUserUseCase().onEach {
             when (it) {
                 is DataResponse.Loading -> _state.value = UiState.Loading
-                is DataResponse.Success<*> -> dataFlow.saveUserState(it.data!!)
+                is DataResponse.Success<*> -> dataFlow.storeUserState(it.data!!)
                 is DataResponse.Error -> _state.value = UiState.Error(it.error!!.message)
                 is DataResponse.Unauthorized -> routerFlow.navigateTo(Screen.Login)
             }

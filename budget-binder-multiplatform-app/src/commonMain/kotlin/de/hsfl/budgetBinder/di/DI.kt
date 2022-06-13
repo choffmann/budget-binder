@@ -10,6 +10,8 @@ import de.hsfl.budgetBinder.domain.repository.CategoryRepository
 import de.hsfl.budgetBinder.domain.repository.EntryRepository
 import de.hsfl.budgetBinder.domain.repository.UserRepository
 import de.hsfl.budgetBinder.domain.usecase.*
+import de.hsfl.budgetBinder.domain.usecase.storage.StoreServerUrlUseCase
+import de.hsfl.budgetBinder.domain.usecase.storage.StoreUserStateUseCase
 import de.hsfl.budgetBinder.presentation.flow.DataFlow
 import de.hsfl.budgetBinder.presentation.flow.RouterFlow
 import de.hsfl.budgetBinder.presentation.login.LoginViewModel
@@ -60,14 +62,16 @@ fun kodein(ktorEngine: HttpClientEngine) = DI {
     bindSingleton { ChangeEntryByIdUseCase(instance()) }
     bindSingleton { DeleteEntryByIdUseCase(instance()) }
 
+    bindSingleton { NavigateToScreenUseCase() }
+    bindSingleton { StoreUserStateUseCase() }
+    bindSingleton { StoreServerUrlUseCase() }
     bindSingleton { EntriesUseCases(instance(), instance(), instance(), instance(), instance()) }
     bindSingleton { CategoriesUseCases(instance(), instance(), instance(), instance(), instance(), instance()) }
     bindSingleton { SettingsUseCases(instance(), instance()) }
     bindSingleton { LoginUseCases(instance(), instance()) }
     bindSingleton { DashboardUseCases(instance(), instance()) }
     bindSingleton { RegisterUseCases(instance(), instance(), instance()) }
-    bindSingleton { NavigateToScreenUseCase() }
-    bindSingleton { StoreUserStateUseCase() }
+    bindSingleton { DataFlowUseCases(instance(), instance()) }
 
     // Flows
     bindSingleton { RouterFlow(instance()) }
