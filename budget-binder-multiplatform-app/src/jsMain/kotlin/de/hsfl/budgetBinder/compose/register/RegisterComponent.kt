@@ -17,12 +17,17 @@ import org.kodein.di.instance
 
 @Composable
 fun RegisterComponent(screenState: MutableState<Screen>) {
-    val scope = CoroutineScope(Dispatchers.Unconfined + SupervisorJob())
+    /*al scope = CoroutineScope(Dispatchers.Unconfined + SupervisorJob())
     val registerUseCase: RegisterUseCase by di.instance()
     val loginUseCase: LoginUseCase by di.instance()
     val getMyUserUseCase : GetMyUserUseCase by di.instance()
     val viewModel = RegisterViewModel(registerUseCase,loginUseCase,getMyUserUseCase, scope)
-    val viewState = viewModel.state.collectAsState(scope)
+    val viewState = viewModel.state.collectAsState(scope)*/
+    val scope = rememberCoroutineScope()
+    val viewModel: RegisterViewModel by di.instance()
+    val viewState = viewModel.state.collectAsState(scope.coroutineContext)
+
+
     RegisterView(
         state = viewState,
         onRegisterButtonPressed = { firstName, lastName, email, password ->

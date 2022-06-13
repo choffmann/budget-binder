@@ -12,6 +12,7 @@ import de.hsfl.budgetBinder.domain.repository.EntryRepository
 import de.hsfl.budgetBinder.domain.repository.UserRepository
 import de.hsfl.budgetBinder.domain.usecase.*
 import de.hsfl.budgetBinder.presentation.Screen
+import de.hsfl.budgetBinder.presentation.login.LoginViewModel
 import de.hsfl.budgetBinder.presentation.viewmodel.*
 
 import io.ktor.client.engine.js.*
@@ -66,21 +67,11 @@ val di = DI {
 
     // ViewModels
     bindSingleton { LoginViewModel(instance(), instance(), instance()) }
-    bindSingleton { RegisterViewModel(instance(), instance(), instance(), instance()) }
-    bindSingleton { SettingsViewModel(instance(), instance(), instance()) }
-    bindSingleton {
-        CategoryViewModel(
-            instance(),
-            instance(),
-            instance(),
-            instance(),
-            instance(),
-            instance(),
-            instance()
-        )
-    }
-    bindSingleton { EntryViewModel(instance(), instance(), instance(), instance(), instance(), instance()) }
-    bindSingleton { DashboardViewModel(instance(), instance(), instance()) }
+    bindSingleton { RegisterViewModel(instance(), instance()) }
+    bindSingleton { SettingsViewModel(instance(), instance()) }
+    bindSingleton { CategoryViewModel(instance(), instance()) }
+    bindSingleton { EntryViewModel(instance(), instance()) }
+    bindSingleton { DashboardViewModel(instance(), instance()) }
 }
 fun main() {
     renderComposable("root") {

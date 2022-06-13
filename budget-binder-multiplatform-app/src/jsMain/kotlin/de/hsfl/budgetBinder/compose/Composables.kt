@@ -2,7 +2,6 @@ package de.hsfl.budgetBinder.compose
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import de.hsfl.budgetBinder.common.StateManager.screenState
 import de.hsfl.budgetBinder.compose.theme.AppStylesheet
 import de.hsfl.budgetBinder.presentation.Screen
 import org.jetbrains.compose.web.css.*

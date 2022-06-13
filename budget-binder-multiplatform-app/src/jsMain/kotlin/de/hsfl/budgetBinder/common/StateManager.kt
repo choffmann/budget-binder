@@ -6,7 +6,8 @@ import de.hsfl.budgetBinder.common.Constants.BASE_URL
 import de.hsfl.budgetBinder.presentation.Screen
 
 object StateManager {
-    val screenState = mutableStateOf<Screen>(Screen.Welcome)
+    // TODO: screenState replaced with new Router
+    //val screenState = mutableStateOf<Screen>(Screen.Welcome)
     //val drawerState = DrawerState(DrawerValue.Closed)
     //val snackbarHostState = SnackbarHostState()
     //val scaffoldState = ScaffoldState(drawerState = drawerState, snackbarHostState = snackbarHostState)
