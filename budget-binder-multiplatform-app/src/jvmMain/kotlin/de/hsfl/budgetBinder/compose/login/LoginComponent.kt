@@ -3,6 +3,7 @@ package de.hsfl.budgetBinder.compose.login
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -26,18 +27,27 @@ fun LoginComponent() {
     val passwordTextState = viewModel.passwordText.collectAsState(scope.coroutineContext)
     val localFocusManager = LocalFocusManager.current
     val scaffoldState = rememberScaffoldState()
+    val loadingState = remember { mutableStateOf(false) }
 
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->
             when (event) {
-                is LoginViewModel.UiEvent.ShowLoading -> scaffoldState.snackbarHostState.showSnackbar("Loading...")
-                is LoginViewModel.UiEvent.ShowError -> scaffoldState.snackbarHostState.showSnackbar(event.msg)
+                is LoginViewModel.UiEvent.ShowLoading -> {
+                    // TODO: Refactor this, it's working but ahh
+                    loadingState.value = true
+                }
+                is LoginViewModel.UiEvent.ShowError -> {
+                    loadingState.value = false
+                    scaffoldState.snackbarHostState.showSnackbar(message = event.msg, actionLabel = "Dissmiss")
+                }
             }
         }
     }
 
     Scaffold(scaffoldState = scaffoldState) {
-
+        if (loadingState.value) {
+            LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+        }
         Column(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.Center,
