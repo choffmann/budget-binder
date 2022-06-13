@@ -79,6 +79,6 @@ fun kodein(ktorEngine: HttpClientEngine) = DI {
     bindSingleton { SettingsViewModel(instance(), instance()) }
     bindSingleton { CategoryViewModel(instance(), instance()) }
     bindSingleton { EntryViewModel(instance(), instance()) }
-    bindSingleton { DashboardViewModel(instance(), instance()) }
+    bindSingleton { DashboardViewModel(instance(), instance(), instance(), instance(), instance(), instance()) }
     bindSingleton { NavDrawerViewModel(instance(), instance()) }
 }
