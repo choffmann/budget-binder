@@ -11,6 +11,10 @@ import de.hsfl.budgetBinder.compose.entry.entriesFromCategory
 import de.hsfl.budgetBinder.compose.theme.AppStylesheet
 import de.hsfl.budgetBinder.presentation.UiState
 import kotlinx.serialization.json.JsonNull.content
+import org.jetbrains.compose.web.css.paddingLeft
+import org.jetbrains.compose.web.css.paddingRight
+import org.jetbrains.compose.web.css.px
+import org.jetbrains.compose.web.css.width
 import org.jetbrains.compose.web.dom.*
 
 
@@ -137,7 +141,8 @@ fun DashboardData(categoryList: List<Category>, entryList: List<Entry>) {
                     Category(0, "Overall", "111111", Category.Image.DEFAULT, everyBudgetTogether)
                 SwipeContainer (
                     content = {BudgetBar(fakeOverallBudget, entryList)}, //Every CategoryBudget with every Entry's Budget
-                    onFocusCategoryChange = {focusedCategory = changeFocusedCategory(it)}
+                    onFocusCategoryChange = {focusedCategory = changeFocusedCategory(it)},
+                    leftOn = false
                 )
 
                 EntryList(entryList, categoryList) //List of Every Entry
@@ -163,7 +168,8 @@ fun DashboardData(categoryList: List<Category>, entryList: List<Entry>) {
                     Category(0, "No Category", "111111", Category.Image.DEFAULT, 0f)
                 SwipeContainer (
                     content = {BudgetBar(fakeNoCategory, filteredEntryList)}, //"No Category" with their Entries' Budget
-                    onFocusCategoryChange = {focusedCategory = changeFocusedCategory(it)}
+                    onFocusCategoryChange = {focusedCategory = changeFocusedCategory(it)},
+                    rightOn = false
                 )
                 EntryList(
                     filteredEntryList,
@@ -188,26 +194,44 @@ fun CreateNewEntryButton(onEntryCreateButton: () -> Unit) {
 }
 
 @Composable
-fun SwipeContainer(content: @Composable () -> Unit, onFocusCategoryChange: (Boolean) -> Unit) {
+fun SwipeContainer(content: @Composable () -> Unit, onFocusCategoryChange: (Boolean) -> Unit, leftOn: Boolean = true, rightOn:Boolean = true) {
     Div(
         attrs = {
             classes(AppStylesheet.flexContainer)
         }) {
         Div(attrs = {
-            classes(AppStylesheet.arrowFlexContainer, "mdc-button")
-            onClick{onFocusCategoryChange(false)}
+            if(leftOn) {
+                classes(AppStylesheet.arrowFlexContainer, "mdc-button")
+                onClick { onFocusCategoryChange(false) }
+            }
+            else{
+                classes(AppStylesheet.arrowFlexContainer)
+                style{
+                    paddingLeft(8.px)
+                    paddingRight(8.px)
+                }
+            }
         }){
-            Icon("arrow_back_ios_new")
+            if(leftOn) Icon("arrow_back_ios_new")
         }
         Div(attrs = { classes(AppStylesheet.budgetBarContainer) })
         {
             content()
         }
         Div(attrs = {
-            classes(AppStylesheet.arrowFlexContainer, "mdc-button")
-            onClick{onFocusCategoryChange(true)}
+            if(rightOn) {
+                classes(AppStylesheet.arrowFlexContainer, "mdc-button")
+                onClick { onFocusCategoryChange(true) }
+            }
+            else{
+                classes(AppStylesheet.arrowFlexContainer)
+                style{
+                    paddingLeft(8.px)
+                    paddingRight(8.px)
+                }
+            }
         }) {
-            Icon("arrow_forward_ios_new")
+            if(rightOn) Icon("arrow_forward_ios_new")
         }
     }
 }
