@@ -2,13 +2,9 @@ package de.hsfl.budgetBinder.compose
 
 import androidx.compose.runtime.*
 import de.hsfl.budgetBinder.common.Category
-import de.hsfl.budgetBinder.common.StateManager.screenState
 import de.hsfl.budgetBinder.compose.theme.AppStylesheet
 import de.hsfl.budgetBinder.presentation.CategoryImageToIcon
-import de.hsfl.budgetBinder.presentation.Screen
-import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
-import org.jetbrains.compose.web.svg.Image
 
 
 /*Main Container for every mayor layout*/
@@ -66,7 +62,8 @@ fun topBarMain(logoButton: @Composable () -> Unit, navButtons: @Composable () ->
 }
 
 @Composable
-fun CategoryImagesToImageList(onClick : (Category.Image) -> Unit) {
+fun CategoryImagesToImageList(onClick: (Category.Image) -> Unit) {
+    var highlightImage by remember { mutableStateOf(Category.Image.DEFAULT) }
     Div(
         attrs = {
             classes("mdc-card", AppStylesheet.card)
@@ -85,8 +82,14 @@ fun CategoryImagesToImageList(onClick : (Category.Image) -> Unit) {
                 ) {
                     Div(
                         attrs = {
-                            classes("mdc-image-list__image-aspect-container", "mdc-icon-button")
-                            onClick { onClick }
+                            if (highlightImage == image)
+                                classes(
+                                    "mdc-image-list__image-aspect-container",
+                                    "mdc-icon-button",
+                                    "mdc-button--raised"
+                                )
+                            else classes("mdc-image-list__image-aspect-container", "mdc-icon-button")
+                            onClick { onClick(image); highlightImage = image }
                         }
                     ) {
                         CategoryImageToIcon(image)
