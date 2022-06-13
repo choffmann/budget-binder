@@ -4,6 +4,7 @@ import androidx.compose.runtime.*
 import de.hsfl.budgetBinder.common.Category
 import de.hsfl.budgetBinder.common.Constants.DEFAULT_CATEGORY
 import de.hsfl.budgetBinder.common.Entry
+import de.hsfl.budgetBinder.common.User
 import de.hsfl.budgetBinder.domain.usecase.*
 import de.hsfl.budgetBinder.presentation.Screen
 import de.hsfl.budgetBinder.presentation.viewmodel.CategoryViewModel
@@ -42,7 +43,11 @@ fun CategoryComponent(screenState: MutableState<Screen>) {
     when (screenState.value) {
         Screen.CategoryCreate -> CategoryCreateView(
             state = viewState,
-            onBackButton = { screenState.value = Screen.CategorySummary}
+            onCreateCategoryButtonPressed = { name, color, image, budget ->
+                categoryViewModel.createCategory(Category.In(name, color.drop(1), image, budget)) },
+            onChangeToDashboard = { screenState.value = Screen.Dashboard },
+            onChangeToSettings = { screenState.value = Screen.Settings },
+            onChangeToCategory = { screenState.value = Screen.CategorySummary },
         )
         Screen.CategorySummary -> CategorySummaryView(
             state = viewState,
