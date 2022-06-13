@@ -1,33 +1,35 @@
 package de.hsfl.budgetBinder.compose
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.*
+import de.hsfl.budgetBinder.common.Category
 import de.hsfl.budgetBinder.common.StateManager.screenState
 import de.hsfl.budgetBinder.compose.theme.AppStylesheet
+import de.hsfl.budgetBinder.presentation.CategoryImageToIcon
 import de.hsfl.budgetBinder.presentation.Screen
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
+import org.jetbrains.compose.web.svg.Image
 
 
 /*Main Container for every mayor layout*/
 @Composable
-fun MainFlexContainer(content: @Composable () -> Unit){
-    Div (
+fun MainFlexContainer(content: @Composable () -> Unit) {
+    Div(
         attrs = {
             classes("mdc-top-app-bar--fixed-adjust", AppStylesheet.flexContainer)
         }
-            ){
-        Div (attrs = { classes(AppStylesheet.pufferFlexContainer) })
-        Div (attrs = { classes(AppStylesheet.contentFlexContainer)})
+    ) {
+        Div(attrs = { classes(AppStylesheet.pufferFlexContainer) })
+        Div(attrs = { classes(AppStylesheet.contentFlexContainer) })
         {
             content()
         }
-        Div (attrs = { classes(AppStylesheet.pufferFlexContainer)})
+        Div(attrs = { classes(AppStylesheet.pufferFlexContainer) })
     }
 }
 
 @Composable
-fun topBarMain(logoButton: @Composable () -> Unit, navButtons: @Composable () -> Unit){
+fun topBarMain(logoButton: @Composable () -> Unit, navButtons: @Composable () -> Unit) {
     Header(
         attrs = {
             classes("mdc-top-app-bar")
@@ -58,6 +60,38 @@ fun topBarMain(logoButton: @Composable () -> Unit, navButtons: @Composable () ->
                 }
             ) {
                 navButtons()
+            }
+        }
+    }
+}
+
+@Composable
+fun CategoryImagesToImageList(onClick : (Category.Image) -> Unit) {
+    Div(
+        attrs = {
+            classes("mdc-card", AppStylesheet.card)
+        }
+    ) {
+        Ul(
+            attrs = {
+                classes("mdc-image-list", "my-image-list")
+            }
+        ) {
+            for (image in Category.Image.values()) {
+                Li(
+                    attrs = {
+                        classes("mdc-image-list__item")
+                    }
+                ) {
+                    Div(
+                        attrs = {
+                            classes("mdc-image-list__image-aspect-container", "mdc-icon-button")
+                            onClick { onClick }
+                        }
+                    ) {
+                        CategoryImageToIcon(image)
+                    }
+                }
             }
         }
     }
