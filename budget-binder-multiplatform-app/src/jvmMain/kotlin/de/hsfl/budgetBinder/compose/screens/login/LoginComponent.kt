@@ -1,9 +1,6 @@
 package de.hsfl.budgetBinder.compose.screens.login
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -72,6 +69,12 @@ fun LoginComponent() {
                 viewModel.onEvent(LoginEvent.OnLogin)
             }) {
                 Text("Login")
+            }
+            Button(onClick = {
+                localFocusManager.clearFocus()
+                viewModel.onEvent(LoginEvent.OnChangeToRegister)
+            }) {
+                Text("Change to Register")
             }
         }
     }

@@ -95,6 +95,18 @@ class RegisterViewModel(
         }.launchIn(scope)
     }
 
+    private fun clearStateFlows() {
+        _firstNameText.value = firstNameText.value.copy(firstName = "")
+        _lastNameText.value = lastNameText.value.copy(lastName = "")
+        _emailText.value = emailText.value.copy(email = "")
+        _passwordText.value = passwordText.value.copy(password = "")
+    }
+
+    sealed class UiEvent {
+        object ShowLoading : UiEvent()
+        data class ShowError(val msg: String) : UiEvent()
+    }
+
     // OLD!!!
     private val _state = MutableStateFlow<UiState>(UiState.Empty)
 
@@ -136,10 +148,5 @@ class RegisterViewModel(
                 is DataResponse.Unauthorized -> _state.value = UiState.Unauthorized
             }
         }.launchIn(scope)
-    }
-
-    sealed class UiEvent {
-        object ShowLoading : UiEvent()
-        data class ShowError(val msg: String) : UiEvent()
     }
 }
