@@ -19,7 +19,7 @@ class RegisterUseCase(private val repository: AuthRepository) {
                     emit(DataResponse.Success(it))
                 } ?: response.error?.let { error ->
                     when (error.code) {
-                        HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized())
+                        HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized(error))
                         else -> emit(DataResponse.Error(error))
                     }
                 }
@@ -43,7 +43,7 @@ class LoginUseCase(private val repository: AuthRepository) {
                     emit(DataResponse.Success(it))
                 } ?: response.error?.let { error ->
                     when (error.code) {
-                        HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized())
+                        HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized(error))
                         else -> emit(DataResponse.Error(error))
                     }
                 }
@@ -67,7 +67,7 @@ class LogoutUseCase(private val repository: AuthRepository) {
                     emit(DataResponse.Success(it))
                 } ?: response.error?.let { error ->
                     when (error.code) {
-                        HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized())
+                        HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized(error))
                         else -> emit(DataResponse.Error(error))
                     }
                 }

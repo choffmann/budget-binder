@@ -19,7 +19,7 @@ class GetAllCategoriesUseCase(private val repository: CategoryRepository) {
                     emit(DataResponse.Success(it))
                 } ?: response.error?.let { error ->
                     when (error.code) {
-                        HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized())
+                        HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized(error))
                         else -> emit(DataResponse.Error(error))
                     }
                 }
@@ -40,7 +40,7 @@ class GetAllCategoriesUseCase(private val repository: CategoryRepository) {
                     emit(DataResponse.Success(it))
                 } ?: response.error?.let { error ->
                     when (error.code) {
-                        HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized())
+                        HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized(error))
                         else -> emit(DataResponse.Error(error))
                     }
                 }
@@ -63,7 +63,7 @@ class CreateCategoryUseCase(private val repository: CategoryRepository) {
                     emit(DataResponse.Success(it))
                 } ?: response.error?.let { error ->
                     when (error.code) {
-                        HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized())
+                        HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized(error))
                         else -> emit(DataResponse.Error(error))
                     }
                 }
@@ -86,7 +86,7 @@ class GetCategoryByIdUseCase(private val repository: CategoryRepository) {
                     emit(DataResponse.Success(it))
                 } ?: response.error?.let { error ->
                     when (error.code) {
-                        HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized())
+                        HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized(error))
                         else -> emit(DataResponse.Error(error))
                     }
                 }
@@ -109,7 +109,7 @@ class ChangeCategoryByIdUseCase(private val repository: CategoryRepository) {
                     emit(DataResponse.Success(it))
                 } ?: response.error?.let { error ->
                     when (error.code) {
-                        HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized())
+                        HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized(error))
                         else -> emit(DataResponse.Error(error))
                     }
                 }
@@ -132,7 +132,7 @@ class DeleteCategoryByIdUseCase(private val repository: CategoryRepository) {
                     emit(DataResponse.Success(it))
                 } ?: response.error?.let { error ->
                     when (error.code) {
-                        HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized())
+                        HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized(error))
                         else -> emit(DataResponse.Error(error))
                     }
                 }
@@ -155,7 +155,7 @@ class GetAllEntriesByCategoryUseCase(private val repository: CategoryRepository)
                     emit(DataResponse.Success(it))
                 } ?: response.error?.let { error ->
                     when (error.code) {
-                        HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized())
+                        HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized(error))
                         else -> emit(DataResponse.Error(error))
                     }
                 }

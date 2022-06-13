@@ -18,7 +18,7 @@ class GetAllEntriesUseCase(private val repository: EntryRepository) {
                     emit(DataResponse.Success(it))
                 } ?: response.error?.let { error ->
                     when (error.code) {
-                        HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized())
+                        HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized(error))
                         else -> emit(DataResponse.Error(error))
                     }
                 }
@@ -39,7 +39,7 @@ class GetAllEntriesUseCase(private val repository: EntryRepository) {
                     emit(DataResponse.Success(it))
                 } ?: response.error?.let { error ->
                     when (error.code) {
-                        HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized())
+                        HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized(error))
                         else -> emit(DataResponse.Error(error))
                     }
                 }
@@ -62,7 +62,7 @@ class CreateNewEntryUseCase(private val repository: EntryRepository) {
                     emit(DataResponse.Success(it))
                 } ?: response.error?.let { error ->
                     when (error.code) {
-                        HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized())
+                        HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized(error))
                         else -> emit(DataResponse.Error(error))
                     }
                 }
@@ -85,7 +85,7 @@ class GetEntryByIdUseCase(private val repository: EntryRepository) {
                     emit(DataResponse.Success(it))
                 } ?: response.error?.let { error ->
                     when (error.code) {
-                        HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized())
+                        HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized(error))
                         else -> emit(DataResponse.Error(error))
                     }
                 }
@@ -108,7 +108,7 @@ class ChangeEntryByIdUseCase(private val repository: EntryRepository) {
                     emit(DataResponse.Success(it))
                 } ?: response.error?.let { error ->
                     when (error.code) {
-                        HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized())
+                        HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized(error))
                         else -> emit(DataResponse.Error(error))
                     }
                 }
@@ -131,7 +131,7 @@ class DeleteEntryByIdUseCase(private val repository: EntryRepository) {
                     emit(DataResponse.Success(it))
                 } ?: response.error?.let { error ->
                     when (error.code) {
-                        HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized())
+                        HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized(error))
                         else -> emit(DataResponse.Error(error))
                     }
                 }

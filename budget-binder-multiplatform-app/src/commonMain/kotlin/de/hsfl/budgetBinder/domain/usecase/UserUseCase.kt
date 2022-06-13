@@ -18,7 +18,7 @@ class GetMyUserUseCase(private val repository: UserRepository) {
                     emit(DataResponse.Success(it))
                 } ?: response.error?.let { error ->
                     when (error.code) {
-                        HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized())
+                        HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized(error))
                         else -> emit(DataResponse.Error(error))
                     }
                 }
@@ -41,7 +41,7 @@ class ChangeMyUserUseCase(private val repository: UserRepository) {
                     emit(DataResponse.Success(it))
                 } ?: response.error?.let { error ->
                     when (error.code) {
-                        HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized())
+                        HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized(error))
                         else -> emit(DataResponse.Error(error))
                     }
                 }
@@ -64,7 +64,7 @@ class DeleteMyUserUseCase(private val repository: UserRepository) {
                     emit(DataResponse.Success(it))
                 } ?: response.error?.let { error ->
                     when (error.code) {
-                        HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized())
+                        HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized(error))
                         else -> emit(DataResponse.Error(error))
                     }
                 }

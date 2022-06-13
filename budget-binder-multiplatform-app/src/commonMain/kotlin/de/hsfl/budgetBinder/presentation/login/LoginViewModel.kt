@@ -55,7 +55,7 @@ class LoginViewModel(
                 is DataResponse.Loading -> _eventFlow.emit(UiEvent.ShowLoading)
                 is DataResponse.Error -> _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
                 is DataResponse.Success<*> -> getMyUser()
-                else -> _eventFlow.emit(UiEvent.ShowError("Something went wrong"))
+                is DataResponse.Unauthorized -> _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
             }
         }.launchIn(scope)
     }
