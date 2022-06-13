@@ -16,7 +16,8 @@ import de.hsfl.budgetBinder.domain.repository.CategoryRepository
 import de.hsfl.budgetBinder.domain.repository.EntryRepository
 import de.hsfl.budgetBinder.domain.repository.UserRepository
 import de.hsfl.budgetBinder.domain.usecase.*
-import de.hsfl.budgetBinder.presentation.Screen
+import de.hsfl.budgetBinder.presentation.RouterFlow
+import de.hsfl.budgetBinder.presentation.login.LoginViewModel
 import de.hsfl.budgetBinder.presentation.viewmodel.*
 import io.ktor.client.engine.cio.*
 import kotlinx.coroutines.CoroutineScope
@@ -71,6 +72,10 @@ val di = DI {
     bindSingleton { LoginUseCases(instance(), instance()) }
     bindSingleton { DashboardUseCases(instance(), instance()) }
     bindSingleton { RegisterUseCases(instance(), instance(), instance()) }
+    bindSingleton { NavigateToScreenUseCase() }
+
+    // Flows
+    bindSingleton { RouterFlow(instance()) }
 
     // ViewModels
     bindSingleton { LoginViewModel(instance(), instance(), instance()) }
@@ -84,12 +89,11 @@ val di = DI {
 
 @Composable
 fun App() = withDI(di) {
-    val screenState = remember { mutableStateOf<Screen>(Screen.Login) }
     val darkTheme = remember { mutableStateOf(false) }
     MaterialTheme(
         colors = if (darkTheme.value) darkColors() else lightColors()
     ) {
-        Router(screenState = screenState)
+        Router()
 
         // Toggle Dark-mode
         IconToggleButton(checked = darkTheme.value, onCheckedChange = { darkTheme.value = it }) {

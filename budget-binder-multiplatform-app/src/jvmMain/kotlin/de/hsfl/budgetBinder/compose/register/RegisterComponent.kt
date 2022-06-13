@@ -10,7 +10,7 @@ import kotlinx.coroutines.SupervisorJob
 import org.kodein.di.instance
 
 @Composable
-fun RegisterComponent(screenState: MutableState<Screen>) {
+fun RegisterComponent() {
     /*val scope = CoroutineScope(Dispatchers.Unconfined + SupervisorJob())
     val viewModel = RegisterViewModel(registerUseCase, scope)
     val viewState = viewModel.state.collectAsState(scope)
