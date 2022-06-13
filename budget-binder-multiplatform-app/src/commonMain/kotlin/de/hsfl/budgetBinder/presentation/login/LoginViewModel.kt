@@ -70,7 +70,7 @@ class LoginViewModel(
                     clearStateFlows()
                 }
                 is DataResponse.Error -> _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
-                else -> _eventFlow.emit(UiEvent.ShowError("Something went wrong"))
+                else -> _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
             }
         }.launchIn(scope)
     }
