@@ -1,4 +1,4 @@
-package de.hsfl.budgetBinder.compose.login
+package de.hsfl.budgetBinder.compose.screens.login
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

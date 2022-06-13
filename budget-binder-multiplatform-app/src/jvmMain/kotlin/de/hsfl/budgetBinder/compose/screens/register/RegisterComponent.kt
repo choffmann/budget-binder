@@ -1,4 +1,4 @@
-package de.hsfl.budgetBinder.compose.register
+package de.hsfl.budgetBinder.compose.screens.register
 
 import androidx.compose.runtime.*
 import de.hsfl.budgetBinder.compose.di
