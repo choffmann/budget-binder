@@ -56,6 +56,7 @@ kotlin {
                 implementation("org.kodein.di:kodein-di-framework-compose:7.11.0")
                 implementation(compose.foundation)
                 implementation(compose.material)
+                implementation(compose.materialIconsExtended)
                 api(compose.preview)
             }
         }
@@ -66,6 +67,7 @@ kotlin {
                 implementation(compose.foundation)
                 implementation(compose.material)
                 implementation(compose.desktop.currentOs)
+                implementation(compose.materialIconsExtended)
             }
         }
 
@@ -74,6 +76,7 @@ kotlin {
             dependencies {
                 implementation(compose.foundation)
                 implementation(compose.material)
+                implementation(compose.materialIconsExtended)
 
                 implementation("androidx.appcompat:appcompat:1.4.1")
                 implementation("androidx.core:core-ktx:1.7.0")
