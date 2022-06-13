@@ -37,6 +37,7 @@ object AppStylesheet : StyleSheet() {
     //Container for flex elements, used in MainFlexContainer
     val flexContainer by style {
         display(DisplayStyle.Flex)
+        justifyContent(JustifyContent.Center)
     }
     //Container for empty sides, used in MainFlexContainer
     val pufferFlexContainer by style {
@@ -49,8 +50,15 @@ object AppStylesheet : StyleSheet() {
     }
     //Container for main content, used in MainFlexContainer
     val contentFlexContainer by style {
-        justifyContent(JustifyContent.Center)
         flex("50%")
+    }
+    //Container for main content in BudgetBar
+    val budgetBarContainer by style {
+        flex("90%")
+    }
+    //Container for arrow in BudgetBar
+    val arrowFlexContainer by style {
+        flex("0.1 0.1 5%")
     }
 
     val categoryListElement by style{
