@@ -62,3 +62,15 @@ fun topBarMain(logoButton: @Composable () -> Unit, navButtons: @Composable () ->
         }
     }
 }
+
+@Composable
+fun Icon (icon_name: String){
+    Span(
+        attrs = {
+            classes("material-icons")
+            style {
+                width(24.px)
+                height(24.px) }
+        }
+    ) {Text(icon_name)}
+}
