@@ -67,6 +67,7 @@ fun kodein(ktorEngine: HttpClientEngine) = DI {
     bindSingleton { DashboardUseCases(instance(), instance()) }
     bindSingleton { RegisterUseCases(instance(), instance(), instance()) }
     bindSingleton { NavigateToScreenUseCase() }
+    bindSingleton { StoreUserStateUseCase() }
 
     // Flows
     bindSingleton { RouterFlow(instance()) }
