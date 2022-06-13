@@ -4,7 +4,6 @@ import androidx.compose.runtime.*
 import de.hsfl.budgetBinder.common.Category
 import de.hsfl.budgetBinder.common.Constants.DEFAULT_CATEGORY
 import de.hsfl.budgetBinder.common.Entry
-import de.hsfl.budgetBinder.common.User
 import de.hsfl.budgetBinder.domain.usecase.*
 import de.hsfl.budgetBinder.presentation.Screen
 import de.hsfl.budgetBinder.presentation.viewmodel.CategoryViewModel
