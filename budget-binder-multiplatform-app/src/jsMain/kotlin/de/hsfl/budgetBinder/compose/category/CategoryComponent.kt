@@ -63,15 +63,18 @@ fun categoryIdToCategory(category_id: Int?,categoryList: List<Category>): Catego
 
 @OptIn(ExperimentalComposeWebSvgApi::class)
 @Composable
-fun Bar(category: Category, entryList: List<Entry>){
+fun BudgetBar(category: Category, entryList: List<Entry>){
+    //category = Category we want to show
+    //entryList = List of entries
     //width and height are for aspect ratio - tries to fill out wherever its in, so its more like
-    val width = 200
-    val height = 80
+    val width = 20
+    val height = 2
     val budget = category.budget
     var usedBudget = 0f
     for (entry in entryList) {
-        usedBudget+= entry.amount
+        usedBudget-= entry.amount //Money spent negative, so we want to add the negative amount (- - = +)to usedBudget
     }
+    H1{Text("${category.name} - Budget")}
     Div{
         if (usedBudget < budget) {
             //Money Text
