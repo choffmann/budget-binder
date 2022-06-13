@@ -73,7 +73,7 @@ val di = DI {
     bindSingleton { RegisterUseCases(instance(), instance(), instance()) }
 
     // ViewModels
-    bindSingleton { LoginViewModel(instance(), instance()) }
+    bindSingleton { LoginViewModel(instance(), instance(), instance()) }
     bindSingleton { RegisterViewModel(instance(), instance()) }
     bindSingleton { SettingsViewModel(instance(), instance()) }
     bindSingleton { CategoryViewModel(instance(), instance()) }
