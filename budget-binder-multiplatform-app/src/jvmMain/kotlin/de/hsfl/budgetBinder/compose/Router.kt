@@ -3,6 +3,7 @@ package de.hsfl.budgetBinder.compose
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
+import de.hsfl.budgetBinder.compose.dashboard.DashboardComponent
 import de.hsfl.budgetBinder.compose.login.LoginComponent
 import de.hsfl.budgetBinder.compose.register.RegisterComponent
 import de.hsfl.budgetBinder.presentation.flow.RouterFlow
@@ -17,6 +18,7 @@ fun Router() {
     when (screenState.value) {
         is Screen.Register -> RegisterComponent()
         is Screen.Login -> LoginComponent()
+        is Screen.Dashboard -> DashboardComponent()
         else -> {}
     }
 }
