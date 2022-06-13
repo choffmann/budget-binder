@@ -8,6 +8,8 @@ import de.hsfl.budgetBinder.compose.theme.AppStylesheet
 import de.hsfl.budgetBinder.compose.topBarMain
 import de.hsfl.budgetBinder.presentation.UiState
 import org.jetbrains.compose.web.attributes.InputType
+import org.jetbrains.compose.web.attributes.min
+import org.jetbrains.compose.web.attributes.required
 import org.jetbrains.compose.web.css.marginBottom
 import org.jetbrains.compose.web.css.marginLeft
 import org.jetbrains.compose.web.css.percent
@@ -113,6 +115,7 @@ fun CategoryCreateView(
                         ) {
                             classes("mdc-text-field__input")
                             value(categoryNameTextFieldState)
+                            required(true)
                             onInput {
                                 categoryNameTextFieldState = it.value
                             }
@@ -207,6 +210,8 @@ fun CategoryCreateView(
                         ) {
                             classes("mdc-text-field__input")
                             value(categoryBudgetTextFieldState)
+                            required(true)
+                            min("1")
                             onInput {
                                 categoryBudgetTextFieldState = it.value.toString()
                             }

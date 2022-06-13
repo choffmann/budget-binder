@@ -64,7 +64,8 @@ fun topBarMain(logoButton: @Composable () -> Unit, navButtons: @Composable () ->
 }
 
 @Composable
-fun CategoryImagesToImageList(onClick : (Category.Image) -> Unit) {
+fun CategoryImagesToImageList(onClick: (Category.Image) -> Unit) {
+    var highlightImage by remember { mutableStateOf(Category.Image.DEFAULT) }
     Div(
         attrs = {
             classes("mdc-card", AppStylesheet.card)
@@ -83,8 +84,14 @@ fun CategoryImagesToImageList(onClick : (Category.Image) -> Unit) {
                 ) {
                     Div(
                         attrs = {
-                            classes("mdc-image-list__image-aspect-container", "mdc-icon-button")
-                            onClick { onClick }
+                            if (highlightImage == image)
+                                classes(
+                                    "mdc-image-list__image-aspect-container",
+                                    "mdc-icon-button",
+                                    "mdc-button--raised"
+                                )
+                            else classes("mdc-image-list__image-aspect-container", "mdc-icon-button")
+                            onClick { onClick(image); highlightImage = image }
                         }
                     ) {
                         CategoryImageToIcon(image)
