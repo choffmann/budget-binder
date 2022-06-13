@@ -1,8 +1,7 @@
 package de.hsfl.budgetBinder.presentation.viewmodel
 
 import de.hsfl.budgetBinder.common.DataResponse
-import de.hsfl.budgetBinder.domain.usecase.GetMyUserUseCase
-import de.hsfl.budgetBinder.domain.usecase.LoginUseCase
+import de.hsfl.budgetBinder.domain.usecase.LoginUseCases
 import de.hsfl.budgetBinder.presentation.UiState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -11,15 +10,14 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
 class LoginViewModel(
-    private val scope: CoroutineScope,
-    private val loginUseCase: LoginUseCase,
-    private val getMyUserUseCase: GetMyUserUseCase
+    private val loginUseCases: LoginUseCases,
+    private val scope: CoroutineScope
 ) {
     private val _state = MutableStateFlow<UiState>(UiState.Empty)
     val state: StateFlow<UiState> = _state
 
     fun login(email: String, password: String) {
-        loginUseCase(email, password).onEach {
+        loginUseCases.loginUseCase(email, password).onEach {
             when (it) {
                 is DataResponse.Loading -> _state.value = UiState.Loading
                 is DataResponse.Success<*> -> getMyUser()
@@ -30,7 +28,7 @@ class LoginViewModel(
     }
 
     private fun getMyUser() {
-        getMyUserUseCase().onEach {
+        loginUseCases.getMyUserUseCase().onEach {
             when (it) {
                 is DataResponse.Loading -> _state.value = UiState.Loading
                 is DataResponse.Success<*> -> _state.value = UiState.Success(it.data)

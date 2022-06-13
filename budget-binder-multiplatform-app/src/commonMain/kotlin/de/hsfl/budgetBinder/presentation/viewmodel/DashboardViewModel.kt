@@ -1,8 +1,6 @@
 package de.hsfl.budgetBinder.presentation.viewmodel
 
 import de.hsfl.budgetBinder.common.DataResponse
-import de.hsfl.budgetBinder.common.Entry
-import de.hsfl.budgetBinder.common.User
 import de.hsfl.budgetBinder.domain.usecase.*
 import de.hsfl.budgetBinder.presentation.UiState
 import kotlinx.coroutines.CoroutineScope
@@ -11,8 +9,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.*
 
 class DashboardViewModel(
-    private val getAllEntriesUseCase: GetAllEntriesUseCase,
-    private val getAllCategoriesUseCase: GetAllCategoriesUseCase,
+    private val dashboardUseCases: DashboardUseCases,
     private val scope: CoroutineScope = CoroutineScope(Dispatchers.Unconfined + SupervisorJob())
 ) {
 
@@ -29,7 +26,7 @@ class DashboardViewModel(
     }
 
     private fun getAllCategories() {
-        getAllCategoriesUseCase.categories().onEach {
+        dashboardUseCases.getAllCategoriesUseCase.categories().onEach {
             when (it) {
                 is DataResponse.Success -> _categoriesState.value = UiState.Success(it.data)
                 is DataResponse.Error -> _categoriesState.value = UiState.Error(it.message!!)
@@ -40,7 +37,7 @@ class DashboardViewModel(
     }
 
     private fun getAllEntries() {
-        getAllEntriesUseCase.entries().onEach {
+        dashboardUseCases.getAllEntriesUseCase.entries().onEach {
             when (it) {
                 is DataResponse.Success -> _entriesState.value = UiState.Success(it.data)
                 is DataResponse.Error -> _entriesState.value = UiState.Error(it.message!!)

@@ -65,23 +65,20 @@ val di = DI {
     bindSingleton { ChangeEntryByIdUseCase(instance()) }
     bindSingleton { DeleteEntryByIdUseCase(instance()) }
 
+    bindSingleton { EntriesUseCases(instance(), instance(), instance(), instance(), instance()) }
+    bindSingleton { CategoriesUseCases(instance(), instance(), instance(), instance(), instance(), instance()) }
+    bindSingleton { SettingsUseCases(instance(), instance()) }
+    bindSingleton { LoginUseCases(instance(), instance()) }
+    bindSingleton { DashboardUseCases(instance(), instance()) }
+    bindSingleton { RegisterUseCases(instance(), instance(), instance()) }
+
     // ViewModels
-    bindSingleton { LoginViewModel(instance(), instance(), instance()) }
-    bindSingleton { RegisterViewModel(instance(), instance(), instance(), instance()) }
-    bindSingleton { SettingsViewModel(instance(), instance(), instance()) }
-    bindSingleton {
-        CategoryViewModel(
-            instance(),
-            instance(),
-            instance(),
-            instance(),
-            instance(),
-            instance(),
-            instance()
-        )
-    }
-    bindSingleton { EntryViewModel(instance(), instance(), instance(), instance(), instance(), instance()) }
-    bindSingleton { DashboardViewModel(instance(), instance(), instance()) }
+    bindSingleton { LoginViewModel(instance(), instance()) }
+    bindSingleton { RegisterViewModel(instance(), instance()) }
+    bindSingleton { SettingsViewModel(instance(), instance()) }
+    bindSingleton { CategoryViewModel(instance(), instance()) }
+    bindSingleton { EntryViewModel(instance(), instance()) }
+    bindSingleton { DashboardViewModel(instance(), instance()) }
     bindSingleton { NavDrawerViewModel(instance(), instance()) }
 }
 
