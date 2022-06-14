@@ -1,4 +1,4 @@
-package de.hsfl.budgetBinder.presentation.login
+package de.hsfl.budgetBinder.presentation.viewmodel.login
 
 sealed class LoginEvent {
     data class EnteredEmail(val value: String) : LoginEvent()

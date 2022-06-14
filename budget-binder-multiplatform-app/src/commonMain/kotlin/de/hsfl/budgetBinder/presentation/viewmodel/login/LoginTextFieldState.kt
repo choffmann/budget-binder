@@ -1,4 +1,4 @@
-package de.hsfl.budgetBinder.presentation.login
+package de.hsfl.budgetBinder.presentation.viewmodel.login
 
 data class LoginTextFieldState(
     val email: String = "root@budget-binder.com",

@@ -1,4 +1,4 @@
-package de.hsfl.budgetBinder.presentation.register
+package de.hsfl.budgetBinder.presentation.viewmodel.register
 
 import de.hsfl.budgetBinder.common.DataResponse
 import de.hsfl.budgetBinder.common.User

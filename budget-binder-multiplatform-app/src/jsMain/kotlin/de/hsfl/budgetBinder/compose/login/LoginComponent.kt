@@ -1,7 +1,7 @@
 package de.hsfl.budgetBinder.compose.login
 import androidx.compose.runtime.*
 import de.hsfl.budgetBinder.presentation.Screen
-import de.hsfl.budgetBinder.presentation.login.LoginViewModel
+import de.hsfl.budgetBinder.presentation.viewmodel.login.LoginViewModel
 import di
 import org.kodein.di.compose.withDI
 import org.kodein.di.instance

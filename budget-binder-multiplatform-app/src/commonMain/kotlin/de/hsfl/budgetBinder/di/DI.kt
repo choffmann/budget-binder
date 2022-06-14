@@ -14,8 +14,8 @@ import de.hsfl.budgetBinder.domain.usecase.storage.StoreServerUrlUseCase
 import de.hsfl.budgetBinder.domain.usecase.storage.StoreUserStateUseCase
 import de.hsfl.budgetBinder.presentation.flow.DataFlow
 import de.hsfl.budgetBinder.presentation.flow.RouterFlow
-import de.hsfl.budgetBinder.presentation.login.LoginViewModel
-import de.hsfl.budgetBinder.presentation.register.RegisterViewModel
+import de.hsfl.budgetBinder.presentation.viewmodel.login.LoginViewModel
+import de.hsfl.budgetBinder.presentation.viewmodel.register.RegisterViewModel
 import de.hsfl.budgetBinder.presentation.viewmodel.*
 import io.ktor.client.engine.*
 import kotlinx.coroutines.CoroutineScope

@@ -1,4 +1,4 @@
-package de.hsfl.budgetBinder.presentation.login
+package de.hsfl.budgetBinder.presentation.viewmodel.login
 
 import de.hsfl.budgetBinder.common.DataResponse
 import de.hsfl.budgetBinder.common.utils.validateEmail

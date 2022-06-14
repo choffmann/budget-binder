@@ -4,7 +4,7 @@ import androidx.compose.runtime.*
 import de.hsfl.budgetBinder.common.User
 
 import de.hsfl.budgetBinder.presentation.Screen
-import de.hsfl.budgetBinder.presentation.register.RegisterViewModel
+import de.hsfl.budgetBinder.presentation.viewmodel.register.RegisterViewModel
 import di
 import org.kodein.di.instance
 

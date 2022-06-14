@@ -1,4 +1,4 @@
-package de.hsfl.budgetBinder.presentation.register
+package de.hsfl.budgetBinder.presentation.viewmodel.register
 
 sealed class RegisterEvent {
     data class EnteredFirstname(val value: String): RegisterEvent()
