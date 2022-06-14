@@ -17,8 +17,8 @@ import kotlinx.coroutines.launch
 class SettingsEditUserViewModel(
     private val changeMyUserUseCase: ChangeMyUserUseCase,
     private val dataFlow: DataFlow,
-    private val scope: CoroutineScope,
-    private val routerFlow: RouterFlow
+    private val routerFlow: RouterFlow,
+    private val scope: CoroutineScope
 ) {
     private val _firstNameText =
         MutableStateFlow(EditUserState(firstName = dataFlow.userState.value.firstName, firstNameIsValid = true))

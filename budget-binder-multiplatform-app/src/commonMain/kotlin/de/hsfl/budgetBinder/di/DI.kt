@@ -17,6 +17,7 @@ import de.hsfl.budgetBinder.presentation.flow.RouterFlow
 import de.hsfl.budgetBinder.presentation.viewmodel.login.LoginViewModel
 import de.hsfl.budgetBinder.presentation.viewmodel.register.RegisterViewModel
 import de.hsfl.budgetBinder.presentation.viewmodel.*
+import de.hsfl.budgetBinder.presentation.viewmodel.settings.SettingsEditUserViewModel
 import de.hsfl.budgetBinder.presentation.viewmodel.settings.SettingsViewModel
 import io.ktor.client.engine.*
 import kotlinx.coroutines.CoroutineScope
@@ -83,6 +84,7 @@ fun kodein(ktorEngine: HttpClientEngine) = DI {
     bindSingleton { LoginViewModel(instance(), instance(), instance(), instance()) }
     bindSingleton { RegisterViewModel(instance(), instance(), instance(), instance()) }
     bindSingleton { SettingsViewModel(instance(), instance(), instance(), instance()) }
+    bindSingleton { SettingsEditUserViewModel(instance(), instance(), instance(), instance()) }
     bindSingleton { CategoryViewModel(instance(), instance()) }
     bindSingleton { EntryViewModel(instance(), instance()) }
     bindSingleton { DashboardViewModel(instance(), instance(), instance(), instance(), instance(), instance()) }
