@@ -28,7 +28,7 @@ class GetAllCategoriesUseCase(private val repository: CategoryRepository) {
             emit(DataResponse.Error(ErrorModel("Couldn't reach the server")))
         } catch (e: Exception) {
             e.printStackTrace()
-            emit(DataResponse.Error(ErrorModel("Somthing went wrong")))
+            emit(DataResponse.Error(ErrorModel("Something went wrong")))
         }
     }
 
@@ -49,7 +49,7 @@ class GetAllCategoriesUseCase(private val repository: CategoryRepository) {
             emit(DataResponse.Error(ErrorModel("Couldn't reach the server")))
         } catch (e: Exception) {
             e.printStackTrace()
-            emit(DataResponse.Error(ErrorModel("Somthing went wrong")))
+            emit(DataResponse.Error(ErrorModel("Something went wrong")))
         }
     }
 }
@@ -72,7 +72,7 @@ class CreateCategoryUseCase(private val repository: CategoryRepository) {
             emit(DataResponse.Error(ErrorModel("Couldn't reach the server")))
         } catch (e: Exception) {
             e.printStackTrace()
-            emit(DataResponse.Error(ErrorModel("Somthing went wrong")))
+            emit(DataResponse.Error(ErrorModel("Something went wrong")))
         }
     }
 }
@@ -95,7 +95,7 @@ class GetCategoryByIdUseCase(private val repository: CategoryRepository) {
             emit(DataResponse.Error(ErrorModel("Couldn't reach the server")))
         } catch (e: Exception) {
             e.printStackTrace()
-            emit(DataResponse.Error(ErrorModel("Somthing went wrong")))
+            emit(DataResponse.Error(ErrorModel("Something went wrong")))
         }
     }
 }
@@ -118,7 +118,7 @@ class ChangeCategoryByIdUseCase(private val repository: CategoryRepository) {
             emit(DataResponse.Error(ErrorModel("Couldn't reach the server")))
         } catch (e: Exception) {
             e.printStackTrace()
-            emit(DataResponse.Error(ErrorModel("Somthing went wrong")))
+            emit(DataResponse.Error(ErrorModel("Something went wrong")))
         }
     }
 }
@@ -141,7 +141,7 @@ class DeleteCategoryByIdUseCase(private val repository: CategoryRepository) {
             emit(DataResponse.Error(ErrorModel("Couldn't reach the server")))
         } catch (e: Exception) {
             e.printStackTrace()
-            emit(DataResponse.Error(ErrorModel("Somthing went wrong")))
+            emit(DataResponse.Error(ErrorModel("Something went wrong")))
         }
     }
 }
@@ -164,7 +164,7 @@ class GetAllEntriesByCategoryUseCase(private val repository: CategoryRepository)
             emit(DataResponse.Error(ErrorModel("Couldn't reach the server")))
         } catch (e: Exception) {
             e.printStackTrace()
-            emit(DataResponse.Error(ErrorModel("Somthing went wrong")))
+            emit(DataResponse.Error(ErrorModel("Something went wrong")))
         }
     }
 }

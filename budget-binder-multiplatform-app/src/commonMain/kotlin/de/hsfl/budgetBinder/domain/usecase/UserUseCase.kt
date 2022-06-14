@@ -27,7 +27,7 @@ class GetMyUserUseCase(private val repository: UserRepository) {
             emit(DataResponse.Error(ErrorModel("Couldn't reach the server")))
         } catch (e: Exception) {
             e.printStackTrace()
-            emit(DataResponse.Error(ErrorModel("Somthing went wrong")))
+            emit(DataResponse.Error(ErrorModel("Something went wrong")))
         }
     }
 }
@@ -50,7 +50,7 @@ class ChangeMyUserUseCase(private val repository: UserRepository) {
             emit(DataResponse.Error(ErrorModel("Couldn't reach the server")))
         } catch (e: Exception) {
             e.printStackTrace()
-            emit(DataResponse.Error(ErrorModel("Somthing went wrong")))
+            emit(DataResponse.Error(ErrorModel("Something went wrong")))
         }
     }
 }
@@ -73,7 +73,7 @@ class DeleteMyUserUseCase(private val repository: UserRepository) {
             emit(DataResponse.Error(ErrorModel("Couldn't reach the server")))
         } catch (e: Exception) {
             e.printStackTrace()
-            emit(DataResponse.Error(ErrorModel("Somthing went wrong")))
+            emit(DataResponse.Error(ErrorModel("Something went wrong")))
         }
     }
 }

@@ -27,7 +27,7 @@ class GetAllEntriesUseCase(private val repository: EntryRepository) {
             emit(DataResponse.Error(ErrorModel("Couldn't reach the server")))
         } catch (e: Exception) {
             e.printStackTrace()
-            emit(DataResponse.Error(ErrorModel("Somthing went wrong")))
+            emit(DataResponse.Error(ErrorModel("Something went wrong")))
         }
     }
 
@@ -48,7 +48,7 @@ class GetAllEntriesUseCase(private val repository: EntryRepository) {
             emit(DataResponse.Error(ErrorModel("Couldn't reach the server")))
         } catch (e: Exception) {
             e.printStackTrace()
-            emit(DataResponse.Error(ErrorModel("Somthing went wrong")))
+            emit(DataResponse.Error(ErrorModel("Something went wrong")))
         }
     }
 }
@@ -71,7 +71,7 @@ class CreateNewEntryUseCase(private val repository: EntryRepository) {
             emit(DataResponse.Error(ErrorModel("Couldn't reach the server")))
         } catch (e: Exception) {
             e.printStackTrace()
-            emit(DataResponse.Error(ErrorModel("Somthing went wrong")))
+            emit(DataResponse.Error(ErrorModel("Something went wrong")))
         }
     }
 }
@@ -94,7 +94,7 @@ class GetEntryByIdUseCase(private val repository: EntryRepository) {
             emit(DataResponse.Error(ErrorModel("Couldn't reach the server")))
         } catch (e: Exception) {
             e.printStackTrace()
-            emit(DataResponse.Error(ErrorModel("Somthing went wrong")))
+            emit(DataResponse.Error(ErrorModel("Something went wrong")))
         }
     }
 }
@@ -117,7 +117,7 @@ class ChangeEntryByIdUseCase(private val repository: EntryRepository) {
             emit(DataResponse.Error(ErrorModel("Couldn't reach the server")))
         } catch (e: Exception) {
             e.printStackTrace()
-            emit(DataResponse.Error(ErrorModel("Somthing went wrong")))
+            emit(DataResponse.Error(ErrorModel("Something went wrong")))
         }
     }
 }
@@ -140,7 +140,7 @@ class DeleteEntryByIdUseCase(private val repository: EntryRepository) {
             emit(DataResponse.Error(ErrorModel("Couldn't reach the server")))
         } catch (e: Exception) {
             e.printStackTrace()
-            emit(DataResponse.Error(ErrorModel("Somthing went wrong")))
+            emit(DataResponse.Error(ErrorModel("Something went wrong")))
         }
     }
 }

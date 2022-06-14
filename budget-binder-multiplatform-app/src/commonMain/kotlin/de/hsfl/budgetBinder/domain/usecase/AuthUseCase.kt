@@ -29,7 +29,7 @@ class RegisterUseCase(private val repository: AuthRepository) {
             emit(DataResponse.Error(ErrorModel("Couldn't reach the server")))
         } catch (e: Throwable) {
             e.printStackTrace()
-            emit(DataResponse.Error(ErrorModel("Somthing went wrong")))
+            emit(DataResponse.Error(ErrorModel("Something went wrong")))
         }
     }
 }
@@ -53,7 +53,7 @@ class LoginUseCase(private val repository: AuthRepository) {
             emit(DataResponse.Error(ErrorModel("Couldn't reach the server")))
         } catch (e: Throwable) {
             e.printStackTrace()
-            emit(DataResponse.Error(ErrorModel("Somthing went wrong")))
+            emit(DataResponse.Error(ErrorModel("Something went wrong")))
         }
     }
 }
@@ -77,7 +77,7 @@ class LogoutUseCase(private val repository: AuthRepository) {
             emit(DataResponse.Error(ErrorModel("Couldn't reach the server")))
         } catch (e: Throwable) {
             e.printStackTrace()
-            emit(DataResponse.Error(ErrorModel("Somthing went wrong")))
+            emit(DataResponse.Error(ErrorModel("Something went wrong")))
         }
     }
 }
