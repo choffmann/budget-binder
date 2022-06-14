@@ -40,6 +40,7 @@ class LoginViewModel(
                 when (it) {
                     is DataResponse.Success -> {
                         _eventFlow.emit(UiEvent.ShowLoading)
+                        dataFlow.storeUserState(it.data!!)
                         delay(1000L)
                         routerFlow.navigateTo(Screen.Dashboard)
                     }
