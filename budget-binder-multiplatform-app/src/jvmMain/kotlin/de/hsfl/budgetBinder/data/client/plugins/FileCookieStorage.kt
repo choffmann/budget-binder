@@ -6,12 +6,40 @@ import io.ktor.util.*
 import io.ktor.util.date.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import java.io.*
 import kotlin.math.min
 
+expect fun getCookieFileStorage(): File
+
 class FileCookieStorage : CookiesStorage {
-    private val container: MutableList<Cookie> = mutableListOf()
+    private val container: MutableList<Cookie>
     private var oldestCookie: Long = 0L
     private val mutex = Mutex()
+
+    init {
+        container = readCookiesFromFile() ?: mutableListOf()
+        container.filter { it.expires?.timestamp != null }.minByOrNull { it.expires!!.timestamp }?.let {
+            oldestCookie = it.expires!!.timestamp
+        }
+    }
+
+    private fun readCookiesFromFile(): MutableList<Cookie>? {
+        return try {
+            val serializedCookies = ObjectInputStream(FileInputStream(getCookieFileStorage())).readObject().let {
+                (it as List<*>).filterIsInstance<SerializableCookie>()
+            }
+            serializedCookies.map { it.toCookie() }.toMutableList()
+        } catch (e: IOException) {
+            null
+        }
+    }
+
+    private fun writeCookiesToFile(cookies: MutableList<Cookie>) {
+        ObjectOutputStream(FileOutputStream(getCookieFileStorage()))
+            .writeObject(cookies.map {
+                SerializableCookie.fromCookie(it)
+            })
+    }
 
     override suspend fun get(requestUrl: Url): List<Cookie> = mutex.withLock {
         val date = GMTDate()
@@ -35,6 +63,7 @@ class FileCookieStorage : CookiesStorage {
                 oldestCookie = expires
             }
         }
+        writeCookiesToFile(container)
     }
 
     private fun areSameCookies(cookie: Cookie, other: Cookie): Boolean {
@@ -106,6 +135,7 @@ class FileCookieStorage : CookiesStorage {
         }
 
         oldestCookie = newOldest
+        writeCookiesToFile(container)
     }
 
     override fun close() {
