@@ -60,7 +60,6 @@ object AppStylesheet : StyleSheet() {
     val card by style {
         margin(10.px)
         marginTop(25.px)
-
     }
 
     val image by style {
@@ -69,5 +68,9 @@ object AppStylesheet : StyleSheet() {
 
     val margin by style {
         margin(10.px)
+    }
+
+    val marginRight by style {
+        marginRight(1.percent)
     }
 }
