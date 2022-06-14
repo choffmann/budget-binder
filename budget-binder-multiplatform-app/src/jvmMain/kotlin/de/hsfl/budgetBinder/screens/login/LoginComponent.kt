@@ -1,16 +1,20 @@
 package de.hsfl.budgetBinder.screens.login
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.unit.dp
 import de.hsfl.budgetBinder.di
 import de.hsfl.budgetBinder.compose.dialog.ServerUrlDialog
+import de.hsfl.budgetBinder.compose.icon.AppIcon
 import de.hsfl.budgetBinder.compose.textfield.EmailTextField
 import de.hsfl.budgetBinder.presentation.login.LoginViewModel
 import de.hsfl.budgetBinder.presentation.login.LoginEvent
@@ -58,12 +62,10 @@ fun LoginComponent() {
             onConfirm = { viewModel.onEvent(LoginEvent.OnDialogConfirm) },
             onDissmiss = { viewModel.onEvent(LoginEvent.OnDialogDissmiss) }
         )
-
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
+        Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
+            AppIcon(modifier = Modifier.size(128.dp).padding(8.dp))
+            Text(text = "Welcome back to Budget Binder 💸", style = MaterialTheme.typography.h5)
+            Spacer(modifier = Modifier.height(8.dp))
             EmailTextField(
                 value = emailTextState.value.email,
                 onValueChange = { viewModel.onEvent(LoginEvent.EnteredEmail(it)) },
@@ -85,11 +87,13 @@ fun LoginComponent() {
             }) {
                 Text("Login")
             }
-            Button(onClick = {
-                localFocusManager.clearFocus()
-                viewModel.onEvent(LoginEvent.OnChangeToRegister)
-            }) {
-                Text("Change to Register")
+            Box(modifier = Modifier.fillMaxSize()) {
+                TextButton(modifier = Modifier.align(Alignment.BottomCenter), onClick = {
+                    localFocusManager.clearFocus()
+                    viewModel.onEvent(LoginEvent.OnChangeToRegister)
+                }) {
+                    Text("Or Register your Account here")
+                }
             }
         }
     }

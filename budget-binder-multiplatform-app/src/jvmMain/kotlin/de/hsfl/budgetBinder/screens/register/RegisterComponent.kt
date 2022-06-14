@@ -8,8 +8,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.unit.dp
+import de.hsfl.budgetBinder.compose.icon.AppIcon
 import de.hsfl.budgetBinder.di
 import de.hsfl.budgetBinder.compose.textfield.EmailTextField
+import de.hsfl.budgetBinder.presentation.login.LoginEvent
 import de.hsfl.budgetBinder.presentation.register.RegisterEvent
 import de.hsfl.budgetBinder.presentation.register.RegisterViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -45,11 +48,10 @@ fun RegisterComponent() {
         if (loadingState.value) {
             LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
         }
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
+        Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
+            AppIcon(modifier = Modifier.size(128.dp).padding(8.dp))
+            Text(text = "Hello there 👋", style = MaterialTheme.typography.h5)
+            Spacer(modifier = Modifier.height(8.dp))
             OutlinedTextField(
                 value = firstNameTextState.value.firstName,
                 onValueChange = { viewModel.onEvent(RegisterEvent.EnteredFirstname(it)) },
@@ -80,8 +82,12 @@ fun RegisterComponent() {
             Button(onClick = { viewModel.onEvent(RegisterEvent.OnRegister) }) {
                 Text("Register")
             }
-            Button(onClick = { viewModel.onEvent(RegisterEvent.OnChangeToLogin) }) {
-                Text("Change to Login")
+            Box(modifier = Modifier.fillMaxSize()) {
+                TextButton(modifier = Modifier.align(Alignment.BottomCenter), onClick = {
+                    viewModel.onEvent(RegisterEvent.OnChangeToLogin)
+                }) {
+                    Text("Or Login with your Account")
+                }
             }
         }
     }
