@@ -1,4 +1,4 @@
-package de.hsfl.budgetBinder.compose
+package de.hsfl.budgetBinder
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState

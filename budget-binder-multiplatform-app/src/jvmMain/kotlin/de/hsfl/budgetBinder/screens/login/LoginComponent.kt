@@ -3,16 +3,13 @@ package de.hsfl.budgetBinder.screens.login
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Warning
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import de.hsfl.budgetBinder.compose.di
+import de.hsfl.budgetBinder.di
 import de.hsfl.budgetBinder.compose.dialog.ServerUrlDialog
 import de.hsfl.budgetBinder.compose.textfield.EmailTextField
 import de.hsfl.budgetBinder.presentation.login.LoginViewModel

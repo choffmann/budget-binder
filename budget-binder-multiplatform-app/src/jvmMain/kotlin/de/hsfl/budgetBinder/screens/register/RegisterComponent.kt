@@ -8,9 +8,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import de.hsfl.budgetBinder.compose.di
+import de.hsfl.budgetBinder.di
 import de.hsfl.budgetBinder.compose.textfield.EmailTextField
-import de.hsfl.budgetBinder.presentation.login.LoginViewModel
 import de.hsfl.budgetBinder.presentation.register.RegisterEvent
 import de.hsfl.budgetBinder.presentation.register.RegisterViewModel
 import kotlinx.coroutines.flow.collectLatest
