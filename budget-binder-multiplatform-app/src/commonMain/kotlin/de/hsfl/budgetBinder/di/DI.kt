@@ -17,6 +17,7 @@ import de.hsfl.budgetBinder.presentation.flow.RouterFlow
 import de.hsfl.budgetBinder.presentation.viewmodel.login.LoginViewModel
 import de.hsfl.budgetBinder.presentation.viewmodel.register.RegisterViewModel
 import de.hsfl.budgetBinder.presentation.viewmodel.*
+import de.hsfl.budgetBinder.presentation.viewmodel.settings.SettingsViewModel
 import io.ktor.client.engine.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -68,7 +69,7 @@ fun kodein(ktorEngine: HttpClientEngine) = DI {
     bindSingleton { StoreServerUrlUseCase() }
     bindSingleton { EntriesUseCases(instance(), instance(), instance(), instance(), instance()) }
     bindSingleton { CategoriesUseCases(instance(), instance(), instance(), instance(), instance(), instance()) }
-    bindSingleton { SettingsUseCases(instance(), instance()) }
+    bindSingleton { SettingsUseCases(instance(), instance(), instance()) }
     bindSingleton { LoginUseCases(instance(), instance()) }
     bindSingleton { DashboardUseCases(instance(), instance()) }
     bindSingleton { RegisterUseCases(instance(), instance(), instance()) }
@@ -81,7 +82,7 @@ fun kodein(ktorEngine: HttpClientEngine) = DI {
     // ViewModels
     bindSingleton { LoginViewModel(instance(), instance(), instance(), instance()) }
     bindSingleton { RegisterViewModel(instance(), instance(), instance(), instance()) }
-    bindSingleton { SettingsViewModel(instance(), instance()) }
+    bindSingleton { SettingsViewModel(instance(), instance(), instance(), instance()) }
     bindSingleton { CategoryViewModel(instance(), instance()) }
     bindSingleton { EntryViewModel(instance(), instance()) }
     bindSingleton { DashboardViewModel(instance(), instance(), instance(), instance(), instance(), instance()) }

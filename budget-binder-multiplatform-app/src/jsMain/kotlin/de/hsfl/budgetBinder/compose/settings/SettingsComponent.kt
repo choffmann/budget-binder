@@ -2,16 +2,9 @@ package de.hsfl.budgetBinder.compose.settings
 
 import androidx.compose.runtime.*
 import de.hsfl.budgetBinder.common.User
-import de.hsfl.budgetBinder.compose.settings.SettingsChangeUserDataView
-import de.hsfl.budgetBinder.domain.usecase.ChangeMyUserUseCase
-import de.hsfl.budgetBinder.domain.usecase.DeleteMyUserUseCase
 import de.hsfl.budgetBinder.presentation.Screen
-import de.hsfl.budgetBinder.presentation.viewmodel.SettingsViewModel
+import de.hsfl.budgetBinder.presentation.viewmodel.settings.SettingsViewModel
 import di
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import org.kodein.di.compose.localDI
 import org.kodein.di.instance
 
 @Composable
