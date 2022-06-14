@@ -237,7 +237,7 @@ fun CategoryCreateView(
                 Div {
                     when (viewState) {
                         is UiState.Success<*> -> {
-                            Text((viewState as UiState.Success<*>).element.toString())
+                            //Text((viewState as UiState.Success<*>).element.toString())
                         }
                         is UiState.Error -> {
                             Text((viewState as UiState.Error).error)
