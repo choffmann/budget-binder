@@ -6,6 +6,7 @@ import de.hsfl.budgetBinder.domain.usecase.storage.StoreUserStateUseCase
 import io.ktor.http.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collect
 
 class DataFlow(
     private val dataFlowUseCases: DataFlowUseCases
@@ -27,6 +28,16 @@ class DataFlow(
     suspend fun storeServerUrl(serverUrl: Url) {
         dataFlowUseCases.storeServerUrlUseCase(serverUrl).collect {
             _serverUrlState.value = it
+        }
+    }
+
+    // Dark Mode
+    private val _darkModeState = MutableStateFlow(false)
+    val darkModeState: StateFlow<Boolean> = _darkModeState
+
+    suspend fun toggleDarkMode() {
+        dataFlowUseCases.storeDarkModeUseCase(!darkModeState.value).collect {
+            _darkModeState.value = it
         }
     }
 }
