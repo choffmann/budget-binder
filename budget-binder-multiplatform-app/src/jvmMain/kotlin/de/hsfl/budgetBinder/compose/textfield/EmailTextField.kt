@@ -1,6 +1,7 @@
 package de.hsfl.budgetBinder.compose.textfield
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
@@ -9,6 +10,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.KeyboardType
 
 @Composable
 fun EmailTextField(
@@ -32,7 +34,8 @@ fun EmailTextField(
                 if (isError) {
                     Icon(Icons.Default.Info, contentDescription = null)
                 }
-            }
+            },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
         )
     }
     if (isError) {
