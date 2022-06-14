@@ -1,6 +1,7 @@
 package de.hsfl.budgetBinder.presentation.login
 
 import de.hsfl.budgetBinder.common.DataResponse
+import de.hsfl.budgetBinder.common.utils.validateEmail
 import de.hsfl.budgetBinder.domain.usecase.LoginUseCases
 import de.hsfl.budgetBinder.presentation.flow.RouterFlow
 import de.hsfl.budgetBinder.presentation.Screen
@@ -38,7 +39,9 @@ class LoginViewModel(
                         delay(1000L)
                         routerFlow.navigateTo(Screen.Dashboard)
                     }
-                    else -> {_eventFlow.emit(UiEvent.ShowError("init: user is nor authorized"))}
+                    else -> {
+                        _eventFlow.emit(UiEvent.ShowError("init: user is nor authorized"))
+                    }
                 }
             }
         }
@@ -48,7 +51,7 @@ class LoginViewModel(
         when (event) {
             is LoginEvent.EnteredEmail -> {
                 _emailText.value = emailText.value.copy(
-                    email = event.value
+                    email = event.value, emailValide = true
                 )
             }
             is LoginEvent.EnteredPassword -> {
@@ -57,7 +60,11 @@ class LoginViewModel(
                 )
             }
             is LoginEvent.OnLogin -> {
-                auth(email = emailText.value.email, password = passwordText.value.password)
+                if (validateEmail(email = emailText.value.email)) {
+                    auth(email = emailText.value.email, password = passwordText.value.password)
+                } else {
+                    _emailText.value = emailText.value.copy(emailValide = false)
+                }
             }
             is LoginEvent.OnChangeToRegister -> {
                 scope.launch {

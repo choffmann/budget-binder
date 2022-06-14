@@ -3,6 +3,9 @@ package de.hsfl.budgetBinder.compose.screens.login
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -54,8 +57,22 @@ fun LoginComponent() {
                 value = emailTextState.value.email,
                 onValueChange = { viewModel.onEvent(LoginEvent.EnteredEmail(it)) },
                 label = { Text("Email") },
-                singleLine = true
+                singleLine = true,
+                enabled = !loadingState.value,
+                isError = !emailTextState.value.emailValide,
+                trailingIcon = {
+                    if (!emailTextState.value.emailValide) {
+                        Icon(Icons.Default.Info, contentDescription = null)
+                    }
+                }
             )
+            if (!emailTextState.value.emailValide) {
+                Text(
+                    text = "Please enter a valide email address",
+                    color = MaterialTheme.colors.error,
+                    style = MaterialTheme.typography.subtitle1
+                )
+            }
             OutlinedTextField(
                 value = passwordTextState.value.password,
                 onValueChange = { viewModel.onEvent(LoginEvent.EnteredPassword(it)) },
