@@ -1,13 +1,11 @@
 package de.hsfl.budgetBinder.screens.login
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -70,7 +68,7 @@ fun LoginComponent() {
                 value = emailTextState.value.email,
                 onValueChange = { viewModel.onEvent(LoginEvent.EnteredEmail(it)) },
                 label = { Text("Email") },
-                isError = !emailTextState.value.emailValide,
+                isError = !emailTextState.value.emailValid,
                 enabled = !loadingState.value
             )
             OutlinedTextField(

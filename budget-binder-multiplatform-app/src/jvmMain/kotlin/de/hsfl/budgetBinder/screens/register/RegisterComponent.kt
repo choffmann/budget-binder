@@ -55,7 +55,7 @@ fun RegisterComponent() {
             OutlinedTextField(
                 value = firstNameTextState.value.firstName,
                 onValueChange = { viewModel.onEvent(RegisterEvent.EnteredFirstname(it)) },
-                label = { Text("Fistname") },
+                label = { Text("Firstname") },
                 singleLine = true
             )
             OutlinedTextField(

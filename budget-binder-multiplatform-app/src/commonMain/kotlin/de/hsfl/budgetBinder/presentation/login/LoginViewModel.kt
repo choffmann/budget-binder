@@ -7,7 +7,6 @@ import de.hsfl.budgetBinder.presentation.flow.RouterFlow
 import de.hsfl.budgetBinder.presentation.Screen
 import de.hsfl.budgetBinder.presentation.UiState
 import de.hsfl.budgetBinder.presentation.flow.DataFlow
-import de.hsfl.budgetBinder.presentation.register.RegisterViewModel
 import io.ktor.http.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
@@ -58,7 +57,7 @@ class LoginViewModel(
     fun onEvent(event: LoginEvent) {
         when (event) {
             is LoginEvent.EnteredEmail -> _emailText.value =
-                emailText.value.copy(email = event.value, emailValide = true)
+                emailText.value.copy(email = event.value, emailValid = true)
             is LoginEvent.EnteredPassword -> _passwordText.value =
                 passwordText.value.copy(password = event.value)
             is LoginEvent.EnteredServerUrl -> _serverUrlText.value =
@@ -69,7 +68,7 @@ class LoginViewModel(
                         _eventFlow.emit(UiEvent.ShowServerInput)
                     }
                 } else {
-                    _emailText.value = emailText.value.copy(emailValide = false)
+                    _emailText.value = emailText.value.copy(emailValid = false)
                 }
             }
             is LoginEvent.OnChangeToRegister -> {
