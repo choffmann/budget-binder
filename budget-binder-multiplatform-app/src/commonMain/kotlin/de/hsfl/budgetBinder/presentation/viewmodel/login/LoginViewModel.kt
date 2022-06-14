@@ -5,6 +5,7 @@ import de.hsfl.budgetBinder.common.utils.validateEmail
 import de.hsfl.budgetBinder.domain.usecase.LoginUseCases
 import de.hsfl.budgetBinder.presentation.flow.RouterFlow
 import de.hsfl.budgetBinder.presentation.Screen
+import de.hsfl.budgetBinder.presentation.UiEvent
 import de.hsfl.budgetBinder.presentation.UiState
 import de.hsfl.budgetBinder.presentation.flow.DataFlow
 import io.ktor.http.*
@@ -150,14 +151,5 @@ class LoginViewModel(
                 is DataResponse.Unauthorized -> _state.value = UiState.Unauthorized
             }
         }.launchIn(scope)
-
-    }
-
-    sealed class UiEvent {
-        // Show Loading State in Ui
-        object ShowLoading : UiEvent()
-
-        // Show Error, for example with a SnackBar
-        data class ShowError(val msg: String) : UiEvent()
     }
 }

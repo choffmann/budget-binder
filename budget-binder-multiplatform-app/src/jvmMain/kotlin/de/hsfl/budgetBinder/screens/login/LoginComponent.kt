@@ -14,6 +14,7 @@ import de.hsfl.budgetBinder.di
 import de.hsfl.budgetBinder.compose.dialog.ServerUrlDialog
 import de.hsfl.budgetBinder.compose.icon.AppIcon
 import de.hsfl.budgetBinder.compose.textfield.EmailTextField
+import de.hsfl.budgetBinder.presentation.UiEvent
 import de.hsfl.budgetBinder.presentation.viewmodel.login.LoginViewModel
 import de.hsfl.budgetBinder.presentation.viewmodel.login.LoginEvent
 import kotlinx.coroutines.flow.collectLatest
@@ -36,11 +37,11 @@ fun LoginComponent() {
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->
             when (event) {
-                is LoginViewModel.UiEvent.ShowLoading -> {
+                is UiEvent.ShowLoading -> {
                     // TODO: Refactor this, it's working but ahh
                     loadingState.value = true
                 }
-                is LoginViewModel.UiEvent.ShowError -> {
+                is UiEvent.ShowError -> {
                     loadingState.value = false
                     scaffoldState.snackbarHostState.showSnackbar(message = event.msg, actionLabel = "Dissmiss")
                 }
