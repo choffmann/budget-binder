@@ -2,11 +2,14 @@ package de.hsfl.budgetBinder.compose.category
 
 import androidx.compose.runtime.*
 import de.hsfl.budgetBinder.common.Category
+import de.hsfl.budgetBinder.common.StateManager.screenState
 import de.hsfl.budgetBinder.compose.CategoryList
 import de.hsfl.budgetBinder.compose.MainFlexContainer
 import de.hsfl.budgetBinder.compose.theme.AppStylesheet
 import de.hsfl.budgetBinder.compose.topBarMain
+import de.hsfl.budgetBinder.presentation.Screen
 import de.hsfl.budgetBinder.presentation.UiState
+import org.jetbrains.compose.web.css.flex
 import org.jetbrains.compose.web.css.margin
 import org.jetbrains.compose.web.css.percent
 import org.jetbrains.compose.web.dom.*
