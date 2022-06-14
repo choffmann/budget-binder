@@ -15,10 +15,16 @@ val di = kodein(ktorEngine = CIO.create())
 @Composable
 fun App() = withDI(di) {
     val darkTheme = remember { mutableStateOf(false) }
+    val scaffoldState = rememberScaffoldState()
     MaterialTheme(
         colors = if (darkTheme.value) darkColors() else lightColors()
     ) {
-        Router()
+        Scaffold(
+            scaffoldState = scaffoldState,
+            topBar = { TopAppBar(title = { Text("Budget Binder") }) }
+        ) {
+            Router()
+        }
 
         // Toggle Dark-mode
         IconToggleButton(checked = darkTheme.value, onCheckedChange = { darkTheme.value = it }) {
