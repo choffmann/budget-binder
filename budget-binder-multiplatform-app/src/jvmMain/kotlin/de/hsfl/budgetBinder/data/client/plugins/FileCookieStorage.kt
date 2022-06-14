@@ -18,6 +18,10 @@ class FileCookieStorage : CookiesStorage {
 
     init {
         container = readCookiesFromFile() ?: mutableListOf()
+        container.filter{ it.expires?.timestamp != null }.sortedBy { it.expires!!.timestamp }.let {
+            println(it)
+            oldestCookie = it.first().expires!!.timestamp
+        }
     }
 
     private fun readCookiesFromFile(): MutableList<Cookie>? {
