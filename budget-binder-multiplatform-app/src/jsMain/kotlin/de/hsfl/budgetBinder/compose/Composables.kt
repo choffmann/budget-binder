@@ -4,10 +4,12 @@ import androidx.compose.runtime.*
 import de.hsfl.budgetBinder.common.Category
 import androidx.compose.runtime.Composable
 import de.hsfl.budgetBinder.compose.theme.AppStylesheet
-import de.hsfl.budgetBinder.domain.usecase.*
 import de.hsfl.budgetBinder.presentation.CategoryImageToIcon
+import org.jetbrains.compose.web.ExperimentalComposeWebSvgApi
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
+import org.jetbrains.compose.web.svg.Rect
+import org.jetbrains.compose.web.svg.Svg
 
 
 /*Main Container for every mayor layout*/
@@ -103,27 +105,57 @@ fun CategoryImagesToImageList(onClick: (Category.Image) -> Unit) {
     }
 }
 
+@OptIn(ExperimentalComposeWebSvgApi::class)
 @Composable
-fun CategoryList(categoryList : List<Category>){
+fun CategoryList(categoryList: List<Category>) {
     Div {
         console.log(categoryList.size)
         for (category in categoryList)
             Div(attrs = {
-                classes("mdc-card", AppStylesheet.card)
+                classes("mdc-card", AppStylesheet.card, AppStylesheet.flexContainer)
             }
             ) {
-                Text("${category.name}")
-                Button(attrs = {
-                    classes("mdc-button", "mdc-button--raised")
-                    onClick {  }
-                }) {
-                    Text("Edit Category")
+                Div(
+                    attrs = {
+                        classes(AppStylesheet.margin)
+                        style { flex(100.percent) }
+                    }
+                ) {
+                    Text("Name: ${category.name}")
+                    Div(attrs = { style { width(3.percent) } }) {
+                        Svg(viewBox = "0 0 1 1") {//For aspect ratio - tries to fill out wherever it is in
+                            Rect(x = 0, y = 0, width = 1, height = 1, {
+                                attr("fill", "#${category.color}")
+                            })
+                        }
+                    }
+                    Div {
+                        Text("Image: ")
+                        CategoryImageToIcon(category.image)
+                    }
+                    Text("Budget: ${category.budget}€")
                 }
-                Button(attrs = {
-                    classes("mdc-button", "mdc-button--raised")
-                    onClick {  }
-                }) {
-                    Text("Delete Category")
+                Div(
+                    attrs = {
+                        style { flex(100.percent) }
+                        classes(AppStylesheet.flexContainer)
+                    }
+                ) {
+                    Div(attrs = { style { flex(75.percent) } }) { }
+                    Button(attrs = {
+                        classes("mdc-button", "mdc-button--raised", AppStylesheet.marginRight)
+                        onClick { }
+                        style { flex(25.percent)}
+                    }) {
+                        Text("Edit Category")
+                    }
+                    Button(attrs = {
+                        classes("mdc-button", "mdc-button--raised")
+                        onClick { }
+                        style { flex(25.percent) }
+                    }) {
+                        Text("Delete Category")
+                    }
                 }
             }
     }
