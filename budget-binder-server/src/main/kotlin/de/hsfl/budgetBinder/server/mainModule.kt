@@ -6,7 +6,7 @@ import de.hsfl.budgetBinder.server.config.Config
 import de.hsfl.budgetBinder.server.models.Categories
 import de.hsfl.budgetBinder.server.models.Entries
 import de.hsfl.budgetBinder.server.models.Users
-import de.hsfl.budgetBinder.server.repository.UnauthorizedException
+import de.hsfl.budgetBinder.server.utils.UnauthorizedException
 import de.hsfl.budgetBinder.server.routes.*
 import de.hsfl.budgetBinder.server.services.*
 import de.hsfl.budgetBinder.server.services.implementations.CategoryServiceImpl

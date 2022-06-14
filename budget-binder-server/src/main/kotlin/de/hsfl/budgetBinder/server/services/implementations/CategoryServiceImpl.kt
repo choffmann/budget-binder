@@ -3,7 +3,7 @@ package de.hsfl.budgetBinder.server.services.implementations
 import de.hsfl.budgetBinder.common.Category
 import de.hsfl.budgetBinder.server.models.CategoryEntity
 import de.hsfl.budgetBinder.server.models.UserEntity
-import de.hsfl.budgetBinder.server.repository.isCreatedAndEndedInPeriod
+import de.hsfl.budgetBinder.server.utils.isCreatedAndEndedInPeriod
 import de.hsfl.budgetBinder.server.services.interfaces.CategoryService
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.time.LocalDateTime
