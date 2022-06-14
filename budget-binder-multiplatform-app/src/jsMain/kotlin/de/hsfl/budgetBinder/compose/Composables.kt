@@ -4,6 +4,7 @@ import androidx.compose.runtime.*
 import de.hsfl.budgetBinder.common.Category
 import androidx.compose.runtime.Composable
 import de.hsfl.budgetBinder.compose.theme.AppStylesheet
+import de.hsfl.budgetBinder.domain.usecase.*
 import de.hsfl.budgetBinder.presentation.CategoryImageToIcon
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
@@ -99,5 +100,31 @@ fun CategoryImagesToImageList(onClick: (Category.Image) -> Unit) {
                 }
             }
         }
+    }
+}
+
+@Composable
+fun CategoryList(categoryList : List<Category>){
+    Div {
+        console.log(categoryList.size)
+        for (category in categoryList)
+            Div(attrs = {
+                classes("mdc-card", AppStylesheet.card)
+            }
+            ) {
+                Text("${category.name}")
+                Button(attrs = {
+                    classes("mdc-button", "mdc-button--raised")
+                    onClick {  }
+                }) {
+                    Text("Edit Category")
+                }
+                Button(attrs = {
+                    classes("mdc-button", "mdc-button--raised")
+                    onClick {  }
+                }) {
+                    Text("Delete Category")
+                }
+            }
     }
 }
