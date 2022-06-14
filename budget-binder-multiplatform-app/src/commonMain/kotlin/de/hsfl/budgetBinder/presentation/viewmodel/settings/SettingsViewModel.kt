@@ -19,14 +19,8 @@ class SettingsViewModel(
     private val scope: CoroutineScope
 ) {
 
-    private val _firstNameText = MutableStateFlow(SettingsTextFieldSate(firstName = dataFlow.userState.value.firstName))
-    val firstNameText: StateFlow<SettingsTextFieldSate> = _firstNameText
-
-    private val _lastNameText = MutableStateFlow(SettingsTextFieldSate(lastName = dataFlow.userState.value.name))
-    val lastNameText: StateFlow<SettingsTextFieldSate> = _lastNameText
-
-    private val _passwordText = MutableStateFlow(SettingsTextFieldSate(password = "........."))
-    val passwordText: StateFlow<SettingsTextFieldSate> = _passwordText
+    private val _userState = MutableStateFlow(dataFlow.userState.value)
+    val userState: StateFlow<User> = _userState
 
     private val _dialogState = MutableStateFlow(false)
     val dialogState: StateFlow<Boolean> = _dialogState
@@ -36,10 +30,6 @@ class SettingsViewModel(
 
     fun onEvent(event: SettingsEvent) {
         when (event) {
-            is SettingsEvent.EnteredFirstName -> _firstNameText.value =
-                firstNameText.value.copy(firstName = event.value)
-            is SettingsEvent.EnteredLastName -> _lastNameText.value = lastNameText.value.copy(firstName = event.value)
-            is SettingsEvent.EnteredPassword -> _passwordText.value = passwordText.value.copy(firstName = event.value)
             is SettingsEvent.OnChangeToSettingsUserEdit -> {
                 scope.launch {
                     routerFlow.navigateTo(Screen.Settings.User)
