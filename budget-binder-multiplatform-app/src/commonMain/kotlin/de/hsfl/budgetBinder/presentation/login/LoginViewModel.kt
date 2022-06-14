@@ -6,7 +6,9 @@ import de.hsfl.budgetBinder.presentation.flow.RouterFlow
 import de.hsfl.budgetBinder.presentation.Screen
 import de.hsfl.budgetBinder.presentation.UiState
 import de.hsfl.budgetBinder.presentation.flow.DataFlow
+import de.hsfl.budgetBinder.presentation.register.RegisterViewModel
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
@@ -25,6 +27,22 @@ class LoginViewModel(
 
     private val _eventFlow = MutableSharedFlow<UiEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
+
+    // try to fetch user /me on start. If successful, the user is already authorized
+    init {
+        scope.launch {
+            loginUseCases.getMyUserUseCase().collect {
+                when (it) {
+                    is DataResponse.Success -> {
+                        _eventFlow.emit(UiEvent.ShowLoading)
+                        delay(1000L)
+                        routerFlow.navigateTo(Screen.Dashboard)
+                    }
+                    else -> {_eventFlow.emit(UiEvent.ShowError("init: user is nor authorized"))}
+                }
+            }
+        }
+    }
 
     fun onEvent(event: LoginEvent) {
         when (event) {
