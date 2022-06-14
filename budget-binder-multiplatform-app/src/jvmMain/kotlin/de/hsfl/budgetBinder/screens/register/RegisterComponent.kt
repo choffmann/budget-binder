@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import de.hsfl.budgetBinder.compose.di
+import de.hsfl.budgetBinder.compose.textfield.EmailTextField
 import de.hsfl.budgetBinder.presentation.login.LoginViewModel
 import de.hsfl.budgetBinder.presentation.register.RegisterEvent
 import de.hsfl.budgetBinder.presentation.register.RegisterViewModel
@@ -62,12 +63,12 @@ fun RegisterComponent() {
                 label = { Text("Lastname") },
                 singleLine = true
             )
-            OutlinedTextField(
+            EmailTextField(
                 value = emailTextState.value.email,
                 onValueChange = { viewModel.onEvent(RegisterEvent.EnteredEmail(it)) },
                 label = { Text("Email") },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                singleLine = true
+                isError = !emailTextState.value.emailValide,
+                enabled = !loadingState.value
             )
             OutlinedTextField(
                 value = passwordTextState.value.password,

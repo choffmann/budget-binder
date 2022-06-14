@@ -2,6 +2,7 @@ package de.hsfl.budgetBinder.presentation.register
 
 import de.hsfl.budgetBinder.common.DataResponse
 import de.hsfl.budgetBinder.common.User
+import de.hsfl.budgetBinder.common.utils.validateEmail
 import de.hsfl.budgetBinder.domain.usecase.RegisterUseCases
 import de.hsfl.budgetBinder.presentation.Screen
 import de.hsfl.budgetBinder.presentation.UiState
@@ -38,16 +39,23 @@ class RegisterViewModel(
             is RegisterEvent.EnteredFirstname -> _firstNameText.value =
                 firstNameText.value.copy(firstName = event.value)
             is RegisterEvent.EnteredLastname -> _lastNameText.value = lastNameText.value.copy(lastName = event.value)
-            is RegisterEvent.EnteredEmail -> _emailText.value = emailText.value.copy(email = event.value)
+            is RegisterEvent.EnteredEmail -> _emailText.value = emailText.value.copy(email = event.value, emailValide = true)
             is RegisterEvent.EnteredPassword -> _passwordText.value = passwordText.value.copy(password = event.value)
-            is RegisterEvent.OnRegister -> register(
-                User.In(
-                    firstName = firstNameText.value.firstName,
-                    name = lastNameText.value.lastName,
-                    email = emailText.value.email,
-                    password = passwordText.value.password
-                )
-            )
+            is RegisterEvent.OnRegister -> {
+                if(validateEmail(emailText.value.email)) {
+                    register(
+                        User.In(
+                            firstName = firstNameText.value.firstName,
+                            name = lastNameText.value.lastName,
+                            email = emailText.value.email,
+                            password = passwordText.value.password
+                        )
+                    )
+                } else {
+                    _emailText.value = emailText.value.copy(emailValide = false)
+                }
+
+            }
             is RegisterEvent.OnChangeToLogin -> {
                 scope.launch {
                     routerFlow.navigateTo(Screen.Login)
