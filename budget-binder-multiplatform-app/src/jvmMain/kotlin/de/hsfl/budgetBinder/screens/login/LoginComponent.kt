@@ -1,39 +1,43 @@
-package de.hsfl.budgetBinder.compose.screens.register
+package de.hsfl.budgetBinder.screens.login
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import de.hsfl.budgetBinder.compose.di
+import de.hsfl.budgetBinder.compose.textfield.EmailTextField
 import de.hsfl.budgetBinder.presentation.login.LoginViewModel
-import de.hsfl.budgetBinder.presentation.register.RegisterEvent
-import de.hsfl.budgetBinder.presentation.register.RegisterViewModel
+import de.hsfl.budgetBinder.presentation.login.LoginEvent
 import kotlinx.coroutines.flow.collectLatest
 import org.kodein.di.instance
 
 @Composable
-fun RegisterComponent() {
+fun LoginComponent() {
     val scope = rememberCoroutineScope()
-    val viewModel: RegisterViewModel by di.instance()
-    val firstNameTextState = viewModel.firstNameText.collectAsState(scope.coroutineContext)
-    val lastNameTextState = viewModel.lastNameText.collectAsState(scope.coroutineContext)
+    val viewModel: LoginViewModel by di.instance()
+
     val emailTextState = viewModel.emailText.collectAsState(scope.coroutineContext)
     val passwordTextState = viewModel.passwordText.collectAsState(scope.coroutineContext)
+    val localFocusManager = LocalFocusManager.current
     val scaffoldState = rememberScaffoldState()
     val loadingState = remember { mutableStateOf(false) }
 
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->
             when (event) {
-                is RegisterViewModel.UiEvent.ShowLoading -> {
+                is LoginViewModel.UiEvent.ShowLoading -> {
                     // TODO: Refactor this, it's working but ahh
                     loadingState.value = true
                 }
-                is RegisterViewModel.UiEvent.ShowError -> {
+                is LoginViewModel.UiEvent.ShowError -> {
                     loadingState.value = false
                     scaffoldState.snackbarHostState.showSnackbar(message = event.msg, actionLabel = "Dissmiss")
                 }
@@ -50,38 +54,32 @@ fun RegisterComponent() {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            OutlinedTextField(
-                value = firstNameTextState.value.firstName,
-                onValueChange = { viewModel.onEvent(RegisterEvent.EnteredFirstname(it)) },
-                label = { Text("Fistname") },
-                singleLine = true
-            )
-            OutlinedTextField(
-                value = lastNameTextState.value.lastName,
-                onValueChange = { viewModel.onEvent(RegisterEvent.EnteredLastname(it)) },
-                label = { Text("Lastname") },
-                singleLine = true
-            )
-            OutlinedTextField(
+            EmailTextField(
                 value = emailTextState.value.email,
-                onValueChange = { viewModel.onEvent(RegisterEvent.EnteredEmail(it)) },
+                onValueChange = { viewModel.onEvent(LoginEvent.EnteredEmail(it)) },
                 label = { Text("Email") },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                singleLine = true
+                isError = !emailTextState.value.emailValide,
+                enabled = !loadingState.value
             )
             OutlinedTextField(
                 value = passwordTextState.value.password,
-                onValueChange = { viewModel.onEvent(RegisterEvent.EnteredPassword(it)) },
+                onValueChange = { viewModel.onEvent(LoginEvent.EnteredPassword(it)) },
                 label = { Text("Password") },
                 visualTransformation = PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                 singleLine = true
             )
-            Button(onClick = { viewModel.onEvent(RegisterEvent.OnRegister) }) {
-                Text("Register")
+            Button(onClick = {
+                localFocusManager.clearFocus()
+                viewModel.onEvent(LoginEvent.OnLogin)
+            }) {
+                Text("Login")
             }
-            Button(onClick = { viewModel.onEvent(RegisterEvent.OnChangeToLogin) }) {
-                Text("Change to Login")
+            Button(onClick = {
+                localFocusManager.clearFocus()
+                viewModel.onEvent(LoginEvent.OnChangeToRegister)
+            }) {
+                Text("Change to Register")
             }
         }
     }

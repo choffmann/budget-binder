@@ -1,4 +1,4 @@
-package de.hsfl.budgetBinder.compose.screens.dashboard
+package de.hsfl.budgetBinder.screens.dashboard
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
