@@ -9,3 +9,8 @@ import androidx.compose.ui.res.painterResource
 actual fun AppIcon(modifier: Modifier) {
     Image(modifier = modifier, painter = painterResource("budgetbinder.svg"), contentDescription = null)
 }
+
+@Composable
+actual fun AvatarImage(modifier: Modifier) {
+    Image(modifier = modifier, painter = painterResource("undraw_profile_pic_ic-5-t.svg"), contentDescription = null)
+}

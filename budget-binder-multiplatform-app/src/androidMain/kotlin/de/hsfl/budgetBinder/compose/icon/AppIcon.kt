@@ -11,3 +11,8 @@ import de.hsfl.budgetBinder.android.R
 actual fun AppIcon(modifier: Modifier) {
     Image(modifier = modifier, imageVector = ImageVector.vectorResource(id = R.drawable.ic_budgetbinder), contentDescription = null)
 }
+
+@Composable
+actual fun AvatarImage(modifier: Modifier) {
+    Image(modifier = modifier, imageVector = ImageVector.vectorResource(id = R.drawable.ic_avataricon), contentDescription = null)
+}
