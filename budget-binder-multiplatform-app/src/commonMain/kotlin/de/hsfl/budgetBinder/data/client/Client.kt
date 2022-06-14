@@ -3,13 +3,11 @@ package de.hsfl.budgetBinder.data.client
 import de.hsfl.budgetBinder.common.*
 import de.hsfl.budgetBinder.common.Constants.BASE_URL
 import de.hsfl.budgetBinder.data.client.plugins.AuthPlugin
-import de.hsfl.budgetBinder.data.client.plugins.FileCookieStorage
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.engine.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.client.plugins.cookies.*
 import io.ktor.client.plugins.logging.*
 import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
@@ -151,6 +149,8 @@ interface ApiClient {
     suspend fun deleteEntryById(id: Int): APIResponse<Entry>
 }
 
+expect fun HttpClientConfig<*>.specificClientConfig()
+
 /**
  * **Client**
  *
@@ -176,13 +176,12 @@ class Client( engine: HttpClientEngine) : ApiClient {
             logger = Logger.DEFAULT
             level = LogLevel.HEADERS
         }
-        install(HttpCookies) {
-            storage = FileCookieStorage()
-        }
 
         defaultRequest {
             url(BASE_URL)
         }
+
+        specificClientConfig()
     }
 
     override suspend fun login(email: String, password: String): APIResponse<AuthToken> {
