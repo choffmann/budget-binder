@@ -6,6 +6,7 @@ import io.ktor.util.*
 import io.ktor.util.date.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import java.io.*
 import kotlin.math.min
 
 class FileCookieStorage : CookiesStorage {
