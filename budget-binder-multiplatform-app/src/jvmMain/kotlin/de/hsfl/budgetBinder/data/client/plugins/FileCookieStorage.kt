@@ -9,6 +9,8 @@ import kotlinx.coroutines.sync.withLock
 import java.io.*
 import kotlin.math.min
 
+expect fun getCookieFileStorage(): File
+
 class FileCookieStorage : CookiesStorage {
     private val container: MutableList<Cookie> = mutableListOf()
     private var oldestCookie: Long = 0L
