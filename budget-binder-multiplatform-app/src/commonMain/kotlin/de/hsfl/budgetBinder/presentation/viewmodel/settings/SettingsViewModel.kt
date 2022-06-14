@@ -8,10 +8,7 @@ import de.hsfl.budgetBinder.presentation.UiEvent
 import de.hsfl.budgetBinder.presentation.UiState
 import de.hsfl.budgetBinder.presentation.flow.DataFlow
 import de.hsfl.budgetBinder.presentation.flow.RouterFlow
-import de.hsfl.budgetBinder.presentation.viewmodel.login.LoginEvent
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
@@ -31,6 +28,9 @@ class SettingsViewModel(
     private val _passwordText = MutableStateFlow(SettingsTextFieldSate(password = "........."))
     val passwordText: StateFlow<SettingsTextFieldSate> = _passwordText
 
+    private val _dialogState = MutableStateFlow(false)
+    val dialogState: StateFlow<Boolean> = _dialogState
+
     private val _eventFlow = MutableSharedFlow<UiEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
 
@@ -40,28 +40,66 @@ class SettingsViewModel(
                 firstNameText.value.copy(firstName = event.value)
             is SettingsEvent.EnteredLastName -> _lastNameText.value = lastNameText.value.copy(firstName = event.value)
             is SettingsEvent.EnteredPassword -> _passwordText.value = passwordText.value.copy(firstName = event.value)
-            is SettingsEvent.OnChangeToSettingsUserEditClicked -> {
+            is SettingsEvent.OnChangeToSettingsUserEdit -> {
                 scope.launch {
                     routerFlow.navigateTo(Screen.Settings.User)
                 }
             }
-            is SettingsEvent.OnChangeToSettingsServerUrlEditClicked -> {
+            is SettingsEvent.OnChangeToSettingsServerUrlEdit -> {
                 scope.launch {
                     routerFlow.navigateTo(Screen.Settings.Server)
                 }
             }
-            is SettingsEvent.OnLogoutAllDevicesClicked -> {
-
+            is SettingsEvent.OnDeleteUser -> _dialogState.value = true
+            is SettingsEvent.OnLogoutAllDevices -> logOutOnAllDevices()
+            is SettingsEvent.OnDeleteDialogConfirm -> {
+                _dialogState.value = false
+                deleteUser()
             }
-            is SettingsEvent.OnDeleteDialogConfirm -> {}
-            is SettingsEvent.OnDeleteDialogDismiss -> {}
+            is SettingsEvent.OnDeleteDialogDismiss -> _dialogState.value = false
+        }
+    }
+
+    private fun logOutOnAllDevices() {
+        scope.launch {
+            settingsUseCases.logoutUseCase(onAllDevices = true).collect { response ->
+                when (response) {
+                    is DataResponse.Loading -> _eventFlow.emit(UiEvent.ShowLoading)
+                    is DataResponse.Error -> _eventFlow.emit(UiEvent.ShowError(response.error!!.message))
+                    is DataResponse.Success -> {
+                        routerFlow.navigateTo(Screen.Login)
+                    }
+                    is DataResponse.Unauthorized -> {
+                        _eventFlow.emit(UiEvent.ShowError(response.error!!.message))
+                        routerFlow.navigateTo(Screen.Login)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun deleteUser() {
+        scope.launch {
+            settingsUseCases.deleteMyUserUseCase().collect { response ->
+                when (response) {
+                    is DataResponse.Loading -> _eventFlow.emit(UiEvent.ShowLoading)
+                    is DataResponse.Error -> _eventFlow.emit(UiEvent.ShowError(response.error!!.message))
+                    is DataResponse.Success -> {
+                        routerFlow.navigateTo(Screen.Login)
+                    }
+                    is DataResponse.Unauthorized -> {
+                        _eventFlow.emit(UiEvent.ShowError(response.error!!.message))
+                        routerFlow.navigateTo(Screen.Login)
+                    }
+                }
+            }
         }
     }
 
     // OLD
     private val _state = MutableStateFlow<UiState>(UiState.Empty)
 
-    @Deprecated(message = "is Deprecated")
+    @Deprecated(message = "Use events")
     val state: StateFlow<UiState> = _state
 
     @Deprecated(message = "Use events")
