@@ -1,13 +1,13 @@
 package de.hsfl.budgetBinder.compose.category
 
 import androidx.compose.runtime.*
+import de.hsfl.budgetBinder.common.Category
+import de.hsfl.budgetBinder.compose.CategoryList
 import de.hsfl.budgetBinder.compose.MainFlexContainer
 import de.hsfl.budgetBinder.compose.theme.AppStylesheet
 import de.hsfl.budgetBinder.compose.topBarMain
 import de.hsfl.budgetBinder.presentation.UiState
 import org.jetbrains.compose.web.css.margin
-import org.jetbrains.compose.web.css.marginBottom
-import org.jetbrains.compose.web.css.marginLeft
 import org.jetbrains.compose.web.css.percent
 import org.jetbrains.compose.web.dom.*
 
@@ -15,13 +15,12 @@ import org.jetbrains.compose.web.dom.*
 @Composable
 fun CategorySummaryView(
     state: State<Any>,
-    onBackButton: () -> Unit,
-    onEditButton: () -> Unit,
     onCategoryCreateButton: () -> Unit,
     onChangeToDashboard: () -> Unit,
     onChangeToCategory: () -> Unit,
     onChangeToSettings: () -> Unit
 ) {
+    var categoryList by remember { mutableStateOf<List<Category>>(emptyList()) }
     val viewState by remember { state }
 
     topBarMain(
@@ -80,40 +79,26 @@ fun CategorySummaryView(
             }) {
                 Text("Create Category")
             }
+            CategoryList(categoryList)
             Div {
                 when (viewState) {
                     is UiState.Success<*> -> {
-                        Text((viewState as UiState.Success<*>).element.toString())
+                        when (val element = (viewState as UiState.Success<*>).element) {
+                            is List<*> -> {
+                                element.filterIsInstance<Category>()
+                                    .let {
+                                        if (it.size == element.size) {
+                                            categoryList = it
+                                        }
+                                    }
+                            }
+                        }
                     }
                     is UiState.Error -> {
                         Text((viewState as UiState.Error).error)
                     }
                     is UiState.Loading -> {
                         //CircularProgressIndicator()
-                    }
-                }
-                Div(attrs = {
-                    classes("mdc-card", AppStylesheet.card)
-                }
-                ) {
-                    Text("Kat 1")
-                    Button(attrs = {
-                        classes("mdc-button", "mdc-button--raised")
-                        onClick { onEditButton() }
-                    }) {
-                        Text("Edit Category (Needs to be set for each category)")
-                    }
-                }
-                Div(attrs = {
-                    classes("mdc-card", AppStylesheet.card)
-                }
-                ) {
-                    Text("Kat 2")
-                    Button(attrs = {
-                        classes("mdc-button", "mdc-button--raised")
-                        onClick { onEditButton() }
-                    }) {
-                        Text("Edit Category (Needs to be set for each category)")
                     }
                 }
             }
