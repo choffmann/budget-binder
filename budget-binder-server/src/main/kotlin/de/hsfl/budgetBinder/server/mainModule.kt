@@ -61,8 +61,8 @@ fun Application.mainModule(config: Config) {
             driver = "com.mysql.cj.jdbc.Driver"
         }
         Config.DBType.POSTGRES -> {
-            url = "jdbc:pgsql://${config.dataBase.serverAddress}:${config.dataBase.serverPort}/${config.dataBase.name}"
-            driver = "com.impossibl.postgres.jdbc.PGDriver"
+            url = "jdbc:postgresql://${config.dataBase.serverAddress}:${config.dataBase.serverPort}/${config.dataBase.name}"
+            driver = "org.postgresql.Driver"
         }
     }
 
