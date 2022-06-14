@@ -7,7 +7,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
-import de.hsfl.budgetBinder.compose.di
+import de.hsfl.budgetBinder.di
 import de.hsfl.budgetBinder.presentation.flow.DataFlow
 import de.hsfl.budgetBinder.presentation.viewmodel.DashboardViewModel
 import org.kodein.di.instance

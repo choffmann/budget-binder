@@ -1,4 +1,4 @@
-package de.hsfl.budgetBinder.compose
+package de.hsfl.budgetBinder
 
 import androidx.compose.material.*
 import androidx.compose.material.Icon
