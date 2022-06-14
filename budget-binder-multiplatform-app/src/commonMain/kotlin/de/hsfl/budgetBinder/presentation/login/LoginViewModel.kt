@@ -44,7 +44,12 @@ class LoginViewModel(
                         delay(1000L)
                         routerFlow.navigateTo(Screen.Dashboard)
                     }
-                    else -> _eventFlow.emit(UiEvent.ShowError("init: user is nor authorized"))
+                    else -> {
+                        // If the request failed
+
+                        // Debug:
+                        // _eventFlow.emit(UiEvent.ShowError("init: user is nor authorized"))
+                    }
                 }
             }
         }
