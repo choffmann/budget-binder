@@ -13,6 +13,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import de.hsfl.budgetBinder.compose.di
+import de.hsfl.budgetBinder.compose.dialog.ServerUrlDialog
 import de.hsfl.budgetBinder.compose.textfield.EmailTextField
 import de.hsfl.budgetBinder.presentation.login.LoginViewModel
 import de.hsfl.budgetBinder.presentation.login.LoginEvent
@@ -26,9 +27,11 @@ fun LoginComponent() {
 
     val emailTextState = viewModel.emailText.collectAsState(scope.coroutineContext)
     val passwordTextState = viewModel.passwordText.collectAsState(scope.coroutineContext)
+    val serverUrlState = viewModel.serverUrlText.collectAsState(scope.coroutineContext)
     val localFocusManager = LocalFocusManager.current
     val scaffoldState = rememberScaffoldState()
     val loadingState = remember { mutableStateOf(false) }
+    val openDialog = remember { mutableStateOf(false) }
 
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->
@@ -41,6 +44,8 @@ fun LoginComponent() {
                     loadingState.value = false
                     scaffoldState.snackbarHostState.showSnackbar(message = event.msg, actionLabel = "Dissmiss")
                 }
+                is LoginViewModel.UiEvent.ShowServerInput -> openDialog.value = true
+                is LoginViewModel.UiEvent.CloseServerInput -> openDialog.value = false
             }
         }
     }
@@ -49,6 +54,14 @@ fun LoginComponent() {
         if (loadingState.value) {
             LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
         }
+        ServerUrlDialog(
+            value = serverUrlState.value.serverAddress,
+            onValueChange = { viewModel.onEvent(LoginEvent.EnteredServerUrl(it)) },
+            openDialog = openDialog.value,
+            onConfirm = { viewModel.onEvent(LoginEvent.OnDialogConfirm) },
+            onDissmiss = { viewModel.onEvent(LoginEvent.OnDialogDissmiss) }
+        )
+
         Column(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.Center,

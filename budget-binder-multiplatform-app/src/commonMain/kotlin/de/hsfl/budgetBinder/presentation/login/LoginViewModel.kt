@@ -8,6 +8,7 @@ import de.hsfl.budgetBinder.presentation.Screen
 import de.hsfl.budgetBinder.presentation.UiState
 import de.hsfl.budgetBinder.presentation.flow.DataFlow
 import de.hsfl.budgetBinder.presentation.register.RegisterViewModel
+import io.ktor.http.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
@@ -26,11 +27,14 @@ class LoginViewModel(
     private val _passwordText = MutableStateFlow(LoginTextFieldState())
     val passwordText: StateFlow<LoginTextFieldState> = _passwordText
 
+    private val _serverUrlText = MutableStateFlow(LoginTextFieldState())
+    val serverUrlText: StateFlow<LoginTextFieldState> = _serverUrlText
+
     private val _eventFlow = MutableSharedFlow<UiEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
 
-    // try to fetch user /me on start. If successful, the user is already authorized
     init {
+        // try to fetch user '/me' on start. If successful, the user is already authorized
         scope.launch {
             loginUseCases.getMyUserUseCase().collect {
                 when (it) {
@@ -39,9 +43,7 @@ class LoginViewModel(
                         delay(1000L)
                         routerFlow.navigateTo(Screen.Dashboard)
                     }
-                    else -> {
-                        _eventFlow.emit(UiEvent.ShowError("init: user is nor authorized"))
-                    }
+                    else -> _eventFlow.emit(UiEvent.ShowError("init: user is nor authorized"))
                 }
             }
         }
@@ -49,19 +51,17 @@ class LoginViewModel(
 
     fun onEvent(event: LoginEvent) {
         when (event) {
-            is LoginEvent.EnteredEmail -> {
-                _emailText.value = emailText.value.copy(
-                    email = event.value, emailValide = true
-                )
-            }
-            is LoginEvent.EnteredPassword -> {
-                _passwordText.value = passwordText.value.copy(
-                    password = event.value
-                )
-            }
+            is LoginEvent.EnteredEmail -> _emailText.value =
+                emailText.value.copy(email = event.value, emailValide = true)
+            is LoginEvent.EnteredPassword -> _passwordText.value =
+                passwordText.value.copy(password = event.value)
+            is LoginEvent.EnteredServerUrl -> _serverUrlText.value =
+                serverUrlText.value.copy(serverAddress = event.value)
             is LoginEvent.OnLogin -> {
                 if (validateEmail(email = emailText.value.email)) {
-                    auth(email = emailText.value.email, password = passwordText.value.password)
+                    scope.launch {
+                        _eventFlow.emit(UiEvent.ShowServerInput)
+                    }
                 } else {
                     _emailText.value = emailText.value.copy(emailValide = false)
                 }
@@ -69,6 +69,18 @@ class LoginViewModel(
             is LoginEvent.OnChangeToRegister -> {
                 scope.launch {
                     routerFlow.navigateTo(Screen.Register)
+                }
+            }
+            is LoginEvent.OnDialogConfirm -> {
+                scope.launch {
+                    _eventFlow.emit(UiEvent.CloseServerInput)
+                    dataFlow.storeServerUrl(Url(urlString = serverUrlText.value.serverAddress))
+                }
+                auth(email = emailText.value.email, password = passwordText.value.password)
+            }
+            is LoginEvent.OnDialogDissmiss -> {
+                scope.launch {
+                    _eventFlow.emit(UiEvent.CloseServerInput)
                 }
             }
         }
@@ -136,7 +148,16 @@ class LoginViewModel(
     }
 
     sealed class UiEvent {
+        // Open Input to define Server URL after Login Button, for example with a Dialog
+        object ShowServerInput : UiEvent()
+
+        // Close ServerInput Dialog
+        object CloseServerInput : UiEvent()
+
+        // Show Loading State in Ui
         object ShowLoading : UiEvent()
+
+        // Show Error, for example with a SnackBar
         data class ShowError(val msg: String) : UiEvent()
     }
 }
