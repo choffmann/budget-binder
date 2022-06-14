@@ -18,10 +18,6 @@ class SettingsViewModel(
     private val routerFlow: RouterFlow,
     private val scope: CoroutineScope
 ) {
-
-    private val _userState = MutableStateFlow(dataFlow.userState.value)
-    val userState: StateFlow<User> = _userState
-
     private val _dialogState = MutableStateFlow(false)
     val dialogState: StateFlow<Boolean> = _dialogState
 
