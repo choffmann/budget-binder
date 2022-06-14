@@ -5,6 +5,7 @@ import de.hsfl.budgetBinder.common.User
 import de.hsfl.budgetBinder.common.utils.validateEmail
 import de.hsfl.budgetBinder.domain.usecase.RegisterUseCases
 import de.hsfl.budgetBinder.presentation.Screen
+import de.hsfl.budgetBinder.presentation.UiEvent
 import de.hsfl.budgetBinder.presentation.UiState
 import de.hsfl.budgetBinder.presentation.flow.DataFlow
 import de.hsfl.budgetBinder.presentation.flow.RouterFlow
@@ -107,11 +108,6 @@ class RegisterViewModel(
         _lastNameText.value = lastNameText.value.copy(lastName = "")
         _emailText.value = emailText.value.copy(email = "")
         _passwordText.value = passwordText.value.copy(password = "")
-    }
-
-    sealed class UiEvent {
-        object ShowLoading : UiEvent()
-        data class ShowError(val msg: String) : UiEvent()
     }
 
     // OLD!!!
