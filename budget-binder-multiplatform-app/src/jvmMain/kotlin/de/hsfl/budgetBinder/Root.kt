@@ -21,17 +21,18 @@ fun App() = withDI(di) {
     ) {
         Scaffold(
             scaffoldState = scaffoldState,
-            topBar = { TopAppBar(title = { Text("Budget Binder") }) }
+            topBar = {
+                // TODO: Show NavDrawer not on Login und Register
+                TopAppBar(title = { Text("Budget Binder") }, navigationIcon = {
+                    IconButton(onClick = {
+                        // TODO: Implement NavBar Logic
+                    }) {
+                        Icon(Icons.Filled.Menu, contentDescription = null)
+                    }
+                })
+            }
         ) {
             Router()
-        }
-
-        // Toggle Dark-mode
-        IconToggleButton(checked = darkTheme.value, onCheckedChange = { darkTheme.value = it }) {
-            if (darkTheme.value)
-                Icon(Icons.Filled.Info, contentDescription = null, tint = Color.White)
-            else
-                Icon(Icons.Filled.Info, contentDescription = null, tint = Color.Black)
         }
     }
 }
