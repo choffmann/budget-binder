@@ -27,10 +27,11 @@ fun LoginComponent() {
     val emailTextState = viewModel.emailText.collectAsState(scope.coroutineContext)
     val passwordTextState = viewModel.passwordText.collectAsState(scope.coroutineContext)
     val serverUrlState = viewModel.serverUrlText.collectAsState(scope.coroutineContext)
+    val openDialog = viewModel.dialogState.collectAsState(scope.coroutineContext)
     val localFocusManager = LocalFocusManager.current
     val scaffoldState = rememberScaffoldState()
     val loadingState = remember { mutableStateOf(false) }
-    val openDialog = remember { mutableStateOf(false) }
+
 
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->
@@ -43,8 +44,6 @@ fun LoginComponent() {
                     loadingState.value = false
                     scaffoldState.snackbarHostState.showSnackbar(message = event.msg, actionLabel = "Dissmiss")
                 }
-                is LoginViewModel.UiEvent.ShowServerInput -> openDialog.value = true
-                is LoginViewModel.UiEvent.CloseServerInput -> openDialog.value = false
             }
         }
     }
@@ -57,8 +56,8 @@ fun LoginComponent() {
             value = serverUrlState.value.serverAddress,
             onValueChange = { viewModel.onEvent(LoginEvent.EnteredServerUrl(it)) },
             openDialog = openDialog.value,
-            onConfirm = { viewModel.onEvent(LoginEvent.OnDialogConfirm) },
-            onDissmiss = { viewModel.onEvent(LoginEvent.OnDialogDissmiss) }
+            onConfirm = { viewModel.onEvent(LoginEvent.OnServerUrlDialogConfirm) },
+            onDismiss = { viewModel.onEvent(LoginEvent.OnServerUrlDialogDismiss) }
         )
         Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
             AppIcon(modifier = Modifier.size(128.dp).padding(8.dp))
@@ -88,7 +87,7 @@ fun LoginComponent() {
             Box(modifier = Modifier.fillMaxSize()) {
                 TextButton(modifier = Modifier.align(Alignment.BottomCenter), onClick = {
                     localFocusManager.clearFocus()
-                    viewModel.onEvent(LoginEvent.OnChangeToRegister)
+                    viewModel.onEvent(LoginEvent.OnRegisterScreen)
                 }) {
                     Text("Or Register your Account here")
                 }

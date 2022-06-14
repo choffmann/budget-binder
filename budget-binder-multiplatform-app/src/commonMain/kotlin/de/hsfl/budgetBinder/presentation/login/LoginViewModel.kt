@@ -29,6 +29,9 @@ class LoginViewModel(
     private val _serverUrlText = MutableStateFlow(LoginTextFieldState())
     val serverUrlText: StateFlow<LoginTextFieldState> = _serverUrlText
 
+    private val _dialogState = MutableStateFlow(false)
+    val dialogState: StateFlow<Boolean> = _dialogState
+
     private val _eventFlow = MutableSharedFlow<UiEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
 
@@ -64,31 +67,29 @@ class LoginViewModel(
                 serverUrlText.value.copy(serverAddress = event.value)
             is LoginEvent.OnLogin -> {
                 if (validateEmail(email = emailText.value.email)) {
-                    scope.launch {
-                        _eventFlow.emit(UiEvent.ShowServerInput)
-                    }
+                    toggleDialog()
                 } else {
                     _emailText.value = emailText.value.copy(emailValid = false)
                 }
             }
-            is LoginEvent.OnChangeToRegister -> {
+            is LoginEvent.OnRegisterScreen -> {
                 scope.launch {
                     routerFlow.navigateTo(Screen.Register)
                 }
             }
-            is LoginEvent.OnDialogConfirm -> {
+            is LoginEvent.OnServerUrlDialogConfirm -> {
                 scope.launch {
-                    _eventFlow.emit(UiEvent.CloseServerInput)
+                    toggleDialog()
                     dataFlow.storeServerUrl(Url(urlString = serverUrlText.value.serverAddress))
                 }
                 auth(email = emailText.value.email, password = passwordText.value.password)
             }
-            is LoginEvent.OnDialogDissmiss -> {
-                scope.launch {
-                    _eventFlow.emit(UiEvent.CloseServerInput)
-                }
-            }
+            is LoginEvent.OnServerUrlDialogDismiss -> toggleDialog()
         }
+    }
+
+    private fun toggleDialog() {
+        _dialogState.value = !dialogState.value
     }
 
     private fun auth(email: String, password: String) {
@@ -153,12 +154,6 @@ class LoginViewModel(
     }
 
     sealed class UiEvent {
-        // Open Input to define Server URL after Login Button, for example with a Dialog
-        object ShowServerInput : UiEvent()
-
-        // Close ServerInput Dialog
-        object CloseServerInput : UiEvent()
-
         // Show Loading State in Ui
         object ShowLoading : UiEvent()
 

@@ -11,10 +11,10 @@ actual fun ServerUrlDialog(
     onValueChange: (String) -> Unit,
     openDialog: Boolean,
     onConfirm: () -> Unit,
-    onDissmiss: () -> Unit
+    onDismiss: () -> Unit
 ) {
     if (openDialog) {
-        AlertDialog(onDismissRequest = onDissmiss,
+        AlertDialog(onDismissRequest = onDismiss,
             title = { Text(text = "Please Enter Server URL") },
             text = {
                 TextField(

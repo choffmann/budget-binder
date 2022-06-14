@@ -8,5 +8,5 @@ expect fun ServerUrlDialog(
     onValueChange: (String) -> Unit,
     openDialog: Boolean,
     onConfirm: () -> Unit,
-    onDissmiss: () -> Unit
+    onDismiss: () -> Unit
 )

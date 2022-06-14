@@ -23,7 +23,7 @@ fun DashboardComponent() {
     Column {
         Text(userState.value.toString())
         Row {
-            Button(onClick = { viewModel.logOut(false) }) {
+            Button(onClick = { viewModel.logOut(true) }) {
                 Text("Logout")
             }
             Button(onClick = { viewModel.getMyUser() }) {

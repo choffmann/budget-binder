@@ -8,7 +8,6 @@ import de.hsfl.budgetBinder.presentation.Screen
 import de.hsfl.budgetBinder.presentation.UiState
 import de.hsfl.budgetBinder.presentation.flow.DataFlow
 import de.hsfl.budgetBinder.presentation.flow.RouterFlow
-import de.hsfl.budgetBinder.presentation.login.LoginViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -56,7 +55,7 @@ class RegisterViewModel(
                 }
 
             }
-            is RegisterEvent.OnChangeToLogin -> {
+            is RegisterEvent.OnLoginScreen -> {
                 scope.launch {
                     routerFlow.navigateTo(Screen.Login)
                 }

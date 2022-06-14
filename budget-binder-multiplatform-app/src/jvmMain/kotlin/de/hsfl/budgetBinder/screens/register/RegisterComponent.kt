@@ -12,7 +12,6 @@ import androidx.compose.ui.unit.dp
 import de.hsfl.budgetBinder.compose.icon.AppIcon
 import de.hsfl.budgetBinder.di
 import de.hsfl.budgetBinder.compose.textfield.EmailTextField
-import de.hsfl.budgetBinder.presentation.login.LoginEvent
 import de.hsfl.budgetBinder.presentation.register.RegisterEvent
 import de.hsfl.budgetBinder.presentation.register.RegisterViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -84,7 +83,7 @@ fun RegisterComponent() {
             }
             Box(modifier = Modifier.fillMaxSize()) {
                 TextButton(modifier = Modifier.align(Alignment.BottomCenter), onClick = {
-                    viewModel.onEvent(RegisterEvent.OnChangeToLogin)
+                    viewModel.onEvent(RegisterEvent.OnLoginScreen)
                 }) {
                     Text("Or Login with your Account")
                 }

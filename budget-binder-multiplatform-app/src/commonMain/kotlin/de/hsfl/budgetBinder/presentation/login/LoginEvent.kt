@@ -5,7 +5,7 @@ sealed class LoginEvent {
     data class EnteredPassword(val value: String) : LoginEvent()
     data class EnteredServerUrl(val value: String) : LoginEvent()
     object OnLogin : LoginEvent()
-    object OnDialogConfirm : LoginEvent()
-    object OnDialogDissmiss : LoginEvent()
-    object OnChangeToRegister : LoginEvent()
+    object OnServerUrlDialogConfirm : LoginEvent()
+    object OnServerUrlDialogDismiss : LoginEvent()
+    object OnRegisterScreen : LoginEvent()
 }

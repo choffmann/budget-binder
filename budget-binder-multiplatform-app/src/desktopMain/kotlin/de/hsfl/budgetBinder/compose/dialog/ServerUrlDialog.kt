@@ -16,12 +16,12 @@ actual fun ServerUrlDialog(
     onValueChange: (String) -> Unit,
     openDialog: Boolean,
     onConfirm: () -> Unit,
-    onDissmiss: () -> Unit
+    onDismiss: () -> Unit
 ) {
     if (openDialog) {
         AlertDialog(
             title = { Text(text = "Please Enter Server URL", style = MaterialTheme.typography.body2) },
-            onDismissRequest = onDissmiss,
+            onDismissRequest = onDismiss,
             buttons = {
                 Box(modifier = Modifier.fillMaxWidth()) {
                     TextButton(
