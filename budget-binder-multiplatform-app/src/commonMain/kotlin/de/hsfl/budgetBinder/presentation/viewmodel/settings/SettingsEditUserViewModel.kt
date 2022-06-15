@@ -34,8 +34,8 @@ class SettingsEditUserViewModel(
 
     val emailText: StateFlow<String> = MutableStateFlow(dataFlow.userState.value.email)
 
-    private val _eventFlow = MutableSharedFlow<UiEvent>()
-    val eventFlow = _eventFlow.asSharedFlow()
+    private val _eventFlow = SettingsSharedFlow.mutableEventFlow
+    val eventFlow = SettingsSharedFlow.eventFlow
 
     init {
         _firstNameText.value =

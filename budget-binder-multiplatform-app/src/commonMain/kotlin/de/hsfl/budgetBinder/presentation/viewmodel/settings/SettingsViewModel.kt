@@ -21,8 +21,8 @@ class SettingsViewModel(
     private val _dialogState = MutableStateFlow(false)
     val dialogState: StateFlow<Boolean> = _dialogState
 
-    private val _eventFlow = MutableSharedFlow<UiEvent>()
-    val eventFlow = _eventFlow.asSharedFlow()
+    private val _eventFlow = SettingsSharedFlow.mutableEventFlow
+    val eventFlow = SettingsSharedFlow.eventFlow
 
     fun onEvent(event: SettingsEvent) {
         when (event) {
