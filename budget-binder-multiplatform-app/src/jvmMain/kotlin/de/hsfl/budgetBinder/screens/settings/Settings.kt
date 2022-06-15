@@ -47,6 +47,7 @@ fun SettingsView() {
             AvatarImage(modifier = Modifier.size(128.dp).padding(16.dp))
             Text(text = "${userState.value.firstName} ${userState.value.name}", style = MaterialTheme.typography.h5)
             Text(text = userState.value.email, style = MaterialTheme.typography.subtitle1)
+            Spacer(modifier = Modifier.height(8.dp))
             when(screenState.value) {
                 is Screen.Settings.Menu -> SettingsMenuView(modifier = Modifier.fillMaxSize())
                 is Screen.Settings.User -> SettingsEditUserView(modifier = Modifier.fillMaxSize())
