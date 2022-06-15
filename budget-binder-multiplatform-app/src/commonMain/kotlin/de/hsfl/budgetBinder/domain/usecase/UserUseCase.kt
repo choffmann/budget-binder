@@ -16,7 +16,7 @@ class GetMyUserUseCase(private val repository: UserRepository) {
             repository.getMyUser().let { response ->
                 response.data?.let {
                     emit(DataResponse.Success(it))
-                } ?: response.error?.let { error ->
+                } ?: response.error!!.let { error ->
                     when (error.code) {
                         HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized(error))
                         else -> emit(DataResponse.Error(error))
@@ -27,7 +27,7 @@ class GetMyUserUseCase(private val repository: UserRepository) {
             emit(DataResponse.Error(ErrorModel("Couldn't reach the server")))
         } catch (e: Exception) {
             e.printStackTrace()
-            emit(DataResponse.Error(ErrorModel("Somthing went wrong")))
+            emit(DataResponse.Error(ErrorModel("Something went wrong")))
         }
     }
 }
@@ -39,7 +39,7 @@ class ChangeMyUserUseCase(private val repository: UserRepository) {
             repository.changeMyUser(user).let { response ->
                 response.data?.let {
                     emit(DataResponse.Success(it))
-                } ?: response.error?.let { error ->
+                } ?: response.error!!.let { error ->
                     when (error.code) {
                         HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized(error))
                         else -> emit(DataResponse.Error(error))
@@ -50,7 +50,7 @@ class ChangeMyUserUseCase(private val repository: UserRepository) {
             emit(DataResponse.Error(ErrorModel("Couldn't reach the server")))
         } catch (e: Exception) {
             e.printStackTrace()
-            emit(DataResponse.Error(ErrorModel("Somthing went wrong")))
+            emit(DataResponse.Error(ErrorModel("Something went wrong")))
         }
     }
 }
@@ -62,7 +62,7 @@ class DeleteMyUserUseCase(private val repository: UserRepository) {
             repository.deleteMyUser().let { response ->
                 response.data?.let {
                     emit(DataResponse.Success(it))
-                } ?: response.error?.let { error ->
+                } ?: response.error!!.let { error ->
                     when (error.code) {
                         HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized(error))
                         else -> emit(DataResponse.Error(error))
@@ -73,7 +73,7 @@ class DeleteMyUserUseCase(private val repository: UserRepository) {
             emit(DataResponse.Error(ErrorModel("Couldn't reach the server")))
         } catch (e: Exception) {
             e.printStackTrace()
-            emit(DataResponse.Error(ErrorModel("Somthing went wrong")))
+            emit(DataResponse.Error(ErrorModel("Something went wrong")))
         }
     }
 }

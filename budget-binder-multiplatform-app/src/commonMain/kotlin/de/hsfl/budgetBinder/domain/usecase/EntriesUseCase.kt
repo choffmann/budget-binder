@@ -16,7 +16,7 @@ class GetAllEntriesUseCase(private val repository: EntryRepository) {
             repository.getAllEntries().let { response ->
                 response.data?.let {
                     emit(DataResponse.Success(it))
-                } ?: response.error?.let { error ->
+                } ?: response.error!!.let { error ->
                     when (error.code) {
                         HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized(error))
                         else -> emit(DataResponse.Error(error))
@@ -27,7 +27,7 @@ class GetAllEntriesUseCase(private val repository: EntryRepository) {
             emit(DataResponse.Error(ErrorModel("Couldn't reach the server")))
         } catch (e: Exception) {
             e.printStackTrace()
-            emit(DataResponse.Error(ErrorModel("Somthing went wrong")))
+            emit(DataResponse.Error(ErrorModel("Something went wrong")))
         }
     }
 
@@ -37,7 +37,7 @@ class GetAllEntriesUseCase(private val repository: EntryRepository) {
             repository.getAllEntries(period).let { response ->
                 response.data?.let {
                     emit(DataResponse.Success(it))
-                } ?: response.error?.let { error ->
+                } ?: response.error!!.let { error ->
                     when (error.code) {
                         HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized(error))
                         else -> emit(DataResponse.Error(error))
@@ -48,7 +48,7 @@ class GetAllEntriesUseCase(private val repository: EntryRepository) {
             emit(DataResponse.Error(ErrorModel("Couldn't reach the server")))
         } catch (e: Exception) {
             e.printStackTrace()
-            emit(DataResponse.Error(ErrorModel("Somthing went wrong")))
+            emit(DataResponse.Error(ErrorModel("Something went wrong")))
         }
     }
 }
@@ -60,7 +60,7 @@ class CreateNewEntryUseCase(private val repository: EntryRepository) {
             repository.createNewEntry(entry).let { response ->
                 response.data?.let {
                     emit(DataResponse.Success(it))
-                } ?: response.error?.let { error ->
+                } ?: response.error!!.let { error ->
                     when (error.code) {
                         HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized(error))
                         else -> emit(DataResponse.Error(error))
@@ -71,7 +71,7 @@ class CreateNewEntryUseCase(private val repository: EntryRepository) {
             emit(DataResponse.Error(ErrorModel("Couldn't reach the server")))
         } catch (e: Exception) {
             e.printStackTrace()
-            emit(DataResponse.Error(ErrorModel("Somthing went wrong")))
+            emit(DataResponse.Error(ErrorModel("Something went wrong")))
         }
     }
 }
@@ -83,7 +83,7 @@ class GetEntryByIdUseCase(private val repository: EntryRepository) {
             repository.getEntryById(id).let { response ->
                 response.data?.let {
                     emit(DataResponse.Success(it))
-                } ?: response.error?.let { error ->
+                } ?: response.error!!.let { error ->
                     when (error.code) {
                         HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized(error))
                         else -> emit(DataResponse.Error(error))
@@ -94,7 +94,7 @@ class GetEntryByIdUseCase(private val repository: EntryRepository) {
             emit(DataResponse.Error(ErrorModel("Couldn't reach the server")))
         } catch (e: Exception) {
             e.printStackTrace()
-            emit(DataResponse.Error(ErrorModel("Somthing went wrong")))
+            emit(DataResponse.Error(ErrorModel("Something went wrong")))
         }
     }
 }
@@ -106,7 +106,7 @@ class ChangeEntryByIdUseCase(private val repository: EntryRepository) {
             repository.changeEntryById(entry, id).let { response ->
                 response.data?.let {
                     emit(DataResponse.Success(it))
-                } ?: response.error?.let { error ->
+                } ?: response.error!!.let { error ->
                     when (error.code) {
                         HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized(error))
                         else -> emit(DataResponse.Error(error))
@@ -117,7 +117,7 @@ class ChangeEntryByIdUseCase(private val repository: EntryRepository) {
             emit(DataResponse.Error(ErrorModel("Couldn't reach the server")))
         } catch (e: Exception) {
             e.printStackTrace()
-            emit(DataResponse.Error(ErrorModel("Somthing went wrong")))
+            emit(DataResponse.Error(ErrorModel("Something went wrong")))
         }
     }
 }
@@ -129,7 +129,7 @@ class DeleteEntryByIdUseCase(private val repository: EntryRepository) {
             repository.deleteEntryById(id).let { response ->
                 response.data?.let {
                     emit(DataResponse.Success(it))
-                } ?: response.error?.let { error ->
+                } ?: response.error!!.let { error ->
                     when (error.code) {
                         HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized(error))
                         else -> emit(DataResponse.Error(error))
@@ -140,7 +140,7 @@ class DeleteEntryByIdUseCase(private val repository: EntryRepository) {
             emit(DataResponse.Error(ErrorModel("Couldn't reach the server")))
         } catch (e: Exception) {
             e.printStackTrace()
-            emit(DataResponse.Error(ErrorModel("Somthing went wrong")))
+            emit(DataResponse.Error(ErrorModel("Something went wrong")))
         }
     }
 }
