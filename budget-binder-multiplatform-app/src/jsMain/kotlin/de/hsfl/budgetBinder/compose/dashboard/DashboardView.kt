@@ -185,11 +185,14 @@ fun DashboardData(categoryList: List<Category>, entryList: List<Entry>) {
 
 
 @Composable
-fun CreateNewEntryButton(onEntryCreateButton: () -> Unit) {
+fun CreateNewEntryButton(onEntryCreateButton: () -> Unit) { //TODO: endlich mal schön machen!
     Button(attrs = {
+        classes("mdc-fab","mdc-fab--touch")
         onClick { onEntryCreateButton() }
     }) {
-        Text("Create Entry")
+        Div(attrs= {classes("mdc-fab__ripple")} )
+        Icon("add")
+        Div(attrs= {classes("mdc-fab__touch")} )
     }
 }
 

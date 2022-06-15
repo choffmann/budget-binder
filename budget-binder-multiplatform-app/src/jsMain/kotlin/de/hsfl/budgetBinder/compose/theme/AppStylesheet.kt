@@ -76,6 +76,12 @@ object AppStylesheet : StyleSheet() {
         textAlign("center")
         padding(10.px)
     }
+    val moneyText by style{
+        textAlign("center")
+        padding(10.px)
+        whiteSpace("nowrap")
+
+    }
     val categoryListElement by style{
         flexDirection(FlexDirection("row"))
         alignItems(AlignItems.Center)
