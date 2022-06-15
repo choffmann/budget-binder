@@ -37,6 +37,13 @@ class SettingsEditUserViewModel(
     private val _eventFlow = MutableSharedFlow<UiEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
 
+    init {
+        _firstNameText.value =
+            firstNameText.value.copy(firstName = dataFlow.userState.value.firstName, firstNameIsValid = true)
+        _lastNameText.value = lastNameText.value.copy(lastName = dataFlow.userState.value.name, lastNameIsValid = true)
+        _passwordText.value = passwordText.value.copy(password = passwordPlaceholder, passwordIsValid = true)
+    }
+
     fun onEvent(event: EditUserEvent) {
         when (event) {
             is EditUserEvent.EnteredFirstName -> _firstNameText.value =
