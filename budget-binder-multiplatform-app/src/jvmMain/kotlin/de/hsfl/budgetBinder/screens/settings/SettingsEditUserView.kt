@@ -18,16 +18,16 @@ import kotlinx.coroutines.flow.collectLatest
 import org.kodein.di.instance
 
 @Composable
-fun SettingsEditUserView(modifier: Modifier = Modifier, scaffoldState: ScaffoldState) {
+fun SettingsEditUserView(modifier: Modifier = Modifier, isLoading: Boolean) {
     val scope = rememberCoroutineScope()
     val viewModel: SettingsEditUserViewModel by di.instance()
     val firstNameText = viewModel.firstNameText.collectAsState()
     val lastNameText = viewModel.lastNameText.collectAsState(scope.coroutineContext)
     val emailText = viewModel.emailText.collectAsState(scope.coroutineContext)
     val passwordText = viewModel.passwordText.collectAsState(scope.coroutineContext)
-    val loadingState = remember { mutableStateOf(false) }
+    //val loadingState = remember { mutableStateOf(false) }
 
-    LaunchedEffect(key1 = true) {
+    /*LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->
             when (event) {
                 is UiEvent.ShowLoading -> loadingState.value = true
@@ -37,11 +37,11 @@ fun SettingsEditUserView(modifier: Modifier = Modifier, scaffoldState: ScaffoldS
                 }
             }
         }
-    }
+    }*/
 
-    if (loadingState.value) {
+    /*if (loadingState.value) {
         LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
-    }
+    }*/
     Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
         SettingsTextField(
             modifier = Modifier.padding(8.dp),
@@ -49,7 +49,7 @@ fun SettingsEditUserView(modifier: Modifier = Modifier, scaffoldState: ScaffoldS
             onValueChange = { viewModel.onEvent(EditUserEvent.EnteredFirstName(it)) },
             label = { Text("Firstname") },
             isError = !firstNameText.value.firstNameIsValid,
-            enabled = !loadingState.value,
+            enabled = !isLoading,
             errorText = "Firstname can't be blank"
         )
         SettingsTextField(
@@ -58,7 +58,7 @@ fun SettingsEditUserView(modifier: Modifier = Modifier, scaffoldState: ScaffoldS
             onValueChange = { viewModel.onEvent(EditUserEvent.EnteredLastName(it)) },
             label = { Text("Lastname") },
             isError = !lastNameText.value.lastNameIsValid,
-            enabled = !loadingState.value,
+            enabled = !isLoading,
             errorText = "Lastname can't be blank"
         )
         SettingsTextField(
@@ -74,7 +74,7 @@ fun SettingsEditUserView(modifier: Modifier = Modifier, scaffoldState: ScaffoldS
             onValueChange = { viewModel.onEvent(EditUserEvent.EnteredPassword(it)) },
             label = { Text("Password") },
             isError = !passwordText.value.passwordIsValid,
-            enabled = !loadingState.value,
+            enabled = !isLoading,
             errorText = "Password can't be blank"
         )
         Row {

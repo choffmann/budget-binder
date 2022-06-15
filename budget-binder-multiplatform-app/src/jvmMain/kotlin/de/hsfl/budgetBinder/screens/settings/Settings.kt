@@ -50,7 +50,7 @@ fun SettingsView() {
             Spacer(modifier = Modifier.height(8.dp))
             when(screenState.value) {
                 is Screen.Settings.Menu -> SettingsMenuView(modifier = Modifier.fillMaxWidth())
-                is Screen.Settings.User -> SettingsEditUserView(modifier = Modifier.fillMaxWidth(), scaffoldState = scaffoldState)
+                is Screen.Settings.User -> SettingsEditUserView(modifier = Modifier.fillMaxWidth(), isLoading = loadingState.value)
             }
         }
     }
