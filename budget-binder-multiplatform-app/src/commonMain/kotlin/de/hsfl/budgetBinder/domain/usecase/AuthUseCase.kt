@@ -2,6 +2,7 @@ package de.hsfl.budgetBinder.domain.usecase
 
 import de.hsfl.budgetBinder.common.AuthToken
 import de.hsfl.budgetBinder.common.DataResponse
+import de.hsfl.budgetBinder.common.ErrorModel
 import de.hsfl.budgetBinder.common.User
 import de.hsfl.budgetBinder.domain.repository.AuthRepository
 import io.ktor.http.*
@@ -16,19 +17,19 @@ class RegisterUseCase(private val repository: AuthRepository) {
             repository.register(user).let { response ->
                 response.data?.let {
                     emit(DataResponse.Success(it))
-                } ?: response.error?.let { error ->
+                } ?: response.error!!.let { error ->
                     when (error.code) {
-                        HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized())
-                        else -> emit(DataResponse.Error(error.message))
+                        HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized(error))
+                        else -> emit(DataResponse.Error(error))
                     }
                 }
             }
         } catch (e: IOException) {
             e.printStackTrace()
-            emit(DataResponse.Error("Couldn't reach the server"))
+            emit(DataResponse.Error(ErrorModel("Couldn't reach the server")))
         } catch (e: Throwable) {
             e.printStackTrace()
-            emit(DataResponse.Error(e.message.toString()))
+            emit(DataResponse.Error(ErrorModel("Something went wrong")))
         }
     }
 }
@@ -40,19 +41,19 @@ class LoginUseCase(private val repository: AuthRepository) {
             repository.authorize(email, password).let { response ->
                 response.data?.let {
                     emit(DataResponse.Success(it))
-                } ?: response.error?.let { error ->
+                } ?: response.error!!.let { error ->
                     when (error.code) {
-                        HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized())
-                        else -> emit(DataResponse.Error(error.message))
+                        HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized(error))
+                        else -> emit(DataResponse.Error(error))
                     }
                 }
             }
         } catch (e: IOException) {
             e.printStackTrace()
-            emit(DataResponse.Error("Couldn't reach the server"))
+            emit(DataResponse.Error(ErrorModel("Couldn't reach the server")))
         } catch (e: Throwable) {
             e.printStackTrace()
-            emit(DataResponse.Error(e.message.toString()))
+            emit(DataResponse.Error(ErrorModel("Something went wrong")))
         }
     }
 }
@@ -64,19 +65,19 @@ class LogoutUseCase(private val repository: AuthRepository) {
             repository.logout(onAllDevices).let { response ->
                 response.data?.let {
                     emit(DataResponse.Success(it))
-                } ?: response.error?.let { error ->
+                } ?: response.error!!.let { error ->
                     when (error.code) {
-                        HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized())
-                        else -> emit(DataResponse.Error(error.message))
+                        HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized(error))
+                        else -> emit(DataResponse.Error(error))
                     }
                 }
             }
         } catch (e: IOException) {
             e.printStackTrace()
-            emit(DataResponse.Error("Couldn't reach the server"))
+            emit(DataResponse.Error(ErrorModel("Couldn't reach the server")))
         } catch (e: Throwable) {
             e.printStackTrace()
-            emit(DataResponse.Error(e.message.toString()))
+            emit(DataResponse.Error(ErrorModel("Something went wrong")))
         }
     }
 }

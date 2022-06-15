@@ -1,11 +1,5 @@
-package de.hsfl.budgetBinder.compose
+package de.hsfl.budgetBinder.di
 
-import androidx.compose.material.*
-import androidx.compose.material.Icon
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.runtime.*
-import androidx.compose.ui.graphics.Color
 import de.hsfl.budgetBinder.data.client.Client
 import de.hsfl.budgetBinder.data.repository.AuthRepositoryImpl
 import de.hsfl.budgetBinder.data.repository.CategoryRepositoryImpl
@@ -16,23 +10,27 @@ import de.hsfl.budgetBinder.domain.repository.CategoryRepository
 import de.hsfl.budgetBinder.domain.repository.EntryRepository
 import de.hsfl.budgetBinder.domain.repository.UserRepository
 import de.hsfl.budgetBinder.domain.usecase.*
-import de.hsfl.budgetBinder.presentation.Screen
+import de.hsfl.budgetBinder.domain.usecase.storage.StoreServerUrlUseCase
+import de.hsfl.budgetBinder.domain.usecase.storage.StoreUserStateUseCase
+import de.hsfl.budgetBinder.presentation.flow.DataFlow
+import de.hsfl.budgetBinder.presentation.flow.RouterFlow
+import de.hsfl.budgetBinder.presentation.viewmodel.login.LoginViewModel
+import de.hsfl.budgetBinder.presentation.viewmodel.register.RegisterViewModel
 import de.hsfl.budgetBinder.presentation.viewmodel.*
-import io.ktor.client.engine.cio.*
+import io.ktor.client.engine.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import org.kodein.di.DI
 import org.kodein.di.bindSingleton
-import org.kodein.di.compose.withDI
 import org.kodein.di.instance
 
-val di = DI {
+fun kodein(ktorEngine: HttpClientEngine) = DI {
     // scope
     bindSingleton { CoroutineScope(Dispatchers.Unconfined + SupervisorJob()) }
 
     // Client
-    bindSingleton { Client(engine = CIO.create()) }
+    bindSingleton { Client(engine = ktorEngine) }
 
     // Repositories
     bindSingleton<AuthRepository> { AuthRepositoryImpl(instance()) }
@@ -65,41 +63,27 @@ val di = DI {
     bindSingleton { ChangeEntryByIdUseCase(instance()) }
     bindSingleton { DeleteEntryByIdUseCase(instance()) }
 
+    bindSingleton { NavigateToScreenUseCase() }
+    bindSingleton { StoreUserStateUseCase() }
+    bindSingleton { StoreServerUrlUseCase() }
+    bindSingleton { EntriesUseCases(instance(), instance(), instance(), instance(), instance()) }
+    bindSingleton { CategoriesUseCases(instance(), instance(), instance(), instance(), instance(), instance()) }
+    bindSingleton { SettingsUseCases(instance(), instance()) }
+    bindSingleton { LoginUseCases(instance(), instance()) }
+    bindSingleton { DashboardUseCases(instance(), instance()) }
+    bindSingleton { RegisterUseCases(instance(), instance(), instance()) }
+    bindSingleton { DataFlowUseCases(instance(), instance()) }
+
+    // Flows
+    bindSingleton { RouterFlow(instance()) }
+    bindSingleton { DataFlow(instance()) }
+
     // ViewModels
-    bindSingleton { LoginViewModel(instance(), instance(), instance()) }
+    bindSingleton { LoginViewModel(instance(), instance(), instance(), instance()) }
     bindSingleton { RegisterViewModel(instance(), instance(), instance(), instance()) }
-    bindSingleton { SettingsViewModel(instance(), instance(), instance()) }
-    bindSingleton {
-        CategoryViewModel(
-            instance(),
-            instance(),
-            instance(),
-            instance(),
-            instance(),
-            instance(),
-            instance()
-        )
-    }
-    bindSingleton { EntryViewModel(instance(), instance(), instance(), instance(), instance(), instance()) }
-    bindSingleton { DashboardViewModel(instance(), instance(), instance()) }
+    bindSingleton { SettingsViewModel(instance(), instance()) }
+    bindSingleton { CategoryViewModel(instance(), instance()) }
+    bindSingleton { EntryViewModel(instance(), instance()) }
+    bindSingleton { DashboardViewModel(instance(), instance(), instance(), instance(), instance(), instance()) }
     bindSingleton { NavDrawerViewModel(instance(), instance()) }
-}
-
-@Composable
-fun App() = withDI(di) {
-    val screenState = remember { mutableStateOf<Screen>(Screen.Login) }
-    val darkTheme = remember { mutableStateOf(false) }
-    MaterialTheme(
-        colors = if (darkTheme.value) darkColors() else lightColors()
-    ) {
-        Router(screenState = screenState)
-
-        // Toggle Dark-mode
-        IconToggleButton(checked = darkTheme.value, onCheckedChange = { darkTheme.value = it }) {
-            if (darkTheme.value)
-                Icon(Icons.Filled.Info, contentDescription = null, tint = Color.White)
-            else
-                Icon(Icons.Filled.Info, contentDescription = null, tint = Color.Black)
-        }
-    }
 }

@@ -56,6 +56,7 @@ kotlin {
                 implementation("org.kodein.di:kodein-di-framework-compose:7.11.0")
                 implementation(compose.foundation)
                 implementation(compose.material)
+                implementation(compose.materialIconsExtended)
                 api(compose.preview)
             }
         }

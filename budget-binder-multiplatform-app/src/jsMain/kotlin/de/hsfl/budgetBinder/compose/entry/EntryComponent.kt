@@ -8,6 +8,7 @@ import de.hsfl.budgetBinder.domain.usecase.*
 import de.hsfl.budgetBinder.presentation.CategoryImageToIcon
 import de.hsfl.budgetBinder.presentation.Screen
 import de.hsfl.budgetBinder.presentation.viewmodel.EntryViewModel
+import di
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -18,15 +19,19 @@ import org.kodein.di.instance
 
 @Composable
 fun EntryComponent(screenState: MutableState<Screen>) {
-    val scope = CoroutineScope(Dispatchers.Unconfined + SupervisorJob())
-    val di = localDI()
+    //val scope = CoroutineScope(Dispatchers.Unconfined + SupervisorJob())
+    val scope = rememberCoroutineScope()
+    /*val di = localDI()
     val getAllEntriesUseCase: GetAllEntriesUseCase by di.instance()
     val getEntryByIdUseCase: GetEntryByIdUseCase by di.instance()
     val changeEntryByIdUseCase: ChangeEntryByIdUseCase by di.instance()
     val deleteEntryByIdUseCase: DeleteEntryByIdUseCase by di.instance()
     val createNewEntryUseCase: CreateNewEntryUseCase by di.instance()
     val userViewModel = EntryViewModel(getAllEntriesUseCase, getEntryByIdUseCase, createNewEntryUseCase,changeEntryByIdUseCase,deleteEntryByIdUseCase, scope)
-    val viewState = userViewModel.state.collectAsState(scope)
+    val viewState = userViewModel.state.collectAsState(scope)*/
+
+    val viewModel: EntryViewModel by di.instance()
+    val viewState = viewModel.state.collectAsState(scope.coroutineContext)
 
     when (screenState.value) {
         Screen.EntryCreate -> EntryCreateView(

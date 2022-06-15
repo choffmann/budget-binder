@@ -13,11 +13,11 @@ import de.hsfl.budgetBinder.presentation.Screen
 @Composable
 fun Router(screenState: MutableState<Screen>) {
     when (screenState.value) {
-        Screen.Welcome -> {}
+        Screen._Welcome -> {}
         Screen.Register -> RegisterComponent(screenState = screenState)
         Screen.Login -> LoginComponent(screenState = screenState)
         Screen.Dashboard -> DashboardComponent(screenState = screenState)
-        Screen.Settings, Screen.SettingsChangeUserData -> SettingsComponent(screenState = screenState)
+        Screen._Settings, Screen.SettingsChangeUserData -> SettingsComponent(screenState = screenState)
         Screen.CategorySummary,Screen.CategoryEdit,Screen.CategoryCreate, Screen.CategoryCreateOnRegister -> CategoryComponent(screenState = screenState)
         Screen.EntryCreate, Screen.EntryEdit -> EntryComponent(screenState = screenState)
     }

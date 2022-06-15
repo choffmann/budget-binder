@@ -7,6 +7,7 @@ import de.hsfl.budgetBinder.common.Entry
 import de.hsfl.budgetBinder.domain.usecase.*
 import de.hsfl.budgetBinder.presentation.Screen
 import de.hsfl.budgetBinder.presentation.viewmodel.CategoryViewModel
+import di
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -20,8 +21,12 @@ import org.kodein.di.instance
 
 @Composable
 fun CategoryComponent(screenState: MutableState<Screen>) {
-    val scope = CoroutineScope(Dispatchers.Unconfined + SupervisorJob())
-    val di = localDI()
+    // Old => CoroutineScope(Dispatchers.Unconfined + SupervisorJob())
+    // Use rememberCoroutineScope()
+    val scope = rememberCoroutineScope()
+
+    // Don't do this like here, use Kodein
+    /* val di = localDI()
     val getAllCategoriesUseCase: GetAllCategoriesUseCase by di.instance()
     val createCategoryUseCase: CreateCategoryUseCase by di.instance()
     val getCategoryByIdUseCase: GetCategoryByIdUseCase by di.instance()
@@ -29,7 +34,10 @@ fun CategoryComponent(screenState: MutableState<Screen>) {
     val deleteCategoryByIdUseCase: DeleteCategoryByIdUseCase by di.instance()
     val getAllEntriesByCategoryUseCase: GetAllEntriesByCategoryUseCase by di.instance()
     val categoryViewModel = CategoryViewModel(getAllCategoriesUseCase, getCategoryByIdUseCase,createCategoryUseCase, changeCategoryByIdUseCase, deleteCategoryByIdUseCase, getAllEntriesByCategoryUseCase, scope)
-    val viewState = categoryViewModel.state.collectAsState(scope)
+    val viewState = categoryViewModel.state.collectAsState(scope)*/
+
+    val viewModel: CategoryViewModel by di.instance()
+    val viewState = viewModel.state.collectAsState(scope.coroutineContext)
 
     when (screenState.value) {
         Screen.CategoryCreate -> CategoryCreateView(

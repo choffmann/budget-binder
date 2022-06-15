@@ -3,6 +3,7 @@ package de.hsfl.budgetBinder.domain.usecase
 import de.hsfl.budgetBinder.common.Category
 import de.hsfl.budgetBinder.common.DataResponse
 import de.hsfl.budgetBinder.common.Entry
+import de.hsfl.budgetBinder.common.ErrorModel
 import de.hsfl.budgetBinder.domain.repository.CategoryRepository
 import io.ktor.http.*
 import io.ktor.utils.io.errors.*
@@ -16,18 +17,18 @@ class GetAllCategoriesUseCase(private val repository: CategoryRepository) {
             repository.getAllCategories().let { response ->
                 response.data?.let {
                     emit(DataResponse.Success(it))
-                } ?: response.error?.let { error ->
+                } ?: response.error!!.let { error ->
                     when (error.code) {
-                        HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized())
-                        else -> emit(DataResponse.Error(error.message))
+                        HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized(error))
+                        else -> emit(DataResponse.Error(error))
                     }
                 }
             }
         } catch (e: IOException) {
-            emit(DataResponse.Error("Couldn't reach the server"))
+            emit(DataResponse.Error(ErrorModel("Couldn't reach the server")))
         } catch (e: Exception) {
             e.printStackTrace()
-            emit(DataResponse.Error(e.message.toString()))
+            emit(DataResponse.Error(ErrorModel("Something went wrong")))
         }
     }
 
@@ -37,18 +38,18 @@ class GetAllCategoriesUseCase(private val repository: CategoryRepository) {
             repository.getAllCategories(period).let { response ->
                 response.data?.let {
                     emit(DataResponse.Success(it))
-                } ?: response.error?.let { error ->
+                } ?: response.error!!.let { error ->
                     when (error.code) {
-                        HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized())
-                        else -> emit(DataResponse.Error(error.message))
+                        HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized(error))
+                        else -> emit(DataResponse.Error(error))
                     }
                 }
             }
         } catch (e: IOException) {
-            emit(DataResponse.Error("Couldn't reach the server"))
+            emit(DataResponse.Error(ErrorModel("Couldn't reach the server")))
         } catch (e: Exception) {
             e.printStackTrace()
-            emit(DataResponse.Error(e.message.toString()))
+            emit(DataResponse.Error(ErrorModel("Something went wrong")))
         }
     }
 }
@@ -60,18 +61,18 @@ class CreateCategoryUseCase(private val repository: CategoryRepository) {
             repository.createNewCategory(category).let { response ->
                 response.data?.let {
                     emit(DataResponse.Success(it))
-                } ?: response.error?.let { error ->
+                } ?: response.error!!.let { error ->
                     when (error.code) {
-                        HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized())
-                        else -> emit(DataResponse.Error(error.message))
+                        HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized(error))
+                        else -> emit(DataResponse.Error(error))
                     }
                 }
             }
         } catch (e: IOException) {
-            emit(DataResponse.Error("Couldn't reach the server"))
+            emit(DataResponse.Error(ErrorModel("Couldn't reach the server")))
         } catch (e: Exception) {
             e.printStackTrace()
-            emit(DataResponse.Error(e.message.toString()))
+            emit(DataResponse.Error(ErrorModel("Something went wrong")))
         }
     }
 }
@@ -83,18 +84,18 @@ class GetCategoryByIdUseCase(private val repository: CategoryRepository) {
             repository.getCategoryById(id).let { response ->
                 response.data?.let {
                     emit(DataResponse.Success(it))
-                } ?: response.error?.let { error ->
+                } ?: response.error!!.let { error ->
                     when (error.code) {
-                        HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized())
-                        else -> emit(DataResponse.Error(error.message))
+                        HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized(error))
+                        else -> emit(DataResponse.Error(error))
                     }
                 }
             }
         } catch (e: IOException) {
-            emit(DataResponse.Error("Couldn't reach the server"))
+            emit(DataResponse.Error(ErrorModel("Couldn't reach the server")))
         } catch (e: Exception) {
             e.printStackTrace()
-            emit(DataResponse.Error(e.message.toString()))
+            emit(DataResponse.Error(ErrorModel("Something went wrong")))
         }
     }
 }
@@ -106,18 +107,18 @@ class ChangeCategoryByIdUseCase(private val repository: CategoryRepository) {
             repository.changeCategoryById(category, id).let { response ->
                 response.data?.let {
                     emit(DataResponse.Success(it))
-                } ?: response.error?.let { error ->
+                } ?: response.error!!.let { error ->
                     when (error.code) {
-                        HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized())
-                        else -> emit(DataResponse.Error(error.message))
+                        HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized(error))
+                        else -> emit(DataResponse.Error(error))
                     }
                 }
             }
         } catch (e: IOException) {
-            emit(DataResponse.Error("Couldn't reach the server"))
+            emit(DataResponse.Error(ErrorModel("Couldn't reach the server")))
         } catch (e: Exception) {
             e.printStackTrace()
-            emit(DataResponse.Error(e.message.toString()))
+            emit(DataResponse.Error(ErrorModel("Something went wrong")))
         }
     }
 }
@@ -129,18 +130,18 @@ class DeleteCategoryByIdUseCase(private val repository: CategoryRepository) {
             repository.deleteCategoryById(id).let { response ->
                 response.data?.let {
                     emit(DataResponse.Success(it))
-                } ?: response.error?.let { error ->
+                } ?: response.error!!.let { error ->
                     when (error.code) {
-                        HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized())
-                        else -> emit(DataResponse.Error(error.message))
+                        HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized(error))
+                        else -> emit(DataResponse.Error(error))
                     }
                 }
             }
         } catch (e: IOException) {
-            emit(DataResponse.Error("Couldn't reach the server"))
+            emit(DataResponse.Error(ErrorModel("Couldn't reach the server")))
         } catch (e: Exception) {
             e.printStackTrace()
-            emit(DataResponse.Error(e.message.toString()))
+            emit(DataResponse.Error(ErrorModel("Something went wrong")))
         }
     }
 }
@@ -152,18 +153,18 @@ class GetAllEntriesByCategoryUseCase(private val repository: CategoryRepository)
             repository.getEntriesFromCategory(id).let { response ->
                 response.data?.let {
                     emit(DataResponse.Success(it))
-                } ?: response.error?.let { error ->
+                } ?: response.error!!.let { error ->
                     when (error.code) {
-                        HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized())
-                        else -> emit(DataResponse.Error(error.message))
+                        HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized(error))
+                        else -> emit(DataResponse.Error(error))
                     }
                 }
             }
         } catch (e: IOException) {
-            emit(DataResponse.Error("Couldn't reach the server"))
+            emit(DataResponse.Error(ErrorModel("Couldn't reach the server")))
         } catch (e: Exception) {
             e.printStackTrace()
-            emit(DataResponse.Error(e.message.toString()))
+            emit(DataResponse.Error(ErrorModel("Something went wrong")))
         }
     }
 }

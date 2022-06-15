@@ -22,7 +22,7 @@ class NavDrawerViewModel(
         logoutUseCase(onAllDevices).onEach {
             when (it) {
                 is DataResponse.Success -> _state.value = UiState.Success(it.data)
-                is DataResponse.Error -> _state.value = UiState.Error(error = it.message ?: "Something went wrong")
+                is DataResponse.Error -> _state.value = UiState.Error(error = it.error!!.message)
                 is DataResponse.Loading -> _state.value = UiState.Loading
                 is DataResponse.Unauthorized -> _state.value = UiState.Unauthorized
             }

@@ -10,21 +10,17 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.*
 
 class EntryViewModel(
-    private val getAllEntriesUseCase: GetAllEntriesUseCase,
-    private val getEntryByIdUseCase: GetEntryByIdUseCase,
-    private val createNewEntryUseCase: CreateNewEntryUseCase,
-    private val changeEntryByIdUseCase: ChangeEntryByIdUseCase,
-    private val deleteEntryByIdUseCase: DeleteEntryByIdUseCase,
+    private val entriesUseCases: EntriesUseCases,
     private val scope: CoroutineScope = CoroutineScope(Dispatchers.Unconfined + SupervisorJob())
 ) {
     private val _state = MutableStateFlow<UiState>(UiState.Empty)
     val state: StateFlow<UiState> = _state
 
     fun getAllEntries() {
-        getAllEntriesUseCase.entries().onEach {
+        entriesUseCases.getAllEntriesUseCase.entries().onEach {
             when (it) {
                 is DataResponse.Success -> _state.value = UiState.Success(it.data)
-                is DataResponse.Error -> _state.value = UiState.Error(it.message!!)
+                is DataResponse.Error -> _state.value = UiState.Error(it.error!!.message)
                 is DataResponse.Loading -> _state.value = UiState.Loading
                 is DataResponse.Unauthorized -> _state.value = UiState.Unauthorized
             }
@@ -32,10 +28,10 @@ class EntryViewModel(
     }
 
     fun getEntryById(id: Int) {
-        getEntryByIdUseCase(id).onEach {
+        entriesUseCases.getEntryByIdUseCase(id).onEach {
             when (it) {
                 is DataResponse.Success -> _state.value = UiState.Success(it.data)
-                is DataResponse.Error -> _state.value = UiState.Error(it.message!!)
+                is DataResponse.Error -> _state.value = UiState.Error(it.error!!.message)
                 is DataResponse.Loading -> _state.value = UiState.Loading
                 is DataResponse.Unauthorized -> _state.value = UiState.Unauthorized
             }
@@ -43,10 +39,10 @@ class EntryViewModel(
     }
 
     fun createEntry(entry: Entry.In) {
-        createNewEntryUseCase(entry).onEach {
+        entriesUseCases.createNewEntryUseCase(entry).onEach {
             when (it) {
                 is DataResponse.Success -> _state.value = UiState.Success(it.data)
-                is DataResponse.Error -> _state.value = UiState.Error(it.message!!)
+                is DataResponse.Error -> _state.value = UiState.Error(it.error!!.message)
                 is DataResponse.Loading -> _state.value = UiState.Loading
                 is DataResponse.Unauthorized -> _state.value = UiState.Unauthorized
             }
@@ -54,10 +50,10 @@ class EntryViewModel(
     }
 
     fun changeEntry(entry: Entry.Patch, id: Int) {
-        changeEntryByIdUseCase(entry, id).onEach {
+        entriesUseCases.changeEntryByIdUseCase(entry, id).onEach {
             when (it) {
                 is DataResponse.Success -> _state.value = UiState.Success(it.data)
-                is DataResponse.Error -> _state.value = UiState.Error(it.message!!)
+                is DataResponse.Error -> _state.value = UiState.Error(it.error!!.message)
                 is DataResponse.Loading -> _state.value = UiState.Loading
                 is DataResponse.Unauthorized -> _state.value = UiState.Unauthorized
             }
@@ -65,10 +61,10 @@ class EntryViewModel(
     }
 
     fun removeEntry(id: Int) {
-        deleteEntryByIdUseCase(id).onEach {
+        entriesUseCases.deleteEntryByIdUseCase(id).onEach {
             when (it) {
                 is DataResponse.Success -> _state.value = UiState.Success(it.data)
-                is DataResponse.Error -> _state.value = UiState.Error(it.message!!)
+                is DataResponse.Error -> _state.value = UiState.Error(it.error!!.message)
                 is DataResponse.Loading -> _state.value = UiState.Loading
                 is DataResponse.Unauthorized -> _state.value = UiState.Unauthorized
             }

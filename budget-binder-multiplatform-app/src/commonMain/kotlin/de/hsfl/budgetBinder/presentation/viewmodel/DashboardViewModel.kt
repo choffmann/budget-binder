@@ -1,18 +1,22 @@
 package de.hsfl.budgetBinder.presentation.viewmodel
 
 import de.hsfl.budgetBinder.common.DataResponse
-import de.hsfl.budgetBinder.common.Entry
-import de.hsfl.budgetBinder.common.User
 import de.hsfl.budgetBinder.domain.usecase.*
+import de.hsfl.budgetBinder.presentation.Screen
 import de.hsfl.budgetBinder.presentation.UiState
+import de.hsfl.budgetBinder.presentation.flow.DataFlow
+import de.hsfl.budgetBinder.presentation.flow.RouterFlow
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.*
 
 class DashboardViewModel(
-    private val getAllEntriesUseCase: GetAllEntriesUseCase,
-    private val getAllCategoriesUseCase: GetAllCategoriesUseCase,
+    private val dashboardUseCases: DashboardUseCases,
+    private val logoutUseCase: LogoutUseCase,
+    private val routerFlow: RouterFlow,
+    private val dataFlow: DataFlow,
+    private val getMyUserUseCase: GetMyUserUseCase,
     private val scope: CoroutineScope = CoroutineScope(Dispatchers.Unconfined + SupervisorJob())
 ) {
 
@@ -28,11 +32,37 @@ class DashboardViewModel(
         getAllCategories()
     }
 
+    private val _state = MutableStateFlow<UiState>(UiState.Empty)
+    val state: StateFlow<UiState> = _state
+
+    fun logOut(onAllDevices: Boolean) {
+        logoutUseCase(onAllDevices).onEach {
+            when (it) {
+                is DataResponse.Success -> _state.value = UiState.Success(it.data)
+                is DataResponse.Error -> _state.value = UiState.Error(error = it.error!!.message)
+                is DataResponse.Loading -> _state.value = UiState.Loading
+                is DataResponse.Unauthorized -> routerFlow.navigateTo(Screen.Login)
+            }
+        }.launchIn(scope)
+    }
+
+    fun getMyUser() {
+        getMyUserUseCase().onEach {
+            when (it) {
+                is DataResponse.Loading -> _state.value = UiState.Loading
+                is DataResponse.Success<*> -> dataFlow.storeUserState(it.data!!)
+                is DataResponse.Error -> _state.value = UiState.Error(it.error!!.message)
+                is DataResponse.Unauthorized -> routerFlow.navigateTo(Screen.Login)
+            }
+        }.launchIn(scope)
+
+    }
+
     private fun getAllCategories() {
-        getAllCategoriesUseCase.categories().onEach {
+        dashboardUseCases.getAllCategoriesUseCase.categories().onEach {
             when (it) {
                 is DataResponse.Success -> _categoriesState.value = UiState.Success(it.data)
-                is DataResponse.Error -> _categoriesState.value = UiState.Error(it.message!!)
+                is DataResponse.Error -> _categoriesState.value = UiState.Error(it.error!!.message)
                 is DataResponse.Loading -> _categoriesState.value = UiState.Loading
                 is DataResponse.Unauthorized -> _categoriesState.value = UiState.Unauthorized
             }
@@ -40,10 +70,10 @@ class DashboardViewModel(
     }
 
     private fun getAllEntries() {
-        getAllEntriesUseCase.entries().onEach {
+        dashboardUseCases.getAllEntriesUseCase.entries().onEach {
             when (it) {
                 is DataResponse.Success -> _entriesState.value = UiState.Success(it.data)
-                is DataResponse.Error -> _entriesState.value = UiState.Error(it.message!!)
+                is DataResponse.Error -> _entriesState.value = UiState.Error(it.error!!.message)
                 is DataResponse.Loading -> _entriesState.value = UiState.Loading
                 is DataResponse.Unauthorized -> _entriesState.value = UiState.Unauthorized
             }
