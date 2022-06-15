@@ -51,9 +51,10 @@ fun EntryComponent(screenState: MutableState<Screen>) {
 
 //Should be put in own File
 @Composable
-fun EntryListElement(entry: Entry, categoryList : List<Category>){
+fun EntryListElement(entry: Entry, categoryList : List<Category>, onEntry: (id:Int) -> Unit){
     Div (attrs = {
         classes("mdc-card","mdc-card--outlined", AppStylesheet.entryListElement)
+        onClick { onEntry(entry.id) }
     }) {
         CategoryImageToIcon(categoryIdToCategory(entry.category_id,categoryList).image)
         Div(attrs = {classes(AppStylesheet.entryListElementText)}){Div(attrs = { classes("mdc-typography--headline5", AppStylesheet.text) }) {Text(entry.name)}}
@@ -67,9 +68,9 @@ fun amountToString(amount:Float):String{
 }
 
 @Composable
-fun EntryList(list: List<Entry>, categoryList : List<Category>){
+fun EntryList(list: List<Entry>, categoryList : List<Category>, onEntry: (id:Int) -> Unit){
     for (entry in list){
-        EntryListElement(entry,categoryList)
+        EntryListElement(entry,categoryList,onEntry)
     }
 }
 

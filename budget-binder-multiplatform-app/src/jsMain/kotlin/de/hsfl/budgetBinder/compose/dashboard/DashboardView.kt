@@ -9,6 +9,7 @@ import de.hsfl.budgetBinder.compose.category.BudgetBar
 import de.hsfl.budgetBinder.compose.entry.EntryList
 import de.hsfl.budgetBinder.compose.entry.entriesFromCategory
 import de.hsfl.budgetBinder.compose.theme.AppStylesheet
+import de.hsfl.budgetBinder.compose.topBarMain
 import de.hsfl.budgetBinder.presentation.UiState
 import kotlinx.serialization.json.JsonNull.content
 import org.jetbrains.compose.web.css.*
@@ -23,38 +24,54 @@ fun DashboardView(
     onCategorySummaryButton: () -> Unit,
     onSettingsButton: () -> Unit,
     onEntryCreateButton: () -> Unit,
-    onEntryEditButton: () -> Unit
+    onEntryEditButton: (id:Int) -> Unit
 ) {
     val categoriesViewState by remember { categoriesState }
     val entriesViewState by remember { entriesState }
     var categoryList by remember { mutableStateOf<List<Category>>(emptyList()) }
     var entryList by remember { mutableStateOf<List<Entry>>(emptyList()) }
 
+    topBarMain(
+        logoButton = {
+            Img(
+                src = "images/Logo.png", alt = "Logo", attrs = {
+                    classes("mdc-icon-button", AppStylesheet.image)
+                    onClick {  }
+                }
+            )
+        }, navButtons = {
+            Button(
+                attrs = {
+                    classes("mdc-button", "mdc-button--raised", "mdc-top-app-bar__navigation-icon")
+                    onClick { onCategorySummaryButton() }
+                }
+            ) {
+                Span(
+                    attrs = {
+                        classes("mdc-button__label")
+                    }
+                ) {
+                    Text("Categories")
+                }
+            }
+            Button(
+                attrs = {
+                    classes("mdc-button", "mdc-button--raised", "mdc-top-app-bar__navigation-icon")
+                    onClick { onSettingsButton() }
+                }
+            ) {
+                Span(
+                    attrs = {
+                        classes("mdc-button__label")
+                    }
+                ) {
+                    Text("Settings")
+                }
+            }
+        })
+
     MainFlexContainer {
-        H1 { Text("DashboardView") }
-        Button(attrs = {
-            onClick { onSettingsButton() }
-        }) {
-            Text("Open Settings")
-        }
-        Button(attrs = {
-            onClick { onCategorySummaryButton() }
-        }) {
-            Text("Open Category List (Summary of every Category)")
-        }
-        Button(attrs = {
-            onClick { onEntryCreateButton() }
-        }) {
-            Text("Create Entry")
-        }
-        Button(attrs = {
-            onClick { onEntryEditButton() }
-        }) {
-            Text("Edit Entry (Needs to be there for every Entry shown)")
-        }
-        Div {
-            DashboardData(categoryList, entryList)
-        }
+        Div { DashboardData(categoryList, entryList, onEntryEditButton) }
         CreateNewEntryButton(onEntryCreateButton)
     }
     //Process new Category Data
@@ -108,7 +125,7 @@ fun DashboardView(
 }
 
 @Composable
-fun DashboardData(categoryList: List<Category>, entryList: List<Entry>) {
+fun DashboardData(categoryList: List<Category>, entryList: List<Entry>, onEntry: (id:Int) -> Unit) {
     console.log("Category $categoryList and Entry $entryList")
     var focusedCategory by remember { mutableStateOf(-1) } //Variable from -1 (all) to categoryList.size
     console.log("Focus:${focusedCategory}")
@@ -143,7 +160,7 @@ fun DashboardData(categoryList: List<Category>, entryList: List<Entry>) {
                     leftOn = false
                 )
 
-                EntryList(entryList, categoryList) //List of Every Entry
+                EntryList(entryList, categoryList, onEntry) //List of Every Entry
             }
             //Normal Category View
             in categoryList.indices -> {
@@ -155,7 +172,8 @@ fun DashboardData(categoryList: List<Category>, entryList: List<Entry>) {
                 )
                 EntryList(
                     filteredEntryList,
-                    listOf(categoryList[focusedCategory])
+                    listOf(categoryList[focusedCategory]),
+                    onEntry
                 ) //Only gives CategoryData of selected category, as everything else seems unnecessary
             }
 
@@ -171,7 +189,8 @@ fun DashboardData(categoryList: List<Category>, entryList: List<Entry>) {
                 )
                 EntryList(
                     filteredEntryList,
-                    emptyList()
+                    emptyList(),
+                    onEntry
                 ) //Needs no categoryList, as they have no category
             }
         }
