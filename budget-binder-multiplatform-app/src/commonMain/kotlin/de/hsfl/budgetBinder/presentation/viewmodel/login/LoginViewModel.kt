@@ -8,6 +8,7 @@ import de.hsfl.budgetBinder.presentation.Screen
 import de.hsfl.budgetBinder.presentation.UiEvent
 import de.hsfl.budgetBinder.presentation.UiState
 import de.hsfl.budgetBinder.presentation.flow.DataFlow
+import de.hsfl.budgetBinder.presentation.flow.UiEventSharedFlow
 import io.ktor.http.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
@@ -33,8 +34,8 @@ class LoginViewModel(
     private val _dialogState = MutableStateFlow(false)
     val dialogState: StateFlow<Boolean> = _dialogState
 
-    private val _eventFlow = MutableSharedFlow<UiEvent>()
-    val eventFlow = _eventFlow.asSharedFlow()
+    private val _eventFlow = UiEventSharedFlow.mutableEventFlow
+    val eventFlow = UiEventSharedFlow.eventFlow
 
     init {
         // try to fetch user '/me' on start. If successful, the user is already authorized

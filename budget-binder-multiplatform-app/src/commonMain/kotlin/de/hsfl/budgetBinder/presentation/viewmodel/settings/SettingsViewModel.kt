@@ -8,6 +8,7 @@ import de.hsfl.budgetBinder.presentation.UiEvent
 import de.hsfl.budgetBinder.presentation.UiState
 import de.hsfl.budgetBinder.presentation.flow.DataFlow
 import de.hsfl.budgetBinder.presentation.flow.RouterFlow
+import de.hsfl.budgetBinder.presentation.flow.UiEventSharedFlow
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -21,8 +22,8 @@ class SettingsViewModel(
     private val _dialogState = MutableStateFlow(false)
     val dialogState: StateFlow<Boolean> = _dialogState
 
-    private val _eventFlow = SettingsSharedFlow.mutableEventFlow
-    val eventFlow = SettingsSharedFlow.eventFlow
+    private val _eventFlow = UiEventSharedFlow.mutableEventFlow
+    val eventFlow = UiEventSharedFlow.eventFlow
 
     fun onEvent(event: SettingsEvent) {
         when (event) {

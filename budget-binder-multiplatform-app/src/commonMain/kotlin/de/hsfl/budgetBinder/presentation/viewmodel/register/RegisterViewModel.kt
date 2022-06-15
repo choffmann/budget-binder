@@ -9,6 +9,7 @@ import de.hsfl.budgetBinder.presentation.UiEvent
 import de.hsfl.budgetBinder.presentation.UiState
 import de.hsfl.budgetBinder.presentation.flow.DataFlow
 import de.hsfl.budgetBinder.presentation.flow.RouterFlow
+import de.hsfl.budgetBinder.presentation.flow.UiEventSharedFlow
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -31,8 +32,8 @@ class RegisterViewModel(
     private val _passwordText = MutableStateFlow(RegisterTextFieldState())
     val passwordText: StateFlow<RegisterTextFieldState> = _passwordText
 
-    private val _eventFlow = MutableSharedFlow<UiEvent>()
-    val eventFlow = _eventFlow.asSharedFlow()
+    private val _eventFlow = UiEventSharedFlow.mutableEventFlow
+    val eventFlow = UiEventSharedFlow.eventFlow
 
     fun onEvent(event: RegisterEvent) {
         when (event) {

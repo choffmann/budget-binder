@@ -7,6 +7,7 @@ import de.hsfl.budgetBinder.presentation.Screen
 import de.hsfl.budgetBinder.presentation.UiEvent
 import de.hsfl.budgetBinder.presentation.flow.DataFlow
 import de.hsfl.budgetBinder.presentation.flow.RouterFlow
+import de.hsfl.budgetBinder.presentation.flow.UiEventSharedFlow
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -34,8 +35,8 @@ class SettingsEditUserViewModel(
 
     val emailText: StateFlow<String> = MutableStateFlow(dataFlow.userState.value.email)
 
-    private val _eventFlow = SettingsSharedFlow.mutableEventFlow
-    val eventFlow = SettingsSharedFlow.eventFlow
+    private val _eventFlow = UiEventSharedFlow.mutableEventFlow
+    val eventFlow = UiEventSharedFlow.eventFlow
 
     init {
         _firstNameText.value =
