@@ -4,6 +4,7 @@ import androidx.compose.runtime.*
 import de.hsfl.budgetBinder.common.Category
 import de.hsfl.budgetBinder.common.Entry
 import de.hsfl.budgetBinder.compose.category.categoryIdToCategory
+import de.hsfl.budgetBinder.compose.theme.AppStylesheet
 import de.hsfl.budgetBinder.domain.usecase.*
 import de.hsfl.budgetBinder.presentation.CategoryImageToIcon
 import de.hsfl.budgetBinder.presentation.Screen
@@ -50,11 +51,12 @@ fun EntryComponent(screenState: MutableState<Screen>) {
 //Should be put in own File
 @Composable
 fun EntryListElement(entry: Entry, categoryList : List<Category>){
-    Div {
+    Div (attrs = {
+        classes("mdc-card","mdc-card--outlined", AppStylesheet.entryListElement)
+    }) {
         CategoryImageToIcon(categoryIdToCategory(entry.category_id,categoryList).image)
-        Text(entry.name)
-        Text(entry.amount.toString()+"€")
-
+        Div(attrs = {classes(AppStylesheet.entryListElementText)}){Div(attrs = { classes("mdc-typography--headline5", AppStylesheet.text) }) {Text(entry.name)}}
+        Div(attrs = {classes(AppStylesheet.imageFlexContainer)}){Div(attrs = { classes("mdc-typography--headline5",AppStylesheet.text) }){Text(entry.amount.toString()+"€")}}
     }
 }
 
