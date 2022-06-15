@@ -11,10 +11,8 @@ import de.hsfl.budgetBinder.compose.entry.entriesFromCategory
 import de.hsfl.budgetBinder.compose.theme.AppStylesheet
 import de.hsfl.budgetBinder.presentation.UiState
 import kotlinx.serialization.json.JsonNull.content
-import org.jetbrains.compose.web.css.paddingLeft
-import org.jetbrains.compose.web.css.paddingRight
-import org.jetbrains.compose.web.css.px
-import org.jetbrains.compose.web.css.width
+import org.jetbrains.compose.web.css.*
+import org.jetbrains.compose.web.css.keywords.auto
 import org.jetbrains.compose.web.dom.*
 
 
@@ -185,14 +183,19 @@ fun DashboardData(categoryList: List<Category>, entryList: List<Entry>) {
 
 
 @Composable
-fun CreateNewEntryButton(onEntryCreateButton: () -> Unit) { //TODO: endlich mal schön machen!
-    Button(attrs = {
-        classes("mdc-fab","mdc-fab--touch")
-        onClick { onEntryCreateButton() }
-    }) {
-        Div(attrs= {classes("mdc-fab__ripple")} )
-        Icon("add")
-        Div(attrs= {classes("mdc-fab__touch")} )
+fun CreateNewEntryButton(onEntryCreateButton: () -> Unit) {
+    Div (attrs = {style {
+        display(DisplayStyle.Flex)
+        justifyContent(JustifyContent.FlexEnd)
+    }}) {
+        Button(attrs = {
+            classes("mdc-fab", "mdc-fab--touch", AppStylesheet.newEntryButton)
+            onClick { onEntryCreateButton() }
+        }) {
+            Div(attrs = { classes("mdc-fab__ripple") })
+            Icon("add")
+            Div(attrs = { classes("mdc-fab__touch") })
+        }
     }
 }
 

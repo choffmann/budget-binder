@@ -51,6 +51,7 @@ object AppStylesheet : StyleSheet() {
     //Container for main content, used in MainFlexContainer
     val contentFlexContainer by style {
         flex("50%")
+        position(Position.Relative)
     }
     //Container for main content in BudgetBar
     val budgetBarContainer by style {
@@ -80,7 +81,11 @@ object AppStylesheet : StyleSheet() {
         textAlign("center")
         padding(10.px)
         whiteSpace("nowrap")
-
+    }
+    val newEntryButton by style{
+        position(Position.Fixed)
+        bottom(16.px)
+        marginRight(20.px)
     }
 
     val card by style {
