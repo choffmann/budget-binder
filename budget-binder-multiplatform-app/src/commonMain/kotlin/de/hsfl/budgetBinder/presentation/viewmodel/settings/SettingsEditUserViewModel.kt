@@ -21,22 +21,28 @@ class SettingsEditUserViewModel(
     private val scope: CoroutineScope
 ) {
     private val _firstNameText =
-        MutableStateFlow(EditUserState(firstName = dataFlow.userState.value.firstName, firstNameIsValid = true))
+        MutableStateFlow(EditUserState())
     val firstNameText: StateFlow<EditUserState> = _firstNameText
 
-    private val _lastNameText =
-        MutableStateFlow(EditUserState(lastName = dataFlow.userState.value.name, lastNameIsValid = true))
+    private val _lastNameText = MutableStateFlow(EditUserState())
     val lastNameText: StateFlow<EditUserState> = _lastNameText
 
     // Can't access password, so I check if the password placeholder was changed
     private val passwordPlaceholder = "........."
-    private val _passwordText = MutableStateFlow(EditUserState(password = passwordPlaceholder, passwordIsValid = true))
+    private val _passwordText = MutableStateFlow(EditUserState())
     val passwordText: StateFlow<EditUserState> = _passwordText
 
     val emailText: StateFlow<String> = MutableStateFlow(dataFlow.userState.value.email)
 
     private val _eventFlow = MutableSharedFlow<UiEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
+
+    init {
+        _firstNameText.value =
+            firstNameText.value.copy(firstName = dataFlow.userState.value.firstName, firstNameIsValid = true)
+        _lastNameText.value = lastNameText.value.copy(lastName = dataFlow.userState.value.name, lastNameIsValid = true)
+        _passwordText.value = passwordText.value.copy(password = passwordPlaceholder, passwordIsValid = true)
+    }
 
     fun onEvent(event: EditUserEvent) {
         when (event) {
@@ -70,18 +76,31 @@ class SettingsEditUserViewModel(
     }
 
     private fun checkValidInput(): Boolean {
-        return if (firstNameText.value.firstName.isBlank()) {
-            _firstNameText.value = firstNameText.value.copy(firstNameIsValid = false)
-            false
-        } else if (lastNameText.value.firstName.isBlank()) {
-            _lastNameText.value = lastNameText.value.copy(lastNameIsValid = false)
-            false
-        } else if (passwordText.value.firstName.isBlank()) {
-            _passwordText.value = passwordText.value.copy(lastNameIsValid = false)
-            false
-        } else {
-            true
-        }
+        val checkFirstName =
+            if (firstNameText.value.firstName.isBlank()) {
+                _firstNameText.value = firstNameText.value.copy(firstNameIsValid = false)
+                false
+            } else {
+                true
+            }
+
+        val checkLastName =
+            if (lastNameText.value.lastName.isBlank()) {
+                _lastNameText.value = lastNameText.value.copy(lastNameIsValid = false)
+                false
+            } else {
+                true
+            }
+
+        val checkPassword =
+            if (passwordText.value.password.isBlank()) {
+                _passwordText.value = passwordText.value.copy(passwordIsValid = false)
+                false
+            } else {
+                true
+            }
+
+        return checkFirstName && checkLastName && checkPassword
     }
 
     private fun updateUser(user: User.Patch) {
