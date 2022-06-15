@@ -201,11 +201,11 @@ fun SwipeContainer(content: @Composable () -> Unit, onFocusCategoryChange: (Bool
         }) {
         Div(attrs = {
             if(leftOn) {
-                classes(AppStylesheet.arrowFlexContainer, "mdc-button")
+                classes(AppStylesheet.imageFlexContainer, "mdc-button")
                 onClick { onFocusCategoryChange(false) }
             }
             else{
-                classes(AppStylesheet.arrowFlexContainer)
+                classes(AppStylesheet.imageFlexContainer)
                 style{
                     paddingLeft(8.px)
                     paddingRight(8.px)
@@ -220,11 +220,11 @@ fun SwipeContainer(content: @Composable () -> Unit, onFocusCategoryChange: (Bool
         }
         Div(attrs = {
             if(rightOn) {
-                classes(AppStylesheet.arrowFlexContainer, "mdc-button")
+                classes(AppStylesheet.imageFlexContainer, "mdc-button")
                 onClick { onFocusCategoryChange(true) }
             }
             else{
-                classes(AppStylesheet.arrowFlexContainer)
+                classes(AppStylesheet.imageFlexContainer)
                 style{
                     paddingLeft(8.px)
                     paddingRight(8.px)
