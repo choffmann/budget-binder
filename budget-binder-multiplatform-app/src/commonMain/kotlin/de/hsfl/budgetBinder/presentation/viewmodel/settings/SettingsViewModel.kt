@@ -26,16 +26,8 @@ class SettingsViewModel(
 
     fun onEvent(event: SettingsEvent) {
         when (event) {
-            is SettingsEvent.OnChangeToSettingsUserEdit -> {
-                scope.launch {
-                    routerFlow.navigateTo(Screen.Settings.User)
-                }
-            }
-            is SettingsEvent.OnChangeToSettingsServerUrlEdit -> {
-                scope.launch {
-                    routerFlow.navigateTo(Screen.Settings.Server)
-                }
-            }
+            is SettingsEvent.OnChangeToSettingsUserEdit -> routerFlow.navigateTo(Screen.Settings.User)
+            is SettingsEvent.OnChangeToSettingsServerUrlEdit -> routerFlow.navigateTo(Screen.Settings.Server)
             is SettingsEvent.OnDeleteUser -> _dialogState.value = true
             is SettingsEvent.OnLogoutAllDevices -> logOutOnAllDevices()
             is SettingsEvent.OnDeleteDialogConfirm -> {
@@ -43,8 +35,10 @@ class SettingsViewModel(
                 deleteUser()
             }
             is SettingsEvent.OnDeleteDialogDismiss -> _dialogState.value = false
+            is SettingsEvent.OnToggleDarkMode -> dataFlow.toggleDarkMode()
         }
     }
+
 
     private fun logOutOnAllDevices() {
         scope.launch {

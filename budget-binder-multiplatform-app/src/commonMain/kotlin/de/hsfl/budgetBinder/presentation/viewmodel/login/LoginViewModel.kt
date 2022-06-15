@@ -73,16 +73,10 @@ class LoginViewModel(
                     _emailText.value = emailText.value.copy(emailValid = false)
                 }
             }
-            is LoginEvent.OnRegisterScreen -> {
-                scope.launch {
-                    routerFlow.navigateTo(Screen.Register)
-                }
-            }
+            is LoginEvent.OnRegisterScreen -> routerFlow.navigateTo(Screen.Register)
             is LoginEvent.OnServerUrlDialogConfirm -> {
-                scope.launch {
-                    toggleDialog()
-                    dataFlow.storeServerUrl(Url(urlString = serverUrlText.value.serverAddress))
-                }
+                toggleDialog()
+                dataFlow.storeServerUrl(Url(urlString = serverUrlText.value.serverAddress))
                 auth(email = emailText.value.email, password = passwordText.value.password)
             }
             is LoginEvent.OnServerUrlDialogDismiss -> toggleDialog()
