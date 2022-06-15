@@ -131,7 +131,11 @@ object AppStylesheet : StyleSheet() {
         textAlign("center")
         padding(10.px)
         whiteSpace("nowrap")
-
+    }
+    val newEntryButton by style{
+        position(Position.Fixed)
+        bottom(16.px)
+        marginRight(20.px)
     }
 
     val card by style {
