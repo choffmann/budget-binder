@@ -39,7 +39,7 @@ class RegisterViewModel(
             is RegisterEvent.EnteredFirstname -> _firstNameText.value =
                 firstNameText.value.copy(firstName = event.value)
             is RegisterEvent.EnteredLastname -> _lastNameText.value = lastNameText.value.copy(lastName = event.value)
-            is RegisterEvent.EnteredEmail -> _emailText.value = emailText.value.copy(email = event.value, emailValide = true)
+            is RegisterEvent.EnteredEmail -> _emailText.value = emailText.value.copy(email = event.value, emailValid = true)
             is RegisterEvent.EnteredPassword -> _passwordText.value = passwordText.value.copy(password = event.value)
             is RegisterEvent.OnRegister -> {
                 if(validateEmail(emailText.value.email)) {
@@ -52,7 +52,7 @@ class RegisterViewModel(
                         )
                     )
                 } else {
-                    _emailText.value = emailText.value.copy(emailValide = false)
+                    _emailText.value = emailText.value.copy(emailValid = false)
                 }
 
             }
