@@ -8,6 +8,7 @@ import de.hsfl.budgetBinder.screens.login.LoginComponent
 import de.hsfl.budgetBinder.screens.register.RegisterComponent
 import de.hsfl.budgetBinder.presentation.flow.RouterFlow
 import de.hsfl.budgetBinder.presentation.Screen
+import de.hsfl.budgetBinder.screens.settings.SettingsView
 import org.kodein.di.instance
 
 @Composable
@@ -19,6 +20,7 @@ fun Router() {
         is Screen.Register -> RegisterComponent()
         is Screen.Login -> LoginComponent()
         is Screen.Dashboard -> DashboardComponent()
+        is Screen.Settings.Menu -> SettingsView()
         else -> {}
     }
 }

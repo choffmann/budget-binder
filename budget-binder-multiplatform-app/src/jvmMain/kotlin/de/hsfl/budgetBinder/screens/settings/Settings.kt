@@ -8,7 +8,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import de.hsfl.budgetBinder.compose.icon.AvatarImage
 import de.hsfl.budgetBinder.di
+import de.hsfl.budgetBinder.presentation.Screen
 import de.hsfl.budgetBinder.presentation.UiEvent
+import de.hsfl.budgetBinder.presentation.flow.DataFlow
+import de.hsfl.budgetBinder.presentation.flow.RouterFlow
 import de.hsfl.budgetBinder.presentation.viewmodel.settings.SettingsViewModel
 import kotlinx.coroutines.flow.collectLatest
 import org.kodein.di.instance
@@ -17,7 +20,10 @@ import org.kodein.di.instance
 fun SettingsView() {
     val scope = rememberCoroutineScope()
     val viewModel: SettingsViewModel by di.instance()
-    val userState = viewModel.userState.collectAsState(scope.coroutineContext)
+    val dataFlow: DataFlow by di.instance()
+    val routerFlow: RouterFlow by di.instance()
+    val userState = dataFlow.userState.collectAsState(scope.coroutineContext)
+    val screenState = routerFlow.state.collectAsState(scope.coroutineContext)
     val scaffoldState = rememberScaffoldState()
     val loadingState = remember { mutableStateOf(false) }
 
@@ -41,14 +47,9 @@ fun SettingsView() {
             AvatarImage(modifier = Modifier.size(128.dp).padding(16.dp))
             Text(text = "${userState.value.firstName} ${userState.value.name}", style = MaterialTheme.typography.h5)
             Text(text = userState.value.email, style = MaterialTheme.typography.subtitle1)
+            when(screenState.value) {
+                is Screen.Settings.Menu -> SettingsMenuView(modifier = Modifier.fillMaxSize())
+            }
         }
-    }
-}
-
-@OptIn(ExperimentalMaterialApi::class)
-@Composable
-private fun SettingsMenuView(modifier: Modifier = Modifier) {
-    Column(modifier = modifier) {
-        ListItem {  }
     }
 }

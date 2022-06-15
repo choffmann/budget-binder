@@ -7,14 +7,19 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.Color
 import de.hsfl.budgetBinder.di.kodein
+import de.hsfl.budgetBinder.presentation.flow.DataFlow
 import io.ktor.client.engine.cio.*
 import org.kodein.di.compose.withDI
+import org.kodein.di.instance
+import javax.xml.crypto.Data
 
 val di = kodein(ktorEngine = CIO.create())
 
 @Composable
 fun App() = withDI(di) {
-    val darkTheme = remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
+    val dataFlow: DataFlow by di.instance()
+    val darkTheme = dataFlow.darkModeState.collectAsState(scope.coroutineContext)
     val scaffoldState = rememberScaffoldState()
     MaterialTheme(
         colors = if (darkTheme.value) darkColors() else lightColors()
