@@ -15,6 +15,7 @@ import de.hsfl.budgetBinder.domain.usecase.storage.StoreServerUrlUseCase
 import de.hsfl.budgetBinder.domain.usecase.storage.StoreUserStateUseCase
 import de.hsfl.budgetBinder.presentation.flow.DataFlow
 import de.hsfl.budgetBinder.presentation.flow.RouterFlow
+import de.hsfl.budgetBinder.presentation.flow.UiEventSharedFlow
 import de.hsfl.budgetBinder.presentation.viewmodel.login.LoginViewModel
 import de.hsfl.budgetBinder.presentation.viewmodel.register.RegisterViewModel
 import de.hsfl.budgetBinder.presentation.viewmodel.*
@@ -82,6 +83,7 @@ fun kodein(ktorEngine: HttpClientEngine) = DI {
     // Flows
     bindSingleton { RouterFlow(instance(), instance()) }
     bindSingleton { DataFlow(instance(), instance()) }
+    bindSingleton { UiEventSharedFlow }
 
     // ViewModels
     bindSingleton { LoginViewModel(instance(), instance(), instance(), instance()) }
