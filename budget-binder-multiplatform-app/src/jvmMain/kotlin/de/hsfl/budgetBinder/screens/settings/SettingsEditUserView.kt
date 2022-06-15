@@ -18,7 +18,7 @@ import kotlinx.coroutines.flow.collectLatest
 import org.kodein.di.instance
 
 @Composable
-fun SettingsEditUserView(modifier: Modifier = Modifier) {
+fun SettingsEditUserView(modifier: Modifier = Modifier, scaffoldState: ScaffoldState) {
     val scope = rememberCoroutineScope()
     val viewModel: SettingsEditUserViewModel by di.instance()
     val firstNameText = viewModel.firstNameText.collectAsState()
@@ -26,7 +26,6 @@ fun SettingsEditUserView(modifier: Modifier = Modifier) {
     val emailText = viewModel.emailText.collectAsState(scope.coroutineContext)
     val passwordText = viewModel.passwordText.collectAsState(scope.coroutineContext)
     val loadingState = remember { mutableStateOf(false) }
-    val scaffoldState = rememberScaffoldState()
 
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->
@@ -40,53 +39,51 @@ fun SettingsEditUserView(modifier: Modifier = Modifier) {
         }
     }
 
-    Scaffold(scaffoldState = scaffoldState) {
-        if (loadingState.value) {
-            LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
-        }
-        Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
-            SettingsTextField(
-                modifier = Modifier.padding(8.dp),
-                value = firstNameText.value.firstName,
-                onValueChange = { viewModel.onEvent(EditUserEvent.EnteredFirstName(it)) },
-                label = { Text("Firstname") },
-                isError = !firstNameText.value.firstNameIsValid,
-                enabled = !loadingState.value,
-                errorText = "Firstname can't be blank"
-            )
-            SettingsTextField(
-                modifier = Modifier.padding(8.dp),
-                value = lastNameText.value.lastName,
-                onValueChange = { viewModel.onEvent(EditUserEvent.EnteredLastName(it)) },
-                label = { Text("Lastname") },
-                isError = !lastNameText.value.lastNameIsValid,
-                enabled = !loadingState.value,
-                errorText = "Lastname can't be blank"
-            )
-            SettingsTextField(
-                modifier = Modifier.padding(8.dp),
-                value = emailText.value,
-                onValueChange = { },
-                label = { Text("Email") },
-                enabled = false,
-            )
-            SettingsTextField(
-                modifier = Modifier.padding(8.dp),
-                value = passwordText.value.password,
-                onValueChange = { viewModel.onEvent(EditUserEvent.EnteredPassword(it)) },
-                label = { Text("Password") },
-                isError = !passwordText.value.passwordIsValid,
-                enabled = !loadingState.value,
-                errorText = "Password can't be blank"
-            )
-            Row {
-                TextButton(onClick = { viewModel.onEvent(EditUserEvent.OnGoBack) }) {
-                    Text("Back")
-                }
-                Spacer(modifier = Modifier.width(8.dp))
-                Button(onClick = { viewModel.onEvent(EditUserEvent.OnUpdate) }) {
-                    Text("Update")
-                }
+    if (loadingState.value) {
+        LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+    }
+    Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
+        SettingsTextField(
+            modifier = Modifier.padding(8.dp),
+            value = firstNameText.value.firstName,
+            onValueChange = { viewModel.onEvent(EditUserEvent.EnteredFirstName(it)) },
+            label = { Text("Firstname") },
+            isError = !firstNameText.value.firstNameIsValid,
+            enabled = !loadingState.value,
+            errorText = "Firstname can't be blank"
+        )
+        SettingsTextField(
+            modifier = Modifier.padding(8.dp),
+            value = lastNameText.value.lastName,
+            onValueChange = { viewModel.onEvent(EditUserEvent.EnteredLastName(it)) },
+            label = { Text("Lastname") },
+            isError = !lastNameText.value.lastNameIsValid,
+            enabled = !loadingState.value,
+            errorText = "Lastname can't be blank"
+        )
+        SettingsTextField(
+            modifier = Modifier.padding(8.dp),
+            value = emailText.value,
+            onValueChange = { },
+            label = { Text("Email") },
+            enabled = false,
+        )
+        SettingsTextField(
+            modifier = Modifier.padding(8.dp),
+            value = passwordText.value.password,
+            onValueChange = { viewModel.onEvent(EditUserEvent.EnteredPassword(it)) },
+            label = { Text("Password") },
+            isError = !passwordText.value.passwordIsValid,
+            enabled = !loadingState.value,
+            errorText = "Password can't be blank"
+        )
+        Row {
+            TextButton(onClick = { viewModel.onEvent(EditUserEvent.OnGoBack) }) {
+                Text("Back")
+            }
+            Spacer(modifier = Modifier.width(8.dp))
+            Button(onClick = { viewModel.onEvent(EditUserEvent.OnUpdate) }) {
+                Text("Update")
             }
         }
     }
@@ -120,7 +117,7 @@ fun SettingsTextField(
                 }
             }
         )
-        if(isError) {
+        if (isError) {
             Text(text = errorText, style = MaterialTheme.typography.subtitle1, color = MaterialTheme.colors.error)
         }
     }
