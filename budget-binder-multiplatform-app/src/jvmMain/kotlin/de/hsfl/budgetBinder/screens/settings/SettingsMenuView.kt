@@ -54,10 +54,6 @@ fun SettingsMenuView(modifier: Modifier = Modifier) {
         ListItem(modifier = Modifier.clickable(onClick = { viewModel.onEvent(SettingsEvent.OnLogoutAllDevices) }),
             text = { Text("Logout on all device") },
             icon = { Icon(Icons.Filled.ExitToApp, contentDescription = null) })
-        Divider()
-        ListItem(modifier = Modifier.clickable(onClick = { viewModel.onEvent(SettingsEvent.OnShowSnackBar) }),
-            text = { Text("Debug: Show Snackbar") },
-            icon = { Icon(Icons.Filled.Email, contentDescription = null) })
         Spacer(modifier = Modifier.height(4.dp))
         Text(
             modifier = Modifier.padding(start = 8.dp),
