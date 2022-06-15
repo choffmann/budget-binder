@@ -71,7 +71,10 @@ class SettingsEditUserViewModel(
                     }
                 }
             }
-            is EditUserEvent.OnGoBack -> routerFlow.navigateTo(Screen.Settings.Menu)
+            is EditUserEvent.OnGoBack -> {
+                resetFlows()
+                routerFlow.navigateTo(Screen.Settings.Menu)
+            }
         }
     }
 
@@ -120,5 +123,12 @@ class SettingsEditUserViewModel(
                 }
             }
         }
+    }
+
+    private fun resetFlows() {
+        _firstNameText.value =
+            firstNameText.value.copy(firstName = dataFlow.userState.value.firstName, firstNameIsValid = true)
+        _lastNameText.value = lastNameText.value.copy(lastName = dataFlow.userState.value.name, lastNameIsValid = true)
+        _passwordText.value = passwordText.value.copy(password = passwordPlaceholder, passwordIsValid = true)
     }
 }
