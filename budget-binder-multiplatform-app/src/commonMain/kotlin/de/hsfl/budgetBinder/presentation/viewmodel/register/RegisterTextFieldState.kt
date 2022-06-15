@@ -5,5 +5,5 @@ data class RegisterTextFieldState(
     val lastName: String = "",
     val email: String = "",
     val password: String = "",
-    val emailValide: Boolean = true
+    val emailValid: Boolean = true
 )

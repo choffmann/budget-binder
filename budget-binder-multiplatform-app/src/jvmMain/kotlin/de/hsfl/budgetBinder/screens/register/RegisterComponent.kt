@@ -68,7 +68,7 @@ fun RegisterComponent() {
                 value = emailTextState.value.email,
                 onValueChange = { viewModel.onEvent(RegisterEvent.EnteredEmail(it)) },
                 label = { Text("Email") },
-                isError = !emailTextState.value.emailValide,
+                isError = !emailTextState.value.emailValid,
                 enabled = !loadingState.value
             )
             OutlinedTextField(

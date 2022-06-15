@@ -17,7 +17,7 @@ class GetAllCategoriesUseCase(private val repository: CategoryRepository) {
             repository.getAllCategories().let { response ->
                 response.data?.let {
                     emit(DataResponse.Success(it))
-                } ?: response.error?.let { error ->
+                } ?: response.error!!.let { error ->
                     when (error.code) {
                         HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized(error))
                         else -> emit(DataResponse.Error(error))
@@ -38,7 +38,7 @@ class GetAllCategoriesUseCase(private val repository: CategoryRepository) {
             repository.getAllCategories(period).let { response ->
                 response.data?.let {
                     emit(DataResponse.Success(it))
-                } ?: response.error?.let { error ->
+                } ?: response.error!!.let { error ->
                     when (error.code) {
                         HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized(error))
                         else -> emit(DataResponse.Error(error))
@@ -61,7 +61,7 @@ class CreateCategoryUseCase(private val repository: CategoryRepository) {
             repository.createNewCategory(category).let { response ->
                 response.data?.let {
                     emit(DataResponse.Success(it))
-                } ?: response.error?.let { error ->
+                } ?: response.error!!.let { error ->
                     when (error.code) {
                         HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized(error))
                         else -> emit(DataResponse.Error(error))
@@ -84,7 +84,7 @@ class GetCategoryByIdUseCase(private val repository: CategoryRepository) {
             repository.getCategoryById(id).let { response ->
                 response.data?.let {
                     emit(DataResponse.Success(it))
-                } ?: response.error?.let { error ->
+                } ?: response.error!!.let { error ->
                     when (error.code) {
                         HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized(error))
                         else -> emit(DataResponse.Error(error))
@@ -107,7 +107,7 @@ class ChangeCategoryByIdUseCase(private val repository: CategoryRepository) {
             repository.changeCategoryById(category, id).let { response ->
                 response.data?.let {
                     emit(DataResponse.Success(it))
-                } ?: response.error?.let { error ->
+                } ?: response.error!!.let { error ->
                     when (error.code) {
                         HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized(error))
                         else -> emit(DataResponse.Error(error))
@@ -130,7 +130,7 @@ class DeleteCategoryByIdUseCase(private val repository: CategoryRepository) {
             repository.deleteCategoryById(id).let { response ->
                 response.data?.let {
                     emit(DataResponse.Success(it))
-                } ?: response.error?.let { error ->
+                } ?: response.error!!.let { error ->
                     when (error.code) {
                         HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized(error))
                         else -> emit(DataResponse.Error(error))
@@ -153,7 +153,7 @@ class GetAllEntriesByCategoryUseCase(private val repository: CategoryRepository)
             repository.getEntriesFromCategory(id).let { response ->
                 response.data?.let {
                     emit(DataResponse.Success(it))
-                } ?: response.error?.let { error ->
+                } ?: response.error!!.let { error ->
                     when (error.code) {
                         HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized(error))
                         else -> emit(DataResponse.Error(error))
