@@ -17,6 +17,7 @@ import org.jetbrains.compose.web.dom.Div
 import org.jetbrains.compose.web.dom.Text
 import org.kodein.di.compose.localDI
 import org.kodein.di.instance
+import kotlin.math.absoluteValue
 
 @Composable
 fun EntryComponent(screenState: MutableState<Screen>) {
@@ -56,8 +57,13 @@ fun EntryListElement(entry: Entry, categoryList : List<Category>){
     }) {
         CategoryImageToIcon(categoryIdToCategory(entry.category_id,categoryList).image)
         Div(attrs = {classes(AppStylesheet.entryListElementText)}){Div(attrs = { classes("mdc-typography--headline5", AppStylesheet.text) }) {Text(entry.name)}}
-        Div(attrs = {classes(AppStylesheet.imageFlexContainer)}){Div(attrs = { classes("mdc-typography--headline5",AppStylesheet.text) }){Text(entry.amount.toString()+"€")}}
+        Div(attrs = {classes(AppStylesheet.imageFlexContainer)}){Div(attrs = { classes("mdc-typography--headline5",AppStylesheet.moneyText) }){Text(amountToString(entry.amount))}}
     }
+}
+fun amountToString(amount:Float):String{
+    //This whole thing just so it's "- 10 €" and not "-10 €"
+    val x = if (amount < 0) "-" else ""
+    return "$x ${amount.absoluteValue} €"
 }
 
 @Composable
