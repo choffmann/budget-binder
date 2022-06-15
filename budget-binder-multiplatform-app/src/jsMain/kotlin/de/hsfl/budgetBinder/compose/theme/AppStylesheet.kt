@@ -76,6 +76,12 @@ object AppStylesheet : StyleSheet() {
         textAlign("center")
         padding(10.px)
     }
+    val moneyText by style{
+        textAlign("center")
+        padding(10.px)
+        whiteSpace("nowrap")
+
+    }
 
     val card by style {
         margin(10.px)
