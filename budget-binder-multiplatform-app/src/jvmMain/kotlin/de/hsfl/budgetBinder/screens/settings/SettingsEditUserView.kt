@@ -21,7 +21,7 @@ import org.kodein.di.instance
 fun SettingsEditUserView(modifier: Modifier = Modifier) {
     val scope = rememberCoroutineScope()
     val viewModel: SettingsEditUserViewModel by di.instance()
-    val firstNameText = viewModel.firstNameText.collectAsState(scope.coroutineContext)
+    val firstNameText = viewModel.firstNameText.collectAsState()
     val lastNameText = viewModel.lastNameText.collectAsState(scope.coroutineContext)
     val emailText = viewModel.emailText.collectAsState(scope.coroutineContext)
     val passwordText = viewModel.passwordText.collectAsState(scope.coroutineContext)
@@ -46,6 +46,7 @@ fun SettingsEditUserView(modifier: Modifier = Modifier) {
         }
         Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
             SettingsTextField(
+                modifier = Modifier.padding(8.dp),
                 value = firstNameText.value.firstName,
                 onValueChange = { viewModel.onEvent(EditUserEvent.EnteredFirstName(it)) },
                 label = { Text("Firstname") },
@@ -54,24 +55,27 @@ fun SettingsEditUserView(modifier: Modifier = Modifier) {
                 errorText = "Firstname can't be blank"
             )
             SettingsTextField(
+                modifier = Modifier.padding(8.dp),
                 value = lastNameText.value.lastName,
                 onValueChange = { viewModel.onEvent(EditUserEvent.EnteredLastName(it)) },
                 label = { Text("Lastname") },
-                isError = !firstNameText.value.lastNameIsValid,
+                isError = !lastNameText.value.lastNameIsValid,
                 enabled = !loadingState.value,
                 errorText = "Lastname can't be blank"
             )
             SettingsTextField(
+                modifier = Modifier.padding(8.dp),
                 value = emailText.value,
                 onValueChange = { },
                 label = { Text("Email") },
                 enabled = false,
             )
             SettingsTextField(
+                modifier = Modifier.padding(8.dp),
                 value = passwordText.value.password,
                 onValueChange = { viewModel.onEvent(EditUserEvent.EnteredPassword(it)) },
                 label = { Text("Password") },
-                isError = !firstNameText.value.passwordIsValid,
+                isError = !passwordText.value.passwordIsValid,
                 enabled = !loadingState.value,
                 errorText = "Password can't be blank"
             )

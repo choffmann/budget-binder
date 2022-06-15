@@ -5,13 +5,11 @@ import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.graphics.Color
 import de.hsfl.budgetBinder.di.kodein
 import de.hsfl.budgetBinder.presentation.flow.DataFlow
 import io.ktor.client.engine.cio.*
 import org.kodein.di.compose.withDI
 import org.kodein.di.instance
-import javax.xml.crypto.Data
 
 val di = kodein(ktorEngine = CIO.create())
 
