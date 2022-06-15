@@ -5,10 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.Build
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
@@ -48,5 +45,9 @@ fun SettingsMenuView(modifier: Modifier = Modifier) {
             text = { Text("Server") },
             icon = { Icon(Icons.Filled.Edit, contentDescription = null) },
             trailing = { Icon(Icons.Filled.KeyboardArrowRight, contentDescription = null) })
+        Divider()
+        ListItem(modifier = Modifier.clickable(onClick = { viewModel.onEvent(SettingsEvent.OnLogoutAllDevices) }),
+            text = { Text("Logout on all device") },
+            icon = { Icon(Icons.Filled.ExitToApp, contentDescription = null) })
     }
 }
