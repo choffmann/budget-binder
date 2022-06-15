@@ -49,6 +49,7 @@ fun SettingsView() {
             Text(text = userState.value.email, style = MaterialTheme.typography.subtitle1)
             when(screenState.value) {
                 is Screen.Settings.Menu -> SettingsMenuView(modifier = Modifier.fillMaxSize())
+                is Screen.Settings.User -> SettingsEditUserView(modifier = Modifier.fillMaxSize())
             }
         }
     }

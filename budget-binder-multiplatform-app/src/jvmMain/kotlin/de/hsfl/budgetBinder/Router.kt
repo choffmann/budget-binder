@@ -21,6 +21,7 @@ fun Router() {
         is Screen.Login -> LoginComponent()
         is Screen.Dashboard -> DashboardComponent()
         is Screen.Settings.Menu -> SettingsView()
+        is Screen.Settings.User -> SettingsView()
         else -> {}
     }
 }
