@@ -27,7 +27,7 @@ fun SettingsView() {
     val scaffoldState = rememberScaffoldState()
     val loadingState = remember { mutableStateOf(false) }
 
-    LaunchedEffect(key1 = true) {
+    /*LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->
             when (event) {
                 is UiEvent.ShowLoading -> loadingState.value = true
@@ -37,21 +37,22 @@ fun SettingsView() {
                 }
             }
         }
-    }
+    }*/
 
-    Scaffold(scaffoldState = scaffoldState) {
-        if (loadingState.value) {
-            LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
-        }
-        Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
-            AvatarImage(modifier = Modifier.size(128.dp).padding(16.dp))
-            Text(text = "${userState.value.firstName} ${userState.value.name}", style = MaterialTheme.typography.h5)
-            Text(text = userState.value.email, style = MaterialTheme.typography.subtitle1)
-            Spacer(modifier = Modifier.height(8.dp))
-            when(screenState.value) {
-                is Screen.Settings.Menu -> SettingsMenuView(modifier = Modifier.fillMaxWidth())
-                is Screen.Settings.User -> SettingsEditUserView(modifier = Modifier.fillMaxWidth(), isLoading = loadingState.value)
-            }
+    if (loadingState.value) {
+        LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+    }
+    Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
+        AvatarImage(modifier = Modifier.size(128.dp).padding(16.dp))
+        Text(text = "${userState.value.firstName} ${userState.value.name}", style = MaterialTheme.typography.h5)
+        Text(text = userState.value.email, style = MaterialTheme.typography.subtitle1)
+        Spacer(modifier = Modifier.height(8.dp))
+        when (screenState.value) {
+            is Screen.Settings.Menu -> SettingsMenuView(modifier = Modifier.fillMaxWidth())
+            is Screen.Settings.User -> SettingsEditUserView(
+                modifier = Modifier.fillMaxWidth(),
+                isLoading = loadingState.value
+            )
         }
     }
 }
