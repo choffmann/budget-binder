@@ -47,9 +47,9 @@ class SettingsEditUserViewModel(
     fun onEvent(event: EditUserEvent) {
         when (event) {
             is EditUserEvent.EnteredFirstName -> _firstNameText.value =
-                firstNameText.value.copy(firstName = event.value)
-            is EditUserEvent.EnteredLastName -> _lastNameText.value = lastNameText.value.copy(lastName = event.value)
-            is EditUserEvent.EnteredPassword -> _passwordText.value = passwordText.value.copy(password = event.value)
+                firstNameText.value.copy(firstName = event.value, firstNameIsValid = true)
+            is EditUserEvent.EnteredLastName -> _lastNameText.value = lastNameText.value.copy(lastName = event.value, lastNameIsValid = true)
+            is EditUserEvent.EnteredPassword -> _passwordText.value = passwordText.value.copy(password = event.value, passwordIsValid = true)
             is EditUserEvent.OnUpdate -> {
                 if (checkValidInput()) {
                     // Check if password is changed
