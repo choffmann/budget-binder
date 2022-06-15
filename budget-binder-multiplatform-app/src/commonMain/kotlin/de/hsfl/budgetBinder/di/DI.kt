@@ -10,6 +10,7 @@ import de.hsfl.budgetBinder.domain.repository.CategoryRepository
 import de.hsfl.budgetBinder.domain.repository.EntryRepository
 import de.hsfl.budgetBinder.domain.repository.UserRepository
 import de.hsfl.budgetBinder.domain.usecase.*
+import de.hsfl.budgetBinder.domain.usecase.storage.StoreDarkModeUseCase
 import de.hsfl.budgetBinder.domain.usecase.storage.StoreServerUrlUseCase
 import de.hsfl.budgetBinder.domain.usecase.storage.StoreUserStateUseCase
 import de.hsfl.budgetBinder.presentation.flow.DataFlow
@@ -69,6 +70,7 @@ fun kodein(ktorEngine: HttpClientEngine) = DI {
     bindSingleton { NavigateToScreenUseCase() }
     bindSingleton { StoreUserStateUseCase() }
     bindSingleton { StoreServerUrlUseCase() }
+    bindSingleton { StoreDarkModeUseCase() }
     bindSingleton { EntriesUseCases(instance(), instance(), instance(), instance(), instance()) }
     bindSingleton { CategoriesUseCases(instance(), instance(), instance(), instance(), instance(), instance()) }
     bindSingleton { SettingsUseCases(instance(), instance(), instance()) }

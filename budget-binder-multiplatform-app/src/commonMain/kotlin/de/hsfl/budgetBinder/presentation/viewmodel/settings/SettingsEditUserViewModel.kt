@@ -65,7 +65,7 @@ class SettingsEditUserViewModel(
                     }
                 }
             }
-            is EditUserEvent.OnGoBack -> {}
+            is EditUserEvent.OnGoBack -> routerFlow.navigateTo(Screen.Settings.Menu)
         }
     }
 
