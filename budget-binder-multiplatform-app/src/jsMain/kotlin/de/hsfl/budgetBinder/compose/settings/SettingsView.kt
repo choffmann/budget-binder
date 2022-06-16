@@ -1,6 +1,7 @@
 package de.hsfl.budgetBinder.compose.settings
 
 import androidx.compose.runtime.*
+import de.hsfl.budgetBinder.compose.DeleteDialog
 import de.hsfl.budgetBinder.presentation.UiState
 import de.hsfl.budgetBinder.compose.MainFlexContainer
 import de.hsfl.budgetBinder.compose.theme.AppStylesheet
@@ -20,6 +21,7 @@ fun SettingsView(
     onDeleteButtonPressed: () -> Unit,
     onChangeButtonPressed: () -> Unit
 ) {
+    var deleteDialog by remember { mutableStateOf(false) }
     val viewState by remember { state }
 
     topBarMain(
@@ -105,13 +107,18 @@ fun SettingsView(
                 Button(
                     attrs = {
                         classes("mdc-button", "mdc-button--raised")
-                        onClick { onDeleteButtonPressed() }
+                        onClick {
+                            deleteDialog = true
+                        }
                         style { flex(100.percent) }
                     }
                 ) {
                     Text("Delete User")
                 }
             }
+        }
+        if (deleteDialog) {
+            DeleteDialog(false, {onDeleteButtonPressed}) { Text("Delete User?") }
         }
     }
 }
