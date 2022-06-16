@@ -4,7 +4,9 @@ import androidx.compose.runtime.*
 import de.hsfl.budgetBinder.common.Category
 import de.hsfl.budgetBinder.common.Constants.DEFAULT_CATEGORY
 import de.hsfl.budgetBinder.common.Entry
+import de.hsfl.budgetBinder.compose.theme.AppStylesheet
 import de.hsfl.budgetBinder.domain.usecase.*
+import de.hsfl.budgetBinder.presentation.CategoryImageToIcon
 import de.hsfl.budgetBinder.presentation.Screen
 import de.hsfl.budgetBinder.presentation.viewmodel.CategoryViewModel
 import di
@@ -92,7 +94,11 @@ fun BudgetBar(category: Category, entryList: List<Entry>) {
     for (entry in entryList) {
         usedBudget -= entry.amount //Money spent negative, so we want to add the negative amount (- - = +)to usedBudget
     }
-    H1(attrs={classes("mdc-typography--headline4")}) { Text("${category.name} - Budget") }
+    H1(attrs={classes("mdc-typography--headline4", AppStylesheet.flexContainer)}) {
+        CategoryImageToIcon(category.image)
+        Text("${category.name} - Budget")
+    }
+
     Div {
         if (usedBudget <= budget && budget > 0) { //Normal not Spent Budget
             //Money Text
