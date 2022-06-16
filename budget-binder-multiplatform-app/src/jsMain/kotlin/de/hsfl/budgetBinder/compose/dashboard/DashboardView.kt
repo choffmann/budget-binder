@@ -71,6 +71,7 @@ fun DashboardView(
         })
 
     MainFlexContainer {
+        
         Div { DashboardData(categoryList, entryList, onEntryEditButton) }
         CreateNewEntryButton(onEntryCreateButton)
         //Process new Category Data
