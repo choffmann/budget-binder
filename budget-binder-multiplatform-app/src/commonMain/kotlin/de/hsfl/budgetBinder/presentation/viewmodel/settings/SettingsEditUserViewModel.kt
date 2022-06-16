@@ -132,6 +132,7 @@ class SettingsEditUserViewModel(
                     is DataResponse.Loading -> _eventFlow.emit(UiEvent.ShowLoading)
                     is DataResponse.Error -> _eventFlow.emit(UiEvent.ShowError(response.error!!.message))
                     is DataResponse.Success -> {
+                        _eventFlow.emit(UiEvent.ShowSuccess("User update successfully"))
                         dataFlow.storeUserState(response.data!!)
                         routerFlow.navigateTo(Screen.Settings.Menu)
                     }
