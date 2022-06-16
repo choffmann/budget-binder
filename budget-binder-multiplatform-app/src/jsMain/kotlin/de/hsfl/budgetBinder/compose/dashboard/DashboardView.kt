@@ -73,54 +73,53 @@ fun DashboardView(
     MainFlexContainer {
         Div { DashboardData(categoryList, entryList, onEntryEditButton) }
         CreateNewEntryButton(onEntryCreateButton)
-        FeedbackSnackbar("haha test")
-    }
-    //Process new Category Data
-    when (categoriesViewState) {
-        is UiState.Success<*> -> {
-            //Updates Data
-            // https://stackoverflow.com/questions/36569421/kotlin-how-to-work-with-list-casts-unchecked-cast-kotlin-collections-listkot
-            when (val element = (categoriesViewState as UiState.Success<*>).element) {
-                is List<*> -> {
-                    element.filterIsInstance<Category>()
-                        .let {
-                            if (it.size == element.size) {
-                                categoryList = it
+        //Process new Category Data
+        when (categoriesViewState) {
+            is UiState.Success<*> -> {
+                //Updates Data
+                // https://stackoverflow.com/questions/36569421/kotlin-how-to-work-with-list-casts-unchecked-cast-kotlin-collections-listkot
+                when (val element = (categoriesViewState as UiState.Success<*>).element) {
+                    is List<*> -> {
+                        element.filterIsInstance<Category>()
+                            .let {
+                                if (it.size == element.size) {
+                                    categoryList = it
+                                }
                             }
-                        }
+                    }
                 }
             }
-        }
-        is UiState.Error -> {
-            Text((categoriesViewState as UiState.Error).error)
-        }
-        is UiState.Loading -> {
-            //CircularProgressIndicator()
-        }
-    }
-    //Process new Entry Data
-    when (entriesViewState) {
-        is UiState.Success<*> -> {
-            //Updates Data
-            when (val element = (entriesViewState as UiState.Success<*>).element) {
-                is List<*> -> {
-                    element.filterIsInstance<Entry>()
-                        .let {
-                            if (it.size == element.size) {
-                                entryList = it
-                            }
-                        }
-                }
+            is UiState.Error -> {
+                FeedbackSnackbar((entriesViewState as UiState.Error).error)
+            }
+            is UiState.Loading -> {
+                //CircularProgressIndicator()
             }
         }
-        is UiState.Error -> {
-            FeedbackSnackbar((entriesViewState as UiState.Error).error) //TODO: make it work
-            Text((entriesViewState as UiState.Error).error)
-        }
-        is UiState.Loading -> {
-            //CircularProgressIndicator()
+        //Process new Entry Data
+        when (entriesViewState) {
+            is UiState.Success<*> -> {
+                //Updates Data
+                when (val element = (entriesViewState as UiState.Success<*>).element) {
+                    is List<*> -> {
+                        element.filterIsInstance<Entry>()
+                            .let {
+                                if (it.size == element.size) {
+                                    entryList = it
+                                }
+                            }
+                    }
+                }
+            }
+            is UiState.Error -> {
+                FeedbackSnackbar((entriesViewState as UiState.Error).error)
+            }
+            is UiState.Loading -> {
+                //CircularProgressIndicator()
+            }
         }
     }
+
 
 
 }
