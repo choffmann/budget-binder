@@ -1,15 +1,20 @@
 package de.hsfl.budgetBinder.screens.settings
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import de.hsfl.budgetBinder.compose.textfield.SettingsPasswordTextField
 import de.hsfl.budgetBinder.compose.textfield.SettingsTextField
 import de.hsfl.budgetBinder.di
 import de.hsfl.budgetBinder.presentation.UiEvent
@@ -25,8 +30,14 @@ fun SettingsEditUserView(modifier: Modifier = Modifier, isLoading: Boolean) {
     val lastNameText = viewModel.lastNameText.collectAsState()
     val emailText = viewModel.emailText.collectAsState()
     val passwordText = viewModel.passwordText.collectAsState()
+    val confirmedPasswordText = viewModel.confirmedPassword.collectAsState()
+    val scrollState = rememberScrollState()
 
-    Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
+    // TODO: Fit the rest of TextField with Password Row
+    Column(
+        modifier = modifier.background(Color.Gray).verticalScroll(scrollState),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         SettingsTextField(
             value = firstNameText.value.firstName,
             onValueChange = { viewModel.onEvent(EditUserEvent.EnteredFirstName(it)) },
@@ -37,6 +48,7 @@ fun SettingsEditUserView(modifier: Modifier = Modifier, isLoading: Boolean) {
         )
         Spacer(modifier = Modifier.height(8.dp))
         SettingsTextField(
+            //modifier = Modifier.width(IntrinsicSize.Min),
             value = lastNameText.value.lastName,
             onValueChange = { viewModel.onEvent(EditUserEvent.EnteredLastName(it)) },
             label = { Text("Lastname") },
@@ -46,20 +58,24 @@ fun SettingsEditUserView(modifier: Modifier = Modifier, isLoading: Boolean) {
         )
         Spacer(modifier = Modifier.height(8.dp))
         SettingsTextField(
+            //modifier = Modifier.width(IntrinsicSize.Min),
             value = emailText.value,
             onValueChange = { },
             label = { Text("Email") },
             enabled = false,
         )
         Spacer(modifier = Modifier.height(8.dp))
-        SettingsTextField(
-            value = passwordText.value.password,
-            onValueChange = { viewModel.onEvent(EditUserEvent.EnteredPassword(it)) },
-            label = { Text("Password") },
-            isError = !passwordText.value.passwordIsValid,
-            enabled = !isLoading,
-            errorText = "Password can't be blank"
+        SettingsPasswordTextField(
+            spaceBetween = 8.dp,
+            passwordText = passwordText.value.password,
+            onPasswordChange = { viewModel.onEvent(EditUserEvent.EnteredPassword(it)) },
+            confirmedPasswordText = confirmedPasswordText.value.password,
+            onConfirmedPasswordText = { viewModel.onEvent(EditUserEvent.EnteredConfirmedPassword(it)) },
+            passwordIsValid = passwordText.value.passwordIsValid,
+            confirmedPasswordIsValid = confirmedPasswordText.value.confirmedPasswordIsValid,
+            enabled = !isLoading
         )
+
         Spacer(modifier = Modifier.height(8.dp))
         Row {
             TextButton(onClick = { viewModel.onEvent(EditUserEvent.OnGoBack) }) {

@@ -36,7 +36,7 @@ fun SettingsView() {
         when (screenState.value) {
             is Screen.Settings.Menu -> SettingsMenuView(modifier = Modifier.fillMaxWidth())
             is Screen.Settings.User -> SettingsEditUserView(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.padding(16.dp),
                 isLoading = loadingState.value
             )
             is Screen.Settings.Server -> SettingsServerUrlView(modifier = Modifier.fillMaxWidth())
