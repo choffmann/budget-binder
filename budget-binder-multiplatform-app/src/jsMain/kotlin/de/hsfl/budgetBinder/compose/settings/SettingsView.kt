@@ -118,7 +118,7 @@ fun SettingsView(
             }
         }
         if (deleteDialog) {
-            DeleteDialog(false, {onDeleteButtonPressed}) { Text("Delete User?") }
+            DeleteDialog(false, {onDeleteButtonPressed()}, {deleteDialog = false}) { Text("Delete User?") }
         }
     }
 }
