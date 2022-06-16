@@ -51,7 +51,7 @@ class DashboardViewModel(
             }
             is DashboardEvent.OnEntry -> { /* TODO: On Entry Clicked */
             }
-            is DashboardEvent.OnCategoryCreate -> {/* TODO: On Category Create */
+            is DashboardEvent.OnEntryCreate -> {/* TODO: On Category Create */
             }
         }
     }
