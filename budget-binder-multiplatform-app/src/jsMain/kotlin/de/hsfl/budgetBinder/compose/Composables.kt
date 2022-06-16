@@ -1,9 +1,11 @@
 package de.hsfl.budgetBinder.compose
 
+import App
 import androidx.compose.runtime.*
 import de.hsfl.budgetBinder.common.Category
 import androidx.compose.runtime.Composable
 import de.hsfl.budgetBinder.compose.theme.AppStylesheet
+import de.hsfl.budgetBinder.compose.theme.AppStylesheet.style
 import de.hsfl.budgetBinder.presentation.CategoryImageToIcon
 import kotlinx.serialization.json.JsonNull.content
 import org.jetbrains.compose.web.ExperimentalComposeWebSvgApi
@@ -113,50 +115,71 @@ fun CategoryList(
     onOpenDeleteDialog: () -> Unit,
 ) {
     Div {
-        console.log(categoryList.size)
         for (category in categoryList)
             Div(attrs = {
-                classes("mdc-card", AppStylesheet.card, AppStylesheet.flexContainer)
+                classes("mdc-card", AppStylesheet.card)
             }
             ) {
                 Div(
                     attrs = {
-                        classes(AppStylesheet.margin)
-                        style { flex(100.percent) }
+                        classes(AppStylesheet.categoryListElement, AppStylesheet.flexContainer)
                     }
                 ) {
-                    Text("Name: ${category.name}")
-                    Div(attrs = { style { width(3.percent) } }) {
+                    Div(
+                        attrs = {
+                            classes(AppStylesheet.imageFlexContainer)
+                        }
+                    ) {
+                        CategoryImageToIcon(category.image)
+                    }
+                    Div(
+                        attrs = {
+                            classes(AppStylesheet.categoryListElementText)
+                        }
+                    ) {
+                        Div {
+                            Div(attrs = {
+                                classes("mdc-typography--headline4", AppStylesheet.text)
+                            }) { Text(category.name) }
+                            Div(attrs = {
+                                classes("mdc-typography--headline6", AppStylesheet.text)
+                            }) { Text("Budget: ${category.budget}€") }
+                        }
+                    }
+                    Div(attrs = {
+                            classes(AppStylesheet.imageFlexContainer)
+                        }
+                    ) {
                         Svg(viewBox = "0 0 1 1") {//For aspect ratio - tries to fill out wherever it is in
                             Rect(x = 0, y = 0, width = 1, height = 1, {
                                 attr("fill", "#${category.color}")
                             })
                         }
                     }
-                    Div {
-                        Text("Image: ")
-                        CategoryImageToIcon(category.image)
-                    }
-                    Text("Budget: ${category.budget}€")
                 }
                 Div(
                     attrs = {
-                        style { flex(100.percent) }
                         classes(AppStylesheet.flexContainer)
                     }
                 ) {
-                    Div(attrs = { style { flex(75.percent) } }) { }
                     Button(attrs = {
                         classes("mdc-button", "mdc-button--raised", AppStylesheet.marginRight)
                         onClick { }
-                        style { flex(25.percent) }
+                        style {
+                            flex(50.percent)
+                            margin(1.5.percent)
+                        }
                     }) {
                         Text("Edit Category")
                     }
                     Button(attrs = {
                         classes("mdc-button", "mdc-button--raised")
                         onClick { onOpenDeleteDialog() }
-                        style { flex(25.percent) }
+                        style {
+                            flex(50.percent)
+                            margin(1.5.percent)
+                            backgroundColor(Color("#b00020"))
+                        }
                     }) {
                         Text("Delete Category")
                     }
