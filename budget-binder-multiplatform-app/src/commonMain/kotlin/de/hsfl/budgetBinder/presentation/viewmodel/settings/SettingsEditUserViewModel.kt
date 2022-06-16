@@ -3,6 +3,7 @@ package de.hsfl.budgetBinder.presentation.viewmodel.settings
 import de.hsfl.budgetBinder.common.DataResponse
 import de.hsfl.budgetBinder.common.User
 import de.hsfl.budgetBinder.domain.usecase.ChangeMyUserUseCase
+import de.hsfl.budgetBinder.domain.usecase.SettingsUseCases
 import de.hsfl.budgetBinder.presentation.Screen
 import de.hsfl.budgetBinder.presentation.UiEvent
 import de.hsfl.budgetBinder.presentation.flow.DataFlow
@@ -16,10 +17,15 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 
 class SettingsEditUserViewModel(
-    private val changeMyUserUseCase: ChangeMyUserUseCase,
+    private val settingsUseCases: SettingsUseCases,
     private val dataFlow: DataFlow,
     private val routerFlow: RouterFlow,
     private val scope: CoroutineScope
+) : SettingsViewModel(
+    _settingsUseCases = settingsUseCases,
+    _dataFlow = dataFlow,
+    _routerFlow = routerFlow,
+    _scope = scope
 ) {
     private val _firstNameText =
         MutableStateFlow(EditUserState())
@@ -39,7 +45,6 @@ class SettingsEditUserViewModel(
     val emailText: StateFlow<String> = MutableStateFlow(dataFlow.userState.value.email)
 
     private val _eventFlow = UiEventSharedFlow.mutableEventFlow
-    val eventFlow = UiEventSharedFlow.eventFlow
 
     init {
         _firstNameText.value =
@@ -127,14 +132,20 @@ class SettingsEditUserViewModel(
 
     private fun updateUser(user: User.Patch) {
         scope.launch {
-            changeMyUserUseCase(user).collect { response ->
+            settingsUseCases.changeMyUserUseCase(user).collect { response ->
                 when (response) {
                     is DataResponse.Loading -> _eventFlow.emit(UiEvent.ShowLoading)
                     is DataResponse.Error -> _eventFlow.emit(UiEvent.ShowError(response.error!!.message))
                     is DataResponse.Success -> {
-                        _eventFlow.emit(UiEvent.ShowSuccess("User update successfully"))
-                        dataFlow.storeUserState(response.data!!)
-                        routerFlow.navigateTo(Screen.Settings.Menu)
+                        // If user has changed his password, he needs to sign in again
+                        if (user.password != null) {
+                            logOutOnAllDevices("Your password was updated. Please sign in again")
+                        } else {
+                            _eventFlow.emit(UiEvent.ShowSuccess("User update successfully"))
+                            dataFlow.storeUserState(response.data!!)
+                            routerFlow.navigateTo(Screen.Settings.Menu)
+
+                        }
                     }
                     is DataResponse.Unauthorized -> {
                         _eventFlow.emit(UiEvent.ShowError(response.error!!.message))
