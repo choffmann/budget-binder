@@ -84,8 +84,18 @@ fun amountToString(amount: Float): String {
 
 @Composable
 fun EntryList(list: List<Entry>, categoryList: List<Category>, onEntry: (id: Int) -> Unit) {
-    for (entry in list) {
-        EntryListElement(entry, categoryList, onEntry)
+    if (list.isEmpty()) {
+        Div(attrs = {
+            classes(
+                "mdc-typography--headline5",
+                AppStylesheet.text
+            )
+        }) { Text("No Entries in this category") }
+    }
+    else {
+        for (entry in list) {
+            EntryListElement(entry, categoryList, onEntry)
+        }
     }
 }
 
