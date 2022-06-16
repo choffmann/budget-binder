@@ -50,7 +50,7 @@ class RegisterViewModel(
                 confirmedPasswordText.value.copy(confirmedPassword = event.value, confirmedPasswordValid = true)
             is RegisterEvent.OnLoginScreen -> routerFlow.navigateTo(Screen.Login)
             is RegisterEvent.OnRegister -> {
-                if (validateEmail(emailText.value.email) && checkConfirmedPassword()) {
+                if (validateInput()) {
                     register(
                         User.In(
                             firstName = firstNameText.value.firstName,
@@ -59,21 +59,29 @@ class RegisterViewModel(
                             password = passwordText.value.password
                         )
                     )
-                } else {
-                    _emailText.value = emailText.value.copy(emailValid = false)
                 }
-
             }
         }
     }
 
-    private fun checkConfirmedPassword(): Boolean {
-        return if (passwordText.value.password == confirmedPasswordText.value.confirmedPassword) {
-            true
-        } else {
-            _confirmedPasswordText.value = confirmedPasswordText.value.copy(confirmedPasswordValid = false)
-            false
-        }
+    private fun validateInput(): Boolean {
+        val checkEmail =
+            if (validateEmail(emailText.value.email)) {
+                true
+            } else {
+                _emailText.value = emailText.value.copy(emailValid = false)
+                false
+            }
+
+        val checkConfirmedPassword =
+            if (passwordText.value.password == confirmedPasswordText.value.confirmedPassword) {
+                true
+            } else {
+                _confirmedPasswordText.value = confirmedPasswordText.value.copy(confirmedPasswordValid = false)
+                false
+            }
+
+        return checkEmail && checkConfirmedPassword
     }
 
     fun register(user: User.In) {
