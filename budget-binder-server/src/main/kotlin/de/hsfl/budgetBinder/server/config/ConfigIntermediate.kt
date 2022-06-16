@@ -56,11 +56,11 @@ data class ConfigIntermediate(val server: Server?, val dataBase: DataBase, val j
             dbPassword = ""
         } else {
             sqlitePath = ""
-            dbServerAddress = dataBase.serverAddress ?: throw Exception("No dbServerAddress specified")
-            dbServerPort = dataBase.serverPort ?: throw Exception("No dbServerPort specified")
-            dbName = dataBase.name ?: throw Exception("No dbDatabaseName specified")
-            dbUser = dataBase.user ?: throw Exception("No dbUser specified")
-            dbPassword = dataBase.password ?: throw Exception("No dbPassword specified")
+            dbServerAddress = dataBase.serverAddress ?: error("No dbServerAddress specified")
+            dbServerPort = dataBase.serverPort ?: error("No dbServerPort specified")
+            dbName = dataBase.name ?: error("No dbDatabaseName specified")
+            dbUser = dataBase.user ?: error("No dbUser specified")
+            dbPassword = dataBase.password ?: error("No dbPassword specified")
         }
 
         val dev = server?.dev ?: false
@@ -75,9 +75,9 @@ data class ConfigIntermediate(val server: Server?, val dataBase: DataBase, val j
         val keyStorePath: String
         if (ssl) {
             keyStorePassword = server?.keyStorePassword
-                ?: if (dev) "budget-binder-server" else throw Exception("No KeystorePassword provided")
+                ?: if (dev) "budget-binder-server" else error("No KeystorePassword provided")
             keyStorePath = server?.keyStorePath
-                ?: if (dev) "data/dev_keystore.jks" else throw Exception("No KeystorePath provided")
+                ?: if (dev) "data/dev_keystore.jks" else error("No KeystorePath provided")
         } else {
             keyStorePassword = ""
             keyStorePath = ""
@@ -142,7 +142,7 @@ private fun getConfigIntermediateFromEnv(): ConfigIntermediate {
         "SQLITE" -> Config.DBType.SQLITE
         "MYSQL" -> Config.DBType.MYSQL
         "POSTGRES" -> Config.DBType.POSTGRES
-        else -> throw Exception("No Database Type given")
+        else -> error("No Database Type given")
     }
 
     val dataBase = ConfigIntermediate.DataBase(
@@ -155,8 +155,8 @@ private fun getConfigIntermediateFromEnv(): ConfigIntermediate {
         System.getenv("DB_PASSWORD")
     )
 
-    val accessSecret = System.getenv("JWT_ACCESS_SECRET") ?: throw Exception("No AccessTokenSecret given")
-    val refreshSecret = System.getenv("JWT_REFRESH_SECRET") ?: throw Exception("No RefreshTokenSecret given")
+    val accessSecret = System.getenv("JWT_ACCESS_SECRET") ?: error("No AccessTokenSecret given")
+    val refreshSecret = System.getenv("JWT_REFRESH_SECRET") ?: error("No RefreshTokenSecret given")
 
     val jwt = ConfigIntermediate.JWT(
         accessSecret,
