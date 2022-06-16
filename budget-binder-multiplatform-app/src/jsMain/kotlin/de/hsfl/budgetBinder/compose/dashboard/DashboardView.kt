@@ -31,13 +31,12 @@ fun DashboardView(
     val entriesViewState by remember { entriesState }
     var categoryList by remember { mutableStateOf<List<Category>>(emptyList()) }
     var entryList by remember { mutableStateOf<List<Entry>>(emptyList()) }
-
     topBarMain(
         logoButton = {
             Img(
                 src = "images/Logo.png", alt = "Logo", attrs = {
                     classes("mdc-icon-button", AppStylesheet.image)
-                    onClick {  }
+                    onClick { }
                 }
             )
         }, navButtons = {

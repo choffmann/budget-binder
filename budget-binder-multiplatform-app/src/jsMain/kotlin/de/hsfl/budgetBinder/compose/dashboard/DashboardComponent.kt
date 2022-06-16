@@ -19,7 +19,6 @@ fun DashboardComponent(screenState: MutableState<Screen>) {
     val dashboardViewModel = DashboardViewModel(getAllEntriesUseCase,getAllCategoriesUseCase, scope)
     val categoriesViewState = dashboardViewModel.categoriesState.collectAsState(scope)
     val entriesViewState = dashboardViewModel.entriesState.collectAsState(scope)
-
     DashboardView(
         categoriesState = categoriesViewState,
         entriesState = entriesViewState,
