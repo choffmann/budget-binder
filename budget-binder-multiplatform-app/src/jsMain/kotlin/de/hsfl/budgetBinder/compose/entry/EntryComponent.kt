@@ -27,7 +27,14 @@ fun EntryComponent(screenState: MutableState<Screen>) {
     val changeEntryByIdUseCase: ChangeEntryByIdUseCase by di.instance()
     val deleteEntryByIdUseCase: DeleteEntryByIdUseCase by di.instance()
     val createNewEntryUseCase: CreateNewEntryUseCase by di.instance()
-    val userViewModel = EntryViewModel(getAllEntriesUseCase, getEntryByIdUseCase, createNewEntryUseCase,changeEntryByIdUseCase,deleteEntryByIdUseCase, scope)
+    val userViewModel = EntryViewModel(
+        getAllEntriesUseCase,
+        getEntryByIdUseCase,
+        createNewEntryUseCase,
+        changeEntryByIdUseCase,
+        deleteEntryByIdUseCase,
+        scope
+    )
     val viewState = userViewModel.state.collectAsState(scope)
 
     when (screenState.value) {
@@ -38,7 +45,7 @@ fun EntryComponent(screenState: MutableState<Screen>) {
         )
         Screen.EntryEdit -> EntryEditView(
             state = viewState,
-            onBackButton = { screenState.value = Screen.Dashboard}
+            onBackButton = { screenState.value = Screen.Dashboard }
         )
         else -> {}
     }
@@ -46,28 +53,43 @@ fun EntryComponent(screenState: MutableState<Screen>) {
 
 //Should be put in own File
 @Composable
-fun EntryListElement(entry: Entry, categoryList : List<Category>, onEntry: (id:Int) -> Unit){
-    Div (attrs = {
-        classes("mdc-card","mdc-card--outlined", AppStylesheet.entryListElement)
+fun EntryListElement(entry: Entry, categoryList: List<Category>, onEntry: (id: Int) -> Unit) {
+    Div(attrs = {
+        classes("mdc-card", "mdc-card--outlined", AppStylesheet.entryListElement)
         onClick { onEntry(entry.id) }
     }) {
-        CategoryImageToIcon(categoryIdToCategory(entry.category_id,categoryList).image)
-        Div(attrs = {classes(AppStylesheet.entryListElementText)}){Div(attrs = { classes("mdc-typography--headline5", AppStylesheet.text) }) {Text(entry.name)}}
-        Div(attrs = {classes(AppStylesheet.imageFlexContainer)}){Div(attrs = { classes("mdc-typography--headline5",AppStylesheet.moneyText) }){Text(amountToString(entry.amount))}}
+        CategoryImageToIcon(categoryIdToCategory(entry.category_id, categoryList).image)
+        Div(attrs = { classes(AppStylesheet.entryListElementText) }) {
+            Div(attrs = {
+                classes(
+                    "mdc-typography--headline5",
+                    AppStylesheet.text
+                )
+            }) { Text(entry.name) }
+        }
+        Div(attrs = { classes(AppStylesheet.imageFlexContainer) }) {
+            Div(attrs = {
+                classes(
+                    "mdc-typography--headline5",
+                    AppStylesheet.moneyText
+                )
+            }) { Text(amountToString(entry.amount)) }
+        }
     }
 }
-fun amountToString(amount:Float):String{
+
+fun amountToString(amount: Float): String {
     //This whole thing just so it's "- 10 €" and not "-10 €"
     val x = if (amount < 0) "-" else ""
     return "$x ${amount.absoluteValue} €"
 }
 
 @Composable
-fun EntryList(list: List<Entry>, categoryList : List<Category>, onEntry: (id:Int) -> Unit){
-    for (entry in list){
-        EntryListElement(entry,categoryList,onEntry)
+fun EntryList(list: List<Entry>, categoryList: List<Category>, onEntry: (id: Int) -> Unit) {
+    for (entry in list) {
+        EntryListElement(entry, categoryList, onEntry)
     }
 }
 
-fun entriesFromCategory(list: List<Entry>, category_id: Int?):List<Entry> =
+fun entriesFromCategory(list: List<Entry>, category_id: Int?): List<Entry> =
     list.filter { it.category_id == category_id }

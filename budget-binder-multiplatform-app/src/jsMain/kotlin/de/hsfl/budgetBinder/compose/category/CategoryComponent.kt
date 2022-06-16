@@ -90,7 +90,8 @@ fun BudgetBar(category: Category, entryList: List<Entry>) {
         if (usedBudget <= budget && budget > 0) { //Normal not Spent Budget
             //Money Text
             MoneyTextDiv {
-                Div(attrs = { classes("mdc-typography--headline5") }) { Text(usedBudget.toString() + "€") }
+                Div(attrs = {
+                    classes("mdc-typography--headline5") }) { Text(usedBudget.toString() + "€") }
                 Div(attrs = { classes("mdc-typography--headline5") }) { Text(budget.toString() + "€") }
             }
             Svg(viewBox = "0 0 $width $height") {
