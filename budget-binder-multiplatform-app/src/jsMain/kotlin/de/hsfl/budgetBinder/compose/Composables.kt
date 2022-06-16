@@ -108,7 +108,10 @@ fun CategoryImagesToImageList(onClick: (Category.Image) -> Unit) {
 
 @OptIn(ExperimentalComposeWebSvgApi::class)
 @Composable
-fun CategoryList(categoryList: List<Category>) {
+fun CategoryList(
+    categoryList: List<Category>,
+    onOpenDeleteDialog: () -> Unit,
+) {
     Div {
         console.log(categoryList.size)
         for (category in categoryList)
@@ -146,13 +149,13 @@ fun CategoryList(categoryList: List<Category>) {
                     Button(attrs = {
                         classes("mdc-button", "mdc-button--raised", AppStylesheet.marginRight)
                         onClick { }
-                        style { flex(25.percent)}
+                        style { flex(25.percent) }
                     }) {
                         Text("Edit Category")
                     }
                     Button(attrs = {
                         classes("mdc-button", "mdc-button--raised")
-                        onClick { }
+                        onClick { onOpenDeleteDialog() }
                         style { flex(25.percent) }
                     }) {
                         Text("Delete Category")
@@ -163,11 +166,11 @@ fun CategoryList(categoryList: List<Category>) {
 }
 
 @Composable
-fun DeleteDialog( hidden: Boolean, buttonAction: () -> Unit, content: @Composable () -> Unit ){
-    var hiddenValue by remember { mutableStateOf(hidden)}
+fun DeleteDialog(hidden: Boolean, buttonAction: () -> Unit, resetDialog: () -> Unit, content: @Composable () -> Unit) {
+    var hiddenValue by remember { mutableStateOf(hidden) }
     Div(
         attrs = {
-            when(hiddenValue){
+            when (hiddenValue) {
                 false -> classes("mdc-dialog", "mdc-dialog--open")
                 true -> classes("mdc-dialog")
             }
@@ -204,7 +207,10 @@ fun DeleteDialog( hidden: Boolean, buttonAction: () -> Unit, content: @Composabl
                         attrs = {
                             classes("mdc-button", "mdc-dialog__button")
                             attr("data-mdc-dialog-action", "cancel")
-                            onClick { hiddenValue = true }
+                            onClick {
+                                hiddenValue = true
+                                resetDialog()
+                            }
                         }
                     ) {
                         Div(
@@ -228,7 +234,9 @@ fun DeleteDialog( hidden: Boolean, buttonAction: () -> Unit, content: @Composabl
                             attr("data-mdc-dialog-action", "accept")
                             onClick {
                                 buttonAction()
-                                hiddenValue = true }
+                                hiddenValue = true
+                                resetDialog()
+                            }
                         }
                     ) {
                         Div(

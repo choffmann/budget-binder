@@ -4,6 +4,7 @@ import androidx.compose.runtime.*
 import de.hsfl.budgetBinder.common.Category
 import de.hsfl.budgetBinder.common.StateManager.screenState
 import de.hsfl.budgetBinder.compose.CategoryList
+import de.hsfl.budgetBinder.compose.DeleteDialog
 import de.hsfl.budgetBinder.compose.MainFlexContainer
 import de.hsfl.budgetBinder.compose.theme.AppStylesheet
 import de.hsfl.budgetBinder.compose.topBarMain
@@ -23,6 +24,7 @@ fun CategorySummaryView(
     onChangeToCategory: () -> Unit,
     onChangeToSettings: () -> Unit
 ) {
+    var deleteDialog by remember { mutableStateOf(false) }
     var categoryList by remember { mutableStateOf<List<Category>>(emptyList()) }
     val viewState by remember { state }
 
@@ -82,7 +84,7 @@ fun CategorySummaryView(
             }) {
                 Text("Create Category")
             }
-            CategoryList(categoryList)
+            CategoryList(categoryList, {deleteDialog = true})
             Div {
                 when (viewState) {
                     is UiState.Success<*> -> {
@@ -105,6 +107,9 @@ fun CategorySummaryView(
                     }
                 }
             }
+        }
+        if (deleteDialog) {
+            DeleteDialog(false, {}, {deleteDialog = false}) { Text("Delete User?") }
         }
     }
 }
