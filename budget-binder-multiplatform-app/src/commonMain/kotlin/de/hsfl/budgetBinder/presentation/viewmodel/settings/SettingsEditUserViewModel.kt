@@ -3,6 +3,7 @@ package de.hsfl.budgetBinder.presentation.viewmodel.settings
 import de.hsfl.budgetBinder.common.DataResponse
 import de.hsfl.budgetBinder.common.User
 import de.hsfl.budgetBinder.domain.usecase.ChangeMyUserUseCase
+import de.hsfl.budgetBinder.domain.usecase.SettingsUseCases
 import de.hsfl.budgetBinder.presentation.Screen
 import de.hsfl.budgetBinder.presentation.UiEvent
 import de.hsfl.budgetBinder.presentation.flow.DataFlow
@@ -16,10 +17,15 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 
 class SettingsEditUserViewModel(
-    private val changeMyUserUseCase: ChangeMyUserUseCase,
+    private val settingsUseCases: SettingsUseCases,
     private val dataFlow: DataFlow,
     private val routerFlow: RouterFlow,
     private val scope: CoroutineScope
+) : SettingsViewModel(
+    _settingsUseCases = settingsUseCases,
+    _dataFlow = dataFlow,
+    _routerFlow = routerFlow,
+    _scope = scope
 ) {
     private val _firstNameText =
         MutableStateFlow(EditUserState())
@@ -33,24 +39,32 @@ class SettingsEditUserViewModel(
     private val _passwordText = MutableStateFlow(EditUserState())
     val passwordText: StateFlow<EditUserState> = _passwordText
 
+    private val _confirmedPasswordText = MutableStateFlow(EditUserState())
+    val confirmedPassword: StateFlow<EditUserState> = _confirmedPasswordText
+
     val emailText: StateFlow<String> = MutableStateFlow(dataFlow.userState.value.email)
 
     private val _eventFlow = UiEventSharedFlow.mutableEventFlow
-    val eventFlow = UiEventSharedFlow.eventFlow
 
     init {
         _firstNameText.value =
             firstNameText.value.copy(firstName = dataFlow.userState.value.firstName, firstNameIsValid = true)
         _lastNameText.value = lastNameText.value.copy(lastName = dataFlow.userState.value.name, lastNameIsValid = true)
         _passwordText.value = passwordText.value.copy(password = passwordPlaceholder, passwordIsValid = true)
+        _confirmedPasswordText.value =
+            confirmedPassword.value.copy(confirmedPassword = passwordPlaceholder, confirmedPasswordIsValid = true)
     }
 
     fun onEvent(event: EditUserEvent) {
         when (event) {
             is EditUserEvent.EnteredFirstName -> _firstNameText.value =
                 firstNameText.value.copy(firstName = event.value, firstNameIsValid = true)
-            is EditUserEvent.EnteredLastName -> _lastNameText.value = lastNameText.value.copy(lastName = event.value, lastNameIsValid = true)
-            is EditUserEvent.EnteredPassword -> _passwordText.value = passwordText.value.copy(password = event.value, passwordIsValid = true)
+            is EditUserEvent.EnteredLastName -> _lastNameText.value =
+                lastNameText.value.copy(lastName = event.value, lastNameIsValid = true)
+            is EditUserEvent.EnteredPassword -> _passwordText.value =
+                passwordText.value.copy(password = event.value, passwordIsValid = true)
+            is EditUserEvent.EnteredConfirmedPassword -> _confirmedPasswordText.value =
+                confirmedPassword.value.copy(confirmedPassword = event.value, confirmedPasswordIsValid = true)
             is EditUserEvent.OnUpdate -> {
                 if (checkValidInput()) {
                     // Check if password is changed
@@ -104,18 +118,34 @@ class SettingsEditUserViewModel(
                 true
             }
 
-        return checkFirstName && checkLastName && checkPassword
+        val checkConfirmedPassword =
+            if (passwordText.value.password == confirmedPassword.value.confirmedPassword) {
+                true
+            } else {
+                _confirmedPasswordText.value = confirmedPassword.value.copy(confirmedPasswordIsValid = false)
+                false
+            }
+
+
+        return checkFirstName && checkLastName && checkPassword && checkConfirmedPassword
     }
 
     private fun updateUser(user: User.Patch) {
         scope.launch {
-            changeMyUserUseCase(user).collect { response ->
+            settingsUseCases.changeMyUserUseCase(user).collect { response ->
                 when (response) {
                     is DataResponse.Loading -> _eventFlow.emit(UiEvent.ShowLoading)
                     is DataResponse.Error -> _eventFlow.emit(UiEvent.ShowError(response.error!!.message))
                     is DataResponse.Success -> {
-                        dataFlow.storeUserState(response.data!!)
-                        routerFlow.navigateTo(Screen.Settings.Menu)
+                        // If user has changed his password, he needs to sign in again
+                        if (user.password != null) {
+                            logOutOnAllDevices("Your password was updated. Please sign in again")
+                        } else {
+                            _eventFlow.emit(UiEvent.ShowSuccess("User update successfully"))
+                            dataFlow.storeUserState(response.data!!)
+                            routerFlow.navigateTo(Screen.Settings.Menu)
+
+                        }
                     }
                     is DataResponse.Unauthorized -> {
                         _eventFlow.emit(UiEvent.ShowError(response.error!!.message))

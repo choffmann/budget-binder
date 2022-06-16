@@ -5,3 +5,6 @@ import androidx.compose.ui.Modifier
 
 @Composable
 expect fun AppIcon(modifier: Modifier = Modifier)
+
+@Composable
+expect fun AvatarImage(modifier: Modifier = Modifier)

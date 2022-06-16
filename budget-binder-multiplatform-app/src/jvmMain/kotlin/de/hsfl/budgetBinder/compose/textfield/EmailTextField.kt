@@ -42,7 +42,7 @@ fun EmailTextField(
         Text(
             text = "Please enter a valide email address",
             color = MaterialTheme.colors.error,
-            style = MaterialTheme.typography.subtitle2
+            style = MaterialTheme.typography.caption
         )
     }
 }

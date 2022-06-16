@@ -6,4 +6,7 @@ sealed class UiEvent {
 
     // Show Error, for example with a SnackBar
     data class ShowError(val msg: String) : UiEvent()
+
+    // Show Success
+    data class ShowSuccess(val msg: String) : UiEvent()
 }

@@ -13,12 +13,17 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
-class SettingsViewModel(
-    private val settingsUseCases: SettingsUseCases,
-    private val dataFlow: DataFlow,
-    private val routerFlow: RouterFlow,
-    private val scope: CoroutineScope
+open class SettingsViewModel(
+    _settingsUseCases: SettingsUseCases,
+    _dataFlow: DataFlow,
+    _routerFlow: RouterFlow,
+    _scope: CoroutineScope
 ) {
+    private val settingsUseCases: SettingsUseCases = _settingsUseCases
+    private val dataFlow: DataFlow = _dataFlow
+    private val routerFlow: RouterFlow = _routerFlow
+    private val scope: CoroutineScope = _scope
+
     private val _dialogState = MutableStateFlow(false)
     val dialogState: StateFlow<Boolean> = _dialogState
 
@@ -41,13 +46,14 @@ class SettingsViewModel(
     }
 
 
-    private fun logOutOnAllDevices() {
+    fun logOutOnAllDevices(msg: String? = null) {
         scope.launch {
             settingsUseCases.logoutUseCase(onAllDevices = true).collect { response ->
                 when (response) {
                     is DataResponse.Loading -> _eventFlow.emit(UiEvent.ShowLoading)
                     is DataResponse.Error -> _eventFlow.emit(UiEvent.ShowError(response.error!!.message))
                     is DataResponse.Success -> {
+                        msg?.let { _eventFlow.emit(UiEvent.ShowSuccess(it)) }
                         routerFlow.navigateTo(Screen.Login)
                     }
                     is DataResponse.Unauthorized -> {
