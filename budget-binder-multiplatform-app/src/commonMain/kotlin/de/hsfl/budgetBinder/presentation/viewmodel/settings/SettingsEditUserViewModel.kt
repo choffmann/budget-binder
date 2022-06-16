@@ -33,6 +33,9 @@ class SettingsEditUserViewModel(
     private val _passwordText = MutableStateFlow(EditUserState())
     val passwordText: StateFlow<EditUserState> = _passwordText
 
+    private val _confirmedPasswordText = MutableStateFlow(EditUserState())
+    val confirmedPassword: StateFlow<EditUserState> = _confirmedPasswordText
+
     val emailText: StateFlow<String> = MutableStateFlow(dataFlow.userState.value.email)
 
     private val _eventFlow = UiEventSharedFlow.mutableEventFlow
@@ -43,14 +46,19 @@ class SettingsEditUserViewModel(
             firstNameText.value.copy(firstName = dataFlow.userState.value.firstName, firstNameIsValid = true)
         _lastNameText.value = lastNameText.value.copy(lastName = dataFlow.userState.value.name, lastNameIsValid = true)
         _passwordText.value = passwordText.value.copy(password = passwordPlaceholder, passwordIsValid = true)
+        _confirmedPasswordText.value = confirmedPassword.value.copy(confirmedPassword = passwordPlaceholder, confirmedPasswordIsValid = true)
     }
 
     fun onEvent(event: EditUserEvent) {
         when (event) {
             is EditUserEvent.EnteredFirstName -> _firstNameText.value =
                 firstNameText.value.copy(firstName = event.value, firstNameIsValid = true)
-            is EditUserEvent.EnteredLastName -> _lastNameText.value = lastNameText.value.copy(lastName = event.value, lastNameIsValid = true)
-            is EditUserEvent.EnteredPassword -> _passwordText.value = passwordText.value.copy(password = event.value, passwordIsValid = true)
+            is EditUserEvent.EnteredLastName -> _lastNameText.value =
+                lastNameText.value.copy(lastName = event.value, lastNameIsValid = true)
+            is EditUserEvent.EnteredPassword -> _passwordText.value =
+                passwordText.value.copy(password = event.value, passwordIsValid = true)
+            is EditUserEvent.EnteredConfirmedPassword -> _confirmedPasswordText.value =
+                confirmedPassword.value.copy(confirmedPassword = event.value, confirmedPasswordIsValid = true)
             is EditUserEvent.OnUpdate -> {
                 if (checkValidInput()) {
                     // Check if password is changed
@@ -61,7 +69,7 @@ class SettingsEditUserViewModel(
                                 name = lastNameText.value.lastName
                             )
                         )
-                    } else {
+                    } else if(checkValidInput()) {
                         updateUser(
                             User.Patch(
                                 firstName = firstNameText.value.firstName,
@@ -76,6 +84,15 @@ class SettingsEditUserViewModel(
                 resetFlows()
                 routerFlow.navigateTo(Screen.Settings.Menu)
             }
+        }
+    }
+
+    private fun checkConfirmedPassword(): Boolean {
+        return if(passwordText.value.password == confirmedPassword.value.confirmedPassword) {
+            true
+        } else{
+            _confirmedPasswordText.value = confirmedPassword.value.copy(confirmedPasswordIsValid = false)
+            false
         }
     }
 

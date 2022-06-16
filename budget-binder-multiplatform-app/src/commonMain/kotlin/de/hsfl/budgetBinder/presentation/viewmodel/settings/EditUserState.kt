@@ -5,7 +5,9 @@ data class EditUserState(
     val lastName: String = "",
     val email: String = "",
     val password: String = "",
+    val confirmedPassword: String = "",
     val firstNameIsValid: Boolean = true,
     val lastNameIsValid: Boolean = true,
-    val passwordIsValid: Boolean = true
+    val passwordIsValid: Boolean = true,
+    val confirmedPasswordIsValid: Boolean = true
 )
