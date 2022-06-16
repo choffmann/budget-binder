@@ -35,7 +35,7 @@ fun SettingsEditUserView(modifier: Modifier = Modifier, isLoading: Boolean) {
 
     // TODO: Fit the rest of TextField with Password Row
     Column(
-        modifier = modifier.background(Color.Gray).verticalScroll(scrollState),
+        modifier = modifier.verticalScroll(scrollState),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         SettingsTextField(

@@ -18,12 +18,23 @@ import org.kodein.di.instance
 
 @Composable
 fun SettingsView() {
-    val scope = rememberCoroutineScope()
+    val viewModel: SettingsViewModel by di.instance()
     val dataFlow: DataFlow by di.instance()
     val routerFlow: RouterFlow by di.instance()
-    val userState = dataFlow.userState.collectAsState(scope.coroutineContext)
-    val screenState = routerFlow.state.collectAsState(scope.coroutineContext)
+    val userState = dataFlow.userState.collectAsState()
+    val screenState = routerFlow.state.collectAsState()
     val loadingState = remember { mutableStateOf(false) }
+
+
+    // Toggle LoadingState
+    LaunchedEffect(key1 = true) {
+        viewModel.eventFlow.collectLatest {
+            when (it) {
+                is UiEvent.ShowLoading -> loadingState.value = true
+                else -> loadingState.value = false
+            }
+        }
+    }
 
     if (loadingState.value) {
         LinearProgressIndicator(modifier = Modifier.fillMaxWidth())

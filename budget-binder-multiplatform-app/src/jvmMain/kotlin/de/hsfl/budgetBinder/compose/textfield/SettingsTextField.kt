@@ -67,7 +67,32 @@ fun SettingsPasswordTextField(
     confirmedPasswordIsValid: Boolean,
     enabled: Boolean
 ) {
-    BoxWithConstraints {
+    SettingsTextField(
+        modifier = modifier,
+        value = passwordText,
+        onValueChange = onPasswordChange,
+        label = { Text("Password") },
+        isError = !passwordIsValid,
+        enabled = enabled,
+        errorText = "Password can't be blank",
+        visualTransformation = PasswordVisualTransformation(),
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
+    )
+    Spacer(modifier = Modifier.height(spaceBetween))
+    SettingsTextField(
+        modifier = modifier,
+        value = confirmedPasswordText,
+        onValueChange = onConfirmedPasswordText,
+        label = { Text("Confirm Password") },
+        isError = !confirmedPasswordIsValid,
+        enabled = enabled,
+        errorText = "Password didn't match",
+        visualTransformation = PasswordVisualTransformation(),
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
+    )
+
+    // TODO: Check screen size
+    /*BoxWithConstraints {
         if (maxWidth >= 600.dp) {
             Row(modifier = modifier, horizontalArrangement = Arrangement.Center) {
                 SettingsTextField(
@@ -117,5 +142,5 @@ fun SettingsPasswordTextField(
                 )
             }
         }
-    }
+    }*/
 }

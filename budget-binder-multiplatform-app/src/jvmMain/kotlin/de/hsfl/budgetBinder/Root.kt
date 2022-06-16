@@ -33,7 +33,11 @@ fun App() = withDI(di) {
                 is UiEvent.ShowLoading -> loadingState.value = true
                 is UiEvent.ShowError -> {
                     loadingState.value = false
-                    scaffoldState.snackbarHostState.showSnackbar(message = event.msg)
+                    scaffoldState.snackbarHostState.showSnackbar(message = event.msg, actionLabel = "Dismiss")
+                }
+                is UiEvent.ShowSuccess -> {
+                    loadingState.value = false
+                    scaffoldState.snackbarHostState.showSnackbar(message = event.msg, actionLabel = "Dismiss")
                 }
             }
         }
