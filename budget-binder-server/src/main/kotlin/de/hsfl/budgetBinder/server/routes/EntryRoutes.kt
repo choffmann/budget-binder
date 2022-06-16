@@ -5,7 +5,7 @@ import de.hsfl.budgetBinder.common.Category
 import de.hsfl.budgetBinder.common.Entry
 import de.hsfl.budgetBinder.common.ErrorModel
 import de.hsfl.budgetBinder.server.models.UserPrincipal
-import de.hsfl.budgetBinder.server.repository.parseParameterToLocalDateTimeOrErrorMessage
+import de.hsfl.budgetBinder.server.utils.parseParameterToLocalDateTimeOrErrorMessage
 import de.hsfl.budgetBinder.server.services.interfaces.EntryService
 import io.ktor.server.application.*
 import io.ktor.server.auth.*

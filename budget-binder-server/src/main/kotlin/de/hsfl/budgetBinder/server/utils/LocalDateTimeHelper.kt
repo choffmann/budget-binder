@@ -1,4 +1,4 @@
-package de.hsfl.budgetBinder.server.repository
+package de.hsfl.budgetBinder.server.utils
 
 import java.time.LocalDateTime
 

@@ -5,7 +5,7 @@ import de.hsfl.budgetBinder.common.AuthToken
 import de.hsfl.budgetBinder.common.ErrorModel
 import de.hsfl.budgetBinder.common.User
 import de.hsfl.budgetBinder.server.models.UserPrincipal
-import de.hsfl.budgetBinder.server.repository.UnauthorizedException
+import de.hsfl.budgetBinder.server.utils.UnauthorizedException
 import de.hsfl.budgetBinder.server.services.JWTService
 import de.hsfl.budgetBinder.server.services.interfaces.UserService
 import io.ktor.server.application.*

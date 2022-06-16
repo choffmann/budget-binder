@@ -6,7 +6,7 @@ import de.hsfl.budgetBinder.common.ErrorModel
 import de.hsfl.budgetBinder.server.models.CategoryEntity
 import de.hsfl.budgetBinder.server.models.EntryEntity
 import de.hsfl.budgetBinder.server.models.UserEntity
-import de.hsfl.budgetBinder.server.repository.isCreatedAndEndedInPeriod
+import de.hsfl.budgetBinder.server.utils.isCreatedAndEndedInPeriod
 import de.hsfl.budgetBinder.server.services.interfaces.EntryService
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.time.LocalDateTime
