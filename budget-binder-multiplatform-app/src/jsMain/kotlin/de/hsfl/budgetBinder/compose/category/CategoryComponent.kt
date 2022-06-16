@@ -119,9 +119,9 @@ fun BudgetBar(category: Category, entryList: List<Entry>) {
                     attr("fill", "#b00020")
                 })
             }
-        } else if (budget <= 0f) { //No Category View or other unpredictable case
+        } else if (budget <= 0f) { //No Category View or other unpredictable case (or no categories, overall screen)
             MoneyTextDiv {
-                Div(attrs = { classes("mdc-typography--headline5") }) { Text(usedBudget.toString() + "€ without category spent") }
+                Div(attrs = { classes("mdc-typography--headline5") }) { Text(usedBudget.toString() + "€ spent") }
             }
             Svg(viewBox = "0 0 $width $height") {
                 Rect(x = 0, y = 0, width = width, height = height, {
