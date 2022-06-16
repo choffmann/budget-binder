@@ -5,6 +5,7 @@ import de.hsfl.budgetBinder.common.Category
 import androidx.compose.runtime.Composable
 import de.hsfl.budgetBinder.compose.theme.AppStylesheet
 import de.hsfl.budgetBinder.presentation.CategoryImageToIcon
+import kotlinx.serialization.json.JsonNull.content
 import org.jetbrains.compose.web.ExperimentalComposeWebSvgApi
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
@@ -158,5 +159,102 @@ fun CategoryList(categoryList: List<Category>) {
                     }
                 }
             }
+    }
+}
+
+@Composable
+fun DeleteDialog( hidden: Boolean, buttonAction: () -> Unit, content: @Composable () -> Unit ){
+    var hiddenValue by remember { mutableStateOf(hidden)}
+    Div(
+        attrs = {
+            when(hiddenValue){
+                false -> classes("mdc-dialog", "mdc-dialog--open")
+                true -> classes("mdc-dialog")
+            }
+        }
+    ) {
+        Div(
+            attrs = {
+                classes("mdc-dialog__container")
+            }
+        ) {
+            Div(
+                attrs = {
+                    classes("mdc-dialog__surface")
+                    attr("role", "alertdialog")
+                    attr("aria-modal", "true")
+                    attr("aria-labelledby", "my-dialog-title")
+                    attr("aria-describedby", "my-dialog-content")
+                }
+            ) {
+                Div(
+                    attrs = {
+                        classes("mdc-dialog__content")
+                        id("my-dialog-content")
+                    }
+                ) {
+                    content() //Text in Dialog
+                }
+                Div(
+                    attrs = {
+                        classes("mdc-dialog__actions")
+                    }
+                ) {
+                    Button(
+                        attrs = {
+                            classes("mdc-button", "mdc-dialog__button")
+                            attr("data-mdc-dialog-action", "cancel")
+                            onClick { hiddenValue = true }
+                        }
+                    ) {
+                        Div(
+                            attrs = {
+                                classes("mdc-button__ripple")
+                            }
+                        ) {
+
+                        }
+                        Span(
+                            attrs = {
+                                classes("mdc-button__label")
+                            }
+                        ) {
+                            Text("Cancel")
+                        }
+                    }
+                    Button(
+                        attrs = {
+                            classes("mdc-button", "mdc-dialog__button")
+                            attr("data-mdc-dialog-action", "accept")
+                            onClick {
+                                buttonAction()
+                                hiddenValue = true }
+                        }
+                    ) {
+                        Div(
+                            attrs = {
+                                classes("mdc-button__ripple")
+                            }
+                        ) {
+
+                        }
+                        Span(
+                            attrs = {
+                                classes("mdc-button__label")
+                            }
+                        ) {
+                            Text("OK")
+                        }
+                    }
+                }
+            }
+        }
+        Div(
+            attrs = {
+                classes("mdc-dialog__scrim")
+            }
+        ) {
+
+        }
     }
 }
