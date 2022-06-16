@@ -146,7 +146,7 @@ fun DashboardData(categoryList: List<Category>, entryList: List<Entry>, onEntry:
         return newFocus
     }
 
-    if (entryList.isNotEmpty()) {
+    //if (entryList.isNotEmpty()) {
         when (focusedCategory) {
             //Overall View
             -1 -> {
@@ -196,14 +196,14 @@ fun DashboardData(categoryList: List<Category>, entryList: List<Entry>, onEntry:
                 ) //Needs no categoryList, as they have no category
             }
         }
-    } else {
+    /*} else {
         Div(attrs = {
             classes(
                 "mdc-typography--headline5",
                 AppStylesheet.text
             )
         }) { Text("No data to load") }
-    }
+    }*/
 
 }
 
