@@ -32,6 +32,9 @@ class RegisterViewModel(
     private val _passwordText = MutableStateFlow(RegisterTextFieldState())
     val passwordText: StateFlow<RegisterTextFieldState> = _passwordText
 
+    private val _confirmedPasswordText = MutableStateFlow(RegisterTextFieldState())
+    val confirmedPasswordText: StateFlow<RegisterTextFieldState> = _confirmedPasswordText
+
     private val _eventFlow = UiEventSharedFlow.mutableEventFlow
     val eventFlow = UiEventSharedFlow.eventFlow
 
@@ -43,8 +46,11 @@ class RegisterViewModel(
             is RegisterEvent.EnteredEmail -> _emailText.value =
                 emailText.value.copy(email = event.value, emailValid = true)
             is RegisterEvent.EnteredPassword -> _passwordText.value = passwordText.value.copy(password = event.value)
+            is RegisterEvent.EnteredConfirmedPassword -> _confirmedPasswordText.value =
+                confirmedPasswordText.value.copy(confirmedPassword = event.value, confirmedPasswordValid = true)
+            is RegisterEvent.OnLoginScreen -> routerFlow.navigateTo(Screen.Login)
             is RegisterEvent.OnRegister -> {
-                if (validateEmail(emailText.value.email)) {
+                if (validateEmail(emailText.value.email) && checkConfirmedPassword()) {
                     register(
                         User.In(
                             firstName = firstNameText.value.firstName,
@@ -58,7 +64,15 @@ class RegisterViewModel(
                 }
 
             }
-            is RegisterEvent.OnLoginScreen -> routerFlow.navigateTo(Screen.Login)
+        }
+    }
+
+    private fun checkConfirmedPassword(): Boolean {
+        return if (passwordText.value.password == confirmedPasswordText.value.confirmedPassword) {
+            true
+        } else {
+            _confirmedPasswordText.value = confirmedPasswordText.value.copy(confirmedPasswordValid = false)
+            false
         }
     }
 
