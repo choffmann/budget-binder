@@ -17,8 +17,6 @@ fun customTestApplication(block: suspend ApplicationTestBuilder.(client: HttpCli
             dataBase:
                 dbType: SQLITE
                 sqlitePath: file:test?mode=memory&cache=shared
-            server:
-                frontendAddresses: http://localhost:8081
             jwt:
                 accessSecret: testSecret
                 refreshSecret: testSecret2

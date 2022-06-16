@@ -5,7 +5,7 @@ import com.sksamuel.hoplite.addFileSource
 import com.sksamuel.hoplite.yaml.YamlPropertySource
 import java.io.File
 
-data class ConfigIntermediate(val server: Server, val dataBase: DataBase, val jwt: JWT) {
+data class ConfigIntermediate(val server: Server?, val dataBase: DataBase, val jwt: JWT) {
     data class Server(
         val dev: Boolean?,
         val ssl: Boolean?,
@@ -15,7 +15,6 @@ data class ConfigIntermediate(val server: Server, val dataBase: DataBase, val jw
         val sslPort: Int?,
         val keyStorePassword: String?,
         val keyStorePath: String?,
-        val frontendAddresses: List<String>?,
         val noForwardedHeaderSupport: Boolean?
     )
 
@@ -64,29 +63,27 @@ data class ConfigIntermediate(val server: Server, val dataBase: DataBase, val jw
             dbPassword = dataBase.password ?: throw Exception("No dbPassword specified")
         }
 
-        val dev = server.dev ?: false
-        val ssl = server.ssl ?: false
+        val dev = server?.dev ?: false
+        val ssl = server?.ssl ?: false
 
-        val host = server.host ?: "0.0.0.0"
-        val port = server.port ?: 8080
-        val sslHost = server.sslHost ?: "0.0.0.0"
-        val sslPort = server.sslPort ?: 8443
+        val host = server?.host ?: "0.0.0.0"
+        val port = server?.port ?: 8080
+        val sslHost = server?.sslHost ?: "0.0.0.0"
+        val sslPort = server?.sslPort ?: 8443
 
         val keyStorePassword: String
         val keyStorePath: String
         if (ssl) {
-            keyStorePassword = server.keyStorePassword
+            keyStorePassword = server?.keyStorePassword
                 ?: if (dev) "budget-binder-server" else throw Exception("No KeystorePassword provided")
-            keyStorePath = server.keyStorePath
+            keyStorePath = server?.keyStorePath
                 ?: if (dev) "data/dev_keystore.jks" else throw Exception("No KeystorePath provided")
         } else {
             keyStorePassword = ""
             keyStorePath = ""
         }
 
-        val frontendAddresses = server.frontendAddresses ?: emptyList()
-
-        val forwardedHeaderSupport = !(server.noForwardedHeaderSupport ?: false)
+        val forwardedHeaderSupport = !(server?.noForwardedHeaderSupport ?: false)
 
         val jwtAccessSecret = jwt.accessSecret
         val jwtRefreshSecret = jwt.refreshSecret
@@ -114,7 +111,6 @@ data class ConfigIntermediate(val server: Server, val dataBase: DataBase, val jw
                 sslPort,
                 keyStorePassword,
                 keyStorePath,
-                frontendAddresses,
                 forwardedHeaderSupport
             ), jwt = Config.JWT(
                 jwtAccessSecret,
@@ -139,7 +135,6 @@ private fun getConfigIntermediateFromEnv(): ConfigIntermediate {
         System.getenv("SSL_PORT")?.toIntOrNull(),
         System.getenv("KEYSTORE_PASSWORD"),
         System.getenv("KEYSTORE_PATH"),
-        System.getenv("FRONTEND_ADDRESSES")?.replace(" ", "")?.split(","),
         System.getenv("NO_FORWARDED_HEADER") != null
     )
 

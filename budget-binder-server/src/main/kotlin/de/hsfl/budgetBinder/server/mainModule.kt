@@ -24,7 +24,6 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.plugins.callloging.CallLogging
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.server.plugins.cors.routing.*
 import io.ktor.server.plugins.forwardedheaders.*
 import io.ktor.server.plugins.statuspages.*
 import kotlinx.serialization.json.Json
@@ -83,22 +82,6 @@ fun Application.mainModule(config: Config) {
     install(CallLogging) {
         level = Level.INFO
         disableDefaultColors()
-    }
-
-    install(CORS) {
-        config.server.frontendAddresses.forEach {
-            val (scheme, hostName) = it.split("://")
-            allowHost(hostName, schemes = listOf(scheme))
-        }
-        allowCredentials = true
-        allowHeader(HttpHeaders.Authorization)
-        allowHeader(HttpHeaders.ContentType)
-        allowMethod(HttpMethod.Put)
-        allowMethod(HttpMethod.Options)
-        allowMethod(HttpMethod.Patch)
-        allowMethod(HttpMethod.Delete)
-        allowMethod(HttpMethod.Post)
-        allowNonSimpleContentTypes = true
     }
 
     if (config.server.forwardedHeaderSupport)

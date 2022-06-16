@@ -11,7 +11,6 @@ data class Config(val server: Server, val dataBase: DataBase, val jwt: JWT) {
         val sslPort: Int,
         val keyStorePassword: String,
         val keyStorePath: String,
-        val frontendAddresses: List<String>,
         val forwardedHeaderSupport: Boolean
     )
 
