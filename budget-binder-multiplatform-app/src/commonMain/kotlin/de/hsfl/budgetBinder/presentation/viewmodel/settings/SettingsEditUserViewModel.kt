@@ -46,7 +46,8 @@ class SettingsEditUserViewModel(
             firstNameText.value.copy(firstName = dataFlow.userState.value.firstName, firstNameIsValid = true)
         _lastNameText.value = lastNameText.value.copy(lastName = dataFlow.userState.value.name, lastNameIsValid = true)
         _passwordText.value = passwordText.value.copy(password = passwordPlaceholder, passwordIsValid = true)
-        _confirmedPasswordText.value = confirmedPassword.value.copy(confirmedPassword = passwordPlaceholder, confirmedPasswordIsValid = true)
+        _confirmedPasswordText.value =
+            confirmedPassword.value.copy(confirmedPassword = passwordPlaceholder, confirmedPasswordIsValid = true)
     }
 
     fun onEvent(event: EditUserEvent) {
@@ -69,7 +70,7 @@ class SettingsEditUserViewModel(
                                 name = lastNameText.value.lastName
                             )
                         )
-                    } else if(checkValidInput()) {
+                    } else {
                         updateUser(
                             User.Patch(
                                 firstName = firstNameText.value.firstName,
@@ -84,15 +85,6 @@ class SettingsEditUserViewModel(
                 resetFlows()
                 routerFlow.navigateTo(Screen.Settings.Menu)
             }
-        }
-    }
-
-    private fun checkConfirmedPassword(): Boolean {
-        return if(passwordText.value.password == confirmedPassword.value.confirmedPassword) {
-            true
-        } else{
-            _confirmedPasswordText.value = confirmedPassword.value.copy(confirmedPasswordIsValid = false)
-            false
         }
     }
 
@@ -121,7 +113,16 @@ class SettingsEditUserViewModel(
                 true
             }
 
-        return checkFirstName && checkLastName && checkPassword
+        val checkConfirmedPassword =
+            if (passwordText.value.password == confirmedPassword.value.confirmedPassword) {
+                true
+            } else {
+                _confirmedPasswordText.value = confirmedPassword.value.copy(confirmedPasswordIsValid = false)
+                false
+            }
+
+
+        return checkFirstName && checkLastName && checkPassword && checkConfirmedPassword
     }
 
     private fun updateUser(user: User.Patch) {
