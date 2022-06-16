@@ -10,6 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import de.hsfl.budgetBinder.compose.textfield.SettingsTextField
 import de.hsfl.budgetBinder.di
 import de.hsfl.budgetBinder.presentation.UiEvent
 import de.hsfl.budgetBinder.presentation.viewmodel.settings.EditUserEvent
@@ -19,32 +20,14 @@ import org.kodein.di.instance
 
 @Composable
 fun SettingsEditUserView(modifier: Modifier = Modifier, isLoading: Boolean) {
-    val scope = rememberCoroutineScope()
     val viewModel: SettingsEditUserViewModel by di.instance()
     val firstNameText = viewModel.firstNameText.collectAsState()
-    val lastNameText = viewModel.lastNameText.collectAsState(scope.coroutineContext)
-    val emailText = viewModel.emailText.collectAsState(scope.coroutineContext)
-    val passwordText = viewModel.passwordText.collectAsState(scope.coroutineContext)
-    //val loadingState = remember { mutableStateOf(false) }
+    val lastNameText = viewModel.lastNameText.collectAsState()
+    val emailText = viewModel.emailText.collectAsState()
+    val passwordText = viewModel.passwordText.collectAsState()
 
-    /*LaunchedEffect(key1 = true) {
-        viewModel.eventFlow.collectLatest { event ->
-            when (event) {
-                is UiEvent.ShowLoading -> loadingState.value = true
-                is UiEvent.ShowError -> {
-                    loadingState.value = false
-                    scaffoldState.snackbarHostState.showSnackbar(message = event.msg)
-                }
-            }
-        }
-    }*/
-
-    /*if (loadingState.value) {
-        LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
-    }*/
     Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
         SettingsTextField(
-            modifier = Modifier.padding(8.dp),
             value = firstNameText.value.firstName,
             onValueChange = { viewModel.onEvent(EditUserEvent.EnteredFirstName(it)) },
             label = { Text("Firstname") },
@@ -52,8 +35,8 @@ fun SettingsEditUserView(modifier: Modifier = Modifier, isLoading: Boolean) {
             enabled = !isLoading,
             errorText = "Firstname can't be blank"
         )
+        Spacer(modifier = Modifier.height(8.dp))
         SettingsTextField(
-            modifier = Modifier.padding(8.dp),
             value = lastNameText.value.lastName,
             onValueChange = { viewModel.onEvent(EditUserEvent.EnteredLastName(it)) },
             label = { Text("Lastname") },
@@ -61,15 +44,15 @@ fun SettingsEditUserView(modifier: Modifier = Modifier, isLoading: Boolean) {
             enabled = !isLoading,
             errorText = "Lastname can't be blank"
         )
+        Spacer(modifier = Modifier.height(8.dp))
         SettingsTextField(
-            modifier = Modifier.padding(8.dp),
             value = emailText.value,
             onValueChange = { },
             label = { Text("Email") },
             enabled = false,
         )
+        Spacer(modifier = Modifier.height(8.dp))
         SettingsTextField(
-            modifier = Modifier.padding(8.dp),
             value = passwordText.value.password,
             onValueChange = { viewModel.onEvent(EditUserEvent.EnteredPassword(it)) },
             label = { Text("Password") },
@@ -77,6 +60,7 @@ fun SettingsEditUserView(modifier: Modifier = Modifier, isLoading: Boolean) {
             enabled = !isLoading,
             errorText = "Password can't be blank"
         )
+        Spacer(modifier = Modifier.height(8.dp))
         Row {
             TextButton(onClick = { viewModel.onEvent(EditUserEvent.OnGoBack) }) {
                 Text("Back")
@@ -87,39 +71,4 @@ fun SettingsEditUserView(modifier: Modifier = Modifier, isLoading: Boolean) {
             }
         }
     }
-}
-
-@Composable
-fun SettingsTextField(
-    modifier: Modifier = Modifier,
-    value: String,
-    onValueChange: (String) -> Unit,
-    label: @Composable () -> Unit,
-    isError: Boolean = false,
-    errorText: String = "",
-    enabled: Boolean = true,
-    visualTransformation: VisualTransformation = VisualTransformation.None,
-    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
-) {
-    Column {
-        TextField(
-            modifier = modifier,
-            value = value,
-            onValueChange = onValueChange,
-            label = label,
-            isError = isError,
-            enabled = enabled,
-            visualTransformation = visualTransformation,
-            keyboardOptions = keyboardOptions,
-            trailingIcon = {
-                if (isError) {
-                    Icon(Icons.Default.Info, contentDescription = null)
-                }
-            }
-        )
-        if (isError) {
-            Text(text = errorText, style = MaterialTheme.typography.subtitle1, color = MaterialTheme.colors.error)
-        }
-    }
-
 }

@@ -19,25 +19,11 @@ import org.kodein.di.instance
 @Composable
 fun SettingsView() {
     val scope = rememberCoroutineScope()
-    val viewModel: SettingsViewModel by di.instance()
     val dataFlow: DataFlow by di.instance()
     val routerFlow: RouterFlow by di.instance()
     val userState = dataFlow.userState.collectAsState(scope.coroutineContext)
     val screenState = routerFlow.state.collectAsState(scope.coroutineContext)
-    val scaffoldState = rememberScaffoldState()
     val loadingState = remember { mutableStateOf(false) }
-
-    /*LaunchedEffect(key1 = true) {
-        viewModel.eventFlow.collectLatest { event ->
-            when (event) {
-                is UiEvent.ShowLoading -> loadingState.value = true
-                is UiEvent.ShowError -> {
-                    loadingState.value = false
-                    scaffoldState.snackbarHostState.showSnackbar(message = event.msg, actionLabel = "Dismiss")
-                }
-            }
-        }
-    }*/
 
     if (loadingState.value) {
         LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
@@ -53,6 +39,7 @@ fun SettingsView() {
                 modifier = Modifier.fillMaxWidth(),
                 isLoading = loadingState.value
             )
+            is Screen.Settings.Server -> SettingsServerUrlView(modifier = Modifier.fillMaxWidth())
         }
     }
 }
