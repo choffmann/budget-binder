@@ -82,12 +82,26 @@ fun Icon(icon_name: String) {
 
 // Snackbar that shows msg
 @Composable
-fun FeedbackSnackbar(msg: String) {
-    Aside(attrs = { classes("mdc-snackbar") }) {
+fun FeedbackSnackbar(msg: String, hidden: Boolean = false) {
+    var hiddenValue by remember { mutableStateOf(hidden)}
+    Aside(
+        attrs = {
+            when(hiddenValue){
+                false -> classes("mdc-snackbar","mdc-snackbar--open")
+                true -> classes("mdc-snackbar","maria")
+            }
+        onClick {
+            hiddenValue = true
+            console.log(this@Aside)
+            console.log("ldsadsad")
+
+        }
+    }) {
         Div(attrs = {
             classes("mdc-snackbar__surface")
             attr(attr = "role", value = "status")
             attr(attr = "aria-relevant", value = "additions")
+
         }) {
             Div(attrs = {
                 classes("mdc-snackbar__label")
@@ -99,7 +113,9 @@ fun FeedbackSnackbar(msg: String) {
                 classes("mdc-snackbar__actions")
                 attr(attr = "aria-atomic", value = "true")
             }) {
-                Button(attrs = { classes("mdc-button", "mdc-snackbar__action") }) {
+                Button(attrs = {
+                    classes("mdc-button", "mdc-snackbar__action")
+                }) {
                     Div(attrs = {
                         classes("mdc-button__ripple")
                     })
@@ -110,6 +126,7 @@ fun FeedbackSnackbar(msg: String) {
         }
     }
 }
+
 
 
 
