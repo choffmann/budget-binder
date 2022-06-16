@@ -9,6 +9,7 @@ import de.hsfl.budgetBinder.presentation.UiEvent
 import de.hsfl.budgetBinder.presentation.UiState
 import de.hsfl.budgetBinder.presentation.flow.DataFlow
 import de.hsfl.budgetBinder.presentation.flow.RouterFlow
+import de.hsfl.budgetBinder.presentation.flow.UiEventSharedFlow
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -31,18 +32,19 @@ class RegisterViewModel(
     private val _passwordText = MutableStateFlow(RegisterTextFieldState())
     val passwordText: StateFlow<RegisterTextFieldState> = _passwordText
 
-    private val _eventFlow = MutableSharedFlow<UiEvent>()
-    val eventFlow = _eventFlow.asSharedFlow()
+    private val _eventFlow = UiEventSharedFlow.mutableEventFlow
+    val eventFlow = UiEventSharedFlow.eventFlow
 
     fun onEvent(event: RegisterEvent) {
         when (event) {
             is RegisterEvent.EnteredFirstname -> _firstNameText.value =
                 firstNameText.value.copy(firstName = event.value)
             is RegisterEvent.EnteredLastname -> _lastNameText.value = lastNameText.value.copy(lastName = event.value)
-            is RegisterEvent.EnteredEmail -> _emailText.value = emailText.value.copy(email = event.value, emailValid = true)
+            is RegisterEvent.EnteredEmail -> _emailText.value =
+                emailText.value.copy(email = event.value, emailValid = true)
             is RegisterEvent.EnteredPassword -> _passwordText.value = passwordText.value.copy(password = event.value)
             is RegisterEvent.OnRegister -> {
-                if(validateEmail(emailText.value.email)) {
+                if (validateEmail(emailText.value.email)) {
                     register(
                         User.In(
                             firstName = firstNameText.value.firstName,
@@ -56,11 +58,7 @@ class RegisterViewModel(
                 }
 
             }
-            is RegisterEvent.OnLoginScreen -> {
-                scope.launch {
-                    routerFlow.navigateTo(Screen.Login)
-                }
-            }
+            is RegisterEvent.OnLoginScreen -> routerFlow.navigateTo(Screen.Login)
         }
     }
 

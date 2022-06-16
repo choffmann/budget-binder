@@ -10,13 +10,18 @@ import de.hsfl.budgetBinder.domain.repository.CategoryRepository
 import de.hsfl.budgetBinder.domain.repository.EntryRepository
 import de.hsfl.budgetBinder.domain.repository.UserRepository
 import de.hsfl.budgetBinder.domain.usecase.*
+import de.hsfl.budgetBinder.domain.usecase.storage.StoreDarkModeUseCase
 import de.hsfl.budgetBinder.domain.usecase.storage.StoreServerUrlUseCase
 import de.hsfl.budgetBinder.domain.usecase.storage.StoreUserStateUseCase
 import de.hsfl.budgetBinder.presentation.flow.DataFlow
 import de.hsfl.budgetBinder.presentation.flow.RouterFlow
+import de.hsfl.budgetBinder.presentation.flow.UiEventSharedFlow
 import de.hsfl.budgetBinder.presentation.viewmodel.login.LoginViewModel
 import de.hsfl.budgetBinder.presentation.viewmodel.register.RegisterViewModel
 import de.hsfl.budgetBinder.presentation.viewmodel.*
+import de.hsfl.budgetBinder.presentation.viewmodel.settings.SettingsEditServerUrlViewModel
+import de.hsfl.budgetBinder.presentation.viewmodel.settings.SettingsEditUserViewModel
+import de.hsfl.budgetBinder.presentation.viewmodel.settings.SettingsViewModel
 import io.ktor.client.engine.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -66,22 +71,26 @@ fun kodein(ktorEngine: HttpClientEngine) = DI {
     bindSingleton { NavigateToScreenUseCase() }
     bindSingleton { StoreUserStateUseCase() }
     bindSingleton { StoreServerUrlUseCase() }
+    bindSingleton { StoreDarkModeUseCase() }
     bindSingleton { EntriesUseCases(instance(), instance(), instance(), instance(), instance()) }
     bindSingleton { CategoriesUseCases(instance(), instance(), instance(), instance(), instance(), instance()) }
-    bindSingleton { SettingsUseCases(instance(), instance()) }
+    bindSingleton { SettingsUseCases(instance(), instance(), instance()) }
     bindSingleton { LoginUseCases(instance(), instance()) }
     bindSingleton { DashboardUseCases(instance(), instance()) }
     bindSingleton { RegisterUseCases(instance(), instance(), instance()) }
-    bindSingleton { DataFlowUseCases(instance(), instance()) }
+    bindSingleton { DataFlowUseCases(instance(), instance(), instance()) }
 
     // Flows
-    bindSingleton { RouterFlow(instance()) }
-    bindSingleton { DataFlow(instance()) }
+    bindSingleton { RouterFlow(instance(), instance()) }
+    bindSingleton { DataFlow(instance(), instance()) }
+    bindSingleton { UiEventSharedFlow }
 
     // ViewModels
     bindSingleton { LoginViewModel(instance(), instance(), instance(), instance()) }
     bindSingleton { RegisterViewModel(instance(), instance(), instance(), instance()) }
-    bindSingleton { SettingsViewModel(instance(), instance()) }
+    bindSingleton { SettingsViewModel(instance(), instance(), instance(), instance()) }
+    bindSingleton { SettingsEditUserViewModel(instance(), instance(), instance(), instance()) }
+    bindSingleton { SettingsEditServerUrlViewModel(instance(), instance(), instance()) }
     bindSingleton { CategoryViewModel(instance(), instance()) }
     bindSingleton { EntryViewModel(instance(), instance()) }
     bindSingleton { DashboardViewModel(instance(), instance(), instance(), instance(), instance(), instance()) }
