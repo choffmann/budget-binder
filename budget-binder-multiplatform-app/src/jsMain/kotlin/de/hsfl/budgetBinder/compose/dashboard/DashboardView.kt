@@ -197,7 +197,12 @@ fun DashboardData(categoryList: List<Category>, entryList: List<Entry>, onEntry:
             }
         }
     } else {
-        //TODO: Show something like: NO DATA TO SHOW!
+        Div(attrs = {
+            classes(
+                "mdc-typography--headline5",
+                AppStylesheet.text
+            )
+        }) { Text("No data to load") }
     }
 
 }
