@@ -3,6 +3,7 @@ package de.hsfl.budgetBinder.compose.dashboard
 import androidx.compose.runtime.*
 import de.hsfl.budgetBinder.common.Category
 import de.hsfl.budgetBinder.common.Entry
+import de.hsfl.budgetBinder.compose.FeedbackSnackbar
 import de.hsfl.budgetBinder.compose.Icon
 import de.hsfl.budgetBinder.compose.MainFlexContainer
 import de.hsfl.budgetBinder.compose.category.BudgetBar
@@ -73,6 +74,7 @@ fun DashboardView(
     MainFlexContainer {
         Div { DashboardData(categoryList, entryList, onEntryEditButton) }
         CreateNewEntryButton(onEntryCreateButton)
+        FeedbackSnackbar("haha test")
     }
     //Process new Category Data
     when (categoriesViewState) {
@@ -111,9 +113,9 @@ fun DashboardView(
                         }
                 }
             }
-
         }
         is UiState.Error -> {
+            FeedbackSnackbar((entriesViewState as UiState.Error).error) //TODO: make it work
             Text((entriesViewState as UiState.Error).error)
         }
         is UiState.Loading -> {
