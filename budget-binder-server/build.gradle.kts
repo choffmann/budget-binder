@@ -19,14 +19,13 @@ application {
 
 repositories {
     mavenCentral()
-    maven("https://s01.oss.sonatype.org/content/repositories/snapshots/")
 }
 
 dependencies {
     implementation(project(":budget-binder-common"))
     implementation(kotlin("stdlib"))
 
-    val ktorVersion = "2.0.1"
+    val ktorVersion = "2.0.2"
     implementation("io.ktor:ktor-network-tls-certificates-jvm:$ktorVersion")
     implementation("io.ktor:ktor-server-core-jvm:$ktorVersion")
     implementation("io.ktor:ktor-server-auth-jvm:$ktorVersion")
@@ -43,9 +42,9 @@ dependencies {
     testImplementation("io.ktor:ktor-server-test-host-jvm:$ktorVersion")
     testImplementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
 
-    implementation("org.kodein.di:kodein-di-framework-ktor-server-jvm:8.0.0-ktor-2-SNAPSHOT")
+    implementation("org.kodein.di:kodein-di-framework-ktor-server-jvm:7.12.0")
 
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.2")
 
 
     implementation("ch.qos.logback:logback-classic:1.2.11")
@@ -57,12 +56,12 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-java-time:$exposedVersion")
     implementation("org.xerial:sqlite-jdbc:3.36.0.3")
     implementation("mysql:mysql-connector-java:8.0.29")
-    implementation("org.postgresql:postgresql:42.3.4")
+    implementation("org.postgresql:postgresql:42.3.6")
     implementation("org.mindrot:jbcrypt:0.4")
 
-    implementation("com.github.ajalt.clikt:clikt:3.4.2")
-    implementation("com.sksamuel.hoplite:hoplite-core:2.1.4")
-    implementation("com.sksamuel.hoplite:hoplite-yaml:2.1.4")
+    implementation("com.github.ajalt.clikt:clikt:3.5.0")
+    implementation("com.sksamuel.hoplite:hoplite-core:2.1.5")
+    implementation("com.sksamuel.hoplite:hoplite-yaml:2.1.5")
 
     testImplementation("org.jetbrains.kotlin:kotlin-test:1.6.21")
 }
