@@ -79,7 +79,7 @@ fun kodein(ktorEngine: HttpClientEngine) = DI {
     bindSingleton { CategoriesUseCases(instance(), instance(), instance(), instance(), instance(), instance()) }
     bindSingleton { SettingsUseCases(instance(), instance(), instance()) }
     bindSingleton { LoginUseCases(instance(), instance()) }
-    bindSingleton { DashboardUseCases(instance(), instance()) }
+    bindSingleton { DashboardUseCases(instance(), instance(), instance()) }
     bindSingleton { RegisterUseCases(instance(), instance(), instance()) }
     bindSingleton { DataFlowUseCases(instance(), instance(), instance()) }
 
@@ -97,6 +97,6 @@ fun kodein(ktorEngine: HttpClientEngine) = DI {
     bindSingleton { _CategoryViewModel(instance(), instance()) }
     bindSingleton { CategorySummaryViewModel(instance(), instance(), instance()) }
     bindSingleton { EntryViewModel(instance(), instance()) }
-    bindSingleton { DashboardViewModel(instance(), instance(), instance(), instance(), instance(), instance()) }
+    bindSingleton { DashboardViewModel(instance(), instance(), instance(), instance(), instance()) }
     bindSingleton { NavDrawerViewModel(instance(), instance()) }
 }
