@@ -2,14 +2,20 @@ package de.hsfl.budgetBinder.presentation
 
 import androidx.compose.runtime.Composable
 import de.hsfl.budgetBinder.common.Category
+import de.hsfl.budgetBinder.compose.theme.AppStylesheet
+import org.jetbrains.compose.web.css.padding
+import org.jetbrains.compose.web.css.px
+import org.jetbrains.compose.web.dom.Div
 import org.jetbrains.compose.web.dom.Span
 import org.jetbrains.compose.web.dom.Text
 
 @Composable
 actual fun CategoryImageToIcon(icon: Category.Image) {
-    Span(
+    Div(attrs = {classes(AppStylesheet.imageFlexContainer)}){
+        Span(
         attrs = {
             classes("material-icons")
+            style { padding(8.px) }
         }
     ) {
         Text(
@@ -60,5 +66,5 @@ actual fun CategoryImageToIcon(icon: Category.Image) {
                 Category.Image.PEST -> "pest_control"
             }
         )
-    }
+    }}
 }
