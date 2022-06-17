@@ -24,7 +24,6 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.plugins.callloging.CallLogging
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.server.plugins.cors.routing.*
 import io.ktor.server.plugins.forwardedheaders.*
 import io.ktor.server.plugins.statuspages.*
 import kotlinx.serialization.json.Json
@@ -40,13 +39,9 @@ import org.slf4j.event.Level
 import java.sql.DriverManager
 
 fun Application.mainModule(config: Config) {
-    val url: String
-    val driver: String
-    when (config.dataBase.dbType) {
+    val url: String = when (config.dataBase.dbType) {
         Config.DBType.SQLITE -> {
-            url = "jdbc:sqlite:${config.dataBase.sqlitePath}"
-            driver = "org.sqlite.JDBC"
-
+            val url = "jdbc:sqlite:${config.dataBase.sqlitePath}"
             /*
             * The url is used in the tests to not create or alter the normal database.
             * the connection must be held because exposed closes the connection to the db
@@ -55,18 +50,13 @@ fun Application.mainModule(config: Config) {
             if (url == "jdbc:sqlite:file:test?mode=memory&cache=shared") {
                 DriverManager.getConnection(url)
             }
+            url
         }
-        Config.DBType.MYSQL -> {
-            url = "jdbc:mysql://${config.dataBase.serverAddress}:${config.dataBase.serverPort}/${config.dataBase.name}"
-            driver = "com.mysql.cj.jdbc.Driver"
-        }
-        Config.DBType.POSTGRES -> {
-            url = "jdbc:postgresql://${config.dataBase.serverAddress}:${config.dataBase.serverPort}/${config.dataBase.name}"
-            driver = "org.postgresql.Driver"
-        }
+        Config.DBType.MYSQL -> "jdbc:mysql://${config.dataBase.serverAddress}:${config.dataBase.serverPort}/${config.dataBase.name}"
+        Config.DBType.POSTGRES -> "jdbc:postgresql://${config.dataBase.serverAddress}:${config.dataBase.serverPort}/${config.dataBase.name}"
     }
 
-    Database.connect(url, driver, user = config.dataBase.user, password = config.dataBase.password)
+    Database.connect(url, user = config.dataBase.user, password = config.dataBase.password)
 
     transaction {
         SchemaUtils.create(Users, Categories, Entries)
@@ -83,22 +73,6 @@ fun Application.mainModule(config: Config) {
     install(CallLogging) {
         level = Level.INFO
         disableDefaultColors()
-    }
-
-    install(CORS) {
-        config.server.frontendAddresses.forEach {
-            val (scheme, hostName) = it.split("://")
-            allowHost(hostName, schemes = listOf(scheme))
-        }
-        allowCredentials = true
-        allowHeader(HttpHeaders.Authorization)
-        allowHeader(HttpHeaders.ContentType)
-        allowMethod(HttpMethod.Put)
-        allowMethod(HttpMethod.Options)
-        allowMethod(HttpMethod.Patch)
-        allowMethod(HttpMethod.Delete)
-        allowMethod(HttpMethod.Post)
-        allowNonSimpleContentTypes = true
     }
 
     if (config.server.forwardedHeaderSupport)

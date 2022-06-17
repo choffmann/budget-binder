@@ -78,7 +78,7 @@ class JWTService(private val config: Config) {
             path = "/refresh_token",
             httpOnly = true,
             secure = isHttps,
-            extensions = hashMapOf(CookieHeaderNames.SAMESITE to if (isHttps) CookieHeaderNames.SameSite.None.toString() else CookieHeaderNames.SameSite.Lax.toString())
+            extensions = hashMapOf(CookieHeaderNames.SAMESITE to CookieHeaderNames.SameSite.Strict.toString())
         )
     }
 }
