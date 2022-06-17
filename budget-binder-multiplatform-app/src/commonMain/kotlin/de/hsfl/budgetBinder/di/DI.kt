@@ -79,7 +79,7 @@ fun kodein(ktorEngine: HttpClientEngine) = DI {
     bindSingleton { CategoriesUseCases(instance(), instance(), instance(), instance(), instance(), instance()) }
     bindSingleton { SettingsUseCases(instance(), instance(), instance()) }
     bindSingleton { LoginUseCases(instance(), instance()) }
-    bindSingleton { DashboardUseCases(instance(), instance(), instance()) }
+    bindSingleton { DashboardUseCases(instance(), instance(), instance(), instance()) }
     bindSingleton { RegisterUseCases(instance(), instance(), instance()) }
     bindSingleton { DataFlowUseCases(instance(), instance(), instance()) }
 
