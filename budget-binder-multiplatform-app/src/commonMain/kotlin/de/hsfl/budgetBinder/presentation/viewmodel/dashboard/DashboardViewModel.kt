@@ -69,7 +69,7 @@ class DashboardViewModel(
                 }
             }
             is DashboardEvent.OnLoadMore -> loadMoreEntries()
-            is DashboardEvent.OnEntryDelete -> {}
+            is DashboardEvent.OnEntryDelete -> deleteEntry(id = event.id)
         }
     }
 
@@ -150,6 +150,19 @@ class DashboardViewModel(
                 is DataResponse.Unauthorized -> {
                     _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
                     routerFlow.navigateTo(Screen.Login)
+                }
+            }
+        }
+    }
+
+    private fun deleteEntry(id: Int) = scope.launch {
+        dashboardUseCases.deleteEntryByIdUseCase(id).collect {
+            when (it) {
+                is DataResponse.Loading -> _eventFlow.emit(UiEvent.ShowLoading)
+                is DataResponse.Error, is DataResponse.Unauthorized -> _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
+                is DataResponse.Success -> {
+                    _eventFlow.emit(UiEvent.ShowSuccess("Removed Category"))
+                    onEvent(DashboardEvent.OnRefresh)
                 }
             }
         }
