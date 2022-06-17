@@ -75,7 +75,12 @@ class DashboardViewModel(
                     is DataResponse.Loading -> _eventFlow.emit(UiEvent.ShowLoading)
                     is DataResponse.Error, is DataResponse.Unauthorized -> _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
                     is DataResponse.Success -> {
-                        _entryListState.value = entryListState.value.copy(entryList = it.data!!)
+                        _entryListState.value = entryListState.value.copy(entryList = it.data!!.map { entry ->
+                            DashboardEntryState(
+                                entry,
+                                categoryImage = getCategoryByEntry(entry)?.image ?: Category.Image.DEFAULT
+                            )
+                        })
                         _eventFlow.emit(UiEvent.HideSuccess)
                         calcSpendBudgetOnCategory()
                     }
@@ -106,13 +111,25 @@ class DashboardViewModel(
                     is DataResponse.Loading -> _eventFlow.emit(UiEvent.ShowLoading)
                     is DataResponse.Error, is DataResponse.Unauthorized -> _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
                     is DataResponse.Success -> {
-                        _entryListState.value = entryListState.value.copy(entryList = it.data!!)
+                        _entryListState.value = entryListState.value.copy(entryList = it.data!!.map { entry ->
+                            DashboardEntryState(
+                                entry,
+                                categoryImage = getCategoryByEntry(entry)?.image ?: Category.Image.DEFAULT
+                            )
+                        })
                         _eventFlow.emit(UiEvent.HideSuccess)
                         calcSpendBudgetOnCategory()
                     }
                 }
             }
         }
+    }
+
+    private fun getCategoryByEntry(entry: Entry): Category? {
+        _categoryListState.value.forEach { category ->
+            if (category.id == entry.category_id) return category
+        }
+        return null
     }
 
     private fun changedFocusedCategory(increase: Boolean) {
@@ -168,10 +185,10 @@ class DashboardViewModel(
     private fun calcSpendBudgetOnCategory() {
         var spendMoney = 0F
         entryListState.value.entryList.onEach {
-            if (it.amount > 0) {
-                spendMoney -= it.amount
+            if (it.entry.amount > 0) {
+                spendMoney -= it.entry.amount
             } else {
-                spendMoney += (it.amount * -1)
+                spendMoney += (it.entry.amount * -1)
             }
         }
         _spendBudgetOnCurrentCategory.value =
