@@ -272,7 +272,7 @@ class Client( engine: HttpClientEngine) : ApiClient {
     }
 
     override suspend fun getAllEntries(period: String): APIResponse<List<Entry>> {
-        return client.submitForm(url = "/categories", formParameters = Parameters.build {
+        return client.submitForm(url = "/entries", formParameters = Parameters.build {
             append("period", period)
         }, encodeInQuery = true).body()
     }
