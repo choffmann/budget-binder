@@ -37,8 +37,8 @@ class DashboardViewModel(
     val eventFlow = _eventFlow.asSharedFlow()
 
     init {
-        _getAllEntries()
-        _getAllCategories()
+        //_getAllEntries()
+        //_getAllCategories()
 
         getAllEntries()
         getAllCategories()
@@ -50,7 +50,9 @@ class DashboardViewModel(
             is DashboardEvent.OnNextCategory -> changedFocusedCategory(increase = true)
             is DashboardEvent.OnPrevCategory -> changedFocusedCategory(increase = false)
             is DashboardEvent.OnEntry -> {}
-            is DashboardEvent.OnEntryCreate -> {}
+            is DashboardEvent.OnEntryCreate -> scope.launch {
+                _eventFlow.emit(UiEvent.ShowError("OnEntryCreate Clicked"))
+            }
         }
     }
 
@@ -76,7 +78,6 @@ class DashboardViewModel(
                     is DataResponse.Error, is DataResponse.Unauthorized -> _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
                     is DataResponse.Success -> {
                         _categoryListState.value = it.data!!
-                        getEntriesByCategory()
                     }
                 }
             }
@@ -98,12 +99,14 @@ class DashboardViewModel(
     }
 
     private fun changedFocusedCategory(increase: Boolean) {
+        println("DashboardViewModel::Category before, ${focusedCategoryState.value.category}")
         changeInternalCategoryId(increase)
         when (internalCategoryId) {
             -1 -> setOverallCategoryState()
             in _categoryListState.value.indices -> setCategoryState()
             _categoryListState.value.size -> setCategoryWithNoCategory()
         }
+        println("DashboardViewModel::Category after, ${focusedCategoryState.value.category}")
     }
 
     private fun changeInternalCategoryId(increase: Boolean) {
@@ -114,7 +117,7 @@ class DashboardViewModel(
             newFocusedCategory--
         internalCategoryId =
             when {
-                newFocusedCategory > -1 -> -1
+                newFocusedCategory < -1 -> -1
                 newFocusedCategory > _categoryListState.value.size -> _categoryListState.value.size
                 else -> newFocusedCategory
             }
@@ -126,7 +129,7 @@ class DashboardViewModel(
             hasNext = true,
             category = Category(0, "Overall", "111111", Category.Image.DEFAULT, 0f)
         )
-        getAllCategories()
+        getAllEntries()
     }
 
     private fun setCategoryState() {
