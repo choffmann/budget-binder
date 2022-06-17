@@ -33,12 +33,16 @@ class DashboardViewModel(
     private val _focusedCategoryState = MutableStateFlow(DashboardState())
     val focusedCategoryState: StateFlow<DashboardState> = _focusedCategoryState
 
+    private val _spendBudgetOnCurrentCategory = MutableStateFlow(DashboardState())
+    val spendBudgetOnCurrentCategory: StateFlow<DashboardState> = _spendBudgetOnCurrentCategory
+
     private val _eventFlow = UiEventSharedFlow.mutableEventFlow
     val eventFlow = _eventFlow.asSharedFlow()
 
     init {
-        //_getAllEntries()
-        //_getAllCategories()
+        // Throws nullPointerException?
+        _getAllEntries()
+        _getAllCategories()
 
         getAllEntries()
         getAllCategories()
@@ -53,6 +57,13 @@ class DashboardViewModel(
             is DashboardEvent.OnEntryCreate -> scope.launch {
                 _eventFlow.emit(UiEvent.ShowError("OnEntryCreate Clicked"))
             }
+            is DashboardEvent.OnRefresh -> {
+                when (internalCategoryId) {
+                    -1 -> getAllEntries()
+                    in _categoryListState.value.indices -> getEntriesByCategory(id = focusedCategoryState.value.category.id)
+                    _categoryListState.value.size -> getEntriesByCategory(id = null)
+                }
+            }
         }
     }
 
@@ -63,7 +74,9 @@ class DashboardViewModel(
                     is DataResponse.Loading -> _eventFlow.emit(UiEvent.ShowLoading)
                     is DataResponse.Error, is DataResponse.Unauthorized -> _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
                     is DataResponse.Success -> {
+                        calcSpendBudgetOnCategory()
                         _entryListState.value = entryListState.value.copy(entryList = it.data!!)
+                        _eventFlow.emit(UiEvent.HideSuccess)
                     }
                 }
             }
@@ -78,6 +91,7 @@ class DashboardViewModel(
                     is DataResponse.Error, is DataResponse.Unauthorized -> _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
                     is DataResponse.Success -> {
                         _categoryListState.value = it.data!!
+                        _eventFlow.emit(UiEvent.HideSuccess)
                     }
                 }
             }
@@ -91,7 +105,9 @@ class DashboardViewModel(
                     is DataResponse.Loading -> _eventFlow.emit(UiEvent.ShowLoading)
                     is DataResponse.Error, is DataResponse.Unauthorized -> _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
                     is DataResponse.Success -> {
+                        calcSpendBudgetOnCategory()
                         _entryListState.value = entryListState.value.copy(entryList = it.data!!)
+                        _eventFlow.emit(UiEvent.HideSuccess)
                     }
                 }
             }
@@ -99,14 +115,12 @@ class DashboardViewModel(
     }
 
     private fun changedFocusedCategory(increase: Boolean) {
-        println("DashboardViewModel::Category before, ${focusedCategoryState.value.category}")
         changeInternalCategoryId(increase)
         when (internalCategoryId) {
             -1 -> setOverallCategoryState()
             in _categoryListState.value.indices -> setCategoryState()
             _categoryListState.value.size -> setCategoryWithNoCategory()
         }
-        println("DashboardViewModel::Category after, ${focusedCategoryState.value.category}")
     }
 
     private fun changeInternalCategoryId(increase: Boolean) {
@@ -148,6 +162,13 @@ class DashboardViewModel(
             category = Category(0, "No Category", "111111", Category.Image.DEFAULT, 0f)
         )
         getEntriesByCategory(id = null)
+    }
+
+    private fun calcSpendBudgetOnCategory() {
+        var spendMoney = 0F
+        entryListState.value.entryList.onEach { spendMoney += it.amount }
+        _spendBudgetOnCurrentCategory.value =
+            spendBudgetOnCurrentCategory.value.copy(spendBudgetOnCurrentCategory = spendMoney)
     }
 
     // Old
