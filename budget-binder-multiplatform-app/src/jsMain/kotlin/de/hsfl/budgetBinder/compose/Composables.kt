@@ -4,12 +4,14 @@ import App
 import androidx.compose.runtime.*
 import de.hsfl.budgetBinder.common.Category
 import de.hsfl.budgetBinder.compose.theme.AppStylesheet
+import de.hsfl.budgetBinder.compose.theme.AppStylesheet.attr
 import de.hsfl.budgetBinder.compose.theme.AppStylesheet.style
 import de.hsfl.budgetBinder.presentation.CategoryImageToIcon
 import kotlinx.serialization.json.JsonNull.content
 import org.jetbrains.compose.web.ExperimentalComposeWebSvgApi
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
+import org.jetbrains.compose.web.svg.Circle
 import org.jetbrains.compose.web.svg.Rect
 import org.jetbrains.compose.web.svg.Svg
 
@@ -150,7 +152,7 @@ fun CategoryList(
                         }
                     ) {
                         Svg(viewBox = "0 0 1 1") {//For aspect ratio - tries to fill out wherever it is in
-                            Rect(x = 0, y = 0, width = 1, height = 1, {
+                            Circle(cx = 0.5, cy = 0.5, r=0.5, {
                                 attr("fill", "#${category.color}")
                             })
                         }
