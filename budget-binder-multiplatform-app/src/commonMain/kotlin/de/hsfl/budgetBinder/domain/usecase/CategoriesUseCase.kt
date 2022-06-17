@@ -147,7 +147,7 @@ class DeleteCategoryByIdUseCase(private val repository: CategoryRepository) {
 }
 
 class GetAllEntriesByCategoryUseCase(private val repository: CategoryRepository) {
-    operator fun invoke(id: Int): Flow<DataResponse<List<Entry>>> = flow {
+    operator fun invoke(id: Int?): Flow<DataResponse<List<Entry>>> = flow {
         try {
             emit(DataResponse.Loading())
             repository.getEntriesFromCategory(id).let { response ->
