@@ -53,9 +53,12 @@ fun CategoryComponent(screenState: MutableState<Screen>) {
         )
         Screen.CategorySummary -> CategorySummaryView(
             state = viewState,
-            onBackButton = { screenState.value = Screen.Dashboard },
-            onEditButton = { screenState.value = Screen.CategoryEdit },
-            onCategoryCreateButton = { screenState.value = Screen.CategoryCreate },
+            onCategoryCreateButton = { screenState.value = Screen.CategoryCreate},
+            onEditButton = { screenState.value = Screen.CategoryEdit},
+            onDeleteButton = {id -> categoryViewModel.removeCategory(id)},
+            onChangeToDashboard = { screenState.value = Screen.Dashboard },
+            onChangeToSettings = { screenState.value = Screen.Settings },
+            onChangeToCategory = { screenState.value = Screen.CategorySummary },
         )
         Screen.CategoryEdit -> CategoryEditView(
             state = viewState,
