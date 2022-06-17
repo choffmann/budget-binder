@@ -21,7 +21,7 @@ class DashboardViewModel(
     private val logoutUseCase: LogoutUseCase,
     private val routerFlow: RouterFlow,
     private val dataFlow: DataFlow,
-    private val scope: CoroutineScope = CoroutineScope(Dispatchers.Unconfined + SupervisorJob())
+    private val scope: CoroutineScope
 ) {
 
     private var internalCategoryId = -1
@@ -40,9 +40,9 @@ class DashboardViewModel(
     val eventFlow = _eventFlow.asSharedFlow()
 
     init {
-        // Throws nullPointerException?
-        _getAllEntries()
-        _getAllCategories()
+        // Throws nullPointerException, crash on Android?
+        //_getAllEntries()
+        //_getAllCategories()
 
         getAllEntries()
         getAllCategories()
@@ -58,6 +58,7 @@ class DashboardViewModel(
                 _eventFlow.emit(UiEvent.ShowError("OnEntryCreate Clicked"))
             }
             is DashboardEvent.OnRefresh -> {
+                getAllCategories()
                 when (internalCategoryId) {
                     -1 -> getAllEntries()
                     in _categoryListState.value.indices -> getEntriesByCategory(id = focusedCategoryState.value.category.id)
@@ -74,9 +75,9 @@ class DashboardViewModel(
                     is DataResponse.Loading -> _eventFlow.emit(UiEvent.ShowLoading)
                     is DataResponse.Error, is DataResponse.Unauthorized -> _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
                     is DataResponse.Success -> {
-                        calcSpendBudgetOnCategory()
                         _entryListState.value = entryListState.value.copy(entryList = it.data!!)
                         _eventFlow.emit(UiEvent.HideSuccess)
+                        calcSpendBudgetOnCategory()
                     }
                 }
             }
@@ -105,9 +106,9 @@ class DashboardViewModel(
                     is DataResponse.Loading -> _eventFlow.emit(UiEvent.ShowLoading)
                     is DataResponse.Error, is DataResponse.Unauthorized -> _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
                     is DataResponse.Success -> {
-                        calcSpendBudgetOnCategory()
                         _entryListState.value = entryListState.value.copy(entryList = it.data!!)
                         _eventFlow.emit(UiEvent.HideSuccess)
+                        calcSpendBudgetOnCategory()
                     }
                 }
             }
@@ -166,7 +167,13 @@ class DashboardViewModel(
 
     private fun calcSpendBudgetOnCategory() {
         var spendMoney = 0F
-        entryListState.value.entryList.onEach { spendMoney += it.amount }
+        entryListState.value.entryList.onEach {
+            if (it.amount > 0) {
+                spendMoney -= it.amount
+            } else {
+                spendMoney += (it.amount * -1)
+            }
+        }
         _spendBudgetOnCurrentCategory.value =
             spendBudgetOnCurrentCategory.value.copy(spendBudgetOnCurrentCategory = spendMoney)
     }
