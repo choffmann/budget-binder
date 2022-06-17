@@ -104,7 +104,7 @@ interface ApiClient {
      * Get Entries from a Category ID
      * @param id ID from category to get the Entries
      */
-    suspend fun getEntriesFromCategory(id: Int): APIResponse<List<Entry>>
+    suspend fun getEntriesFromCategory(id: Int?): APIResponse<List<Entry>>
 
     /**
      * Get All Entries from current month. The request has a query in the link ?current
@@ -261,7 +261,7 @@ class Client( engine: HttpClientEngine) : ApiClient {
         }.body()
     }
 
-    override suspend fun getEntriesFromCategory(id: Int): APIResponse<List<Entry>> {
+    override suspend fun getEntriesFromCategory(id: Int?): APIResponse<List<Entry>> {
         return client.get(urlString = "/categories/$id/entries").body()
     }
 

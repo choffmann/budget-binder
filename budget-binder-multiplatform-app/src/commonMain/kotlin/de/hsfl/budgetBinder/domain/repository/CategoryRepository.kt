@@ -52,5 +52,5 @@ interface CategoryRepository {
      * @param id ID from Category to get all Entries from this
      * @author Cedrik Hoffmann
      */
-    suspend fun getEntriesFromCategory(id: Int): APIResponse<List<Entry>>
+    suspend fun getEntriesFromCategory(id: Int?): APIResponse<List<Entry>>
 }
