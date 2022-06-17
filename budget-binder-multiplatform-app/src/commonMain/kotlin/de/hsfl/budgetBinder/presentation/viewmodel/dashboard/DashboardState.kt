@@ -4,7 +4,8 @@ import de.hsfl.budgetBinder.common.Category
 import de.hsfl.budgetBinder.common.Entry
 
 data class DashboardState(
-    val categoryList: List<Category> = emptyList(),
-    val entryList: List<Entry> = emptyList(),
-    val focusedCategory: Category = Category(0, "Allgemein", "FFFFFF", Category.Image.DEFAULT, 0f)
+    val hasPrev: Boolean = false,
+    val hasNext: Boolean = true,
+    val category: Category = Category(0, "Overall", "111111", Category.Image.DEFAULT, 0f),
+    val entryList: List<Entry> = emptyList()
 )

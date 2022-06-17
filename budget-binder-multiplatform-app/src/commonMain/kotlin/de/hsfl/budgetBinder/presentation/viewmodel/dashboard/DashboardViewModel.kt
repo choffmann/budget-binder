@@ -1,6 +1,8 @@
 package de.hsfl.budgetBinder.presentation.viewmodel.dashboard
 
+import de.hsfl.budgetBinder.common.Category
 import de.hsfl.budgetBinder.common.DataResponse
+import de.hsfl.budgetBinder.common.Entry
 import de.hsfl.budgetBinder.domain.usecase.*
 import de.hsfl.budgetBinder.presentation.Screen
 import de.hsfl.budgetBinder.presentation.UiEvent
@@ -19,13 +21,11 @@ class DashboardViewModel(
     private val logoutUseCase: LogoutUseCase,
     private val routerFlow: RouterFlow,
     private val dataFlow: DataFlow,
-    private val getMyUserUseCase: GetMyUserUseCase,
     private val scope: CoroutineScope = CoroutineScope(Dispatchers.Unconfined + SupervisorJob())
 ) {
 
-
-    private val _categoryListState = MutableStateFlow(DashboardState())
-    val categoryListSate: StateFlow<DashboardState> = _categoryListState
+    private var internalCategoryId = -1
+    private val _categoryListState = MutableStateFlow<List<Category>>(emptyList())
 
     private val _entryListState = MutableStateFlow(DashboardState())
     val entryListState: StateFlow<DashboardState> = _entryListState
@@ -36,23 +36,21 @@ class DashboardViewModel(
     private val _eventFlow = UiEventSharedFlow.mutableEventFlow
     val eventFlow = _eventFlow.asSharedFlow()
 
-    // Everytime the View is open or only once?
     init {
         _getAllEntries()
         _getAllCategories()
 
         getAllEntries()
         getAllCategories()
+
     }
 
     fun onEvent(event: DashboardEvent) {
         when (event) {
-            is DashboardEvent.OnCategoryChanged -> { /* TODO: On Category Changed */
-            }
-            is DashboardEvent.OnEntry -> { /* TODO: On Entry Clicked */
-            }
-            is DashboardEvent.OnEntryCreate -> {/* TODO: On Category Create */
-            }
+            is DashboardEvent.OnNextCategory -> changedFocusedCategory(increase = true)
+            is DashboardEvent.OnPrevCategory -> changedFocusedCategory(increase = false)
+            is DashboardEvent.OnEntry -> {}
+            is DashboardEvent.OnEntryCreate -> {}
         }
     }
 
@@ -77,13 +75,77 @@ class DashboardViewModel(
                     is DataResponse.Loading -> _eventFlow.emit(UiEvent.ShowLoading)
                     is DataResponse.Error, is DataResponse.Unauthorized -> _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
                     is DataResponse.Success -> {
-                        _categoryListState.value = categoryListSate.value.copy(categoryList = it.data!!)
+                        _categoryListState.value = it.data!!
+                        getEntriesByCategory()
                     }
                 }
             }
         }
     }
 
+    private fun getEntriesByCategory(id: Int? = null) {
+        scope.launch {
+            dashboardUseCases.getAllEntriesByCategoryUseCase(id).collect {
+                when (it) {
+                    is DataResponse.Loading -> _eventFlow.emit(UiEvent.ShowLoading)
+                    is DataResponse.Error, is DataResponse.Unauthorized -> _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
+                    is DataResponse.Success -> {
+                        _entryListState.value = entryListState.value.copy(entryList = it.data!!)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun changedFocusedCategory(increase: Boolean) {
+        changeInternalCategoryId(increase)
+        when (internalCategoryId) {
+            -1 -> setOverallCategoryState()
+            in _categoryListState.value.indices -> setCategoryState()
+            _categoryListState.value.size -> setCategoryWithNoCategory()
+        }
+    }
+
+    private fun changeInternalCategoryId(increase: Boolean) {
+        var newFocusedCategory = internalCategoryId
+        if (increase)
+            newFocusedCategory++
+        else
+            newFocusedCategory--
+        internalCategoryId =
+            when {
+                newFocusedCategory > -1 -> -1
+                newFocusedCategory > _categoryListState.value.size -> _categoryListState.value.size
+                else -> newFocusedCategory
+            }
+    }
+
+    private fun setOverallCategoryState() {
+        _focusedCategoryState.value = focusedCategoryState.value.copy(
+            hasPrev = false,
+            hasNext = true,
+            category = Category(0, "Overall", "111111", Category.Image.DEFAULT, 0f)
+        )
+        getAllCategories()
+    }
+
+    private fun setCategoryState() {
+        _focusedCategoryState.value = focusedCategoryState.value.copy(
+            hasPrev = true,
+            hasNext = true,
+            category = _categoryListState.value[internalCategoryId]
+        )
+        getEntriesByCategory(id = focusedCategoryState.value.category.id)
+    }
+
+    private fun setCategoryWithNoCategory() {
+        _focusedCategoryState.value = focusedCategoryState.value.copy(
+            hasPrev = true,
+            hasNext = false,
+            category = Category(0, "No Category", "111111", Category.Image.DEFAULT, 0f)
+        )
+        getEntriesByCategory(id = null)
+    }
 
     // Old
     private val _categoriesState = MutableStateFlow<UiState>(UiState.Empty)
@@ -110,18 +172,6 @@ class DashboardViewModel(
                 is DataResponse.Unauthorized -> routerFlow.navigateTo(Screen.Login)
             }
         }.launchIn(scope)
-    }
-
-    fun getMyUser() {
-        getMyUserUseCase().onEach {
-            when (it) {
-                is DataResponse.Loading -> _state.value = UiState.Loading
-                is DataResponse.Success<*> -> dataFlow.storeUserState(it.data!!)
-                is DataResponse.Error -> _state.value = UiState.Error(it.error!!.message)
-                is DataResponse.Unauthorized -> routerFlow.navigateTo(Screen.Login)
-            }
-        }.launchIn(scope)
-
     }
 
     @Deprecated(message = "Use new StateFlow")
