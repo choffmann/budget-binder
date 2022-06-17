@@ -10,9 +10,8 @@ import de.hsfl.budgetBinder.presentation.UiState
 import de.hsfl.budgetBinder.presentation.flow.DataFlow
 import de.hsfl.budgetBinder.presentation.flow.RouterFlow
 import de.hsfl.budgetBinder.presentation.flow.UiEventSharedFlow
+import io.ktor.util.date.*
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
@@ -25,10 +24,15 @@ class DashboardViewModel(
 ) {
 
     private var internalCategoryId = -1
-    private val _categoryListState = MutableStateFlow<List<Category>>(emptyList())
+    private val currentMonth: Month = GMTDate().month
+    private var lastRequestedMonth = currentMonth
 
+    private val _categoryListState = MutableStateFlow<List<Category>>(emptyList())
     private val _entryListState = MutableStateFlow(DashboardState())
     val entryListState: StateFlow<DashboardState> = _entryListState
+
+    private val _oldEntriesMapState = MutableStateFlow<MutableMap<String, List<Entry>>>(mutableMapOf())
+    val oldEntriesMapState: StateFlow<Map<String, List<Entry>>> = _oldEntriesMapState
 
     private val _focusedCategoryState = MutableStateFlow(DashboardState())
     val focusedCategoryState: StateFlow<DashboardState> = _focusedCategoryState
@@ -44,9 +48,8 @@ class DashboardViewModel(
         //_getAllEntries()
         //_getAllCategories()
 
-        getAllEntries()
         getAllCategories()
-
+        getAllEntries()
     }
 
     fun onEvent(event: DashboardEvent) {
@@ -55,7 +58,7 @@ class DashboardViewModel(
             is DashboardEvent.OnPrevCategory -> changedFocusedCategory(increase = false)
             is DashboardEvent.OnEntry -> {}
             is DashboardEvent.OnEntryCreate -> scope.launch {
-                _eventFlow.emit(UiEvent.ShowError("OnEntryCreate Clicked"))
+                _eventFlow.emit(UiEvent.ShowError(currentMonth.toMonthString()))
             }
             is DashboardEvent.OnRefresh -> {
                 getAllCategories()
@@ -65,6 +68,8 @@ class DashboardViewModel(
                     _categoryListState.value.size -> getEntriesByCategory(id = null)
                 }
             }
+            is DashboardEvent.OnLoadMore -> loadMoreEntries()
+            is DashboardEvent.OnEntryDelete -> {}
         }
     }
 
@@ -125,6 +130,31 @@ class DashboardViewModel(
         }
     }
 
+    private fun getAllEntriesFromMonth(month: Month) = scope.launch {
+        // TODO: Year had also be to check
+        dashboardUseCases.getAllEntriesUseCase.entries("${month.toMonthString()}-${GMTDate().year}").collect {
+            when (it) {
+                is DataResponse.Loading -> _eventFlow.emit(UiEvent.ShowLoading)
+                is DataResponse.Error -> _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
+                is DataResponse.Success -> {
+                    _eventFlow.emit(UiEvent.HideSuccess)
+                    _oldEntriesMapState.value.putAll(
+                        mapOf(
+                            Pair(
+                                month.toMonthString(),
+                                it.data!!
+                            )
+                        )
+                    )
+                }
+                is DataResponse.Unauthorized -> {
+                    _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
+                    routerFlow.navigateTo(Screen.Login)
+                }
+            }
+        }
+    }
+
     private fun getCategoryByEntry(entry: Entry): Category? {
         _categoryListState.value.forEach { category ->
             if (category.id == entry.category_id) return category
@@ -141,6 +171,11 @@ class DashboardViewModel(
         }
     }
 
+    /**
+     * Change the internal Id to swipe between the categories
+     * @param increase if the next or prev button is pressed
+     * @author Cedrik Hoffmann
+     */
     private fun changeInternalCategoryId(increase: Boolean) {
         var newFocusedCategory = internalCategoryId
         if (increase)
@@ -155,15 +190,23 @@ class DashboardViewModel(
             }
     }
 
+    /**
+     * Set the first category, all entries are here
+     */
     private fun setOverallCategoryState() {
+        var totalBudget = 0f
+        _categoryListState.value.forEach { totalBudget += it.budget }
         _focusedCategoryState.value = focusedCategoryState.value.copy(
             hasPrev = false,
             hasNext = true,
-            category = Category(0, "Overall", "111111", Category.Image.DEFAULT, 0f)
+            category = Category(0, "Overall", "111111", Category.Image.DEFAULT, totalBudget)
         )
         getAllEntries()
     }
 
+    /**
+     * Set the category state for the current category, wich the user moved to
+     */
     private fun setCategoryState() {
         _focusedCategoryState.value = focusedCategoryState.value.copy(
             hasPrev = true,
@@ -173,6 +216,9 @@ class DashboardViewModel(
         getEntriesByCategory(id = focusedCategoryState.value.category.id)
     }
 
+    /**
+     * All entries with no category are shown in this category
+     */
     private fun setCategoryWithNoCategory() {
         _focusedCategoryState.value = focusedCategoryState.value.copy(
             hasPrev = true,
@@ -182,6 +228,9 @@ class DashboardViewModel(
         getEntriesByCategory(id = null)
     }
 
+    /**
+     * Calculate the spend money for a category
+     */
     private fun calcSpendBudgetOnCategory() {
         var spendMoney = 0F
         entryListState.value.entryList.onEach {
@@ -193,6 +242,27 @@ class DashboardViewModel(
         }
         _spendBudgetOnCurrentCategory.value =
             spendBudgetOnCurrentCategory.value.copy(spendBudgetOnCurrentCategory = spendMoney)
+    }
+
+    private fun loadMoreEntries() {
+        getAllEntriesFromMonth(
+            month = Month.from(lastRequestedMonth.ordinal - 1)
+        )
+        lastRequestedMonth = Month.from(lastRequestedMonth.ordinal - 1)
+    }
+
+
+    /**
+     * Helper Function to convert object in String for ApiRequest
+     * Month.ordinal starts at 0, so we have to add by 1 every time
+     * if (Month.ordinal + 1) < 10 then add a 0 at the front
+     * else return the ordinal
+     */
+    private fun Month.toMonthString(): String {
+        return when {
+            this.ordinal + 1 < 10 -> "0${this.ordinal + 1}"
+            else -> "${this.ordinal + 1}"
+        }
     }
 
     // Old
