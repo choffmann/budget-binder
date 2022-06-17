@@ -1,18 +1,13 @@
 package de.hsfl.budgetBinder.compose
 
-import App
 import androidx.compose.runtime.*
 import de.hsfl.budgetBinder.common.Category
 import de.hsfl.budgetBinder.compose.theme.AppStylesheet
-import de.hsfl.budgetBinder.compose.theme.AppStylesheet.attr
-import de.hsfl.budgetBinder.compose.theme.AppStylesheet.style
 import de.hsfl.budgetBinder.presentation.CategoryImageToIcon
-import kotlinx.serialization.json.JsonNull.content
 import org.jetbrains.compose.web.ExperimentalComposeWebSvgApi
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
 import org.jetbrains.compose.web.svg.Circle
-import org.jetbrains.compose.web.svg.Rect
 import org.jetbrains.compose.web.svg.Svg
 
 
@@ -113,8 +108,10 @@ fun CategoryImagesToImageList(onClick: (Category.Image) -> Unit) {
 @Composable
 fun CategoryList(
     categoryList: List<Category>,
-    onOpenDeleteDialog: () -> Unit,
+    onEditButton: () -> Unit,
+    onDeleteButton: (Int) -> Unit
 ) {
+    var deleteDialog by remember { mutableStateOf(false) }
     Div {
         for (category in categoryList)
             Div(attrs = {
@@ -165,7 +162,7 @@ fun CategoryList(
                 ) {
                     Button(attrs = {
                         classes("mdc-button", "mdc-button--raised", AppStylesheet.marginRight)
-                        onClick { }
+                        onClick { onEditButton() }
                         style {
                             flex(50.percent)
                             margin(1.5.percent)
@@ -175,7 +172,7 @@ fun CategoryList(
                     }
                     Button(attrs = {
                         classes("mdc-button", "mdc-button--raised")
-                        onClick { onOpenDeleteDialog() }
+                        onClick { deleteDialog = true }
                         style {
                             flex(50.percent)
                             margin(1.5.percent)
@@ -184,6 +181,9 @@ fun CategoryList(
                     }) {
                         Text("Delete Category")
                     }
+                }
+                if (deleteDialog) {
+                    DeleteDialog(false, {onDeleteButton(category.id)}, {deleteDialog = false}) { Text("Delete Category?") }
                 }
             }
     }
