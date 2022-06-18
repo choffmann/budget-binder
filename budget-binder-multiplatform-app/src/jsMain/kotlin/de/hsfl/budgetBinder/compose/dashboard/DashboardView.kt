@@ -23,7 +23,7 @@ fun DashboardView(
     entriesState: State<Any>,
     onCategorySummaryButton: () -> Unit,
     onSettingsButton: () -> Unit,
-    onEntryCreateButton: () -> Unit,
+    onEntryCreateButton: (categoryList: List<Category>) -> Unit,
     onEntryOverviewButton: (id:Int) -> Unit
 ) {
     val categoriesViewState by remember { categoriesState }
@@ -72,7 +72,7 @@ fun DashboardView(
     MainFlexContainer {
         
         Div { DashboardData(categoryList, entryList, onEntryOverviewButton) }
-        CreateNewEntryButton(onEntryCreateButton)
+        CreateNewEntryButton({ onEntryCreateButton(categoryList) })
         //Process new Category Data
         when (categoriesViewState) {
             is UiState.Success<*> -> {
