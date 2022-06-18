@@ -78,7 +78,7 @@ fun EntryOverviewView(
                 }
             ) { Text(" Entry") }
 
-            EntryOverview(entry,onEditButton,onDeleteButton)
+            EntryOverview(entry, onEditButton, onDeleteButton)
         }
         when (viewState) {
             is UiState.Success<*> -> {
@@ -105,64 +105,60 @@ fun EntryOverview(
     onDeleteButton: (Int) -> Unit
 ) {
     var deleteDialog by remember { mutableStateOf(false) }
-    Div(attrs = {
-        classes("mdc-card", AppStylesheet.card)
-    }
+    Div(
+        attrs = {
+            classes(AppStylesheet.categoryListElement, AppStylesheet.flexContainer)
+        }
     ) {
-        Div(
-            attrs = {
-                classes(AppStylesheet.categoryListElement, AppStylesheet.flexContainer)
-            }
-        ) {
 
-            Div(
-                attrs = {
-                    classes(AppStylesheet.categoryListElementText)
-                }
-            ) {
-                Div {
-                    Div(attrs = {
-                        classes("mdc-typography--headline4", AppStylesheet.text)
-                    }) { Text(entry.name) }
-                    Div(attrs = {
-                        classes("mdc-typography--headline6", AppStylesheet.text)
-                    }) { Text("Amount: ${entry.amount}€") }
-                }
-            }
-        }
         Div(
             attrs = {
-                classes(AppStylesheet.flexContainer)
+                classes(AppStylesheet.categoryListElementText)
             }
         ) {
-            Button(attrs = {
-                classes("mdc-button", "mdc-button--raised", AppStylesheet.marginRight)
-                onClick { onEditButton() }
-                style {
-                    flex(50.percent)
-                    margin(1.5.percent)
-                }
-            }) {
-                Text("Edit Entry")
-            }
-            Button(attrs = {
-                classes("mdc-button", "mdc-button--raised")
-                onClick { deleteDialog = true }
-                style {
-                    flex(50.percent)
-                    margin(1.5.percent)
-                    backgroundColor(Color("#b00020"))
-                }
-            }) {
-                Text("Delete Entry")
+            Div {
+                Div(attrs = {
+                    classes("mdc-typography--headline4", AppStylesheet.text)
+                }) { Text(entry.name) }
+                Div(attrs = {
+                    classes("mdc-typography--headline6", AppStylesheet.text)
+                }) { Text("Amount: ${entry.amount}€") }
             }
         }
-        if (deleteDialog) {
-            DeleteDialog(
-                false,
-                { onDeleteButton(entry.id) },
-                { deleteDialog = false }) { Text("Delete Entry?") }
+    }
+    Div(
+        attrs = {
+            classes(AppStylesheet.flexContainer)
         }
+    ) {
+        Button(attrs = {
+            classes("mdc-button", "mdc-button--raised", AppStylesheet.marginRight)
+            onClick { onEditButton() }
+            style {
+                flex(50.percent)
+                margin(1.5.percent)
+            }
+        }) {
+            Text("Edit Entry")
+        }
+        Button(attrs = {
+            classes("mdc-button", "mdc-button--raised")
+            onClick { deleteDialog = true }
+            style {
+                flex(50.percent)
+                margin(1.5.percent)
+                backgroundColor(Color("#b00020"))
+            }
+        }) {
+            Text("Delete Entry")
+        }
+    }
+    if (deleteDialog) {
+        DeleteDialog(
+            false,
+            { onDeleteButton(entry.id) },
+            { deleteDialog = false }) { Text("Delete Entry?") }
     }
 }
+
 

@@ -51,14 +51,17 @@ fun EntryComponent(screenState: MutableState<Screen>) {
             state = viewState,
             onBackButton = { screenState.value = Screen.Dashboard }
         )
-        is Screen.EntryOverview -> EntryOverviewView(
-            state = viewState,
-            onEditButton = {},
-            onDeleteButton = {id -> entryViewModel.removeEntry(id)},
-            onChangeToDashboard = { screenState.value = Screen.Dashboard },
-            onChangeToSettings = { screenState.value = Screen.Settings },
-            onChangeToCategory = { screenState.value = Screen.CategorySummary },
-        )
+        is Screen.EntryOverview -> {
+            EntryOverviewView(
+                state = viewState,
+                onEditButton = {},
+                onDeleteButton = { id -> entryViewModel.removeEntry(id) },
+                onChangeToDashboard = { screenState.value = Screen.Dashboard },
+                onChangeToSettings = { screenState.value = Screen.Settings },
+                onChangeToCategory = { screenState.value = Screen.CategorySummary },
+            )
+            entryViewModel.getEntryById((screenState.value as Screen.EntryOverview).id)
+        }
         else -> {}
     }
 }
@@ -105,8 +108,7 @@ fun EntryList(list: List<Entry>, categoryList: List<Category>, onEntry: (id: Int
                 AppStylesheet.text
             )
         }) { Text("No Entries in this category") }
-    }
-    else {
+    } else {
         for (entry in list) {
             EntryListElement(entry, categoryList, onEntry)
         }
