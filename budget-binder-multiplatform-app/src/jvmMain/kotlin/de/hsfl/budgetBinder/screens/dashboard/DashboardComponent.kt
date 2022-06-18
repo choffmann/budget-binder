@@ -1,100 +1,127 @@
 package de.hsfl.budgetBinder.screens.dashboard
 
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.*
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.Icons.Default
-import androidx.compose.material.icons.filled.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.List
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import de.hsfl.budgetBinder.common.Category
 import de.hsfl.budgetBinder.common.Entry
 import de.hsfl.budgetBinder.di
 import de.hsfl.budgetBinder.presentation.CategoryImageToIcon
-import de.hsfl.budgetBinder.presentation.UiEvent
 import de.hsfl.budgetBinder.presentation.viewmodel.dashboard.DashboardEntryState
 import de.hsfl.budgetBinder.presentation.viewmodel.dashboard.DashboardEvent
 import de.hsfl.budgetBinder.presentation.viewmodel.dashboard.DashboardViewModel
-import kotlinx.coroutines.flow.collectLatest
 import org.kodein.di.instance
 
 @Composable
 fun DashboardComponent() {
     val viewModel: DashboardViewModel by di.instance()
-    //val categoryList = viewModel.categoryListSate.collectAsState()
     val entryList = viewModel.entryListState.collectAsState()
     val focusedCategory = viewModel.focusedCategoryState.collectAsState()
     val totalSpendBudget = viewModel.spendBudgetOnCurrentCategory.collectAsState()
     val olderEntries = viewModel.oldEntriesMapState.collectAsState()
-    val scaffoldState = rememberScaffoldState()
     val loadingState = remember { mutableStateOf(false) }
 
-    LaunchedEffect(key1 = true) {
-        viewModel.eventFlow.collectLatest { event ->
-            when (event) {
-                is UiEvent.ShowLoading -> loadingState.value = true
-                else -> loadingState.value = false
-            }
-        }
-    }
-    Scaffold(
-        scaffoldState = scaffoldState,
-        floatingActionButton = {
-            FloatingActionButton(onClick = { viewModel.onEvent(DashboardEvent.OnEntryCreate) }) {
-                Icon(Default.Add, contentDescription = null)
-            }
-        },
-        floatingActionButtonPosition = FabPosition.End,
-        isFloatingActionButtonDocked = true
-    ) {
-        if (loadingState.value) {
-            LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
-        }
+    Column {
+        TopDashboardSection(
+            focusedCategory = focusedCategory.value.category,
+            totalSpendBudget = totalSpendBudget.value.spendBudgetOnCurrentCategory,
+            totalBudget = focusedCategory.value.category.budget,
+            hasPrev = focusedCategory.value.hasPrev,
+            hasNext = focusedCategory.value.hasNext,
+            onPrevClicked = { viewModel.onEvent(DashboardEvent.OnPrevCategory) },
+            onNextClicked = { viewModel.onEvent(DashboardEvent.OnNextCategory) }
+        )
         Column {
-            Row {
-                if (focusedCategory.value.hasPrev) {
-                    IconButton(onClick = { viewModel.onEvent(DashboardEvent.OnPrevCategory) }) {
-                        Icon(Default.ArrowBack, contentDescription = null)
-                    }
-                }
-                Text(focusedCategory.value.category.name)
-                if (focusedCategory.value.hasNext) {
-                    IconButton(onClick = { viewModel.onEvent(DashboardEvent.OnNextCategory) }) {
-                        Icon(Default.ArrowForward, contentDescription = null)
-                    }
+            EntryList(entryList = entryList.value.entryList, onItemClicked = {})
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(text = "Older entries...", style = MaterialTheme.typography.caption)
+            Spacer(modifier = Modifier.height(8.dp))
+            OlderEntryList(entryMap = olderEntries.value)
+            Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+                OutlinedButton(onClick = { viewModel.onEvent(DashboardEvent.OnLoadMore) }) {
+                    Text("Load More")
                 }
             }
-            Text("Spend: ${totalSpendBudget.value.spendBudgetOnCurrentCategory}")
-            Text("Total: ${focusedCategory.value.category.budget}")
-            Button(onClick = { viewModel.onEvent(DashboardEvent.OnRefresh) }) {
-                Text("Update")
-            }
-            EntryList(entryList = entryList.value.entryList)
-            OlderEntryList(olderEntries.value)
-            Button(onClick = { viewModel.onEvent(DashboardEvent.OnLoadMore) }) {
-                Text("Load more")
-            }
-            //EntryList()
 
         }
     }
 }
 
 @Composable
-fun FocusedCategory(category: Category) {
-    Column { Text(category.name) }
+fun BudgetBar(modifier: Modifier = Modifier, progress: Float) {
+    var _progress = progress
+    if (progress > 1f) _progress = 1f
+    if (progress < 0f) _progress = 0f
+    val animatedProgress = animateFloatAsState(
+        targetValue = _progress,
+        animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec
+    ).value
+    LinearProgressIndicator(modifier = modifier, progress = animatedProgress)
 }
 
+@Composable
+private fun TopDashboardSection(
+    focusedCategory: Category,
+    totalSpendBudget: Float,
+    totalBudget: Float,
+    hasPrev: Boolean,
+    hasNext: Boolean,
+    onPrevClicked: () -> Unit,
+    onNextClicked: () -> Unit
+) {
+    Surface(elevation = 8.dp) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(text = focusedCategory.name)
+            Spacer(modifier = Modifier.height(8.dp))
+            Row(horizontalArrangement = Arrangement.Center) {
+                IconButton(
+                    modifier = Modifier.weight(1F),
+                    onClick = onPrevClicked,
+                    enabled = hasPrev
+                ) {
+                    Icon(Icons.Default.KeyboardArrowLeft, contentDescription = null)
+                }
+                BudgetBar(
+                    modifier = Modifier.weight(4F).height(32.dp).clip(RoundedCornerShape(8.dp)),
+                    progress = totalSpendBudget / totalBudget
+                )
+                IconButton(
+                    modifier = Modifier.weight(1F),
+                    onClick = onNextClicked,
+                    enabled = hasNext
+                ) {
+                    Icon(Icons.Default.KeyboardArrowRight, contentDescription = null)
+                }
+            }
+            Text("Spend: $totalSpendBudget")
+            Text("Total: $totalBudget")
+            Spacer(modifier = Modifier.height(8.dp))
+        }
+    }
+}
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-private fun EntryList(entryList: List<DashboardEntryState>) {
+private fun EntryList(entryList: List<DashboardEntryState>, onItemClicked: (Int) -> Unit) {
 
     when {
         entryList.isEmpty() -> Text("This category has no entries. You can create an new entry.")
@@ -103,6 +130,7 @@ private fun EntryList(entryList: List<DashboardEntryState>) {
         items(entryList) { state ->
             Divider()
             ListItem(
+                modifier = Modifier.clickable(onClick = { onItemClicked(state.entry.id) }),
                 text = { Text(state.entry.name) },
                 icon = { CategoryImageToIcon(icon = state.categoryImage) },
                 trailing = { Text("${state.entry.amount} €") }
@@ -114,10 +142,6 @@ private fun EntryList(entryList: List<DashboardEntryState>) {
 @OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
 @Composable
 private fun OlderEntryList(entryMap: Map<String, List<Entry>>) {
-
-    when {
-        entryMap.isEmpty() -> Text("There are not more entries")
-    }
     LazyColumn {
         entryMap.forEach { (date, entries) ->
             stickyHeader {
@@ -136,104 +160,3 @@ private fun OlderEntryList(entryMap: Map<String, List<Entry>>) {
     }
 }
 
-
-@OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
-@Composable
-private fun EntryList() {
-    data class _DashboardEntryState(
-        val entry: Entry,
-        val categoryImage: Category.Image = Category.Image.DEFAULT,
-        val date: String = "02-2022"
-    )
-
-    val dateEntryList = listOf<_DashboardEntryState>(
-        _DashboardEntryState(
-            entry = Entry(0, "Entry 1", -20.51F, false, null),
-            date = "06-2022"
-        ),
-        _DashboardEntryState(
-            entry = Entry(0, "Entry 2", -20.51F, false, null),
-            date = "06-2022"
-        ),
-        _DashboardEntryState(
-            entry = Entry(0, "Entry 3", -20.51F, false, null),
-            date = "06-2022"
-        ),
-        _DashboardEntryState(
-            entry = Entry(0, "Entry 4", -20.51F, false, null),
-            date = "06-2022"
-        ),
-        _DashboardEntryState(
-            entry = Entry(0, "Entry 5", -20.51F, false, null),
-            date = "05-2022"
-        ),
-        _DashboardEntryState(
-            entry = Entry(0, "Entry 6", -20.51F, false, null),
-            date = "05-2022"
-        ),
-        _DashboardEntryState(
-            entry = Entry(0, "Entry 7", -20.51F, false, null),
-            date = "04-2022"
-        ),
-        _DashboardEntryState(
-            entry = Entry(0, "Entry 8", -20.51F, false, null),
-            date = "04-2022"
-        ),
-        _DashboardEntryState(
-            entry = Entry(0, "Entry 9", -20.51F, false, null),
-            date = "04-2022"
-        ),
-        _DashboardEntryState(
-            entry = Entry(0, "Entry 10", -20.51F, false, null),
-            date = "04-2022"
-        ),
-        _DashboardEntryState(
-            entry = Entry(0, "Entry 11", -20.51F, false, null),
-            date = "04-2022"
-        ),
-        _DashboardEntryState(
-            entry = Entry(0, "Entry 12", -20.51F, false, null),
-            date = "04-2022"
-        ),
-        _DashboardEntryState(
-            entry = Entry(0, "Entry 13", -20.51F, false, null),
-            date = "03-2022"
-        ),
-        _DashboardEntryState(
-            entry = Entry(0, "Entry 14", -20.51F, false, null),
-            date = "03-2022"
-        ),
-        _DashboardEntryState(
-            entry = Entry(0, "Entry 15", -20.51F, false, null),
-            date = "03-2022"
-        ),
-        _DashboardEntryState(
-            entry = Entry(0, "Entry 16", -20.51F, false, null),
-            date = "03-2022"
-        ),
-        _DashboardEntryState(
-            entry = Entry(0, "Entry 17", -20.51F, false, null),
-            date = "03-2022"
-        )
-    )
-
-    val groupList = dateEntryList.groupBy { it.date }
-
-    val listState = rememberLazyListState()
-    LazyColumn(state = listState) {
-        groupList.forEach { (date, states) ->
-            stickyHeader {
-                Text(modifier = Modifier.background(MaterialTheme.colors.background).fillMaxWidth(), text = date)
-            }
-
-            items(states) { state ->
-                Divider()
-                ListItem(
-                    text = { Text(state.entry.name) },
-                    icon = { CategoryImageToIcon(icon = state.categoryImage) },
-                    trailing = { Text("${state.entry.amount} €") }
-                )
-            }
-        }
-    }
-}
