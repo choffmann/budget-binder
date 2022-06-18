@@ -86,6 +86,7 @@ fun CategoryCreateView(
             }
         }
         ) {
+            //Category Name Input
             Div(
                 attrs = {
                     classes(AppStylesheet.margin)
@@ -124,6 +125,7 @@ fun CategoryCreateView(
                     ) { }
                 }
             }
+            //Category Color Input
             Div(
                 attrs = {
                     classes(AppStylesheet.margin)
@@ -162,6 +164,7 @@ fun CategoryCreateView(
                     ) { }
                 }
             }
+            //Category Image Input
             Div(
                 attrs = {
                     classes(AppStylesheet.margin)
@@ -181,6 +184,7 @@ fun CategoryCreateView(
                     CategoryImagesToImageList(onClick = { categoryImageState = it })
                 }
             }
+            //Category Budget Input
             Div(
                 attrs = {
                     classes(AppStylesheet.margin)
@@ -220,6 +224,7 @@ fun CategoryCreateView(
                     ) { }
                 }
             }
+            //Submit button
             Div(
                 attrs = {
                     classes(AppStylesheet.margin)

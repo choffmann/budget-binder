@@ -146,7 +146,7 @@ fun CategoryImagesToImageList(onClick: (Category.Image) -> Unit) {
     ) {
         Ul(
             attrs = {
-                classes("mdc-image-list", "my-image-list")
+                classes("mdc-image-list", AppStylesheet.categoryImageList)
             }
         ) {
             for (image in Category.Image.values()) {

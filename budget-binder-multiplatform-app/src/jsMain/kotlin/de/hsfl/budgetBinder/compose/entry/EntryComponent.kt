@@ -27,7 +27,7 @@ fun EntryComponent(screenState: MutableState<Screen>) {
     val changeEntryByIdUseCase: ChangeEntryByIdUseCase by di.instance()
     val deleteEntryByIdUseCase: DeleteEntryByIdUseCase by di.instance()
     val createNewEntryUseCase: CreateNewEntryUseCase by di.instance()
-    val userViewModel = EntryViewModel(
+    val entryViewModel = EntryViewModel(
         getAllEntriesUseCase,
         getEntryByIdUseCase,
         createNewEntryUseCase,
@@ -35,25 +35,40 @@ fun EntryComponent(screenState: MutableState<Screen>) {
         deleteEntryByIdUseCase,
         scope
     )
-    val viewState = userViewModel.state.collectAsState(scope)
+    val viewState = entryViewModel.state.collectAsState(scope)
 
     when (screenState.value) {
+        is Screen.EntryOverview -> {
+            EntryOverviewView(
+                state = viewState,
+                onEditButton = {id -> screenState.value = Screen.EntryEdit(id)},
+                onDeleteButton = { id ->
+                    entryViewModel.removeEntry(id)
+                    screenState.value = Screen.Dashboard},
+                onChangeToDashboard = { screenState.value = Screen.Dashboard },
+                onChangeToSettings = { screenState.value = Screen.Settings },
+                onChangeToCategory = { screenState.value = Screen.CategorySummary },
+            )
+            entryViewModel.getEntryById((screenState.value as Screen.EntryOverview).id)
+        }
         is Screen.EntryCreate -> {EntryCreateView(
             state = viewState,
             categoryList = (screenState.value as Screen.EntryCreate).categoryList,
             onChangeToDashboard = { screenState.value = Screen.Dashboard },
             onCreateEntryButtonPressed = { name, amount, repeat, category_id ->
-                userViewModel.createEntry(Entry.In(name, amount, repeat, category_id)) },
+                entryViewModel.createEntry(Entry.In(name, amount, repeat, category_id)) },
             onChangeToSettings = { screenState.value = Screen.Settings },
             onChangeToCategory = { screenState.value = Screen.CategorySummary },
         )
 
         }
-        is Screen.EntryEdit -> EntryEditView(
-            state = viewState,
-            onBackButton = { screenState.value = Screen.Dashboard }
-        )
-        else -> {}
+        is Screen.EntryEdit -> {
+            EntryEditView(
+                state = viewState,
+                onBackButton = { screenState.value = Screen.Dashboard }
+            )
+            entryViewModel.getEntryById((screenState.value as Screen.EntryEdit).id)//(screenState.value as Screen.EntryEdit).id)
+        }
     }
 }
 
@@ -99,8 +114,7 @@ fun EntryList(list: List<Entry>, categoryList: List<Category>, onEntry: (id: Int
                 AppStylesheet.text
             )
         }) { Text("No Entries in this category") }
-    }
-    else {
+    } else {
         for (entry in list) {
             EntryListElement(entry, categoryList, onEntry)
         }
