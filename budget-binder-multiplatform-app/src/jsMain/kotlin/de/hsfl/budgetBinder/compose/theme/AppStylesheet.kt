@@ -74,6 +74,10 @@ object AppStylesheet : StyleSheet() {
         flex("2 2 90%")
     }
 
+    val categoryImageList by style{
+        justifyContent(JustifyContent.Center)
+    }
+
     val text by style {
         textAlign("center")
         padding(10.px)
