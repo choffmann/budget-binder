@@ -18,16 +18,18 @@ class EntryServiceImpl : EntryService {
         }
     }
 
+    private fun filterEntriesByPeriod(it: EntryEntity, period: LocalDateTime): Boolean {
+        return if (it.repeat)
+            isCreatedAndEndedInPeriod(it.created, it.ended, period)
+        else
+            it.created > period && it.created < period.plusMonths(1)
+    }
+
     override fun getEntriesByPeriod(userId: Int, period: LocalDateTime?): List<Entry> = transaction {
         val user = UserEntity[userId]
 
         val value = period?.let { period ->
-            user.entries.filter {
-                if (it.repeat)
-                    isCreatedAndEndedInPeriod(it.created, it.ended, period)
-                else
-                    it.created > period && it.created < period.plusMonths(1)
-            }
+            user.entries.filter { filterEntriesByPeriod(it, period) }
         } ?: user.entries
 
         value.map { it.toDto() }
@@ -101,8 +103,9 @@ class EntryServiceImpl : EntryService {
         returnValue
     }
 
-    override fun getAllEntriesForCategoryIdParam(
+    override fun getAllEntriesByPeriodForCategoryIdParam(
         userId: Int,
+        period: LocalDateTime?,
         categoryId: String?
     ): APIResponse<List<Entry>> = transaction {
         val userEntity = UserEntity[userId]
@@ -112,12 +115,16 @@ class EntryServiceImpl : EntryService {
             APIResponse(data = entries.map { it.toDto() }, success = true)
         } else {
             categoryId?.toIntOrNull()?.let { id ->
-                userEntity.categories.firstOrNull { it.id.value == id }
-                    ?.let { categoryEntity ->
-                        val entries =
-                            EntryEntity.find { Entries.category eq categoryEntity.id and (Entries.user eq userEntity.id) }
-                        APIResponse(data = entries.map { it.toDto() }, success = true)
-                    } ?: APIResponse(ErrorModel("Your category was not found."))
+                userEntity.categories.firstOrNull { it.id.value == id }?.let { categoryEntity ->
+                    EntryEntity.find { Entries.category eq categoryEntity.id and (Entries.user eq userEntity.id) }
+                        .let { entryEntities ->
+                            period?.let {
+                                entryEntities.filter { filterEntriesByPeriod(it, period) }
+                            } ?: entryEntities
+                        }.let { entries ->
+                            APIResponse(data = entries.map { it.toDto() }, success = true)
+                        }
+                } ?: APIResponse(ErrorModel("Your category was not found."))
             } ?: APIResponse(ErrorModel("The ID you provided is not a number."))
         }
     }

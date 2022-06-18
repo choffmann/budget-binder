@@ -122,7 +122,8 @@ class CategoryEntryTest {
         client.get("/categories/1/entries").let { response ->
             assertEquals(HttpStatusCode.Unauthorized, response.status)
             val responseBody: APIResponse<List<Entry>> = response.body()
-            val shouldResponse: APIResponse<List<Entry>> = wrapFailure("Your accessToken is absent or does not match.", 401)
+            val shouldResponse: APIResponse<List<Entry>> =
+                wrapFailure("Your accessToken is absent or does not match.", 401)
             assertEquals(shouldResponse, responseBody)
         }
 
@@ -183,6 +184,106 @@ class CategoryEntryTest {
             assertEquals(HttpStatusCode.OK, response.status)
             val responseBody: APIResponse<List<Entry>> = response.body()
             val shouldResponse = wrapSuccess(listOf(entryList[1], entryList[2], entryList[4]))
+            assertEquals(shouldResponse, responseBody)
+        }
+    }
+
+    @Test
+    fun testGetEntriesByCategoryWithPeriod() = customTestApplicationWithLogin { client ->
+        val categoryId = transaction { CategoryEntity.all().first().id.value }
+        val entryId = transaction { EntryEntity.all().first().id.value }
+
+        val now = LocalDateTime.now()
+
+        val entryList = listOf(
+            Entry(entryId, "Internet", -50f, true, categoryId),
+            Entry(entryId + 1, "Internet", -50f, true, categoryId + 1),
+            Entry(entryId + 2, "Phone", -50f, true, categoryId + 1),
+            Entry(entryId + 3, "Phone one Time", -250f, false, categoryId + 1),
+            Entry(entryId + 4, "Monthly Pay", 3000f, true, null),
+        )
+
+        sendAuthenticatedRequest(client, HttpMethod.Get, "/categories/${categoryId}/entries?current=true") { response ->
+            assertEquals(HttpStatusCode.OK, response.status)
+            val responseBody: APIResponse<List<Entry>> = response.body()
+            val shouldResponse: APIResponse<List<Entry>> = wrapSuccess(emptyList())
+            assertEquals(shouldResponse, responseBody)
+        }
+
+        sendAuthenticatedRequest(
+            client,
+            HttpMethod.Get,
+            "/categories/${categoryId}/entries?period=${formatToPeriod(now.minusMonths(1))}"
+        ) { response ->
+            assertEquals(HttpStatusCode.OK, response.status)
+            val responseBody: APIResponse<List<Entry>> = response.body()
+            val shouldResponse: APIResponse<List<Entry>> = wrapSuccess(emptyList())
+            assertEquals(shouldResponse, responseBody)
+        }
+
+        sendAuthenticatedRequest(
+            client,
+            HttpMethod.Get,
+            "/categories/${categoryId}/entries?period=${formatToPeriod(now.minusMonths(2))}"
+        ) { response ->
+            assertEquals(HttpStatusCode.OK, response.status)
+            val responseBody: APIResponse<List<Entry>> = response.body()
+            val shouldResponse: APIResponse<List<Entry>> = wrapSuccess(emptyList())
+            assertEquals(shouldResponse, responseBody)
+        }
+
+        sendAuthenticatedRequest(
+            client,
+            HttpMethod.Get,
+            "/categories/${categoryId}/entries?period=${formatToPeriod(now.minusMonths(3))}"
+        ) { response ->
+            assertEquals(HttpStatusCode.OK, response.status)
+            val responseBody: APIResponse<List<Entry>> = response.body()
+            val shouldResponse = wrapSuccess(listOf(entryList[0]))
+            assertEquals(shouldResponse, responseBody)
+        }
+
+        sendAuthenticatedRequest(
+            client,
+            HttpMethod.Get,
+            "/categories/${categoryId + 1}/entries?current=true"
+        ) { response ->
+            assertEquals(HttpStatusCode.OK, response.status)
+            val responseBody: APIResponse<List<Entry>> = response.body()
+            val shouldResponse = wrapSuccess(listOf(entryList[1], entryList[2]))
+            assertEquals(shouldResponse, responseBody)
+        }
+
+        sendAuthenticatedRequest(
+            client,
+            HttpMethod.Get,
+            "/categories/${categoryId + 1}/entries?period=${formatToPeriod(now.minusMonths(1))}"
+        ) { response ->
+            assertEquals(HttpStatusCode.OK, response.status)
+            val responseBody: APIResponse<List<Entry>> = response.body()
+            val shouldResponse = wrapSuccess(listOf(entryList[1], entryList[2]))
+            assertEquals(shouldResponse, responseBody)
+        }
+
+        sendAuthenticatedRequest(
+            client,
+            HttpMethod.Get,
+            "/categories/${categoryId + 1}/entries?period=${formatToPeriod(now.minusMonths(2))}"
+        ) { response ->
+            assertEquals(HttpStatusCode.OK, response.status)
+            val responseBody: APIResponse<List<Entry>> = response.body()
+            val shouldResponse = wrapSuccess(listOf(entryList[1], entryList[2], entryList[3]))
+            assertEquals(shouldResponse, responseBody)
+        }
+
+        sendAuthenticatedRequest(
+            client,
+            HttpMethod.Get,
+            "/categories/${categoryId + 1}/entries?period=${formatToPeriod(now.minusMonths(3))}"
+        ) { response ->
+            assertEquals(HttpStatusCode.OK, response.status)
+            val responseBody: APIResponse<List<Entry>> = response.body()
+            val shouldResponse: APIResponse<List<Entry>> = wrapSuccess(emptyList())
             assertEquals(shouldResponse, responseBody)
         }
     }
