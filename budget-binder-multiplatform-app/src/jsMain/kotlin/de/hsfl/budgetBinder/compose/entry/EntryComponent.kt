@@ -36,25 +36,30 @@ fun EntryComponent(screenState: MutableState<Screen>) {
     val viewState = viewModel.state.collectAsState(scope.coroutineContext)
 
     when (screenState.value) {
-        is Screen.EntryCreate -> {EntryCreateView(
-            state = viewState,
-            categoryList = (screenState.value as Screen.EntryCreate).categoryList,
-            onChangeToDashboard = { screenState.value = Screen.Dashboard },
-            onCreateEntryButtonPressed = { name, amount, repeat, category_id ->
-                userViewModel.createEntry(Entry.In(name, amount, repeat, category_id)) },
-            onChangeToSettings = { screenState.value = Screen.Settings },
-            onChangeToCategory = { screenState.value = Screen.CategorySummary },
-        )
+        is Screen.EntryCreate -> {
+            EntryCreateView(
+                state = viewState,
+                categoryList = (screenState.value as Screen.EntryCreate).categoryList,
+                onChangeToDashboard = { screenState.value = Screen.Dashboard },
+                onCreateEntryButtonPressed = { name, amount, repeat, category_id ->
+                    userViewModel.createEntry(Entry.In(name, amount, repeat, category_id))
+                },
+                onChangeToSettings = { screenState.value = Screen.Settings },
+                onChangeToCategory = { screenState.value = Screen.CategorySummary },
+            )
 
         }
-        is Screen.EntryEdit -> EntryEditView(
-            state = viewState,
-            onBackButton = { screenState.value = Screen.Dashboard }
-        )
+        is Screen.EntryEdit -> {
+            EntryEditView(
+                state = viewState,
+                onBackButton = { screenState.value = Screen.Dashboard }
+            )
+            entryViewModel.getEntryById((screenState.value as Screen.EntryEdit).id)//(screenState.value as Screen.EntryEdit).id)
+        }
         is Screen.EntryOverview -> {
             EntryOverviewView(
                 state = viewState,
-                onEditButton = {screenState.value  = Screen.EntryEdit},
+                onEditButton = {id -> screenState.value = Screen.EntryEdit(id)},
                 onDeleteButton = { id -> entryViewModel.removeEntry(id) },
                 onChangeToDashboard = { screenState.value = Screen.Dashboard },
                 onChangeToSettings = { screenState.value = Screen.Settings },
