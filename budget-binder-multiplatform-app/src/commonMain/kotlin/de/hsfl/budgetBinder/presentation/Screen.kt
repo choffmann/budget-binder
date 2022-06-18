@@ -23,7 +23,7 @@ sealed class Screen {
     }
     sealed class Entry: Screen() {
         data class Overview(val id: Int): Entry()
-        object Edit: Entry()
+        data class Edit(val id: Int): Entry()
         data class Create (val categoryList :List<Category>): Entry()
     }
     object Login : Screen()
