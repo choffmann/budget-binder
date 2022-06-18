@@ -27,7 +27,7 @@ fun EntryComponent(screenState: MutableState<Screen>) {
     val changeEntryByIdUseCase: ChangeEntryByIdUseCase by di.instance()
     val deleteEntryByIdUseCase: DeleteEntryByIdUseCase by di.instance()
     val createNewEntryUseCase: CreateNewEntryUseCase by di.instance()
-    val userViewModel = EntryViewModel(
+    val entryViewModel = EntryViewModel(
         getAllEntriesUseCase,
         getEntryByIdUseCase,
         createNewEntryUseCase,
@@ -35,7 +35,7 @@ fun EntryComponent(screenState: MutableState<Screen>) {
         deleteEntryByIdUseCase,
         scope
     )
-    val viewState = userViewModel.state.collectAsState(scope)
+    val viewState = entryViewModel.state.collectAsState(scope)
 
     when (screenState.value) {
         Screen.EntryCreate -> EntryCreateView(
@@ -46,6 +46,14 @@ fun EntryComponent(screenState: MutableState<Screen>) {
         Screen.EntryEdit -> EntryEditView(
             state = viewState,
             onBackButton = { screenState.value = Screen.Dashboard }
+        )
+        is Screen.EntryOverview -> EntryOverviewView(
+            state = viewState,
+            onEditButton = {},
+            onDeleteButton = {id -> entryViewModel.removeEntry(id)},
+            onChangeToDashboard = { screenState.value = Screen.Dashboard },
+            onChangeToSettings = { screenState.value = Screen.Settings },
+            onChangeToCategory = { screenState.value = Screen.CategorySummary },
         )
         else -> {}
     }
