@@ -97,6 +97,9 @@ class EntryServiceImpl : EntryService {
         if (entryEntity.repeat && entryEntity.created < period) {
             entryEntity.ended = now
         } else {
+            EntryEntity.find { Entries.child eq entryEntity.id }.firstOrNull()?.let {
+                it.child = null
+            }
             entryEntity.delete()
         }
 

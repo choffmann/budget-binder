@@ -1,10 +1,7 @@
 package de.hsfl.budgetBinder.server.services.implementations
 
 import de.hsfl.budgetBinder.common.Category
-import de.hsfl.budgetBinder.server.models.CategoryEntity
-import de.hsfl.budgetBinder.server.models.Entries
-import de.hsfl.budgetBinder.server.models.EntryEntity
-import de.hsfl.budgetBinder.server.models.UserEntity
+import de.hsfl.budgetBinder.server.models.*
 import de.hsfl.budgetBinder.server.utils.isCreatedAndEndedInPeriod
 import de.hsfl.budgetBinder.server.services.interfaces.CategoryService
 import org.jetbrains.exposed.sql.SizedIterable
@@ -114,12 +111,15 @@ class CategoryServiceImpl : CategoryService {
         if (isNewCategory(categoryEntity)) {
             val entries = getEntriesForCategory(categoryEntity)
             entries.forEach { it.category = null }
+            CategoryEntity.find { Categories.child eq categoryEntity.id }.firstOrNull()?.let {
+                it.child = null
+            }
             categoryEntity.delete()
-            return@transaction returnValue
+        } else {
+            categoryEntity.ended = LocalDateTime.now()
+            changeEntriesWithCategory(categoryEntity, null)
         }
 
-        categoryEntity.ended = LocalDateTime.now()
-        changeEntriesWithCategory(categoryEntity, null)
         returnValue
     }
 }
