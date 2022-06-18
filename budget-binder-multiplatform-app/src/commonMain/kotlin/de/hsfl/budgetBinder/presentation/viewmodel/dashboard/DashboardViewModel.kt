@@ -48,8 +48,11 @@ class DashboardViewModel(
         //_getAllEntries()
         //_getAllCategories()
 
-        getAllCategories()
-        getAllEntries()
+        getAllCategories(onSuccess = { categories ->
+            _categoryListState.value = categories
+            setOverallCategoryState()
+        })
+
     }
 
     fun onEvent(event: DashboardEvent) {
@@ -61,11 +64,23 @@ class DashboardViewModel(
                 _eventFlow.emit(UiEvent.ShowError(currentMonth.toMonthString()))
             }
             is DashboardEvent.OnRefresh -> {
-                getAllCategories()
                 when (internalCategoryId) {
-                    -1 -> getAllEntries()
-                    in _categoryListState.value.indices -> getEntriesByCategory(id = focusedCategoryState.value.category.id)
-                    _categoryListState.value.size -> getEntriesByCategory(id = null)
+                    -1 -> getAllEntries(onSuccess = {
+                        _entryListState.value =
+                            entryListState.value.copy(entryList = mapEntryListToDashboardEntryState(it))
+                    })
+                    in _categoryListState.value.indices -> getEntriesByCategory(
+                        id = focusedCategoryState.value.category.id,
+                        onSuccess = {
+                            _entryListState.value =
+                                entryListState.value.copy(entryList = mapEntryListToDashboardEntryState(it))
+                        })
+                    _categoryListState.value.size -> getEntriesByCategory(
+                        id = null,
+                        onSuccess = {
+                            _entryListState.value =
+                                entryListState.value.copy(entryList = mapEntryListToDashboardEntryState(it))
+                        })
                 }
             }
             is DashboardEvent.OnLoadMore -> loadMoreEntries()
@@ -73,21 +88,25 @@ class DashboardViewModel(
         }
     }
 
-    private fun getAllEntries() {
+    private fun mapEntryListToDashboardEntryState(entryList: List<Entry>): List<DashboardEntryState> {
+        return entryList.map { entry ->
+            DashboardEntryState(
+                entry,
+                categoryImage = getCategoryByEntry(entry)?.image ?: Category.Image.DEFAULT
+            )
+        }
+    }
+
+    private fun getAllEntries(onSuccess: (List<Entry>) -> Unit) {
         scope.launch {
             dashboardUseCases.getAllEntriesUseCase.entries().collect {
                 when (it) {
                     is DataResponse.Loading -> _eventFlow.emit(UiEvent.ShowLoading)
                     is DataResponse.Error -> _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
                     is DataResponse.Success -> {
-                        _entryListState.value = entryListState.value.copy(entryList = it.data!!.map { entry ->
-                            DashboardEntryState(
-                                entry,
-                                categoryImage = getCategoryByEntry(entry)?.image ?: Category.Image.DEFAULT
-                            )
-                        })
+                        onSuccess(it.data!!)
                         _eventFlow.emit(UiEvent.HideSuccess)
-                        calcSpendBudgetOnCategory()
+                        //calcSpendBudgetOnCategory()
                     }
                     is DataResponse.Unauthorized -> {
                         _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
@@ -98,14 +117,15 @@ class DashboardViewModel(
         }
     }
 
-    private fun getAllCategories() {
+    private fun getAllCategories(onSuccess: (List<Category>) -> Unit) {
         scope.launch {
             dashboardUseCases.getAllCategoriesUseCase.categories().collect {
                 when (it) {
                     is DataResponse.Loading -> _eventFlow.emit(UiEvent.ShowLoading)
-                    is DataResponse.Error-> _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
+                    is DataResponse.Error -> _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
                     is DataResponse.Success -> {
-                        _categoryListState.value = it.data!!
+                        onSuccess(it.data!!)
+                        //_categoryListState.value = it.data!!
                         _eventFlow.emit(UiEvent.HideSuccess)
                     }
                     is DataResponse.Unauthorized -> {
@@ -117,21 +137,22 @@ class DashboardViewModel(
         }
     }
 
-    private fun getEntriesByCategory(id: Int? = null) {
+    private fun getEntriesByCategory(id: Int? = null, onSuccess: (List<Entry>) -> Unit) {
         scope.launch {
             dashboardUseCases.getAllEntriesByCategoryUseCase(id).collect {
                 when (it) {
                     is DataResponse.Loading -> _eventFlow.emit(UiEvent.ShowLoading)
                     is DataResponse.Error -> _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
                     is DataResponse.Success -> {
-                        _entryListState.value = entryListState.value.copy(entryList = it.data!!.map { entry ->
+                        onSuccess(it.data!!)
+                        /*_entryListState.value = entryListState.value.copy(entryList = it.data!!.map { entry ->
                             DashboardEntryState(
                                 entry,
                                 categoryImage = getCategoryByEntry(entry)?.image ?: Category.Image.DEFAULT
                             )
-                        })
+                        })*/
                         _eventFlow.emit(UiEvent.HideSuccess)
-                        calcSpendBudgetOnCategory()
+                        //calcSpendBudgetOnCategory()
                     }
                     is DataResponse.Unauthorized -> {
                         _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
@@ -194,6 +215,12 @@ class DashboardViewModel(
             in _categoryListState.value.indices -> setCategoryState()
             _categoryListState.value.size -> setCategoryWithNoCategory()
         }
+        resetOldEntries()
+    }
+
+    private fun resetOldEntries() {
+        _oldEntriesMapState.value = mutableMapOf()
+        lastRequestedMonth = currentMonth
     }
 
     /**
@@ -219,50 +246,59 @@ class DashboardViewModel(
      * Set the first category, all entries are here
      */
     private fun setOverallCategoryState() {
-        var totalBudget = 0f
-        _categoryListState.value.forEach { totalBudget += it.budget }
-        _focusedCategoryState.value = focusedCategoryState.value.copy(
-            hasPrev = false,
-            hasNext = true,
-            category = Category(0, "Overall", "111111", Category.Image.DEFAULT, totalBudget)
-        )
-        getAllEntries()
+        getAllEntries(onSuccess = {
+            var totalBudget = 0f
+            _categoryListState.value.forEach { totalBudget += it.budget }
+            _focusedCategoryState.value = focusedCategoryState.value.copy(
+                hasPrev = false,
+                hasNext = true,
+                category = Category(0, "Overall", "111111", Category.Image.DEFAULT, totalBudget)
+            )
+            calcSpendBudgetOnCategory(it)
+            _entryListState.value = entryListState.value.copy(entryList = mapEntryListToDashboardEntryState(it))
+        })
     }
 
     /**
      * Set the category state for the current category, wich the user moved to
      */
     private fun setCategoryState() {
-        _focusedCategoryState.value = focusedCategoryState.value.copy(
-            hasPrev = true,
-            hasNext = true,
-            category = _categoryListState.value[internalCategoryId]
-        )
-        getEntriesByCategory(id = focusedCategoryState.value.category.id)
+        getEntriesByCategory(id = _categoryListState.value[internalCategoryId].id, onSuccess = {
+            calcSpendBudgetOnCategory(it)
+            _focusedCategoryState.value = focusedCategoryState.value.copy(
+                hasPrev = true,
+                hasNext = true,
+                category = _categoryListState.value[internalCategoryId]
+            )
+            _entryListState.value = entryListState.value.copy(entryList = mapEntryListToDashboardEntryState(it))
+
+        })
     }
 
     /**
      * All entries with no category are shown in this category
      */
     private fun setCategoryWithNoCategory() {
-        _focusedCategoryState.value = focusedCategoryState.value.copy(
-            hasPrev = true,
-            hasNext = false,
-            category = Category(0, "No Category", "111111", Category.Image.DEFAULT, 0f)
-        )
-        getEntriesByCategory(id = null)
+        getEntriesByCategory(id = null, onSuccess = {
+            _focusedCategoryState.value = focusedCategoryState.value.copy(
+                hasPrev = true,
+                hasNext = false,
+                category = Category(0, "No Category", "111111", Category.Image.DEFAULT, 0f)
+            )
+            _entryListState.value = entryListState.value.copy(entryList = mapEntryListToDashboardEntryState(it))
+        })
     }
 
     /**
      * Calculate the spend money for a category
      */
-    private fun calcSpendBudgetOnCategory() {
+    private fun calcSpendBudgetOnCategory(entryList: List<Entry>) {
         var spendMoney = 0F
-        entryListState.value.entryList.onEach {
-            if (it.entry.amount > 0) {
-                spendMoney -= it.entry.amount
+        entryList.onEach {
+            if (it.amount > 0) {
+                spendMoney -= it.amount
             } else {
-                spendMoney += (it.entry.amount * -1)
+                spendMoney += (it.amount * -1)
             }
         }
         _spendBudgetOnCurrentCategory.value =
