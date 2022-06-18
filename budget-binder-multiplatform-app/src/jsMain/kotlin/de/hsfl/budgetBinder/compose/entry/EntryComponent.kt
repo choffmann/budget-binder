@@ -36,12 +36,18 @@ fun EntryComponent(screenState: MutableState<Screen>) {
     val viewState = viewModel.state.collectAsState(scope.coroutineContext)
 
     when (screenState.value) {
-        Screen.EntryCreate -> EntryCreateView(
+        is Screen.EntryCreate -> {EntryCreateView(
             state = viewState,
-            onBackButton = { screenState.value = Screen.Dashboard },
-            onCategoryCreateButton = { screenState.value = Screen.CategoryCreate }
+            categoryList = (screenState.value as Screen.EntryCreate).categoryList,
+            onChangeToDashboard = { screenState.value = Screen.Dashboard },
+            onCreateEntryButtonPressed = { name, amount, repeat, category_id ->
+                userViewModel.createEntry(Entry.In(name, amount, repeat, category_id)) },
+            onChangeToSettings = { screenState.value = Screen.Settings },
+            onChangeToCategory = { screenState.value = Screen.CategorySummary },
         )
-        Screen.EntryEdit -> EntryEditView(
+
+        }
+        is Screen.EntryEdit -> EntryEditView(
             state = viewState,
             onBackButton = { screenState.value = Screen.Dashboard }
         )

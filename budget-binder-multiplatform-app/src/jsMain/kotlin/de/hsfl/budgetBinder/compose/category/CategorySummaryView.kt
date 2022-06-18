@@ -66,43 +66,38 @@ fun CategorySummaryView(
         })
 
     MainFlexContainer {
-        Div(attrs = {
-            classes("mdc-card", AppStylesheet.card)
-        }
-        ) {
-            H1(
-                attrs = {
-                    style { margin(2.percent) }
-                }
-            ) { Text(" Category Summary") }
-            Button(attrs = {
-                classes("mdc-button", "mdc-button--raised")
-                onClick { onCategoryCreateButton() }
+        H1(
+            attrs = {
                 style { margin(2.percent) }
-            }) {
-                Text("Create Category")
             }
-            CategoryList(categoryList, onEditButton, onDeleteButton)
-            Div {
-                when (viewState) {
-                    is UiState.Success<*> -> {
-                        when (val element = (viewState as UiState.Success<*>).element) {
-                            is List<*> -> {
-                                element.filterIsInstance<Category>()
-                                    .let {
-                                        if (it.size == element.size) {
-                                            categoryList = it
-                                        }
+        ) { Text(" Category Summary") }
+        Button(attrs = {
+            classes("mdc-button", "mdc-button--raised")
+            onClick { onCategoryCreateButton() }
+            style { margin(2.percent) }
+        }) {
+            Text("Create Category")
+        }
+        CategoryList(categoryList, onEditButton, onDeleteButton)
+        Div {
+            when (viewState) {
+                is UiState.Success<*> -> {
+                    when (val element = (viewState as UiState.Success<*>).element) {
+                        is List<*> -> {
+                            element.filterIsInstance<Category>()
+                                .let {
+                                    if (it.size == element.size) {
+                                        categoryList = it
                                     }
-                            }
+                                }
                         }
                     }
-                    is UiState.Error -> {
-                        Text((viewState as UiState.Error).error)
-                    }
-                    is UiState.Loading -> {
-                        //CircularProgressIndicator()
-                    }
+                }
+                is UiState.Error -> {
+                    Text((viewState as UiState.Error).error)
+                }
+                is UiState.Loading -> {
+                    //CircularProgressIndicator()
                 }
             }
         }

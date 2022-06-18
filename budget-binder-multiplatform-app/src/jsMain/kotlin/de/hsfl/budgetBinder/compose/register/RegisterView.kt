@@ -74,198 +74,191 @@ fun RegisterView(
         }
     }
 
-    MainFlexContainer{
+    MainFlexContainer {
         // -- Register Form --
-        Div(
-            attrs = {
-                classes("mdc-card", AppStylesheet.card)
+        H1 { Text(" Register") }
+        Form(attrs = { //Probably possible with just a button OnClick instead of Form&Submit
+            this.addEventListener("submit") {
+                console.log("$firstNameTextFieldState, $lastNameTextFieldState, $emailTextFieldState, $passwordTextFieldState")
+                onRegisterButtonPressed(
+                    firstNameTextFieldState,
+                    lastNameTextFieldState,
+                    emailTextFieldState,
+                    passwordTextFieldState
+                )
+                it.preventDefault()
             }
+        }
         ) {
-
-                H1 { Text(" Register") }
-                Form(attrs = { //Probably possible with just a button OnClick instead of Form&Submit
-                    this.addEventListener("submit") {
-                        console.log("$firstNameTextFieldState, $lastNameTextFieldState, $emailTextFieldState, $passwordTextFieldState")
-                        onRegisterButtonPressed(
-                            firstNameTextFieldState,
-                            lastNameTextFieldState,
-                            emailTextFieldState,
-                            passwordTextFieldState
-                        )
-                        it.preventDefault()
-                    }
+            Div(
+                attrs = {
+                    classes(AppStylesheet.margin)
                 }
+            ) {
+                Label(
+                    attrs = {
+                        classes("mdc-text-field", "mdc-text-field--filled")
+                        style { width(100.percent) }
+                    }
                 ) {
-                    Div(
+                    Span(
                         attrs = {
-                            classes(AppStylesheet.margin)
+                            classes("mdc-text-field__ripple")
                         }
-                    ) {
-                        Label(
-                            attrs = {
-                                classes("mdc-text-field", "mdc-text-field--filled")
-                                style { width(100.percent) }
-                            }
-                        ) {
-                            Span(
-                                attrs = {
-                                    classes("mdc-text-field__ripple")
-                                }
-                            ) { }
-                            Span(
-                                attrs = {
-                                    classes("mdc-floating-label", "mdc-floating-label--float-above")
-                                }
-                            ) { Text("Firstname") }
-                            Input(
-                                type = InputType.Text
-                            ) {
-                                classes("mdc-text-field__input")
-                                value(firstNameTextFieldState)
-                                onInput {
-                                    firstNameTextFieldState = it.value
-                                }
-                            }
-                            Span(
-                                attrs = {
-                                    classes("mdc-line-ripple")
-                                }
-                            ) { }
-                        }
-                    }
-                    Div(
+                    ) { }
+                    Span(
                         attrs = {
-                            classes(AppStylesheet.margin)
+                            classes("mdc-floating-label", "mdc-floating-label--float-above")
                         }
+                    ) { Text("Firstname") }
+                    Input(
+                        type = InputType.Text
                     ) {
-                        Label(
-                            attrs = {
-                                classes("mdc-text-field", "mdc-text-field--filled")
-                                style { width(100.percent) }
-                            }
-                        ) {
-                            Span(
-                                attrs = {
-                                    classes("mdc-text-field__ripple")
-                                }
-                            ) { }
-                            Span(
-                                attrs = {
-                                    classes("mdc-floating-label", "mdc-floating-label--float-above")
-                                }
-                            ) { Text("Lastname") }
-                            Input(
-                                type = InputType.Text
-                            ) {
-                                classes("mdc-text-field__input")
-                                value(lastNameTextFieldState)
-                                onInput {
-                                    lastNameTextFieldState = it.value
-                                }
-                            }
-                            Span(
-                                attrs = {
-                                    classes("mdc-line-ripple")
-                                }
-                            ) { }
+                        classes("mdc-text-field__input")
+                        value(firstNameTextFieldState)
+                        onInput {
+                            firstNameTextFieldState = it.value
                         }
                     }
-                    Div(
+                    Span(
                         attrs = {
-                            classes(AppStylesheet.margin)
+                            classes("mdc-line-ripple")
                         }
-                    ) {
-                        Label(
-                            attrs = {
-                                classes("mdc-text-field", "mdc-text-field--filled")
-                                style { width(100.percent) }
-                            }
-                        ) {
-                            Span(
-                                attrs = {
-                                    classes("mdc-text-field__ripple")
-                                }
-                            ) { }
-                            Span(
-                                attrs = {
-                                    classes("mdc-floating-label", "mdc-floating-label--float-above")
-                                }
-                            ) { Text("Email") }
-                            EmailInput(value = emailTextFieldState,
-                                attrs = {
-                                    classes("mdc-text-field__input")
-                                    onInput {
-                                        emailTextFieldState = it.value
-
-                                    }
-                                })
-                            Span(
-                                attrs = {
-                                    classes("mdc-line-ripple")
-                                }
-                            ) { }
-                        }
-                    }
-                    Div(
-                        attrs = {
-                            classes(AppStylesheet.margin)
-                        }
-                    ) {
-                        Label(
-                            attrs = {
-                                classes("mdc-text-field", "mdc-text-field--filled")
-                                style { width(100.percent) }
-                            }
-                        ) {
-                            Span(
-                                attrs = {
-                                    classes("mdc-text-field__ripple")
-                                }
-                            ) { }
-                            Span(
-                                attrs = {
-                                    classes("mdc-floating-label", "mdc-floating-label--float-above")
-                                }
-                            ) { Text("Password") }
-                            PasswordInput(value = passwordTextFieldState,
-                                attrs = {
-                                    classes("mdc-text-field__input")
-                                    onInput {
-                                        passwordTextFieldState = it.value
-                                    }
-                                })
-                            Span(
-                                attrs = {
-                                    classes("mdc-line-ripple")
-                                }
-                            ) { }
-                        }
-                    }
-                    Div(
-                        attrs = {
-                            classes(AppStylesheet.margin)
-                        }
-                    ) {
-                        SubmitInput(
-                            attrs = {
-                                classes("mdc-button", "mdc-button--raised")
-                                value("Submit")
-                            })
-                    }
-                    // -- Register Request Management --
-                    when (viewState) {
-                        is UiState.Success<*> -> {
-                            onChangeToLogin()
-                        }
-                        is UiState.Error -> {
-                            Text((viewState as UiState.Error).error)
-                        }
-                        is UiState.Loading -> {
-                            //CircularProgressIndicator()
-                        }
-                        else -> {}
-                    }
+                    ) { }
                 }
+            }
+            Div(
+                attrs = {
+                    classes(AppStylesheet.margin)
+                }
+            ) {
+                Label(
+                    attrs = {
+                        classes("mdc-text-field", "mdc-text-field--filled")
+                        style { width(100.percent) }
+                    }
+                ) {
+                    Span(
+                        attrs = {
+                            classes("mdc-text-field__ripple")
+                        }
+                    ) { }
+                    Span(
+                        attrs = {
+                            classes("mdc-floating-label", "mdc-floating-label--float-above")
+                        }
+                    ) { Text("Lastname") }
+                    Input(
+                        type = InputType.Text
+                    ) {
+                        classes("mdc-text-field__input")
+                        value(lastNameTextFieldState)
+                        onInput {
+                            lastNameTextFieldState = it.value
+                        }
+                    }
+                    Span(
+                        attrs = {
+                            classes("mdc-line-ripple")
+                        }
+                    ) { }
+                }
+            }
+            Div(
+                attrs = {
+                    classes(AppStylesheet.margin)
+                }
+            ) {
+                Label(
+                    attrs = {
+                        classes("mdc-text-field", "mdc-text-field--filled")
+                        style { width(100.percent) }
+                    }
+                ) {
+                    Span(
+                        attrs = {
+                            classes("mdc-text-field__ripple")
+                        }
+                    ) { }
+                    Span(
+                        attrs = {
+                            classes("mdc-floating-label", "mdc-floating-label--float-above")
+                        }
+                    ) { Text("Email") }
+                    EmailInput(value = emailTextFieldState,
+                        attrs = {
+                            classes("mdc-text-field__input")
+                            onInput {
+                                emailTextFieldState = it.value
+
+                            }
+                        })
+                    Span(
+                        attrs = {
+                            classes("mdc-line-ripple")
+                        }
+                    ) { }
+                }
+            }
+            Div(
+                attrs = {
+                    classes(AppStylesheet.margin)
+                }
+            ) {
+                Label(
+                    attrs = {
+                        classes("mdc-text-field", "mdc-text-field--filled")
+                        style { width(100.percent) }
+                    }
+                ) {
+                    Span(
+                        attrs = {
+                            classes("mdc-text-field__ripple")
+                        }
+                    ) { }
+                    Span(
+                        attrs = {
+                            classes("mdc-floating-label", "mdc-floating-label--float-above")
+                        }
+                    ) { Text("Password") }
+                    PasswordInput(value = passwordTextFieldState,
+                        attrs = {
+                            classes("mdc-text-field__input")
+                            onInput {
+                                passwordTextFieldState = it.value
+                            }
+                        })
+                    Span(
+                        attrs = {
+                            classes("mdc-line-ripple")
+                        }
+                    ) { }
+                }
+            }
+            Div(
+                attrs = {
+                    classes(AppStylesheet.margin)
+                }
+            ) {
+                SubmitInput(
+                    attrs = {
+                        classes("mdc-button", "mdc-button--raised")
+                        value("Submit")
+                    })
+            }
+            // -- Register Request Management --
+            when (viewState) {
+                is UiState.Success<*> -> {
+                    onChangeToLogin()
+                }
+                is UiState.Error -> {
+                    Text((viewState as UiState.Error).error)
+                }
+                is UiState.Loading -> {
+                    //CircularProgressIndicator()
+                }
+                else -> {}
+            }
         }
     }
 }

@@ -2,6 +2,8 @@ package de.hsfl.budgetBinder.presentation
 
 import de.hsfl.budgetBinder.domain.usecase.DeleteEntryByIdUseCase
 
+import de.hsfl.budgetBinder.common.Category
+
 sealed class Screen {
     sealed class Welcome: Screen() {
         object Screen1: Welcome()
@@ -22,7 +24,7 @@ sealed class Screen {
     sealed class Entry: Screen() {
         data class Overview(val id: Int): Entry()
         object Edit: Entry()
-        object Create: Entry()
+        data class Create (val categoryList :List<Category>): Entry()
     }
     object Login : Screen()
     object Register : Screen()
