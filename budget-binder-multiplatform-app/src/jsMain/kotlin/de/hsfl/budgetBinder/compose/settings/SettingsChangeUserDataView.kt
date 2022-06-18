@@ -64,155 +64,148 @@ fun SettingsChangeUserDataView(
         })
 
     MainFlexContainer {
-        Div(
-            attrs = {
-                classes("mdc-card", AppStylesheet.card)
+        H1 { Text("Change User Data") }
+        Form(attrs = {
+            this.addEventListener("submit") {
+                console.log("$firstNameTextFieldState, $lastNameTextFieldState, $passwordTextFieldState")
+                onChangeDataButtonPressed(
+                    firstNameTextFieldState,
+                    lastNameTextFieldState,
+                    passwordTextFieldState
+                )
+                it.preventDefault()
             }
+        }
         ) {
-
-            H1 { Text("Change User Data") }
-            Form(attrs = {
-                this.addEventListener("submit") {
-                    console.log("$firstNameTextFieldState, $lastNameTextFieldState, $passwordTextFieldState")
-                    onChangeDataButtonPressed(
-                        firstNameTextFieldState,
-                        lastNameTextFieldState,
-                        passwordTextFieldState
-                    )
-                    it.preventDefault()
+            Div(
+                attrs = {
+                    classes(AppStylesheet.margin)
+                }
+            ) {
+                Label(
+                    attrs = {
+                        classes("mdc-text-field", "mdc-text-field--filled")
+                        style { width(100.percent) }
+                    }
+                ) {
+                    Span(
+                        attrs = {
+                            classes("mdc-text-field__ripple")
+                        }
+                    ) { }
+                    Span(
+                        attrs = {
+                            classes("mdc-floating-label", "mdc-floating-label--float-above")
+                        }
+                    ) { Text("Firstname") }
+                    Input(
+                        type = InputType.Text
+                    ) {
+                        classes("mdc-text-field__input")
+                        value(firstNameTextFieldState)
+                        onInput {
+                            firstNameTextFieldState = it.value
+                        }
+                    }
+                    Span(
+                        attrs = {
+                            classes("mdc-line-ripple")
+                        }
+                    ) { }
                 }
             }
+            Div(
+                attrs = {
+                    classes(AppStylesheet.margin)
+                }
             ) {
-                Div(
+                Label(
                     attrs = {
-                        classes(AppStylesheet.margin)
+                        classes("mdc-text-field", "mdc-text-field--filled")
+                        style { width(100.percent) }
                     }
                 ) {
-                    Label(
+                    Span(
                         attrs = {
-                            classes("mdc-text-field", "mdc-text-field--filled")
-                            style { width(100.percent) }
+                            classes("mdc-text-field__ripple")
                         }
+                    ) { }
+                    Span(
+                        attrs = {
+                            classes("mdc-floating-label", "mdc-floating-label--float-above")
+                        }
+                    ) { Text("Lastname") }
+                    Input(
+                        type = InputType.Text
                     ) {
-                        Span(
-                            attrs = {
-                                classes("mdc-text-field__ripple")
-                            }
-                        ) { }
-                        Span(
-                            attrs = {
-                                classes("mdc-floating-label", "mdc-floating-label--float-above")
-                            }
-                        ) { Text("Firstname") }
-                        Input(
-                            type = InputType.Text
-                        ) {
+                        classes("mdc-text-field__input")
+                        value(lastNameTextFieldState)
+                        onInput {
+                            lastNameTextFieldState = it.value
+                        }
+                    }
+                    Span(
+                        attrs = {
+                            classes("mdc-line-ripple")
+                        }
+                    ) { }
+                }
+            }
+            Div(
+                attrs = {
+                    classes(AppStylesheet.margin)
+                }
+            ) {
+                Label(
+                    attrs = {
+                        classes("mdc-text-field", "mdc-text-field--filled")
+                        style { width(100.percent) }
+                    }
+                ) {
+                    Span(
+                        attrs = {
+                            classes("mdc-text-field__ripple")
+                        }
+                    ) { }
+                    Span(
+                        attrs = {
+                            classes("mdc-floating-label", "mdc-floating-label--float-above")
+                        }
+                    ) { Text("Password") }
+                    PasswordInput(value = passwordTextFieldState,
+                        attrs = {
                             classes("mdc-text-field__input")
-                            value(firstNameTextFieldState)
                             onInput {
-                                firstNameTextFieldState = it.value
+                                passwordTextFieldState = it.value
                             }
-                        }
-                        Span(
-                            attrs = {
-                                classes("mdc-line-ripple")
-                            }
-                        ) { }
-                    }
-                }
-                Div(
-                    attrs = {
-                        classes(AppStylesheet.margin)
-                    }
-                ) {
-                    Label(
-                        attrs = {
-                            classes("mdc-text-field", "mdc-text-field--filled")
-                            style { width(100.percent) }
-                        }
-                    ) {
-                        Span(
-                            attrs = {
-                                classes("mdc-text-field__ripple")
-                            }
-                        ) { }
-                        Span(
-                            attrs = {
-                                classes("mdc-floating-label", "mdc-floating-label--float-above")
-                            }
-                        ) { Text("Lastname") }
-                        Input(
-                            type = InputType.Text
-                        ) {
-                            classes("mdc-text-field__input")
-                            value(lastNameTextFieldState)
-                            onInput {
-                                lastNameTextFieldState = it.value
-                            }
-                        }
-                        Span(
-                            attrs = {
-                                classes("mdc-line-ripple")
-                            }
-                        ) { }
-                    }
-                }
-                Div(
-                    attrs = {
-                        classes(AppStylesheet.margin)
-                    }
-                ) {
-                    Label(
-                        attrs = {
-                            classes("mdc-text-field", "mdc-text-field--filled")
-                            style { width(100.percent) }
-                        }
-                    ) {
-                        Span(
-                            attrs = {
-                                classes("mdc-text-field__ripple")
-                            }
-                        ) { }
-                        Span(
-                            attrs = {
-                                classes("mdc-floating-label", "mdc-floating-label--float-above")
-                            }
-                        ) { Text("Password") }
-                        PasswordInput(value = passwordTextFieldState,
-                            attrs = {
-                                classes("mdc-text-field__input")
-                                onInput {
-                                    passwordTextFieldState = it.value
-                                }
-                            })
-                        Span(
-                            attrs = {
-                                classes("mdc-line-ripple")
-                            }
-                        ) { }
-                    }
-                }
-                Div(
-                    attrs = {
-                        classes(AppStylesheet.margin)
-                    }
-                ) {
-                    SubmitInput(
-                        attrs = {
-                            classes("mdc-button", "mdc-button--raised")
-                            value("Submit")
                         })
+                    Span(
+                        attrs = {
+                            classes("mdc-line-ripple")
+                        }
+                    ) { }
                 }
-                when (viewState) {
-                    is UiState.Success<*> -> {
-                        Text((viewState as UiState.Success<*>).element.toString())
-                    }
-                    is UiState.Error -> {
-                        Text((viewState as UiState.Error).error)
-                    }
-                    is UiState.Loading -> {
-                        //CircularProgressIndicator()
-                    }
+            }
+            Div(
+                attrs = {
+                    classes(AppStylesheet.margin)
+                }
+            ) {
+                SubmitInput(
+                    attrs = {
+                        classes("mdc-button", "mdc-button--raised")
+                        value("Submit")
+                    })
+            }
+            when (viewState) {
+                is UiState.Success<*> -> {
+                    Text((viewState as UiState.Success<*>).element.toString())
+                }
+                is UiState.Error -> {
+                    Text((viewState as UiState.Error).error)
+                }
+                is UiState.Loading -> {
+                    //CircularProgressIndicator()
                 }
             }
         }
