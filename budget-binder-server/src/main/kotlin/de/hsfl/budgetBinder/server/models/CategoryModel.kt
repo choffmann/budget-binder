@@ -46,7 +46,6 @@ class CategoryEntity(id: EntityID<Int>) : IntEntity(id), Iterable<CategoryEntity
     var child by Categories.child
 
     var user by UserEntity referencedOn Categories.user
-    // val entries by EntryEntity referrersOn Entries.category
 
     fun toDto(): Category {
         val lastChild = this.lastOrNull() ?: this
