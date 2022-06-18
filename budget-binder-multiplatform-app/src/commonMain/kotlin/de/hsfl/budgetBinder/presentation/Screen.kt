@@ -11,7 +11,8 @@ sealed class Screen {
     object CategoryEdit : Screen()
     object CategoryCreate : Screen()
     object CategoryCreateOnRegister : Screen()
-    object EntryEdit : Screen()
+    data class EntryOverview (val id: Int) : Screen()
+    data class EntryEdit (val id: Int): Screen()
     object EntryCreate : Screen()
 
 }

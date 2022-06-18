@@ -12,9 +12,8 @@ import de.hsfl.budgetBinder.compose.entry.entriesFromCategory
 import de.hsfl.budgetBinder.compose.theme.AppStylesheet
 import de.hsfl.budgetBinder.compose.topBarMain
 import de.hsfl.budgetBinder.presentation.UiState
-import kotlinx.serialization.json.JsonNull.content
 import org.jetbrains.compose.web.css.*
-import org.jetbrains.compose.web.css.keywords.auto
+
 import org.jetbrains.compose.web.dom.*
 
 
@@ -25,7 +24,7 @@ fun DashboardView(
     onCategorySummaryButton: () -> Unit,
     onSettingsButton: () -> Unit,
     onEntryCreateButton: () -> Unit,
-    onEntryEditButton: (id:Int) -> Unit
+    onEntryOverviewButton: (id:Int) -> Unit
 ) {
     val categoriesViewState by remember { categoriesState }
     val entriesViewState by remember { entriesState }
@@ -72,7 +71,7 @@ fun DashboardView(
 
     MainFlexContainer {
         
-        Div { DashboardData(categoryList, entryList, onEntryEditButton) }
+        Div { DashboardData(categoryList, entryList, onEntryOverviewButton) }
         CreateNewEntryButton(onEntryCreateButton)
         //Process new Category Data
         when (categoriesViewState) {
