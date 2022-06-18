@@ -41,7 +41,7 @@ fun EntryComponent(screenState: MutableState<Screen>) {
         is Screen.EntryOverview -> {
             EntryOverviewView(
                 state = viewState,
-                onEditButton = {screenState.value  = Screen.EntryEdit},
+                onEditButton = {id -> screenState.value = Screen.EntryEdit(id)},
                 onDeleteButton = { id -> entryViewModel.removeEntry(id) },
                 onChangeToDashboard = { screenState.value = Screen.Dashboard },
                 onChangeToSettings = { screenState.value = Screen.Settings },
@@ -54,10 +54,13 @@ fun EntryComponent(screenState: MutableState<Screen>) {
             onBackButton = { screenState.value = Screen.Dashboard },
             onCategoryCreateButton = { screenState.value = Screen.CategoryCreate }
         )
-        Screen.EntryEdit -> EntryEditView(
-            state = viewState,
-            onBackButton = { screenState.value = Screen.Dashboard }
-        )
+        is Screen.EntryEdit -> {
+            EntryEditView(
+                state = viewState,
+                onBackButton = { screenState.value = Screen.Dashboard }
+            )
+            entryViewModel.getEntryById((screenState.value as Screen.EntryEdit).id)//(screenState.value as Screen.EntryEdit).id)
+        }
         else -> {}
     }
 }

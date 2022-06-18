@@ -19,7 +19,7 @@ import org.jetbrains.compose.web.svg.Svg
 @Composable
 fun EntryOverviewView(
     state: State<Any>,
-    onEditButton: () -> Unit,
+    onEditButton: (id: Int) -> Unit,
     onDeleteButton: (id: Int) -> Unit,
     onChangeToDashboard: () -> Unit,
     onChangeToCategory: () -> Unit,
@@ -101,7 +101,7 @@ fun EntryOverviewView(
 @Composable
 fun EntryOverview(
     entry: Entry,
-    onEditButton: () -> Unit,
+    onEditButton: (Int) -> Unit,
     onDeleteButton: (Int) -> Unit
 ) {
     var deleteDialog by remember { mutableStateOf(false) }
@@ -133,7 +133,7 @@ fun EntryOverview(
     ) {
         Button(attrs = {
             classes("mdc-button", "mdc-button--raised", AppStylesheet.marginRight)
-            onClick { onEditButton() }
+            onClick { onEditButton(entry.id) }
             style {
                 flex(50.percent)
                 margin(1.5.percent)

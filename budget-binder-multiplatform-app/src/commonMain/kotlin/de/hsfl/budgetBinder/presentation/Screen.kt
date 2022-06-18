@@ -12,7 +12,7 @@ sealed class Screen {
     object CategoryCreate : Screen()
     object CategoryCreateOnRegister : Screen()
     data class EntryOverview (val id: Int) : Screen()
-    object EntryEdit : Screen()
+    data class EntryEdit (val id: Int): Screen()
     object EntryCreate : Screen()
 
 }
