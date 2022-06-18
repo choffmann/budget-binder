@@ -11,7 +11,6 @@ import de.hsfl.budgetBinder.compose.settings.SettingsComponent
 import de.hsfl.budgetBinder.presentation.Screen
 
 @Composable
-//Id for cases where a specific entry or category needs to be opened
 fun Router(screenState: MutableState<Screen>) {
     when (screenState.value) {
         is Screen.Welcome -> {}
