@@ -30,7 +30,7 @@ actual fun CategoryImageToIcon(icon: Category.Image) {
         Category.Image.FLOWER -> Icon(imageVector = Icons.Default.LocalFlorist, contentDescription = null)
         Category.Image.PET -> Icon(imageVector = Icons.Default.Pets, contentDescription = null)
         Category.Image.BILLS -> Icon(imageVector = Icons.Default.Receipt, contentDescription = null)
-        Category.Image.KEYBOARD -> Icon(imageVector = Icons.Default.Redeem, contentDescription = null)
+        Category.Image.KEYBOARD -> Icon(imageVector = Icons.Default.Keyboard, contentDescription = null)
         Category.Image.PRINTER -> Icon(imageVector = Icons.Default.Print, contentDescription = null)
         Category.Image.WATER -> Icon(imageVector = Icons.Default.WaterDrop, contentDescription = null)
         Category.Image.FIRE -> Icon(imageVector = Icons.Default.FireExtinguisher, contentDescription = null)
