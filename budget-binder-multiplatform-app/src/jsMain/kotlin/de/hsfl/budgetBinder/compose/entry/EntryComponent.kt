@@ -51,6 +51,14 @@ fun EntryComponent(screenState: MutableState<Screen>) {
             state = viewState,
             onBackButton = { screenState.value = Screen.Dashboard }
         )
+        is Screen.EntryOverview -> EntryOverviewView(
+            state = viewState,
+            onEditButton = {},
+            onDeleteButton = {id -> entryViewModel.removeEntry(id)},
+            onChangeToDashboard = { screenState.value = Screen.Dashboard },
+            onChangeToSettings = { screenState.value = Screen.Settings },
+            onChangeToCategory = { screenState.value = Screen.CategorySummary },
+        )
         else -> {}
     }
 }
