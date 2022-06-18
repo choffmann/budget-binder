@@ -3,11 +3,14 @@ package de.hsfl.budgetBinder.compose
 import androidx.compose.runtime.*
 import de.hsfl.budgetBinder.common.Category
 import de.hsfl.budgetBinder.compose.theme.AppStylesheet
+import de.hsfl.budgetBinder.compose.theme.AppStylesheet.image
 import de.hsfl.budgetBinder.presentation.CategoryImageToIcon
 import org.jetbrains.compose.web.ExperimentalComposeWebSvgApi
+import org.jetbrains.compose.web.attributes.ButtonType
+import org.jetbrains.compose.web.attributes.type
+import org.jetbrains.compose.web.attributes.value
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
-import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.svg.Circle
 import org.jetbrains.compose.web.svg.Svg
 
@@ -23,7 +26,12 @@ fun MainFlexContainer(content: @Composable () -> Unit) {
         Div(attrs = { classes(AppStylesheet.pufferFlexContainer) })
         Div(attrs = { classes(AppStylesheet.contentFlexContainer) })
         {
-            content()
+            Div(attrs = {
+                classes("mdc-card", AppStylesheet.card)
+            }
+            ) {
+                content()
+            }
         }
         Div(attrs = { classes(AppStylesheet.pufferFlexContainer) })
     }
@@ -85,20 +93,20 @@ fun Icon(icon_name: String) {
 // Snackbar that shows msg
 @Composable
 fun FeedbackSnackbar(msg: String, hidden: Boolean = false) {
-    var hiddenValue by remember { mutableStateOf(hidden)}
+    var hiddenValue by remember { mutableStateOf(hidden) }
     Aside(
         attrs = {
-            when(hiddenValue){
-                false -> classes("mdc-snackbar","mdc-snackbar--open")
-                true -> classes("mdc-snackbar","maria")
+            when (hiddenValue) {
+                false -> classes("mdc-snackbar", "mdc-snackbar--open")
+                true -> classes("mdc-snackbar", "maria")
             }
-        onClick {
-            hiddenValue = true
-            console.log(this@Aside)
-            console.log("ldsadsad")
+            onClick {
+                hiddenValue = true
+                console.log(this@Aside)
+                console.log("ldsadsad")
 
-        }
-    }) {
+            }
+        }) {
         Div(attrs = {
             classes("mdc-snackbar__surface")
             attr(attr = "role", value = "status")
@@ -128,8 +136,6 @@ fun FeedbackSnackbar(msg: String, hidden: Boolean = false) {
         }
     }
 }
-
-
 
 
 @Composable
@@ -212,11 +218,11 @@ fun CategoryList(
                         }
                     }
                     Div(attrs = {
-                            classes(AppStylesheet.imageFlexContainer)
-                        }
+                        classes(AppStylesheet.imageFlexContainer)
+                    }
                     ) {
                         Svg(viewBox = "0 0 1 1") {//For aspect ratio - tries to fill out wherever it is in
-                            Circle(cx = 0.5, cy = 0.5, r=0.5, {
+                            Circle(cx = 0.5, cy = 0.5, r = 0.5, {
                                 attr("fill", "#${category.color}")
                             })
                         }
@@ -250,7 +256,10 @@ fun CategoryList(
                     }
                 }
                 if (deleteDialog) {
-                    DeleteDialog(false, {onDeleteButton(category.id)}, {deleteDialog = false}) { Text("Delete Category?") }
+                    DeleteDialog(
+                        false,
+                        { onDeleteButton(category.id) },
+                        { deleteDialog = false }) { Text("Delete Category?") }
                 }
             }
     }
@@ -357,3 +366,50 @@ fun DeleteDialog(hidden: Boolean, buttonAction: () -> Unit, resetDialog: () -> U
         }
     }
 }
+
+@Composable
+fun ChooseCategoryMenu(
+    categoryList: List<Category>,
+    getCategoryId: (Int) -> Unit
+) {
+    var chosenCategory by remember { mutableStateOf(categoryList[0]) }
+    var showList by remember { mutableStateOf(false) }
+
+    Button(attrs = {
+        classes("mdc-button", "mdc-dialog__button")
+        onClick { showList = !showList }
+        type(ButtonType.Button)
+    }) {
+        Div(attrs = {
+            when (showList) {
+                true -> classes("mdc-menu", "mdc-menu-surface", "mdc-menu-surface--open")
+                false -> classes("mdc-menu", "mdc-menu-surface")
+            }
+        }) {
+            Ul(attrs = {
+                classes("mdc-list")
+                attr("role", "menu")
+                attr("aria-hidden", "true")
+                attr("aria-orientation", "vertical")
+                attr("tabindex", "-1")
+            }) {
+                for (category in categoryList) {
+                    Li(attrs = {
+                        classes("mdc-list-item")
+                        attr("role", "menuitem")
+                        onClick { }
+                    }) {
+                        Span(attrs = { classes("mdc-list-item__ripple") }) { }
+                        Span(attrs = { onClick { chosenCategory = category; getCategoryId(category.id) } }) {
+                            Text(
+                                category.name
+                            )
+                        }
+                    }
+                }
+            }
+        }
+        Text(chosenCategory.name)
+    }
+}
+

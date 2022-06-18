@@ -1,5 +1,7 @@
 package de.hsfl.budgetBinder.presentation
 
+import de.hsfl.budgetBinder.common.Category
+
 sealed class Screen {
     object Welcome : Screen()
     object Login : Screen()
@@ -12,6 +14,6 @@ sealed class Screen {
     object CategoryCreate : Screen()
     object CategoryCreateOnRegister : Screen()
     object EntryEdit : Screen()
-    object EntryCreate : Screen()
+    data class EntryCreate (val categoryList :List<Category>): Screen()
 
 }

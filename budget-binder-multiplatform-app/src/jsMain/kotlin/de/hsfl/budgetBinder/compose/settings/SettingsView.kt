@@ -64,61 +64,56 @@ fun SettingsView(
         })
 
     MainFlexContainer {
-        Div(attrs = {
-            classes("mdc-card", AppStylesheet.card)
+        H1(
+            attrs = {
+                style { marginLeft(2.percent) }
+            }
+        ) { Text("Settings") }
+        when (viewState) {
+            is UiState.Success<*> -> {
+                Text((viewState as UiState.Success<*>).element.toString())
+            }
+            is UiState.Error -> {
+                Text((viewState as UiState.Error).error)
+            }
+            is UiState.Loading -> {
+                //CircularProgressIndicator()
+            }
         }
+        Div(
+            attrs = {
+                classes(AppStylesheet.margin, AppStylesheet.flexContainer)
+            }
         ) {
-            H1(
+            Button(
                 attrs = {
-                    style { marginLeft(2.percent) }
-                }
-            ) { Text("Settings") }
-            when (viewState) {
-                is UiState.Success<*> -> {
-                    Text((viewState as UiState.Success<*>).element.toString())
-                }
-                is UiState.Error -> {
-                    Text((viewState as UiState.Error).error)
-                }
-                is UiState.Loading -> {
-                    //CircularProgressIndicator()
-                }
-            }
-            Div(
-                attrs = {
-                    classes(AppStylesheet.margin, AppStylesheet.flexContainer)
+                    classes("mdc-button", "mdc-button--raised")
+                    onClick { onChangeButtonPressed() }
+                    style { flex(100.percent) }
                 }
             ) {
-                Button(
-                    attrs = {
-                        classes("mdc-button", "mdc-button--raised")
-                        onClick { onChangeButtonPressed() }
-                        style { flex(100.percent) }
-                    }
-                ) {
-                    Text("Change Userdata")
-                }
+                Text("Change Userdata")
             }
-            Div(
+        }
+        Div(
+            attrs = {
+                classes(AppStylesheet.margin, AppStylesheet.flexContainer)
+            }
+        ) {
+            Button(
                 attrs = {
-                    classes(AppStylesheet.margin, AppStylesheet.flexContainer)
+                    classes("mdc-button", "mdc-button--raised")
+                    onClick {
+                        deleteDialog = true
+                    }
+                    style { flex(100.percent) }
                 }
             ) {
-                Button(
-                    attrs = {
-                        classes("mdc-button", "mdc-button--raised")
-                        onClick {
-                            deleteDialog = true
-                        }
-                        style { flex(100.percent) }
-                    }
-                ) {
-                    Text("Delete User")
-                }
+                Text("Delete User")
             }
         }
-        if (deleteDialog) {
-            DeleteDialog(false, {onDeleteButtonPressed()}, {deleteDialog = false}) { Text("Delete User?") }
-        }
+    }
+    if (deleteDialog) {
+        DeleteDialog(false, { onDeleteButtonPressed() }, { deleteDialog = false }) { Text("Delete User?") }
     }
 }
