@@ -3,8 +3,7 @@ package de.hsfl.budgetBinder.presentation
 import androidx.compose.runtime.Composable
 import de.hsfl.budgetBinder.common.Category
 import de.hsfl.budgetBinder.compose.theme.AppStylesheet
-import org.jetbrains.compose.web.css.padding
-import org.jetbrains.compose.web.css.px
+import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.Div
 import org.jetbrains.compose.web.dom.Span
 import org.jetbrains.compose.web.dom.Text
@@ -15,7 +14,10 @@ actual fun CategoryImageToIcon(icon: Category.Image) {
         Span(
         attrs = {
             classes("material-icons")
-            style { padding(8.px) }
+            style {
+                paddingTop(8.px)
+                paddingBottom(8.px)
+            }
         }
     ) {
         Text(
@@ -27,7 +29,7 @@ actual fun CategoryImageToIcon(icon: Category.Image) {
                 Category.Image.WRONG -> "dangerous"
                 Category.Image.HOME -> "home"
                 Category.Image.FOOD -> "bakery_dining"
-                Category.Image.FASTFOOD -> "bakery_dining"
+                Category.Image.FASTFOOD -> "fastfood"
                 Category.Image.RESTAURANT -> "restaurant"
                 Category.Image.FAMILY -> "people"
                 Category.Image.MONEY -> "payments"
@@ -41,10 +43,10 @@ actual fun CategoryImageToIcon(icon: Category.Image) {
                 Category.Image.FLOWER -> "local_florist"
                 Category.Image.PET -> "pets"
                 Category.Image.BILLS -> "receipt"
-                Category.Image.KEYBOARD -> "redeem"
+                Category.Image.KEYBOARD -> "keyboard"
                 Category.Image.PRINTER -> "print"
                 Category.Image.WATER -> "water_drop"
-                Category.Image.FIRE -> "fire"
+                Category.Image.FIRE -> "local_fire_department"
                 Category.Image.STAR -> "grade"
                 Category.Image.SAVINGS -> "savings"
                 Category.Image.CAR -> "minor_crash"
