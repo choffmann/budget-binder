@@ -3,12 +3,10 @@ package de.hsfl.budgetBinder.compose
 import androidx.compose.runtime.*
 import de.hsfl.budgetBinder.common.Category
 import de.hsfl.budgetBinder.compose.theme.AppStylesheet
-import de.hsfl.budgetBinder.compose.theme.AppStylesheet.image
 import de.hsfl.budgetBinder.presentation.CategoryImageToIcon
 import org.jetbrains.compose.web.ExperimentalComposeWebSvgApi
 import org.jetbrains.compose.web.attributes.ButtonType
 import org.jetbrains.compose.web.attributes.type
-import org.jetbrains.compose.web.attributes.value
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
 import org.jetbrains.compose.web.svg.Circle
