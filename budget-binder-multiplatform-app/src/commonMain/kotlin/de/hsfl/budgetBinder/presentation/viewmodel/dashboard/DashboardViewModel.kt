@@ -78,7 +78,7 @@ class DashboardViewModel(
             dashboardUseCases.getAllEntriesUseCase.entries().collect {
                 when (it) {
                     is DataResponse.Loading -> _eventFlow.emit(UiEvent.ShowLoading)
-                    is DataResponse.Error, is DataResponse.Unauthorized -> _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
+                    is DataResponse.Error -> _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
                     is DataResponse.Success -> {
                         _entryListState.value = entryListState.value.copy(entryList = it.data!!.map { entry ->
                             DashboardEntryState(
@@ -88,6 +88,10 @@ class DashboardViewModel(
                         })
                         _eventFlow.emit(UiEvent.HideSuccess)
                         calcSpendBudgetOnCategory()
+                    }
+                    is DataResponse.Unauthorized -> {
+                        _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
+                        routerFlow.navigateTo(Screen.Login)
                     }
                 }
             }
@@ -99,10 +103,14 @@ class DashboardViewModel(
             dashboardUseCases.getAllCategoriesUseCase.categories().collect {
                 when (it) {
                     is DataResponse.Loading -> _eventFlow.emit(UiEvent.ShowLoading)
-                    is DataResponse.Error, is DataResponse.Unauthorized -> _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
+                    is DataResponse.Error-> _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
                     is DataResponse.Success -> {
                         _categoryListState.value = it.data!!
                         _eventFlow.emit(UiEvent.HideSuccess)
+                    }
+                    is DataResponse.Unauthorized -> {
+                        _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
+                        routerFlow.navigateTo(Screen.Login)
                     }
                 }
             }
@@ -114,7 +122,7 @@ class DashboardViewModel(
             dashboardUseCases.getAllEntriesByCategoryUseCase(id).collect {
                 when (it) {
                     is DataResponse.Loading -> _eventFlow.emit(UiEvent.ShowLoading)
-                    is DataResponse.Error, is DataResponse.Unauthorized -> _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
+                    is DataResponse.Error -> _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
                     is DataResponse.Success -> {
                         _entryListState.value = entryListState.value.copy(entryList = it.data!!.map { entry ->
                             DashboardEntryState(
@@ -124,6 +132,10 @@ class DashboardViewModel(
                         })
                         _eventFlow.emit(UiEvent.HideSuccess)
                         calcSpendBudgetOnCategory()
+                    }
+                    is DataResponse.Unauthorized -> {
+                        _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
+                        routerFlow.navigateTo(Screen.Login)
                     }
                 }
             }
@@ -141,7 +153,7 @@ class DashboardViewModel(
                     _oldEntriesMapState.value.putAll(
                         mapOf(
                             Pair(
-                                month.toMonthString(),
+                                "${month.toMonthString()}-${GMTDate().year}",
                                 it.data!!
                             )
                         )
@@ -258,10 +270,14 @@ class DashboardViewModel(
     }
 
     private fun loadMoreEntries() {
+        val nextMonth = when {
+            lastRequestedMonth.ordinal - 1 < 0 -> 11
+            else -> lastRequestedMonth.ordinal - 1
+        }
         getAllEntriesFromMonth(
-            month = Month.from(lastRequestedMonth.ordinal - 1)
+            month = Month.from(nextMonth)
         )
-        lastRequestedMonth = Month.from(lastRequestedMonth.ordinal - 1)
+        lastRequestedMonth = Month.from(nextMonth)
     }
 
 
