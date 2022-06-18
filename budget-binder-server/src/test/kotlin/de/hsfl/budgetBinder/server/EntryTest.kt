@@ -2,7 +2,6 @@ package de.hsfl.budgetBinder.server
 
 import de.hsfl.budgetBinder.common.APIResponse
 import de.hsfl.budgetBinder.common.Entry
-import de.hsfl.budgetBinder.server.models.CategoryEntity
 import de.hsfl.budgetBinder.server.models.EntryEntity
 import de.hsfl.budgetBinder.server.models.UserEntity
 import io.ktor.client.call.*
@@ -32,7 +31,7 @@ class EntryTest {
                 child = null
 
                 user = userEntity
-                category = CategoryEntity[userEntity.category!!]
+                category = null
             }
 
             val newPay = EntryEntity.new {
@@ -44,7 +43,7 @@ class EntryTest {
                 child = null
 
                 user = userEntity
-                category = CategoryEntity[userEntity.category!!]
+                category = null
             }
 
             oldPay.child = newPay.id
@@ -58,7 +57,7 @@ class EntryTest {
                 child = null
 
                 user = userEntity
-                category = CategoryEntity[userEntity.category!!]
+                category = null
             }
 
             EntryEntity.new {
@@ -70,7 +69,7 @@ class EntryTest {
                 child = null
 
                 user = userEntity
-                category = CategoryEntity[userEntity.category!!]
+                category = null
             }
 
             EntryEntity.new {
@@ -82,7 +81,7 @@ class EntryTest {
                 child = null
 
                 user = userEntity
-                category = CategoryEntity[userEntity.category!!]
+                category = null
             }
 
             EntryEntity.new {
@@ -94,7 +93,7 @@ class EntryTest {
                 child = null
 
                 user = userEntity
-                category = CategoryEntity[userEntity.category!!]
+                category = null
             }
 
             EntryEntity.new {
@@ -106,7 +105,7 @@ class EntryTest {
                 child = null
 
                 user = userEntity
-                category = CategoryEntity[userEntity.category!!]
+                category = null
             }
         }
     }
@@ -118,7 +117,6 @@ class EntryTest {
             it.delete()
         }
         UserEntity.all().forEach {
-            CategoryEntity[it.category!!].delete()
             it.delete()
         }
     }
@@ -153,7 +151,7 @@ class EntryTest {
                     assertEquals("Bafög", it.name)
                     assertEquals(700f, it.amount)
                     assert(it.repeat)
-                    assertEquals(it.user.category, it.category.id)
+                    assertNull(it.category)
                     it.id.value
                 }
             }

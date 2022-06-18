@@ -4,11 +4,13 @@ import de.hsfl.budgetBinder.common.APIResponse
 import de.hsfl.budgetBinder.common.Category
 import de.hsfl.budgetBinder.common.Entry
 import de.hsfl.budgetBinder.server.models.CategoryEntity
+import de.hsfl.budgetBinder.server.models.Entries
 import de.hsfl.budgetBinder.server.models.EntryEntity
 import de.hsfl.budgetBinder.server.models.UserEntity
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.http.*
+import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.time.LocalDateTime
 import kotlin.test.*
@@ -55,7 +57,7 @@ class CategoryEntryTest {
                 ended = now.minusMonths(2)
                 child = null
                 user = userEntity
-                category = internetCategory
+                category = internetCategory.id
             }
 
             EntryEntity.new {
@@ -66,7 +68,7 @@ class CategoryEntryTest {
                 ended = null
                 child = null
                 user = userEntity
-                category = internetPhoneCategory
+                category = internetPhoneCategory.id
             }.let { internetEntry.child = it.id }
 
             EntryEntity.new {
@@ -77,7 +79,7 @@ class CategoryEntryTest {
                 ended = null
                 child = null
                 user = userEntity
-                category = internetPhoneCategory
+                category = internetPhoneCategory.id
             }
 
             EntryEntity.new {
@@ -88,7 +90,7 @@ class CategoryEntryTest {
                 ended = null
                 child = null
                 user = userEntity
-                category = internetPhoneCategory
+                category = internetPhoneCategory.id
             }
 
             EntryEntity.new {
@@ -99,7 +101,7 @@ class CategoryEntryTest {
                 ended = null
                 child = null
                 user = userEntity
-                category = CategoryEntity[userEntity.category!!]
+                category = null
             }
         }
     }
@@ -109,7 +111,6 @@ class CategoryEntryTest {
     fun after() = transaction {
         EntryEntity.all().forEach { it.delete() }
         UserEntity.all().forEach {
-            CategoryEntity[it.category!!].delete()
             it.delete()
         }
         CategoryEntity.all().forEach { it.delete() }
@@ -139,7 +140,7 @@ class CategoryEntryTest {
             assertEquals(shouldResponse, responseBody)
         }
 
-        val categoryId = transaction { CategoryEntity.all().first().id.value + 1 }
+        val categoryId = transaction { CategoryEntity.all().first().id.value }
         val entryId = transaction { EntryEntity.all().first().id.value }
 
         val entryList = listOf(
@@ -189,7 +190,7 @@ class CategoryEntryTest {
 
     @Test
     fun createEntryWithCategory() = customTestApplicationWithLogin { client ->
-        val categoryId = transaction { CategoryEntity.all().first().id.value + 2 }
+        val categoryId = transaction { CategoryEntity.all().first().id.value + 1 }
 
         sendAuthenticatedRequestWithBody(
             client,
@@ -204,7 +205,7 @@ class CategoryEntryTest {
                     assertEquals("Second Phone", it.name)
                     assertEquals(-50f, it.amount)
                     assert(it.repeat)
-                    assertEquals(it.user.category, it.category.id)
+                    assertNull(it.category)
                     it.id.value
                 }
             }
@@ -225,7 +226,7 @@ class CategoryEntryTest {
                     assertEquals("Second Phone", it.name)
                     assertEquals(-50f, it.amount)
                     assert(it.repeat)
-                    assertEquals(categoryId, it.category.id.value)
+                    assertEquals(categoryId, it.category?.value)
                     it.id.value
                 }
             }
@@ -237,7 +238,7 @@ class CategoryEntryTest {
 
     @Test
     fun testChangeCategoryInEntry() = customTestApplicationWithLogin { client ->
-        val categoryId = transaction { CategoryEntity.all().first().id.value + 2 }
+        val categoryId = transaction { CategoryEntity.all().first().id.value + 1 }
         val entryId = transaction { EntryEntity.all().last().id.value }
 
         sendAuthenticatedRequestWithBody(
@@ -260,7 +261,7 @@ class CategoryEntryTest {
             val responseBody: APIResponse<Entry> = response.body()
 
             transaction {
-                assertEquals(categoryId, EntryEntity[entryId].category.id.value)
+                assertEquals(categoryId, EntryEntity[entryId].category?.value)
             }
             val shouldResponse = wrapSuccess(Entry(entryId, "Monthly Pay", 3000f, true, categoryId))
             assertEquals(shouldResponse, responseBody)
@@ -275,9 +276,7 @@ class CategoryEntryTest {
             val responseBody: APIResponse<Entry> = response.body()
 
             transaction {
-                EntryEntity[entryId].let {
-                    assertEquals(it.user.category, it.category.id)
-                }
+                assertNull(EntryEntity[entryId].category)
             }
             val shouldResponse = wrapSuccess(Entry(entryId, "Monthly Pay", 3000f, true, null))
             assertEquals(shouldResponse, responseBody)
@@ -287,7 +286,7 @@ class CategoryEntryTest {
 
     @Test
     fun testChangeOldCategoryHasOldEntries() = customTestApplicationWithLogin { client ->
-        val categoryId = transaction { CategoryEntity.all().first().id.value + 2 }
+        val categoryId = transaction { CategoryEntity.all().first().id.value + 1 }
         val entryId = transaction { EntryEntity.all().first().id.value + 1 }
 
         sendAuthenticatedRequestWithBody(
@@ -349,7 +348,7 @@ class CategoryEntryTest {
 
     @Test
     fun testChangeOldCategoryHasNewEntries() = customTestApplicationWithLogin { client ->
-        val categoryId = transaction { CategoryEntity.all().first().id.value + 2 }
+        val categoryId = transaction { CategoryEntity.all().first().id.value + 1 }
         transaction {
             val userEntity = UserEntity.all().first()
             val categoryEntity = CategoryEntity[categoryId]
@@ -362,7 +361,7 @@ class CategoryEntryTest {
                 ended = null
                 child = null
                 user = userEntity
-                category = categoryEntity
+                category = categoryEntity.id
             }.id.value
 
             EntryEntity.new {
@@ -373,7 +372,7 @@ class CategoryEntryTest {
                 ended = null
                 child = null
                 user = userEntity
-                category = categoryEntity
+                category = categoryEntity.id
             }
         }
 
@@ -402,12 +401,12 @@ class CategoryEntryTest {
                 assertNull(mobileEntry.child)
                 assertNull(mobileEntry.ended)
                 assert(mobileEntry.repeat)
-                assertEquals(newCategory, mobileEntry.category)
+                assertEquals(newCategory.id, mobileEntry.category)
 
                 assertNull(mobileOneEntry.child)
                 assertNull(mobileOneEntry.ended)
                 assert(!mobileOneEntry.repeat)
-                assertEquals(newCategory, mobileOneEntry.category)
+                assertEquals(newCategory.id, mobileOneEntry.category)
 
                 newCategory.id.value
             }
@@ -428,12 +427,12 @@ class CategoryEntryTest {
 
     @Test
     fun testChangeOldCategoryHasOnlyNewEntries() = customTestApplicationWithLogin { client ->
-        val categoryId = transaction { CategoryEntity.all().first().id.value + 2 }
+        val categoryId = transaction { CategoryEntity.all().first().id.value + 1 }
         transaction {
             val userEntity = UserEntity.all().first()
             val categoryEntity = CategoryEntity[categoryId]
 
-            categoryEntity.entries.forEach { it.delete() }
+            Entries.deleteWhere { Entries.category eq categoryEntity.id }
 
             EntryEntity.new {
                 name = "Mobile"
@@ -443,7 +442,7 @@ class CategoryEntryTest {
                 ended = null
                 child = null
                 user = userEntity
-                category = categoryEntity
+                category = categoryEntity.id
             }.id.value
 
             EntryEntity.new {
@@ -454,7 +453,7 @@ class CategoryEntryTest {
                 ended = null
                 child = null
                 user = userEntity
-                category = categoryEntity
+                category = categoryEntity.id
             }
         }
 
@@ -482,8 +481,8 @@ class CategoryEntryTest {
                 assertNull(mobileEntry.ended)
                 assert(mobileEntry.repeat)
 
-                assertEquals(categoryEntity, mobileEntry.category)
-                assertEquals(categoryEntity, mobileOneEntry.category)
+                assertEquals(categoryEntity.id, mobileEntry.category)
+                assertEquals(categoryEntity.id, mobileOneEntry.category)
 
                 assertNull(mobileOneEntry.child)
                 assertNull(mobileOneEntry.ended)
@@ -531,7 +530,7 @@ class CategoryEntryTest {
                 ended = null
                 child = null
                 user = userEntity
-                category = categoryEntity
+                category = categoryEntity.id
             }.id.value
 
             EntryEntity.new {
@@ -542,7 +541,7 @@ class CategoryEntryTest {
                 ended = null
                 child = null
                 user = userEntity
-                category = categoryEntity
+                category = categoryEntity.id
             }
         }
 
@@ -570,8 +569,8 @@ class CategoryEntryTest {
                 assertNull(mobileEntry.ended)
                 assert(mobileEntry.repeat)
 
-                assertEquals(categoryEntity, mobileEntry.category)
-                assertEquals(categoryEntity, mobileOneEntry.category)
+                assertEquals(categoryEntity.id, mobileEntry.category)
+                assertEquals(categoryEntity.id, mobileOneEntry.category)
 
                 assertNull(mobileOneEntry.child)
                 assertNull(mobileOneEntry.ended)
@@ -594,7 +593,7 @@ class CategoryEntryTest {
 
     @Test
     fun testDeleteOldCategoryHasOldEntries() = customTestApplicationWithLogin { client ->
-        val categoryId = transaction { CategoryEntity.all().first().id.value + 2 }
+        val categoryId = transaction { CategoryEntity.all().first().id.value + 1 }
         val entryId = transaction { EntryEntity.all().first().id.value + 1 }
 
         sendAuthenticatedRequest(client, HttpMethod.Delete, "/categories/$categoryId") { response ->
@@ -625,12 +624,12 @@ class CategoryEntryTest {
                 assertNull(newPhoneEntry.child)
                 assertNull(newPhoneEntry.ended)
 
-                assertEquals(categoryEntity, oldInternetEntry.category)
-                assertEquals(categoryEntity, oldPhoneEntry.category)
-                assertEquals(newInternetEntry.user.category, newInternetEntry.category.id)
-                assertEquals(newPhoneEntry.user.category, newPhoneEntry.category.id)
+                assertEquals(categoryEntity.id, oldInternetEntry.category)
+                assertEquals(categoryEntity.id, oldPhoneEntry.category)
+                assertNull(newInternetEntry.category)
+                assertNull(newPhoneEntry.category)
 
-                assertEquals(categoryEntity, oldPhoneOneTimeEntry.category)
+                assertEquals(categoryEntity.id, oldPhoneOneTimeEntry.category)
             }
 
             val shouldResponse = wrapSuccess(
@@ -649,7 +648,7 @@ class CategoryEntryTest {
 
     @Test
     fun testDeleteOldCategoryHasNewEntries() = customTestApplicationWithLogin { client ->
-        val categoryId = transaction { CategoryEntity.all().first().id.value + 2 }
+        val categoryId = transaction { CategoryEntity.all().first().id.value + 1 }
         transaction {
             val userEntity = UserEntity.all().first()
             val categoryEntity = CategoryEntity[categoryId]
@@ -662,7 +661,7 @@ class CategoryEntryTest {
                 ended = null
                 child = null
                 user = userEntity
-                category = categoryEntity
+                category = categoryEntity.id
             }.id.value
 
             EntryEntity.new {
@@ -673,7 +672,7 @@ class CategoryEntryTest {
                 ended = null
                 child = null
                 user = userEntity
-                category = categoryEntity
+                category = categoryEntity.id
             }
         }
 
@@ -697,8 +696,8 @@ class CategoryEntryTest {
                 assertNull(mobileOneEntry.child)
                 assertNull(mobileOneEntry.ended)
 
-                assertEquals(mobileEntry.user.category, mobileEntry.category.id)
-                assertEquals(mobileOneEntry.user.category, mobileOneEntry.category.id)
+                assertNull(mobileEntry.category)
+                assertNull(mobileOneEntry.category)
             }
 
             val shouldResponse = wrapSuccess(
@@ -717,12 +716,12 @@ class CategoryEntryTest {
 
     @Test
     fun testDeleteOldCategoryHasOnlyNewEntries() = customTestApplicationWithLogin { client ->
-        val categoryId = transaction { CategoryEntity.all().first().id.value + 2 }
+        val categoryId = transaction { CategoryEntity.all().first().id.value + 1 }
         transaction {
             val userEntity = UserEntity.all().first()
             val categoryEntity = CategoryEntity[categoryId]
 
-            categoryEntity.entries.forEach { it.delete() }
+            Entries.deleteWhere { Entries.category eq categoryEntity.id }
 
             EntryEntity.new {
                 name = "Mobile"
@@ -732,7 +731,7 @@ class CategoryEntryTest {
                 ended = null
                 child = null
                 user = userEntity
-                category = categoryEntity
+                category = categoryEntity.id
             }.id.value
 
             EntryEntity.new {
@@ -743,7 +742,7 @@ class CategoryEntryTest {
                 ended = null
                 child = null
                 user = userEntity
-                category = categoryEntity
+                category = categoryEntity.id
             }
         }
 
@@ -765,8 +764,8 @@ class CategoryEntryTest {
                 assertNull(mobileOneEntry.child)
                 assertNull(mobileOneEntry.ended)
 
-                assertEquals(mobileEntry.user.category, mobileEntry.category.id)
-                assertEquals(mobileOneEntry.user.category, mobileOneEntry.category.id)
+                assertNull(mobileEntry.category)
+                assertNull(mobileOneEntry.category)
             }
 
             val shouldResponse = wrapSuccess(
@@ -808,7 +807,7 @@ class CategoryEntryTest {
                 ended = null
                 child = null
                 user = userEntity
-                category = categoryEntity
+                category = categoryEntity.id
             }.id.value
 
             EntryEntity.new {
@@ -819,7 +818,7 @@ class CategoryEntryTest {
                 ended = null
                 child = null
                 user = userEntity
-                category = categoryEntity
+                category = categoryEntity.id
             }
         }
 
@@ -842,8 +841,8 @@ class CategoryEntryTest {
                 assertNull(mobileOneEntry.child)
                 assertNull(mobileOneEntry.ended)
 
-                assertEquals(mobileEntry.user.category, mobileEntry.category.id)
-                assertEquals(mobileOneEntry.user.category, mobileOneEntry.category.id)
+                assertNull(mobileEntry.category)
+                assertNull(mobileOneEntry.category)
             }
 
             val shouldResponse = wrapSuccess(

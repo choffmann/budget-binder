@@ -3,18 +3,19 @@ package de.hsfl.budgetBinder.server.services.implementations
 import de.hsfl.budgetBinder.common.APIResponse
 import de.hsfl.budgetBinder.common.Entry
 import de.hsfl.budgetBinder.common.ErrorModel
-import de.hsfl.budgetBinder.server.models.CategoryEntity
-import de.hsfl.budgetBinder.server.models.EntryEntity
-import de.hsfl.budgetBinder.server.models.UserEntity
+import de.hsfl.budgetBinder.server.models.*
 import de.hsfl.budgetBinder.server.utils.isCreatedAndEndedInPeriod
 import de.hsfl.budgetBinder.server.services.interfaces.EntryService
+import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.time.LocalDateTime
 
 class EntryServiceImpl : EntryService {
 
-    private fun getCategoryByID(userId: Int, categoryId: Int?): CategoryEntity = transaction {
-        categoryId?.let { CategoryEntity.findById(it) } ?: CategoryEntity[UserEntity[userId].category!!]
+    private fun getCategoryByID(userId: Int, categoryId: Int?): CategoryEntity? = transaction {
+        categoryId?.let {
+            CategoryEntity.find { Categories.id eq categoryId and (Categories.user eq userId) }.firstOrNull()
+        }
     }
 
     override fun getEntriesByPeriod(userId: Int, period: LocalDateTime?): List<Entry> = transaction {
@@ -41,7 +42,7 @@ class EntryServiceImpl : EntryService {
             name = entry.name
             amount = entry.amount
             repeat = entry.repeat
-            category = getCategoryByID(userId, entry.category_id)
+            category = getCategoryByID(userId, entry.category_id)?.id
             user = UserEntity[userId]
         }.toDto()
     }
@@ -77,7 +78,7 @@ class EntryServiceImpl : EntryService {
         entry.name?.let { entryEntity.name = it }
         entry.amount?.let { entryEntity.amount = it }
         entry.repeat?.let { entryEntity.repeat = it }
-        categoryEntity?.let { entryEntity.category = it }
+        entry.category?.let { entryEntity.category = categoryEntity?.id }
 
         entryEntity.toDto()
     }
@@ -107,14 +108,16 @@ class EntryServiceImpl : EntryService {
         val userEntity = UserEntity[userId]
 
         if (categoryId == "null") {
-            APIResponse(data = CategoryEntity[userEntity.category!!].entries.map { it.toDto() }, success = true)
+            val entries = EntryEntity.find { Entries.category eq null and (Entries.user eq userEntity.id) }
+            APIResponse(data = entries.map { it.toDto() }, success = true)
         } else {
             categoryId?.toIntOrNull()?.let { id ->
-                userEntity.categories.firstOrNull { it.id.value == id && it.id != userEntity.category }
+                userEntity.categories.firstOrNull { it.id.value == id }
                     ?.let { categoryEntity ->
-                        APIResponse(data = categoryEntity.entries.map { it.toDto() }, success = true)
-                    }
-                    ?: APIResponse(ErrorModel("Your category was not found."))
+                        val entries =
+                            EntryEntity.find { Entries.category eq categoryEntity.id and (Entries.user eq userEntity.id) }
+                        APIResponse(data = entries.map { it.toDto() }, success = true)
+                    } ?: APIResponse(ErrorModel("Your category was not found."))
             } ?: APIResponse(ErrorModel("The ID you provided is not a number."))
         }
     }

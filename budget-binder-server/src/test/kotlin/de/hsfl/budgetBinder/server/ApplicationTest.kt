@@ -3,7 +3,6 @@ package de.hsfl.budgetBinder.server
 import de.hsfl.budgetBinder.common.APIResponse
 import de.hsfl.budgetBinder.common.AuthToken
 import de.hsfl.budgetBinder.common.User
-import de.hsfl.budgetBinder.server.models.CategoryEntity
 import de.hsfl.budgetBinder.server.models.UserEntity
 import io.ktor.client.call.*
 import io.ktor.client.plugins.contentnegotiation.*
@@ -24,7 +23,6 @@ class ApplicationTest {
     @AfterTest
     fun deleteTestUser() = transaction {
         UserEntity.all().forEach {
-            CategoryEntity[it.category!!].delete()
             it.delete()
         }
     }

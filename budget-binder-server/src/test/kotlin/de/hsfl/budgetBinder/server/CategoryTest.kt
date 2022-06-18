@@ -84,7 +84,6 @@ class CategoryTest {
     @AfterTest
     fun after() = transaction {
         UserEntity.all().forEach {
-            CategoryEntity[it.category!!].delete()
             it.delete()
         }
         CategoryEntity.all().forEach {
@@ -143,7 +142,7 @@ class CategoryTest {
             assertEquals(shouldResponse, responseBody)
         }
 
-        val id = transaction { CategoryEntity.all().first().id.value + 1 }
+        val id = transaction { CategoryEntity.all().first().id.value }
 
         val categoryList = listOf(
             Category(id, "test", TestCategories.color, TestCategories.image, 10f),
@@ -298,7 +297,7 @@ class CategoryTest {
             assertEquals(shouldResponse, responseBody)
         }
 
-        val id = transaction { CategoryEntity.all().first().id.value + 1 }
+        val id = transaction { CategoryEntity.all().first().id.value }
 
         sendAuthenticatedRequest(client, HttpMethod.Get, "/categories/${id - 1}") { response ->
             assertEquals(HttpStatusCode.OK, response.status)
@@ -346,7 +345,7 @@ class CategoryTest {
             assertEquals(shouldResponse, responseBody)
         }
 
-        val id = transaction { CategoryEntity.all().first().id.value + 1 }
+        val id = transaction { CategoryEntity.all().first().id.value }
 
         sendAuthenticatedRequest(client, HttpMethod.Patch, "/categories/${id}") { response ->
             assertEquals(HttpStatusCode.OK, response.status)
@@ -451,7 +450,7 @@ class CategoryTest {
             assertEquals(shouldResponse, responseBody)
         }
 
-        val id = transaction { CategoryEntity.all().first().id.value + 1 }
+        val id = transaction { CategoryEntity.all().first().id.value }
 
         sendAuthenticatedRequest(client, HttpMethod.Delete, "/categories/${id - 1}") { response ->
             assertEquals(HttpStatusCode.OK, response.status)

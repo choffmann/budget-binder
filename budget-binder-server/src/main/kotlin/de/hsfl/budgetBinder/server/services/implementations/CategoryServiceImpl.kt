@@ -2,9 +2,12 @@ package de.hsfl.budgetBinder.server.services.implementations
 
 import de.hsfl.budgetBinder.common.Category
 import de.hsfl.budgetBinder.server.models.CategoryEntity
+import de.hsfl.budgetBinder.server.models.Entries
+import de.hsfl.budgetBinder.server.models.EntryEntity
 import de.hsfl.budgetBinder.server.models.UserEntity
 import de.hsfl.budgetBinder.server.utils.isCreatedAndEndedInPeriod
 import de.hsfl.budgetBinder.server.services.interfaces.CategoryService
+import org.jetbrains.exposed.sql.SizedIterable
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.time.LocalDateTime
 
@@ -15,17 +18,15 @@ class CategoryServiceImpl : CategoryService {
 
             val value = period?.let { period ->
                 user.categories.filter {
-                    it.id != user.category && isCreatedAndEndedInPeriod(it.created, it.ended, period)
+                    isCreatedAndEndedInPeriod(it.created, it.ended, period)
                 }
-            } ?: user.categories.filter { it.id != user.category }
+            } ?: user.categories
 
             value.map { it.toDto() }
         }
 
     override fun findCategoryByID(userId: Int, id: Int): Category? = transaction {
-        val user = UserEntity[userId]
-        if (id == user.category!!.value) null else
-            user.categories.firstOrNull { it.id.value == id }?.toDto()
+        UserEntity[userId].categories.firstOrNull { it.id.value == id }?.toDto()
     }
 
     override fun createCategory(userId: Int, category: Category.In): Category = transaction {
@@ -38,27 +39,33 @@ class CategoryServiceImpl : CategoryService {
         }.toDto()
     }
 
+    private fun getEntriesForCategory(categoryEntity: CategoryEntity): SizedIterable<EntryEntity> = transaction {
+        EntryEntity.find { Entries.category eq categoryEntity.id }
+    }
+
     private fun isNewCategory(categoryEntity: CategoryEntity): Boolean {
         val now = LocalDateTime.now()
         val period = LocalDateTime.of(now.year, now.month.value, 1, 0, 0)
-        return categoryEntity.created > period || categoryEntity.entries.empty() || categoryEntity.entries.all { it.created > period }
+        val entries = getEntriesForCategory(categoryEntity)
+        return categoryEntity.created > period || entries.empty() || entries.all { it.created > period }
     }
 
-    private fun changeEntriesWithCategory(oldCategory: CategoryEntity, newCategory: CategoryEntity) {
+    private fun changeEntriesWithCategory(oldCategory: CategoryEntity, newCategory: CategoryEntity?) {
         val now = LocalDateTime.now()
         val period = LocalDateTime.of(now.year, now.month.value, 1, 0, 0)
         val plusPeriod = period.plusMonths(1)
-        oldCategory.entries.forEach {
+        val entries = getEntriesForCategory(oldCategory)
+        entries.forEach {
             val entryPeriod = LocalDateTime.of(it.created.year, it.created.month.value, 1, 0, 0)
             var changeEntity = it
             if (it.repeat && entryPeriod != period) {
                 changeEntity = changeEntity.createChild()
 
-                changeEntity.category = newCategory
+                changeEntity.category = newCategory?.id
 
             } else {
                 if (it.created > period && it.created < plusPeriod)
-                    it.category = newCategory
+                    it.category = newCategory?.id
             }
         }
     }
@@ -105,13 +112,14 @@ class CategoryServiceImpl : CategoryService {
         }
         val returnValue = categoryEntity.toDto()
         if (isNewCategory(categoryEntity)) {
-            categoryEntity.entries.forEach { it.category = CategoryEntity[it.user.category!!] }
+            val entries = getEntriesForCategory(categoryEntity)
+            entries.forEach { it.category = null }
             categoryEntity.delete()
             return@transaction returnValue
         }
 
         categoryEntity.ended = LocalDateTime.now()
-        changeEntriesWithCategory(categoryEntity, CategoryEntity[categoryEntity.user.category!!])
+        changeEntriesWithCategory(categoryEntity, null)
         returnValue
     }
 }
