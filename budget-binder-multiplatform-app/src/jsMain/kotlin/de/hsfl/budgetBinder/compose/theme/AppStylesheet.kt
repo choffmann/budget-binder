@@ -63,6 +63,21 @@ object AppStylesheet : StyleSheet() {
         height(auto)
     }
 
+    val categoryListElement by style{
+        flexDirection(FlexDirection("row"))
+        alignItems(AlignItems.Center)
+        margin(10.px)
+        marginTop(0.px)
+    }
+
+    val categoryListElementText by style{
+        flex("2 2 90%")
+    }
+
+    val categoryImageList by style{
+        justifyContent(JustifyContent.Center)
+    }
+
     //EntryList
     val entryListElement by style{
         flexDirection(FlexDirection("row"))
@@ -72,10 +87,6 @@ object AppStylesheet : StyleSheet() {
     }
     val entryListElementText by style{
         flex("2 2 90%")
-    }
-    val text by style{
-        textAlign("center")
-        padding(10.px)
     }
     val moneyText by style{
         textAlign("center")

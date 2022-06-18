@@ -68,179 +68,185 @@ fun CategoryCreateView(
         })
 
     MainFlexContainer {
-        H1(
-            attrs = {
-                style { margin(2.percent) }
-            }
-        ) { Text("Create a new Category") }
-        Form(attrs = {
-            this.addEventListener("submit") {
-                console.log("$categoryNameTextFieldState, $categoryColorTextFieldState, $categoryImageState, $categoryBudgetTextFieldState")
-                onCreateCategoryButtonPressed(
-                    categoryNameTextFieldState,
-                    categoryColorTextFieldState,
-                    categoryImageState,
-                    categoryBudgetTextFieldState.toFloat()
-                )
-                it.preventDefault()
-            }
+        Div(attrs = {
+            classes("mdc-card", AppStylesheet.card)
         }
         ) {
-            Div(
-                attrs = {
-                    classes(AppStylesheet.margin)
+            H1 { Text("Create a new Category") }
+            Form(attrs = {
+                this.addEventListener("submit") {
+                    console.log("$categoryNameTextFieldState, $categoryColorTextFieldState, $categoryImageState, $categoryBudgetTextFieldState")
+                    onCreateCategoryButtonPressed(
+                        categoryNameTextFieldState,
+                        categoryColorTextFieldState,
+                        categoryImageState,
+                        categoryBudgetTextFieldState.toFloat()
+                    )
+                    it.preventDefault()
                 }
+            }
             ) {
-                Label(
+                //Category Name Input
+                Div(
                     attrs = {
-                        classes("mdc-text-field", "mdc-text-field--filled")
-                        style { width(100.percent) }
+                        classes(AppStylesheet.margin)
                     }
                 ) {
-                    Span(
+                    Label(
                         attrs = {
-                            classes("mdc-text-field__ripple")
+                            classes("mdc-text-field", "mdc-text-field--filled")
+                            style { width(100.percent) }
                         }
-                    ) { }
-                    Span(
-                        attrs = {
-                            classes("mdc-floating-label", "mdc-floating-label--float-above")
-                        }
-                    ) { Text("Category Name") }
-                    Input(
-                        type = InputType.Text
                     ) {
-                        classes("mdc-text-field__input")
-                        value(categoryNameTextFieldState)
-                        required(true)
-                        onInput {
-                            categoryNameTextFieldState = it.value
+                        Span(
+                            attrs = {
+                                classes("mdc-text-field__ripple")
+                            }
+                        ) { }
+                        Span(
+                            attrs = {
+                                classes("mdc-floating-label", "mdc-floating-label--float-above")
+                            }
+                        ) { Text("Category Name") }
+                        Input(
+                            type = InputType.Text
+                        ) {
+                            classes("mdc-text-field__input")
+                            value(categoryNameTextFieldState)
+                            required(true)
+                            onInput {
+                                categoryNameTextFieldState = it.value
+                            }
                         }
+                        Span(
+                            attrs = {
+                                classes("mdc-line-ripple")
+                            }
+                        ) { }
                     }
-                    Span(
-                        attrs = {
-                            classes("mdc-line-ripple")
-                        }
-                    ) { }
                 }
-            }
-            Div(
-                attrs = {
-                    classes(AppStylesheet.margin)
-                }
-            ) {
-                Label(
+                //Category Color Input
+                Div(
                     attrs = {
-                        classes("mdc-text-field", "mdc-text-field--outlined")
-                        style { width(100.percent) }
+                        classes(AppStylesheet.margin)
                     }
                 ) {
-                    Span(
+                    Label(
                         attrs = {
-                            classes("mdc-text-field__ripple")
+                            classes("mdc-text-field", "mdc-text-field--outlined")
+                            style { width(100.percent) }
                         }
-                    ) { }
-                    Span(
-                        attrs = {
-                            classes("mdc-floating-label", "mdc-floating-label--float-above")
-                            style { marginBottom(1.percent) }
-                        }
-                    ) { Text("Color") }
-                    Input(
-                        type = InputType.Color
                     ) {
-                        classes("mdc-text-field__input")
-                        value(categoryColorTextFieldState)
-                        onInput {
-                            categoryColorTextFieldState = it.value
+                        Span(
+                            attrs = {
+                                classes("mdc-text-field__ripple")
+                            }
+                        ) { }
+                        Span(
+                            attrs = {
+                                classes("mdc-floating-label", "mdc-floating-label--float-above")
+                                style { marginBottom(1.percent) }
+                            }
+                        ) { Text("Color") }
+                        Input(
+                            type = InputType.Color
+                        ) {
+                            classes("mdc-text-field__input")
+                            value(categoryColorTextFieldState)
+                            onInput {
+                                categoryColorTextFieldState = it.value
+                            }
                         }
+                        Span(
+                            attrs = {
+                                classes("mdc-line-ripple")
+                            }
+                        ) { }
                     }
-                    Span(
-                        attrs = {
-                            classes("mdc-line-ripple")
-                        }
-                    ) { }
                 }
-            }
-            Div(
-                attrs = {
-                    classes(AppStylesheet.margin)
-                }
-            ) {
-                Label(
+                //Category Image Input
+                Div(
                     attrs = {
-                        style { width(100.percent) }
+                        classes(AppStylesheet.margin)
                     }
                 ) {
-                    Span(
+                    Label(
                         attrs = {
-                            classes("mdc-floating-label", "mdc-floating-label--float-above")
-                            style { marginBottom(1.percent); marginLeft(2.percent) }
+                            style { width(100.percent) }
                         }
-                    ) { Text("Image") }
-                    CategoryImagesToImageList(onClick = { categoryImageState = it })
-                }
-            }
-            Div(
-                attrs = {
-                    classes(AppStylesheet.margin)
-                }
-            ) {
-                Label(
-                    attrs = {
-                        classes("mdc-text-field", "mdc-text-field--filled")
-                        style { width(100.percent) }
-                    }
-                ) {
-                    Span(
-                        attrs = {
-                            classes("mdc-text-field__ripple")
-                        }
-                    ) { }
-                    Span(
-                        attrs = {
-                            classes("mdc-floating-label", "mdc-floating-label--float-above")
-                        }
-                    ) { Text("Budget") }
-                    Input(
-                        type = InputType.Number
                     ) {
-                        classes("mdc-text-field__input")
-                        value(categoryBudgetTextFieldState)
-                        required(true)
-                        min("1")
-                        onInput {
-                            categoryBudgetTextFieldState = it.value.toString()
-                        }
+                        Span(
+                            attrs = {
+                                classes("mdc-floating-label", "mdc-floating-label--float-above")
+                                style { marginBottom(1.percent); marginLeft(2.percent)}
+                            }
+                        ) { Text("Image") }
+                        CategoryImagesToImageList(onClick = {categoryImageState = it})
                     }
-                    Span(
-                        attrs = {
-                            classes("mdc-line-ripple")
-                        }
-                    ) { }
                 }
-            }
-            Div(
-                attrs = {
-                    classes(AppStylesheet.margin)
-                }
-            ) {
-                SubmitInput(
+                //Category Budget Input
+                Div(
                     attrs = {
-                        classes("mdc-button", "mdc-button--raised")
-                        value("Submit")
-                    })
-            }
-            Div {
-                when (viewState) {
-                    is UiState.Success<*> -> {
-                        //Text((viewState as UiState.Success<*>).element.toString())
+                        classes(AppStylesheet.margin)
                     }
-                    is UiState.Error -> {
-                        Text((viewState as UiState.Error).error)
+                ) {
+                    Label(
+                        attrs = {
+                            classes("mdc-text-field", "mdc-text-field--filled")
+                            style { width(100.percent) }
+                        }
+                    ) {
+                        Span(
+                            attrs = {
+                                classes("mdc-text-field__ripple")
+                            }
+                        ) { }
+                        Span(
+                            attrs = {
+                                classes("mdc-floating-label", "mdc-floating-label--float-above")
+                            }
+                        ) { Text("Budget") }
+                        Input(
+                            type = InputType.Number
+                        ) {
+                            classes("mdc-text-field__input")
+                            value(categoryBudgetTextFieldState)
+                            required(true)
+                            min("1")
+                            onInput {
+                                categoryBudgetTextFieldState = it.value.toString()
+                            }
+                        }
+                        Span(
+                            attrs = {
+                                classes("mdc-line-ripple")
+                            }
+                        ) { }
                     }
-                    is UiState.Loading -> {
-                        //CircularProgressIndicator()
+                }
+                //Submit button
+                Div(
+                    attrs = {
+                        classes(AppStylesheet.margin)
+                    }
+                ) {
+                    SubmitInput(
+                        attrs = {
+                            classes("mdc-button", "mdc-button--raised")
+                            value("Submit")
+                        })
+                }
+                Div {
+                    when (viewState) {
+                        is UiState.Success<*> -> {
+                            //Text((viewState as UiState.Success<*>).element.toString())
+                        }
+                        is UiState.Error -> {
+                            Text((viewState as UiState.Error).error)
+                        }
+                        is UiState.Loading -> {
+                            //CircularProgressIndicator()
+                        }
                     }
                 }
             }
