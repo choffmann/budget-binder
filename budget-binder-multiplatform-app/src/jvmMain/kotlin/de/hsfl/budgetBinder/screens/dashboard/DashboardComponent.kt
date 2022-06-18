@@ -8,13 +8,11 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.List
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.Modifier
@@ -25,9 +23,11 @@ import de.hsfl.budgetBinder.common.Category
 import de.hsfl.budgetBinder.common.Entry
 import de.hsfl.budgetBinder.di
 import de.hsfl.budgetBinder.presentation.CategoryImageToIcon
+import de.hsfl.budgetBinder.presentation.UiEvent
 import de.hsfl.budgetBinder.presentation.viewmodel.dashboard.DashboardEntryState
 import de.hsfl.budgetBinder.presentation.viewmodel.dashboard.DashboardEvent
 import de.hsfl.budgetBinder.presentation.viewmodel.dashboard.DashboardViewModel
+import kotlinx.coroutines.flow.collectLatest
 import org.kodein.di.instance
 
 @Composable
@@ -38,29 +38,50 @@ fun DashboardComponent() {
     val totalSpendBudget = viewModel.spendBudgetOnCurrentCategory.collectAsState()
     val olderEntries = viewModel.oldEntriesMapState.collectAsState()
     val loadingState = remember { mutableStateOf(false) }
+    val scaffoldState = rememberScaffoldState()
 
-    Column {
-        TopDashboardSection(
-            focusedCategory = focusedCategory.value.category,
-            totalSpendBudget = totalSpendBudget.value.spendBudgetOnCurrentCategory,
-            totalBudget = focusedCategory.value.category.budget,
-            hasPrev = focusedCategory.value.hasPrev,
-            hasNext = focusedCategory.value.hasNext,
-            onPrevClicked = { viewModel.onEvent(DashboardEvent.OnPrevCategory) },
-            onNextClicked = { viewModel.onEvent(DashboardEvent.OnNextCategory) }
-        )
-        Column {
-            EntryList(entryList = entryList.value.entryList, onItemClicked = {})
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(text = "Older entries...", style = MaterialTheme.typography.caption)
-            Spacer(modifier = Modifier.height(8.dp))
-            OlderEntryList(entryMap = olderEntries.value)
-            Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-                OutlinedButton(onClick = { viewModel.onEvent(DashboardEvent.OnLoadMore) }) {
-                    Text("Load More")
-                }
+    LaunchedEffect(key1 = true) {
+        viewModel.eventFlow.collectLatest { event ->
+            when (event) {
+                is UiEvent.ShowLoading -> loadingState.value = true
+                is UiEvent.HideSuccess -> loadingState.value = false
+                else -> loadingState.value = false
             }
+        }
+    }
 
+
+    Scaffold(
+        scaffoldState = scaffoldState,
+        floatingActionButtonPosition = FabPosition.End,
+        floatingActionButton = {
+            FloatingActionButton(onClick = { viewModel.onEvent(DashboardEvent.OnEntryCreate) }) {
+                Icon(Icons.Default.Add, contentDescription = null)
+            }
+        }
+    ) {
+        Column {
+            if (loadingState.value) {
+                LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+            }
+            TopDashboardSection(
+                focusedCategory = focusedCategory.value.category,
+                totalSpendBudget = totalSpendBudget.value.spendBudgetOnCurrentCategory,
+                totalBudget = focusedCategory.value.category.budget,
+                hasPrev = focusedCategory.value.hasPrev,
+                hasNext = focusedCategory.value.hasNext,
+                onPrevClicked = { viewModel.onEvent(DashboardEvent.OnPrevCategory) },
+                onNextClicked = { viewModel.onEvent(DashboardEvent.OnNextCategory) }
+            )
+            Column {
+                EntryList(
+                    entryList = entryList.value.entryList,
+                    oldEntries = olderEntries.value,
+                    onItemClicked = {},
+                    onLoadMore = { viewModel.onEvent(DashboardEvent.OnLoadMore) })
+                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(8.dp))
+            }
         }
     }
 }
@@ -119,9 +140,14 @@ private fun TopDashboardSection(
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
 @Composable
-private fun EntryList(entryList: List<DashboardEntryState>, onItemClicked: (Int) -> Unit) {
+private fun EntryList(
+    entryList: List<DashboardEntryState>,
+    oldEntries: Map<String, List<Entry>>,
+    onItemClicked: (Int) -> Unit,
+    onLoadMore: () -> Unit
+) {
 
     when {
         entryList.isEmpty() -> Text("This category has no entries. You can create an new entry.")
@@ -136,14 +162,14 @@ private fun EntryList(entryList: List<DashboardEntryState>, onItemClicked: (Int)
                 trailing = { Text("${state.entry.amount} €") }
             )
         }
-    }
-}
-
-@OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
-@Composable
-private fun OlderEntryList(entryMap: Map<String, List<Entry>>) {
-    LazyColumn {
-        entryMap.forEach { (date, entries) ->
+        stickyHeader {
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                modifier = Modifier.background(MaterialTheme.colors.background).fillMaxWidth(),
+                text = "Older entries..."
+            )
+        }
+        oldEntries.forEach { (date, entries) ->
             stickyHeader {
                 Text(modifier = Modifier.background(MaterialTheme.colors.background).fillMaxWidth(), text = date)
             }
@@ -155,6 +181,15 @@ private fun OlderEntryList(entryMap: Map<String, List<Entry>>) {
                     icon = { Icon(Icons.Default.List, contentDescription = null) },
                     trailing = { Text("${entry.amount} €") }
                 )
+            }
+        }
+
+        item {
+            Spacer(modifier = Modifier.height(8.dp))
+            Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+                OutlinedButton(onClick = onLoadMore) {
+                    Text("Load More")
+                }
             }
         }
     }
