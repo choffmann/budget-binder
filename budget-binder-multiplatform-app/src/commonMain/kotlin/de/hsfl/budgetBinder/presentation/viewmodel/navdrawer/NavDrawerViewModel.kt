@@ -35,7 +35,10 @@ class NavDrawerViewModel(
             is NavDrawerEvent.OnLogout -> scope.launch {
                 logoutUseCase(onAllDevices = false).collect {
                     when (it) {
-                        is DataResponse.Success -> _eventFlow.emit(UiEvent.ShowSuccess("Your are logged out"))
+                        is DataResponse.Success -> {
+                            routerFlow.navigateTo(Screen.Login)
+                            _eventFlow.emit(UiEvent.ShowSuccess("Your are logged out"))
+                        }
                         is DataResponse.Error -> _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
                         is DataResponse.Loading -> _eventFlow.emit(UiEvent.ShowLoading)
                         is DataResponse.Unauthorized -> {
