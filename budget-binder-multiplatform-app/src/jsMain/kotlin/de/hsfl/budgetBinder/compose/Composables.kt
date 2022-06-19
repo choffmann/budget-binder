@@ -182,7 +182,16 @@ fun CategoryList(
     onEditButton: (Int) -> Unit,
     onDeleteButton: (Int) -> Unit
 ) {
+    var deleteDialog by remember { mutableStateOf(false) }
+    var id by remember { mutableStateOf(0) }
+
     Div {
+        if (deleteDialog) {
+            DeleteDialog(
+                false,
+                { onDeleteButton(id) },
+                { deleteDialog = false }) { Text("Delete Category?") }
+        }
         for (category in categoryList)
             Div(attrs = {
                 classes("mdc-card", AppStylesheet.card)
@@ -242,7 +251,7 @@ fun CategoryList(
                     }
                     Button(attrs = {
                         classes("mdc-button", "mdc-button--raised")
-                        onClick { onDeleteButton(category.id) }
+                        onClick { deleteDialog = !deleteDialog; id = category.id }
                         style {
                             flex(50.percent)
                             margin(1.5.percent)
