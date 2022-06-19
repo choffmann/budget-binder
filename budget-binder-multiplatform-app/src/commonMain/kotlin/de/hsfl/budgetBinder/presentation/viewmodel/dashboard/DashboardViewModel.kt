@@ -208,7 +208,7 @@ class DashboardViewModel(
     }
 
     /**
-     * Set the category state for the current category, wich the user moved to
+     * Set the category state for the current category, which the user moved to
      */
     private fun setCategoryState() {
         getEntriesByCategory(id = _categoryListState.value[internalCategoryId].id, onSuccess = {
