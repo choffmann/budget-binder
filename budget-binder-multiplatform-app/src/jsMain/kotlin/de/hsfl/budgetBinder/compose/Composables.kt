@@ -179,10 +179,9 @@ fun CategoryImagesToImageList(onClick: (Category.Image) -> Unit) {
 @Composable
 fun CategoryList(
     categoryList: List<Category>,
-    onEditButton: () -> Unit,
+    onEditButton: (Int) -> Unit,
     onDeleteButton: (Int) -> Unit
 ) {
-    var deleteDialog by remember { mutableStateOf(false) }
     Div {
         for (category in categoryList)
             Div(attrs = {
@@ -233,7 +232,7 @@ fun CategoryList(
                 ) {
                     Button(attrs = {
                         classes("mdc-button", "mdc-button--raised", AppStylesheet.marginRight)
-                        onClick { onEditButton() }
+                        onClick { onEditButton(category.id) }
                         style {
                             flex(50.percent)
                             margin(1.5.percent)
@@ -243,7 +242,7 @@ fun CategoryList(
                     }
                     Button(attrs = {
                         classes("mdc-button", "mdc-button--raised")
-                        onClick { deleteDialog = true }
+                        onClick { onDeleteButton(category.id) }
                         style {
                             flex(50.percent)
                             margin(1.5.percent)
@@ -252,12 +251,6 @@ fun CategoryList(
                     }) {
                         Text("Delete Category")
                     }
-                }
-                if (deleteDialog) {
-                    DeleteDialog(
-                        false,
-                        { onDeleteButton(category.id) },
-                        { deleteDialog = false }) { Text("Delete Category?") }
                 }
             }
     }

@@ -14,11 +14,12 @@ fun CategoryEditView(
     onBackButton: () -> Unit
 ) {
     val viewState by remember { state }
-    H1{Text("CategoryEditView")}
+    H1{Text("Edit Category")}
+    console.log()
     Div {
         when (viewState) {
             is UiState.Success<*> -> {
-                Text((viewState as UiState.Success<*>).element.toString())
+                //Text((viewState as UiState.Success<*>).element.toString())
             }
             is UiState.Error -> {
                 Text((viewState as UiState.Error).error)
