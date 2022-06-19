@@ -18,7 +18,7 @@ object Entries : IntIdTable() {
     val child = reference("child", Entries).nullable().default(null)
 
     val user = reference("user", Users)
-    val category = reference("category", Categories)
+    val category = reference("category", Categories).nullable().default(null)
 }
 
 class EntryIter(start: EntryEntity) : Iterator<EntryEntity> {
@@ -45,15 +45,13 @@ class EntryEntity(id: EntityID<Int>) : IntEntity(id), Iterable<EntryEntity> {
     var child by Entries.child
 
     var user by UserEntity referencedOn Entries.user
-    var category by CategoryEntity referencedOn Entries.category
+    var category by Entries.category
 
 
     fun toDto(): Entry {
         val lastChild = this.lastOrNull() ?: this
 
-        val categoryId =
-            if (user.category?.value == category.id.value) null else category.id.value
-        return Entry(id.value, lastChild.name, amount, repeat, categoryId)
+        return Entry(id.value, lastChild.name, amount, repeat, category?.value)
     }
 
     override fun iterator(): Iterator<EntryEntity> {

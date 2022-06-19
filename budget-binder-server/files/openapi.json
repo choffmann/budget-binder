@@ -519,6 +519,25 @@
             "schema": {
               "type": "integer"
             }
+          },
+          {
+            "name": "current",
+            "in": "query",
+            "description": "only get current entries",
+            "allowEmptyValue": true,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "period",
+            "in": "query",
+            "description": "get all entries in the given period",
+            "allowEmptyValue": true,
+            "schema": {
+              "type": "string",
+              "example": "12-2022"
+            }
           }
         ],
         "responses": {
