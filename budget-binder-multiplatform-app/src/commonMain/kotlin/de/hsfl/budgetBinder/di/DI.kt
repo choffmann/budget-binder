@@ -19,6 +19,7 @@ import de.hsfl.budgetBinder.presentation.flow.UiEventSharedFlow
 import de.hsfl.budgetBinder.presentation.viewmodel.login.LoginViewModel
 import de.hsfl.budgetBinder.presentation.viewmodel.register.RegisterViewModel
 import de.hsfl.budgetBinder.presentation.viewmodel.*
+import de.hsfl.budgetBinder.presentation.viewmodel.navdrawer.NavDrawerViewModel
 import de.hsfl.budgetBinder.presentation.viewmodel.dashboard.DashboardViewModel
 import de.hsfl.budgetBinder.presentation.viewmodel.category.summary.CategorySummaryViewModel
 import de.hsfl.budgetBinder.presentation.viewmodel.category._CategoryViewModel
@@ -98,5 +99,5 @@ fun kodein(ktorEngine: HttpClientEngine) = DI {
     bindSingleton { CategorySummaryViewModel(instance(), instance(), instance()) }
     bindSingleton { EntryViewModel(instance(), instance()) }
     bindSingleton { DashboardViewModel(instance(), instance(), instance(), instance(), instance()) }
-    bindSingleton { NavDrawerViewModel(instance(), instance()) }
+    bindSingleton { NavDrawerViewModel(instance(), instance(), instance()) }
 }
