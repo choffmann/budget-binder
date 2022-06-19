@@ -33,8 +33,8 @@ class DashboardViewModel(
     private val _entryListState = MutableStateFlow(DashboardState())
     val entryListState: StateFlow<DashboardState> = _entryListState
 
-    private val _oldEntriesMapState = MutableStateFlow<MutableMap<String, List<Entry>>>(mutableMapOf())
-    val oldEntriesMapState: StateFlow<Map<String, List<Entry>>> = _oldEntriesMapState
+    private val _oldEntriesMapState = MutableStateFlow<MutableMap<String, DashboardState>>(mutableMapOf())
+    val oldEntriesMapState: StateFlow<Map<String, DashboardState>> = _oldEntriesMapState
 
     private val _focusedCategoryState = MutableStateFlow(DashboardState())
     val focusedCategoryState: StateFlow<DashboardState> = _focusedCategoryState
@@ -157,7 +157,7 @@ class DashboardViewModel(
         }
     }
 
-    private fun getAllEntriesFromMonth(period: String) = scope.launch {
+    private fun getAllEntriesFromMonth(period: String, onSuccess: (List<Entry>) -> Unit) = scope.launch {
         // TODO: Year had also be to check
         dashboardUseCases.getAllEntriesUseCase.entries(period).collect {
             when (it) {
@@ -165,7 +165,7 @@ class DashboardViewModel(
                 is DataResponse.Error -> _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
                 is DataResponse.Success -> {
                     _eventFlow.emit(UiEvent.HideSuccess)
-                    _oldEntriesMapState.value.putAll(mapOf(Pair(period, it.data!!)))
+                    onSuccess(it.data!!)
                 }
                 is DataResponse.Unauthorized -> {
                     _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
@@ -304,16 +304,39 @@ class DashboardViewModel(
         }
         val periodString = "${Month.from(nextMonth).toMonthString()}-${lastRequestedYear}"
         when (internalCategoryId) {
-            -1 -> getAllEntriesFromMonth(periodString)
+            -1 -> getAllEntriesFromMonth(period = periodString) {
+                _oldEntriesMapState.value.putAll(
+                    mapOf(
+                        Pair(
+                            periodString,
+                            DashboardState(entryList = mapEntryListToDashboardEntryState(it))
+                        )
+                    )
+                )
+            }
             in _categoryListState.value.indices -> getEntriesByCategory(
                 id = focusedCategoryState.value.category.id, period = periodString
             ) {
-                _oldEntriesMapState.value.putAll(mapOf(Pair(periodString, it)))
+                _oldEntriesMapState.value.putAll(
+                    mapOf(
+                        Pair(
+                            periodString,
+                            DashboardState(entryList = mapEntryListToDashboardEntryState(it))
+                        )
+                    )
+                )
             }
             _categoryListState.value.size -> getEntriesByCategory(
                 id = null, period = periodString
             ) {
-                _oldEntriesMapState.value.putAll(mapOf(Pair(periodString, it)))
+                _oldEntriesMapState.value.putAll(
+                    mapOf(
+                        Pair(
+                            periodString,
+                            DashboardState(entryList = mapEntryListToDashboardEntryState(it))
+                        )
+                    )
+                )
             }
         }
         lastRequestedMonth = Month.from(nextMonth)

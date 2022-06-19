@@ -26,6 +26,7 @@ import de.hsfl.budgetBinder.presentation.CategoryImageToIcon
 import de.hsfl.budgetBinder.presentation.UiEvent
 import de.hsfl.budgetBinder.presentation.viewmodel.dashboard.DashboardEntryState
 import de.hsfl.budgetBinder.presentation.viewmodel.dashboard.DashboardEvent
+import de.hsfl.budgetBinder.presentation.viewmodel.dashboard.DashboardState
 import de.hsfl.budgetBinder.presentation.viewmodel.dashboard.DashboardViewModel
 import kotlinx.coroutines.flow.collectLatest
 import org.kodein.di.instance
@@ -132,7 +133,7 @@ private fun TopDashboardSection(
 @Composable
 private fun EntryList(
     entryList: List<DashboardEntryState>,
-    oldEntries: Map<String, List<Entry>>,
+    oldEntries: Map<String, DashboardState>,
     onItemClicked: (Int) -> Unit,
     onLoadMore: () -> Unit,
     onEntryDelete: (Int) -> Unit
@@ -162,23 +163,23 @@ private fun EntryList(
                 text = "Older entries..."
             )
         }
-        oldEntries.forEach { (date, entries) ->
+        oldEntries.forEach { (date, dashboardState) ->
             stickyHeader {
                 Text(modifier = Modifier.background(MaterialTheme.colors.background).fillMaxWidth(), text = date)
             }
 
-            items(entries) { entry ->
+            items(dashboardState.entryList) { entryState ->
                 val swipeState = rememberDismissState(confirmStateChange = {
                     if (it == DismissValue.DismissedToEnd) {
-                        onEntryDelete(entry.id)
+                        onEntryDelete(entryState.entry.id)
                     }
                     true
                 })
                 Divider()
                 SwipeToDelete(dismissState = swipeState) {
-                    ListItem(text = { Text(entry.name) },
-                        icon = { Icon(Icons.Default.List, contentDescription = null) },
-                        trailing = { Text("${entry.amount} €") })
+                    ListItem(text = { Text(entryState.entry.name) },
+                        icon = { CategoryImageToIcon(icon = entryState.categoryImage) },
+                        trailing = { Text("${entryState.entry.amount} €") })
                 }
             }
         }
