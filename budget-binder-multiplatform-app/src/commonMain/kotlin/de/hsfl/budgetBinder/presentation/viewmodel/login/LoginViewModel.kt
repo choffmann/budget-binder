@@ -46,7 +46,7 @@ class LoginViewModel(
                         _eventFlow.emit(UiEvent.ShowLoading)
                         dataFlow.storeUserState(it.data!!)
                         delay(1000L)
-                        routerFlow.navigateTo(Screen.Settings.Menu)
+                        routerFlow.navigateTo(Screen.Dashboard)
                     }
                     else -> {
                         // If the request failed

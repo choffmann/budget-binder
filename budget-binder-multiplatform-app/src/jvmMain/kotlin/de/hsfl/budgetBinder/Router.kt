@@ -1,5 +1,6 @@
 package de.hsfl.budgetBinder
 
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
@@ -21,6 +22,8 @@ fun Router() {
         is Screen.Login -> LoginComponent()
         is Screen.Dashboard -> DashboardComponent()
         is Screen.Settings.Menu, Screen.Settings.User, Screen.Settings.Server -> SettingsView()
+        is Screen.Entry.Overview -> Text(text = "Entry Click with id: ${(screenState.value as Screen.Entry.Overview).id}")
+        is Screen.Entry.Create -> Text(text = "Entry Create")
         else -> {}
     }
 }

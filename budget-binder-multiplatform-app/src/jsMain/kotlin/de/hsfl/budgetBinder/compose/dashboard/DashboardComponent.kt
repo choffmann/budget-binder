@@ -2,13 +2,8 @@ package de.hsfl.budgetBinder.compose.dashboard
 
 import androidx.compose.runtime.*
 import de.hsfl.budgetBinder.presentation.Screen
-import de.hsfl.budgetBinder.domain.usecase.*
-import de.hsfl.budgetBinder.presentation.viewmodel.DashboardViewModel
+import de.hsfl.budgetBinder.presentation.viewmodel.dashboard.DashboardViewModel
 import di
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import org.kodein.di.compose.localDI
 import org.kodein.di.instance
 
 @Composable

@@ -33,7 +33,11 @@ class CategoryRepositoryImpl(
         return client.deleteCategoryById(id)
     }
 
-    override suspend fun getEntriesFromCategory(id: Int): APIResponse<List<Entry>> {
+    override suspend fun getEntriesFromCategory(id: Int?): APIResponse<List<Entry>> {
         return client.getEntriesFromCategory(id)
+    }
+
+    override suspend fun getEntriesFromCategory(id: Int?, period: String): APIResponse<List<Entry>> {
+        return client.getEntriesFromCategory(id, period)
     }
 }

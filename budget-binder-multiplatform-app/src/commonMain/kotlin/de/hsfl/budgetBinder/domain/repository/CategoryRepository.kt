@@ -48,9 +48,17 @@ interface CategoryRepository {
     suspend fun deleteCategoryById(id: Int): APIResponse<Category>
 
     /**
-     * Get all entries from a category
+     * Get all entries from a category of current month
      * @param id ID from Category to get all Entries from this
      * @author Cedrik Hoffmann
      */
-    suspend fun getEntriesFromCategory(id: Int): APIResponse<List<Entry>>
+    suspend fun getEntriesFromCategory(id: Int?): APIResponse<List<Entry>>
+
+    /**
+     * Get all entries from a category on period of time
+     * @param id ID from Category to get all Entries from this
+     * @param period Time period in format MM-YYYY (03-2022)
+     * @author Cedrik Hoffmann
+     */
+    suspend fun getEntriesFromCategory(id: Int?, period: String): APIResponse<List<Entry>>
 }
