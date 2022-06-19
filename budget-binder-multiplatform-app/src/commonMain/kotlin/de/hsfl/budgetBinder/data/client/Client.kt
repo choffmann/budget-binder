@@ -101,10 +101,17 @@ interface ApiClient {
     suspend fun deleteCategoryById(id: Int): APIResponse<Category>
 
     /**
-     * Get Entries from a Category ID
+     * Get Entries from a Category ID. The request has a query in the link ?current
      * @param id ID from category to get the Entries
      */
     suspend fun getEntriesFromCategory(id: Int?): APIResponse<List<Entry>>
+
+    /**
+     * Get Entries from a Category ID on period
+     * @param id ID from category to get the Entries
+     * @param period Period definition in format MM-YYYY (03-2022)
+     */
+    suspend fun getEntriesFromCategory(id: Int?, period: String): APIResponse<List<Entry>>
 
     /**
      * Get All Entries from current month. The request has a query in the link ?current
@@ -160,7 +167,7 @@ expect fun HttpClientConfig<*>.specificClientConfig()
  * @author Cedrik Hoffmann
  * @see de.hsfl.budgetBinder.data.client.ApiClient
  */
-class Client( engine: HttpClientEngine) : ApiClient {
+class Client(engine: HttpClientEngine) : ApiClient {
     private val client = HttpClient(engine) {
         install(ContentNegotiation) {
             json()
@@ -262,7 +269,15 @@ class Client( engine: HttpClientEngine) : ApiClient {
     }
 
     override suspend fun getEntriesFromCategory(id: Int?): APIResponse<List<Entry>> {
-        return client.get(urlString = "/categories/$id/entries").body()
+        return client.submitForm(url = "/categories/$id/entries", formParameters = Parameters.build {
+            append("current", "true")
+        }, encodeInQuery = true).body()
+    }
+
+    override suspend fun getEntriesFromCategory(id: Int?, period: String): APIResponse<List<Entry>> {
+        return client.submitForm(url = "/categories/$id/entries", formParameters = Parameters.build {
+            append("period", period)
+        }, encodeInQuery = true).body()
     }
 
     override suspend fun getAllEntries(): APIResponse<List<Entry>> {
