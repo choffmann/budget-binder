@@ -1,4 +1,4 @@
-package de.hsfl.budgetBinder.presentation.viewmodel
+package de.hsfl.budgetBinder.presentation.viewmodel.category
 
 import de.hsfl.budgetBinder.common.Category
 import de.hsfl.budgetBinder.common.DataResponse
@@ -13,9 +13,13 @@ class CategoryViewModel(
     private val categoryUseCases: CategoriesUseCases,
     private val scope: CoroutineScope = CoroutineScope(Dispatchers.Unconfined + SupervisorJob())
 ) {
+    // OLD
     private val _state = MutableStateFlow<UiState>(UiState.Empty)
+
+    @Deprecated(message = "Use new StateFlow")
     val state: StateFlow<UiState> = _state
 
+    @Deprecated(message = "Use StateFlow")
     fun getAllCategories() {
         categoryUseCases.getAllCategoriesUseCase.categories().onEach {
             when (it) {
@@ -27,6 +31,7 @@ class CategoryViewModel(
         }.launchIn(scope)
     }
 
+    @Deprecated(message = "Use StateFlow")
     fun getCategoryById(id: Int) {
         categoryUseCases.getCategoryByIdUseCase(id).onEach {
             when (it) {
@@ -38,6 +43,7 @@ class CategoryViewModel(
         }.launchIn(scope)
     }
 
+    @Deprecated(message = "Use StateFlow")
     fun createCategory(category: Category.In) {
         categoryUseCases.createCategoryUseCase(category).onEach {
             when (it) {
@@ -49,7 +55,8 @@ class CategoryViewModel(
         }.launchIn(scope)
     }
 
-    fun changeCategory(category: Category.Patch,id: Int) {
+    @Deprecated(message = "Use StateFlow")
+    fun changeCategory(category: Category.Patch, id: Int) {
         categoryUseCases.changeCategoryByIdUseCase(category, id).onEach {
             when (it) {
                 is DataResponse.Success -> _state.value = UiState.Success(it.data)
@@ -60,6 +67,7 @@ class CategoryViewModel(
         }.launchIn(scope)
     }
 
+    @Deprecated(message = "Use StateFlow")
     fun removeCategory(id: Int) {
         categoryUseCases.deleteCategoryByIdUseCase(id).onEach {
             when (it) {
@@ -71,6 +79,7 @@ class CategoryViewModel(
         }.launchIn(scope)
     }
 
+    @Deprecated(message = "Use StateFlow")
     fun getEntriesByCategory(id: Int) {
         categoryUseCases.getAllEntriesByCategoryUseCase(id).onEach {
             when (it) {

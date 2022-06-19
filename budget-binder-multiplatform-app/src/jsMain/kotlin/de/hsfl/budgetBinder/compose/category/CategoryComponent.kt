@@ -4,19 +4,14 @@ import androidx.compose.runtime.*
 import de.hsfl.budgetBinder.common.Category
 import de.hsfl.budgetBinder.common.Constants.DEFAULT_CATEGORY
 import de.hsfl.budgetBinder.common.Entry
-import de.hsfl.budgetBinder.domain.usecase.*
 import de.hsfl.budgetBinder.presentation.Screen
-import de.hsfl.budgetBinder.presentation.viewmodel.CategoryViewModel
+import de.hsfl.budgetBinder.presentation.viewmodel.category.CategoryViewModel
 import di
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import org.jetbrains.compose.web.ExperimentalComposeWebSvgApi
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
 import org.jetbrains.compose.web.svg.Rect
 import org.jetbrains.compose.web.svg.Svg
-import org.kodein.di.compose.localDI
 import org.kodein.di.instance
 
 @Composable

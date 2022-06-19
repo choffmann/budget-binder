@@ -19,6 +19,7 @@ import de.hsfl.budgetBinder.presentation.flow.UiEventSharedFlow
 import de.hsfl.budgetBinder.presentation.viewmodel.login.LoginViewModel
 import de.hsfl.budgetBinder.presentation.viewmodel.register.RegisterViewModel
 import de.hsfl.budgetBinder.presentation.viewmodel.*
+import de.hsfl.budgetBinder.presentation.viewmodel.category.CategoryViewModel
 import de.hsfl.budgetBinder.presentation.viewmodel.settings.SettingsEditServerUrlViewModel
 import de.hsfl.budgetBinder.presentation.viewmodel.settings.SettingsEditUserViewModel
 import de.hsfl.budgetBinder.presentation.viewmodel.settings.SettingsViewModel
