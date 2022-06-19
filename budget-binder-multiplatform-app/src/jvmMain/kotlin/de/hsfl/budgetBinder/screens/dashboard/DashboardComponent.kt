@@ -71,7 +71,7 @@ fun DashboardComponent() {
             Column {
                 EntryList(entryList = entryList.value.entryList,
                     oldEntries = olderEntries.value,
-                    onItemClicked = {},
+                    onItemClicked = { viewModel.onEvent(DashboardEvent.OnEntry(it)) },
                     onLoadMore = { viewModel.onEvent(DashboardEvent.OnLoadMore) },
                     onEntryDelete = { viewModel.onEvent(DashboardEvent.OnEntryDelete(it)) }
                 )
@@ -177,7 +177,8 @@ private fun EntryList(
                 })
                 Divider()
                 SwipeToDelete(dismissState = swipeState) {
-                    ListItem(text = { Text(entryState.entry.name) },
+                    ListItem(modifier = Modifier.clickable(onClick = { onItemClicked(entryState.entry.id) }),
+                        text = { Text(entryState.entry.name) },
                         icon = { CategoryImageToIcon(icon = entryState.categoryImage) },
                         trailing = { Text("${entryState.entry.amount} €") })
                 }
