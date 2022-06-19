@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import de.hsfl.budgetBinder.compose.dialog.DeleteUserDialog
+import de.hsfl.budgetBinder.compose.icon.*
 import de.hsfl.budgetBinder.di
 import de.hsfl.budgetBinder.presentation.flow.DataFlow
 import de.hsfl.budgetBinder.presentation.viewmodel.settings.SettingsEvent
@@ -34,7 +35,7 @@ fun SettingsMenuView(modifier: Modifier = Modifier) {
         Divider()
         ListItem(text = { Text("Dark Mode") },
             modifier = Modifier.clickable(onClick = { viewModel.onEvent(SettingsEvent.OnToggleDarkMode) }),
-            icon = { Icon(Icons.Filled.Build, contentDescription = null) },
+            icon = { DarkModeIcon() },
             trailing = {
                 Switch(modifier = Modifier.padding(start = 8.dp),
                     checked = darkMode.value,
@@ -43,17 +44,17 @@ fun SettingsMenuView(modifier: Modifier = Modifier) {
         Divider()
         ListItem(modifier = Modifier.clickable(onClick = { viewModel.onEvent(SettingsEvent.OnChangeToSettingsUserEdit) }),
             text = { Text("Account") },
-            icon = { Icon(Icons.Filled.AccountCircle, contentDescription = null) },
+            icon = { AccountIcon() },
             trailing = { Icon(Icons.Filled.KeyboardArrowRight, contentDescription = null) })
         Divider()
         ListItem(modifier = Modifier.clickable(onClick = { viewModel.onEvent(SettingsEvent.OnChangeToSettingsServerUrlEdit) }),
             text = { Text("Server") },
-            icon = { Icon(Icons.Filled.Edit, contentDescription = null) },
+            icon = { ServerIcon() },
             trailing = { Icon(Icons.Filled.KeyboardArrowRight, contentDescription = null) })
         Divider()
         ListItem(modifier = Modifier.clickable(onClick = { viewModel.onEvent(SettingsEvent.OnLogoutAllDevices) }),
             text = { Text("Logout on all device") },
-            icon = { Icon(Icons.Filled.ExitToApp, contentDescription = null) })
+            icon = { LogoutIcon() })
         Spacer(modifier = Modifier.height(4.dp))
         Text(
             modifier = Modifier.padding(start = 8.dp),
@@ -64,7 +65,7 @@ fun SettingsMenuView(modifier: Modifier = Modifier) {
         Divider()
         ListItem(modifier = Modifier.clickable(onClick = { viewModel.onEvent(SettingsEvent.OnDeleteUser) }),
             text = { Text("Delete my User") },
-            icon = { Icon(Icons.Filled.Delete, contentDescription = null) })
+            icon = { DeleteForeverIcon() })
     }
     DeleteUserDialog(
         openDialog = dialogState.value,
