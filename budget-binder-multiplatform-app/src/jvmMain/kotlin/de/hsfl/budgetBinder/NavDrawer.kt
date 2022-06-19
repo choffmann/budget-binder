@@ -83,7 +83,7 @@ fun UserData() {
     val userData = dataFlow.userState.collectAsState()
 
     Column {
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        Row(modifier = Modifier.padding(8.dp),verticalAlignment = Alignment.CenterVertically) {
             AvatarImage(modifier = Modifier.size(64.dp))
             Spacer(modifier = Modifier.width(16.dp))
             Column(verticalArrangement = Arrangement.Center) {
@@ -91,7 +91,6 @@ fun UserData() {
                 Text(text = userData.value.email, style = MaterialTheme.typography.body1)
             }
         }
-        Spacer(modifier = Modifier.width(16.dp))
         Divider()
     }
 }
