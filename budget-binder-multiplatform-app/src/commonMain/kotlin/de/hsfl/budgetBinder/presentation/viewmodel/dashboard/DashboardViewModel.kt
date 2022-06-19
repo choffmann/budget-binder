@@ -7,7 +7,6 @@ import de.hsfl.budgetBinder.domain.usecase.*
 import de.hsfl.budgetBinder.presentation.Screen
 import de.hsfl.budgetBinder.presentation.UiEvent
 import de.hsfl.budgetBinder.presentation.UiState
-import de.hsfl.budgetBinder.presentation.flow.DataFlow
 import de.hsfl.budgetBinder.presentation.flow.RouterFlow
 import de.hsfl.budgetBinder.presentation.flow.UiEventSharedFlow
 import io.ktor.util.date.*
@@ -19,7 +18,6 @@ class DashboardViewModel(
     private val dashboardUseCases: DashboardUseCases,
     private val logoutUseCase: LogoutUseCase,
     private val routerFlow: RouterFlow,
-    private val dataFlow: DataFlow,
     private val scope: CoroutineScope
 ) {
 
@@ -63,28 +61,80 @@ class DashboardViewModel(
             is DashboardEvent.OnPrevCategory -> changedFocusedCategory(increase = false)
             is DashboardEvent.OnEntry -> routerFlow.navigateTo(Screen.Entry.Overview(event.id))
             is DashboardEvent.OnEntryCreate -> routerFlow.navigateTo(Screen.Entry.Create)
-            is DashboardEvent.OnRefresh -> {
-                when (internalCategoryId) {
-                    -1 -> getAllEntries(onSuccess = {
-                        _entryListState.value =
-                            entryListState.value.copy(entryList = mapEntryListToDashboardEntryState(it))
-                    })
-                    in _categoryListState.value.indices -> getEntriesByCategory(
-                        id = focusedCategoryState.value.category.id,
-                        onSuccess = {
-                            _entryListState.value =
-                                entryListState.value.copy(entryList = mapEntryListToDashboardEntryState(it))
-                        })
-                    _categoryListState.value.size -> getEntriesByCategory(
-                        id = null,
-                        onSuccess = {
-                            _entryListState.value =
-                                entryListState.value.copy(entryList = mapEntryListToDashboardEntryState(it))
-                        })
-                }
-            }
+            is DashboardEvent.OnRefresh -> refresh()
             is DashboardEvent.OnLoadMore -> loadMoreEntries()
             is DashboardEvent.OnEntryDelete -> deleteEntry(id = event.id)
+        }
+    }
+
+    private fun refresh() {
+        when (internalCategoryId) {
+            -1 -> getAllEntries(onSuccess = {
+                _entryListState.value =
+                    entryListState.value.copy(entryList = mapEntryListToDashboardEntryState(it))
+            })
+            in _categoryListState.value.indices -> getEntriesByCategory(
+                id = focusedCategoryState.value.category.id,
+                onSuccess = {
+                    _entryListState.value =
+                        entryListState.value.copy(entryList = mapEntryListToDashboardEntryState(it))
+                })
+            _categoryListState.value.size -> getEntriesByCategory(
+                id = null,
+                onSuccess = {
+                    _entryListState.value =
+                        entryListState.value.copy(entryList = mapEntryListToDashboardEntryState(it))
+                })
+        }
+    }
+
+    private fun getAllEntries(onSuccess: (List<Entry>) -> Unit) = scope.launch {
+        dashboardUseCases.getAllEntriesUseCase.entries()
+            .collect { handleDataResponse(response = it, onSuccess = onSuccess) }
+    }
+
+
+    private fun getAllCategories(onSuccess: (List<Category>) -> Unit) = scope.launch {
+        dashboardUseCases.getAllCategoriesUseCase.categories()
+            .collect { handleDataResponse(response = it, onSuccess = onSuccess) }
+    }
+
+
+    private fun getEntriesByCategory(id: Int? = null, period: String? = null, onSuccess: (List<Entry>) -> Unit) =
+        scope.launch {
+            dashboardUseCases.getAllEntriesByCategoryUseCase(id, period)
+                .collect { handleDataResponse(response = it, onSuccess = onSuccess) }
+        }
+
+
+    private fun getAllEntriesFromMonth(period: String, onSuccess: (List<Entry>) -> Unit) = scope.launch {
+        dashboardUseCases.getAllEntriesUseCase.entries(period)
+            .collect { handleDataResponse(response = it, onSuccess = onSuccess) }
+    }
+
+    private fun deleteEntry(id: Int) = scope.launch {
+        dashboardUseCases.deleteEntryByIdUseCase(id).collect {
+            handleDataResponse(response = it, onSuccess = {
+                scope.launch {
+                    _eventFlow.emit(UiEvent.ShowSuccess("Removed Category"))
+                }
+                onEvent(DashboardEvent.OnRefresh)
+            })
+        }
+    }
+
+    private suspend fun <T> handleDataResponse(response: DataResponse<T>, onSuccess: (T) -> Unit) {
+        when (response) {
+            is DataResponse.Loading -> _eventFlow.emit(UiEvent.ShowLoading)
+            is DataResponse.Error -> _eventFlow.emit(UiEvent.ShowError(response.error!!.message))
+            is DataResponse.Success -> {
+                _eventFlow.emit(UiEvent.HideSuccess)
+                onSuccess(response.data!!)
+            }
+            is DataResponse.Unauthorized -> {
+                _eventFlow.emit(UiEvent.ShowError(response.error!!.message))
+                routerFlow.navigateTo(Screen.Login)
+            }
         }
     }
 
@@ -94,95 +144,6 @@ class DashboardViewModel(
                 entry,
                 categoryImage = getCategoryByEntry(entry)?.image ?: Category.Image.DEFAULT
             )
-        }
-    }
-
-    private fun getAllEntries(onSuccess: (List<Entry>) -> Unit) = scope.launch {
-        dashboardUseCases.getAllEntriesUseCase.entries().collect {
-            when (it) {
-                is DataResponse.Loading -> _eventFlow.emit(UiEvent.ShowLoading)
-                is DataResponse.Error -> _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
-                is DataResponse.Success -> {
-                    onSuccess(it.data!!)
-                    _eventFlow.emit(UiEvent.HideSuccess)
-                    //calcSpendBudgetOnCategory()
-                }
-                is DataResponse.Unauthorized -> {
-                    _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
-                    routerFlow.navigateTo(Screen.Login)
-                }
-            }
-        }
-    }
-
-
-    private fun getAllCategories(onSuccess: (List<Category>) -> Unit) {
-        scope.launch {
-            dashboardUseCases.getAllCategoriesUseCase.categories().collect {
-                when (it) {
-                    is DataResponse.Loading -> _eventFlow.emit(UiEvent.ShowLoading)
-                    is DataResponse.Error -> _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
-                    is DataResponse.Success -> {
-                        onSuccess(it.data!!)
-                        //_categoryListState.value = it.data!!
-                        _eventFlow.emit(UiEvent.HideSuccess)
-                    }
-                    is DataResponse.Unauthorized -> {
-                        _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
-                        routerFlow.navigateTo(Screen.Login)
-                    }
-                }
-            }
-        }
-    }
-
-    private fun getEntriesByCategory(id: Int? = null, period: String? = null, onSuccess: (List<Entry>) -> Unit) {
-        scope.launch {
-            dashboardUseCases.getAllEntriesByCategoryUseCase(id, period).collect {
-                when (it) {
-                    is DataResponse.Loading -> _eventFlow.emit(UiEvent.ShowLoading)
-                    is DataResponse.Error -> _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
-                    is DataResponse.Success -> {
-                        onSuccess(it.data!!)
-                        _eventFlow.emit(UiEvent.HideSuccess)
-                    }
-                    is DataResponse.Unauthorized -> {
-                        _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
-                        routerFlow.navigateTo(Screen.Login)
-                    }
-                }
-            }
-        }
-    }
-
-    private fun getAllEntriesFromMonth(period: String, onSuccess: (List<Entry>) -> Unit) = scope.launch {
-        // TODO: Year had also be to check
-        dashboardUseCases.getAllEntriesUseCase.entries(period).collect {
-            when (it) {
-                is DataResponse.Loading -> _eventFlow.emit(UiEvent.ShowLoading)
-                is DataResponse.Error -> _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
-                is DataResponse.Success -> {
-                    _eventFlow.emit(UiEvent.HideSuccess)
-                    onSuccess(it.data!!)
-                }
-                is DataResponse.Unauthorized -> {
-                    _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
-                    routerFlow.navigateTo(Screen.Login)
-                }
-            }
-        }
-    }
-
-    private fun deleteEntry(id: Int) = scope.launch {
-        dashboardUseCases.deleteEntryByIdUseCase(id).collect {
-            when (it) {
-                is DataResponse.Loading -> _eventFlow.emit(UiEvent.ShowLoading)
-                is DataResponse.Error, is DataResponse.Unauthorized -> _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
-                is DataResponse.Success -> {
-                    _eventFlow.emit(UiEvent.ShowSuccess("Removed Category"))
-                    onEvent(DashboardEvent.OnRefresh)
-                }
-            }
         }
     }
 
@@ -210,7 +171,7 @@ class DashboardViewModel(
     }
 
     /**
-     * Change the internal Id to swipe between the categories
+     * Change the internal id to swipe between the categories
      * @param increase if the next or prev button is pressed
      * @author Cedrik Hoffmann
      */
@@ -232,7 +193,7 @@ class DashboardViewModel(
      * Set the first category, all entries are here
      */
     private fun setOverallCategoryState() {
-        getAllEntries(onSuccess = {
+        getAllEntries(onSuccess = { entryList ->
             var totalBudget = 0f
             _categoryListState.value.forEach { totalBudget += it.budget }
             _focusedCategoryState.value = focusedCategoryState.value.copy(
@@ -240,8 +201,8 @@ class DashboardViewModel(
                 hasNext = true,
                 category = Category(0, "Overall", "111111", Category.Image.DEFAULT, totalBudget)
             )
-            calcSpendBudgetOnCategory(it)
-            _entryListState.value = entryListState.value.copy(entryList = mapEntryListToDashboardEntryState(it))
+            calcSpendBudgetOnCategory(entryList)
+            _entryListState.value = entryListState.value.copy(entryList = mapEntryListToDashboardEntryState(entryList))
         })
     }
 
@@ -291,6 +252,10 @@ class DashboardViewModel(
             spendBudgetOnCurrentCategory.value.copy(spendBudgetOnCurrentCategory = spendMoney)
     }
 
+    /**
+     * First, calculate the next Month and Year to request
+     *
+     */
     private fun loadMoreEntries() {
         val nextMonth = when {
             // When the month goes from 01 to 12, the year has to be changed
