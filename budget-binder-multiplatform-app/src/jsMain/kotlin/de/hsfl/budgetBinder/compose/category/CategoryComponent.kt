@@ -35,24 +35,24 @@ fun CategoryComponent(screenState: MutableState<Screen>) {
     val viewState = viewModel.state.collectAsState(scope.coroutineContext)
 
     when (screenState.value) {
-        Screen.CategoryCreate -> CategoryCreateView(
+        is Screen.CategoryCreate -> CategoryCreateView(
             state = viewState,
             onBackButton = { screenState.value = Screen.CategorySummary}
         )
-        Screen.CategorySummary -> CategorySummaryView(
+        is Screen.CategorySummary -> CategorySummaryView(
             state = viewState,
             onCategoryCreateButton = { screenState.value = Screen.CategoryCreate},
-            onEditButton = { screenState.value = Screen.CategoryEdit},
+            onEditButton = { id -> screenState.value = Screen.CategoryEdit(id)},
             onDeleteButton = {id -> categoryViewModel.removeCategory(id)},
             onChangeToDashboard = { screenState.value = Screen.Dashboard },
             onChangeToSettings = { screenState.value = Screen.Settings },
             onChangeToCategory = { screenState.value = Screen.CategorySummary },
         )
-        Screen.CategoryEdit -> CategoryEditView(
+        is Screen.CategoryEdit -> CategoryEditView(
             state = viewState,
             onBackButton = { screenState.value = Screen.CategorySummary}
         )
-        Screen.CategoryCreateOnRegister -> CategoryCreateOnRegisterView(
+        is Screen.CategoryCreateOnRegister -> CategoryCreateOnRegisterView(
             state = viewState,
             onFinishedButton = { screenState.value = Screen.Dashboard} //Should go back to the previous Screen, which could be CategorySummary or EntryCreate.
         )

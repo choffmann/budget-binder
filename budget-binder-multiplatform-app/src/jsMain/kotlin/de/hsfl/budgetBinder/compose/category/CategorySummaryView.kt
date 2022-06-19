@@ -17,12 +17,13 @@ import org.jetbrains.compose.web.dom.*
 fun CategorySummaryView(
     state: State<Any>,
     onCategoryCreateButton: () -> Unit,
-    onEditButton: () -> Unit,
+    onEditButton: (id: Int) -> Unit,
     onDeleteButton: (id: Int) -> Unit,
     onChangeToDashboard: () -> Unit,
     onChangeToCategory: () -> Unit,
     onChangeToSettings: () -> Unit
 ) {
+    var deleteDialog by remember { mutableStateOf(false) }
     var categoryList by remember { mutableStateOf<List<Category>>(emptyList()) }
     val viewState by remember { state }
 
@@ -78,7 +79,13 @@ fun CategorySummaryView(
         }) {
             Text("Create Category")
         }
-        CategoryList(categoryList, onEditButton, onDeleteButton)
+        CategoryList(categoryList, {id -> onEditButton(id)}, {id -> onDeleteButton(id)})
+        if (deleteDialog) {
+            DeleteDialog(
+                false,
+                { onDeleteButton },
+                { deleteDialog = false }) { Text("Delete Category?") }
+        }
         Div {
             when (viewState) {
                 is UiState.Success<*> -> {
