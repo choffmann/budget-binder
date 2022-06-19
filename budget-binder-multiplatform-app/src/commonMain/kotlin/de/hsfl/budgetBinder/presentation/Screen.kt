@@ -17,7 +17,7 @@ sealed class Screen {
     }
     sealed class Category: Screen() {
         object Summary: Category()
-        object Edit: Category()
+        data class Edit(val id: Int): Category()
         object Create: Category()
         object CreateOnRegister: Category()
     }
