@@ -16,10 +16,6 @@ class CategoryViewModel(
     private val _state = MutableStateFlow<UiState>(UiState.Empty)
     val state: StateFlow<UiState> = _state
 
-    init {
-        getAllCategories()
-    }
-
     fun getAllCategories() {
         categoryUseCases.getAllCategoriesUseCase.categories().onEach {
             when (it) {
