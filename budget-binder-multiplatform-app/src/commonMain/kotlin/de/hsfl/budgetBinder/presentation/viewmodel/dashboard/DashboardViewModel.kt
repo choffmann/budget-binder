@@ -97,25 +97,24 @@ class DashboardViewModel(
         }
     }
 
-    private fun getAllEntries(onSuccess: (List<Entry>) -> Unit) {
-        scope.launch {
-            dashboardUseCases.getAllEntriesUseCase.entries().collect {
-                when (it) {
-                    is DataResponse.Loading -> _eventFlow.emit(UiEvent.ShowLoading)
-                    is DataResponse.Error -> _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
-                    is DataResponse.Success -> {
-                        onSuccess(it.data!!)
-                        _eventFlow.emit(UiEvent.HideSuccess)
-                        //calcSpendBudgetOnCategory()
-                    }
-                    is DataResponse.Unauthorized -> {
-                        _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
-                        routerFlow.navigateTo(Screen.Login)
-                    }
+    private fun getAllEntries(onSuccess: (List<Entry>) -> Unit) = scope.launch {
+        dashboardUseCases.getAllEntriesUseCase.entries().collect {
+            when (it) {
+                is DataResponse.Loading -> _eventFlow.emit(UiEvent.ShowLoading)
+                is DataResponse.Error -> _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
+                is DataResponse.Success -> {
+                    onSuccess(it.data!!)
+                    _eventFlow.emit(UiEvent.HideSuccess)
+                    //calcSpendBudgetOnCategory()
+                }
+                is DataResponse.Unauthorized -> {
+                    _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
+                    routerFlow.navigateTo(Screen.Login)
                 }
             }
         }
     }
+
 
     private fun getAllCategories(onSuccess: (List<Category>) -> Unit) {
         scope.launch {
@@ -137,22 +136,15 @@ class DashboardViewModel(
         }
     }
 
-    private fun getEntriesByCategory(id: Int? = null, onSuccess: (List<Entry>) -> Unit) {
+    private fun getEntriesByCategory(id: Int? = null, period: String? = null, onSuccess: (List<Entry>) -> Unit) {
         scope.launch {
-            dashboardUseCases.getAllEntriesByCategoryUseCase(id).collect {
+            dashboardUseCases.getAllEntriesByCategoryUseCase(id, period).collect {
                 when (it) {
                     is DataResponse.Loading -> _eventFlow.emit(UiEvent.ShowLoading)
                     is DataResponse.Error -> _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
                     is DataResponse.Success -> {
                         onSuccess(it.data!!)
-                        /*_entryListState.value = entryListState.value.copy(entryList = it.data!!.map { entry ->
-                            DashboardEntryState(
-                                entry,
-                                categoryImage = getCategoryByEntry(entry)?.image ?: Category.Image.DEFAULT
-                            )
-                        })*/
                         _eventFlow.emit(UiEvent.HideSuccess)
-                        //calcSpendBudgetOnCategory()
                     }
                     is DataResponse.Unauthorized -> {
                         _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
@@ -310,9 +302,20 @@ class DashboardViewModel(
             lastRequestedMonth.ordinal - 1 < 0 -> 11
             else -> lastRequestedMonth.ordinal - 1
         }
-        getAllEntriesFromMonth(
-            month = Month.from(nextMonth)
-        )
+        val monthString = "${Month.from(nextMonth).toMonthString()}-${GMTDate().year}"
+        when (internalCategoryId) {
+            -1 -> getAllEntriesFromMonth(month = Month.from(nextMonth))
+            in _categoryListState.value.indices -> getEntriesByCategory(
+                id = focusedCategoryState.value.category.id, period = monthString
+            ) {
+                _oldEntriesMapState.value.putAll(mapOf(Pair(monthString, it)))
+            }
+            _categoryListState.value.size -> getEntriesByCategory(
+                id = null, period = monthString
+            ) {
+                _oldEntriesMapState.value.putAll(mapOf(Pair(monthString, it)))
+            }
+        }
         lastRequestedMonth = Month.from(nextMonth)
     }
 
