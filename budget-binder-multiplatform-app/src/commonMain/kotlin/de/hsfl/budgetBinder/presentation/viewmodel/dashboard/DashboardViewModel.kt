@@ -25,7 +25,9 @@ class DashboardViewModel(
 
     private var internalCategoryId = -1
     private val currentMonth: Month = GMTDate().month
+    private val currentYear: Int = GMTDate().year
     private var lastRequestedMonth = currentMonth
+    private var lastRequestedYear = currentYear
 
     private val _categoryListState = MutableStateFlow<List<Category>>(emptyList())
     private val _entryListState = MutableStateFlow(DashboardState())
@@ -155,22 +157,15 @@ class DashboardViewModel(
         }
     }
 
-    private fun getAllEntriesFromMonth(month: Month) = scope.launch {
+    private fun getAllEntriesFromMonth(period: String) = scope.launch {
         // TODO: Year had also be to check
-        dashboardUseCases.getAllEntriesUseCase.entries("${month.toMonthString()}-${GMTDate().year}").collect {
+        dashboardUseCases.getAllEntriesUseCase.entries(period).collect {
             when (it) {
                 is DataResponse.Loading -> _eventFlow.emit(UiEvent.ShowLoading)
                 is DataResponse.Error -> _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
                 is DataResponse.Success -> {
                     _eventFlow.emit(UiEvent.HideSuccess)
-                    _oldEntriesMapState.value.putAll(
-                        mapOf(
-                            Pair(
-                                "${month.toMonthString()}-${GMTDate().year}",
-                                it.data!!
-                            )
-                        )
-                    )
+                    _oldEntriesMapState.value.putAll(mapOf(Pair(period, it.data!!)))
                 }
                 is DataResponse.Unauthorized -> {
                     _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
@@ -213,6 +208,7 @@ class DashboardViewModel(
     private fun resetOldEntries() {
         _oldEntriesMapState.value = mutableMapOf()
         lastRequestedMonth = currentMonth
+        lastRequestedYear = currentYear
     }
 
     /**
@@ -299,21 +295,25 @@ class DashboardViewModel(
 
     private fun loadMoreEntries() {
         val nextMonth = when {
-            lastRequestedMonth.ordinal - 1 < 0 -> 11
+            // When the month goes from 01 to 12, the year has to be changed
+            lastRequestedMonth.ordinal - 1 < 0 -> {
+                lastRequestedYear -= 1
+                11
+            }
             else -> lastRequestedMonth.ordinal - 1
         }
-        val monthString = "${Month.from(nextMonth).toMonthString()}-${GMTDate().year}"
+        val periodString = "${Month.from(nextMonth).toMonthString()}-${lastRequestedYear}"
         when (internalCategoryId) {
-            -1 -> getAllEntriesFromMonth(month = Month.from(nextMonth))
+            -1 -> getAllEntriesFromMonth(periodString)
             in _categoryListState.value.indices -> getEntriesByCategory(
-                id = focusedCategoryState.value.category.id, period = monthString
+                id = focusedCategoryState.value.category.id, period = periodString
             ) {
-                _oldEntriesMapState.value.putAll(mapOf(Pair(monthString, it)))
+                _oldEntriesMapState.value.putAll(mapOf(Pair(periodString, it)))
             }
             _categoryListState.value.size -> getEntriesByCategory(
-                id = null, period = monthString
+                id = null, period = periodString
             ) {
-                _oldEntriesMapState.value.putAll(mapOf(Pair(monthString, it)))
+                _oldEntriesMapState.value.putAll(mapOf(Pair(periodString, it)))
             }
         }
         lastRequestedMonth = Month.from(nextMonth)
