@@ -67,24 +67,25 @@ class DashboardViewModel(
         }
     }
 
+    private fun fillEntryListStateWithResult(entryList: List<Entry>) {
+        _entryListState.value = entryListState.value.copy(entryList = mapEntryListToDashboardEntryState(entryList))
+    }
+
+    private fun fillOldEntriesMapState(period: String, entryList: List<Entry>) {
+        _oldEntriesMapState.value.putAll(
+            mapOf(Pair(period, DashboardState(entryList = mapEntryListToDashboardEntryState(entryList))))
+        )
+    }
+
     private fun refresh() {
         when (internalCategoryId) {
-            -1 -> getAllEntries(onSuccess = {
-                _entryListState.value =
-                    entryListState.value.copy(entryList = mapEntryListToDashboardEntryState(it))
-            })
+            -1 -> getAllEntries(onSuccess = { fillEntryListStateWithResult(it) })
             in _categoryListState.value.indices -> getEntriesByCategory(
                 id = focusedCategoryState.value.category.id,
-                onSuccess = {
-                    _entryListState.value =
-                        entryListState.value.copy(entryList = mapEntryListToDashboardEntryState(it))
-                })
+                onSuccess = { fillEntryListStateWithResult(it) })
             _categoryListState.value.size -> getEntriesByCategory(
                 id = null,
-                onSuccess = {
-                    _entryListState.value =
-                        entryListState.value.copy(entryList = mapEntryListToDashboardEntryState(it))
-                })
+                onSuccess = { fillEntryListStateWithResult(it) })
         }
     }
 
@@ -202,7 +203,7 @@ class DashboardViewModel(
                 category = Category(0, "Overall", "111111", Category.Image.DEFAULT, totalBudget)
             )
             calcSpendBudgetOnCategory(entryList)
-            _entryListState.value = entryListState.value.copy(entryList = mapEntryListToDashboardEntryState(entryList))
+            fillEntryListStateWithResult(entryList)
         })
     }
 
@@ -217,8 +218,7 @@ class DashboardViewModel(
                 hasNext = true,
                 category = _categoryListState.value[internalCategoryId]
             )
-            _entryListState.value = entryListState.value.copy(entryList = mapEntryListToDashboardEntryState(it))
-
+            fillEntryListStateWithResult(it)
         })
     }
 
@@ -232,7 +232,7 @@ class DashboardViewModel(
                 hasNext = false,
                 category = Category(0, "No Category", "111111", Category.Image.DEFAULT, 0f)
             )
-            _entryListState.value = entryListState.value.copy(entryList = mapEntryListToDashboardEntryState(it))
+            fillEntryListStateWithResult(it)
         })
     }
 
@@ -254,7 +254,7 @@ class DashboardViewModel(
 
     /**
      * First, calculate the next Month and Year to request
-     *
+     * After that, show on wich category we are at the moment and fetch old entries
      */
     private fun loadMoreEntries() {
         val nextMonth = when {
@@ -268,39 +268,16 @@ class DashboardViewModel(
         val periodString = "${Month.from(nextMonth).toMonthString()}-${lastRequestedYear}"
         when (internalCategoryId) {
             -1 -> getAllEntriesFromMonth(period = periodString) {
-                _oldEntriesMapState.value.putAll(
-                    mapOf(
-                        Pair(
-                            periodString,
-                            DashboardState(entryList = mapEntryListToDashboardEntryState(it))
-                        )
-                    )
-                )
+                fillOldEntriesMapState(periodString, it)
             }
             in _categoryListState.value.indices -> getEntriesByCategory(
-                id = focusedCategoryState.value.category.id, period = periodString
-            ) {
-                _oldEntriesMapState.value.putAll(
-                    mapOf(
-                        Pair(
-                            periodString,
-                            DashboardState(entryList = mapEntryListToDashboardEntryState(it))
-                        )
-                    )
-                )
-            }
+                id = focusedCategoryState.value.category.id, period = periodString,
+                onSuccess = { fillOldEntriesMapState(periodString, it) }
+            )
             _categoryListState.value.size -> getEntriesByCategory(
-                id = null, period = periodString
-            ) {
-                _oldEntriesMapState.value.putAll(
-                    mapOf(
-                        Pair(
-                            periodString,
-                            DashboardState(entryList = mapEntryListToDashboardEntryState(it))
-                        )
-                    )
-                )
-            }
+                id = null, period = periodString,
+                onSuccess = { fillOldEntriesMapState(periodString, it) }
+            )
         }
         lastRequestedMonth = Month.from(nextMonth)
     }
