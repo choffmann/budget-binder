@@ -61,10 +61,8 @@ class DashboardViewModel(
         when (event) {
             is DashboardEvent.OnNextCategory -> changedFocusedCategory(increase = true)
             is DashboardEvent.OnPrevCategory -> changedFocusedCategory(increase = false)
-            is DashboardEvent.OnEntry -> {}
-            is DashboardEvent.OnEntryCreate -> scope.launch {
-                _eventFlow.emit(UiEvent.ShowError(currentMonth.toMonthString()))
-            }
+            is DashboardEvent.OnEntry -> routerFlow.navigateTo(Screen.Entry.Overview(event.id))
+            is DashboardEvent.OnEntryCreate -> routerFlow.navigateTo(Screen.Entry.Create)
             is DashboardEvent.OnRefresh -> {
                 when (internalCategoryId) {
                     -1 -> getAllEntries(onSuccess = {
