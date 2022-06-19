@@ -12,6 +12,7 @@ sealed class Screen {
         object Server: Settings()
     }
     sealed class Category: Screen() {
+        data class Detail(val id: Int): Category()
         object Summary: Category()
         object Edit: Category()
         object Create: Category()
