@@ -101,12 +101,22 @@ fun Route.categoryByIdRoute() {
             val userPrincipal: UserPrincipal = call.principal()!!
             val entryService: EntryService by closestDI().instance()
 
-            call.respond(
-                entryService.getAllEntriesForCategoryIdParam(
-                    userPrincipal.getUserID(),
-                    call.parameters["id"]
-                )
+            val (error, period) = parseParameterToLocalDateTimeOrErrorMessage(
+                call.request.queryParameters["current"].toBoolean(),
+                call.request.queryParameters["period"]
             )
+
+            error?.let {
+                call.respond(APIResponse<List<Category>>(ErrorModel(error)))
+            } ?: run {
+                call.respond(
+                    entryService.getAllEntriesByPeriodForCategoryIdParam(
+                        userPrincipal.getUserID(),
+                        period,
+                        call.parameters["id"]
+                    )
+                )
+            }
         }
     }
 }

@@ -1,8 +1,6 @@
 package de.hsfl.budgetBinder.server.services.implementations
 
-import de.hsfl.budgetBinder.common.Category
 import de.hsfl.budgetBinder.common.User
-import de.hsfl.budgetBinder.server.models.CategoryEntity
 import de.hsfl.budgetBinder.server.models.UserEntity
 import de.hsfl.budgetBinder.server.models.UserPrincipal
 import de.hsfl.budgetBinder.server.models.Users
@@ -43,31 +41,17 @@ class UserServiceImpl : UserService {
     }
 
     override fun insertNewUserOrNull(userIn: User.In): User? {
-        val userEntity = try {
+        return try {
             transaction {
                 UserEntity.new {
                     firstName = userIn.firstName
                     name = userIn.name
                     email = userIn.email
                     passwordHash = BCrypt.hashpw(userIn.password, BCrypt.gensalt())
-                }
+                }.toDto()
             }
         } catch (_: ExposedSQLException) {
             null
-        }
-
-        return userEntity?.let {
-            transaction {
-                val category = CategoryEntity.new {
-                    name = "default"
-                    color = "000000"
-                    image = Category.Image.DEFAULT
-                    budget = 0.0f
-                    user = it
-                }
-                it.category = category.id
-                it.toDto()
-            }
         }
     }
 
@@ -75,7 +59,6 @@ class UserServiceImpl : UserService {
         val user = UserEntity[userId]
         val userDto = user.toDto()
         user.entries.forEach { it.delete() }
-        user.category = null
         user.categories.forEach { it.delete() }
         user.delete()
         userDto

@@ -309,6 +309,19 @@ paths:
           required: true
           schema:
             type: integer
+        - name: current
+          in: query
+          description: only get current entries
+          allowEmptyValue: true
+          schema:
+            type: boolean
+        - name: period
+          in: query
+          description: get all entries in the given period
+          allowEmptyValue: true
+          schema:
+            type: string
+            example: "12-2022"
       responses:
         200:
           description: OK
@@ -324,17 +337,6 @@ paths:
                 $ref: '#/components/schemas/UnauthorizedError'
       security:
         - LoginBearer: [ ]
-
-
-
-
-
-
-
-
-
-
-
   /entries:
     get:
       tags:
@@ -724,7 +726,49 @@ components:
     Image:
       type: string
       enum:
-        - SHOPPING
+        - CHECKMARK
+        - WRONG
+        - SHOPPINGCART
+        - SHOPPINGBASKET
+        - FOOD
+        - FASTFOOD
+        - RESTAURANT
+        - MONEY
+        - HOME
+        - FAMILY
+        - HEALTH
+        - MEDICATION
+        - KEYBOARD
+        - PRINTER
+        - INVEST
+        - SPORT
+        - CLOTH
+        - GIFT
+        - WEALTH
+        - FLOWER
+        - PET
+        - BILLS
+        - WATER
+        - FIRE
+        - STAR
+        - SAVINGS
+        - CAR
+        - BIKE
+        - TRAIN
+        - MOTORCYCLE
+        - MOPED
+        - ELECTRONICS
+        - BOOK
+        - FLIGHT
+        - WORK
+        - MOON
+        - LOCK
+        - PHONE
+        - STORE
+        - BAR
+        - FOREST
+        - HARDWARE
+        - PEST
 
   securitySchemes:
     LoginBearer:

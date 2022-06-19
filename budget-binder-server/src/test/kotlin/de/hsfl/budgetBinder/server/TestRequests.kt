@@ -3,7 +3,6 @@ package de.hsfl.budgetBinder.server
 import de.hsfl.budgetBinder.common.APIResponse
 import de.hsfl.budgetBinder.common.AuthToken
 import de.hsfl.budgetBinder.common.User
-import de.hsfl.budgetBinder.server.models.CategoryEntity
 import de.hsfl.budgetBinder.server.models.UserEntity
 import io.ktor.client.*
 import io.ktor.client.call.*
@@ -24,10 +23,6 @@ suspend fun registerUser(client: HttpClient) {
     val id = transaction {
         val userEntity = UserEntity.all().first()
         assertEquals(TestUser.email, userEntity.email)
-        assertNotNull(userEntity.category)
-        val categoryEntity = CategoryEntity[userEntity.category!!]
-        assertNotNull(categoryEntity)
-        assertEquals("default", categoryEntity.name)
         userEntity.id.value
     }
     val shouldResponse = wrapSuccess(

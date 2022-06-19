@@ -12,7 +12,6 @@ object Users : IntIdTable() {
     val email = varchar("email", 50).uniqueIndex()
     val passwordHash = char("password_hash", 60)
     val tokenVersion = integer("token_version").default(1)
-    val category = reference("category", Categories).nullable()
 }
 
 class UserEntity(id: EntityID<Int>) : IntEntity(id), UserPrincipal {
@@ -23,7 +22,6 @@ class UserEntity(id: EntityID<Int>) : IntEntity(id), UserPrincipal {
     var email by Users.email
     var passwordHash by Users.passwordHash
     var tokenVersion by Users.tokenVersion
-    var category by Users.category
 
     val categories by CategoryEntity referrersOn Categories.user
     val entries by EntryEntity referrersOn Entries.user
