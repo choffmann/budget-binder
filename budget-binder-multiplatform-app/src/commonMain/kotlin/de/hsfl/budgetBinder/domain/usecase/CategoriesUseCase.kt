@@ -147,10 +147,21 @@ class DeleteCategoryByIdUseCase(private val repository: CategoryRepository) {
 }
 
 class GetAllEntriesByCategoryUseCase(private val repository: CategoryRepository) {
-    operator fun invoke(id: Int?): Flow<DataResponse<List<Entry>>> = flow {
+    operator fun invoke(id: Int?, period: String? = null): Flow<DataResponse<List<Entry>>> = flow {
         try {
             emit(DataResponse.Loading())
-            repository.getEntriesFromCategory(id).let { response ->
+            period?.let { period ->
+                repository.getEntriesFromCategory(id, period).let { response ->
+                    response.data?.let {
+                        emit(DataResponse.Success(it))
+                    } ?: response.error!!.let { error ->
+                        when (error.code) {
+                            HttpStatusCode.Unauthorized.value -> emit(DataResponse.Unauthorized(error))
+                            else -> emit(DataResponse.Error(error))
+                        }
+                    }
+                }
+            } ?: repository.getEntriesFromCategory(id).let { response ->
                 response.data?.let {
                     emit(DataResponse.Success(it))
                 } ?: response.error!!.let { error ->
