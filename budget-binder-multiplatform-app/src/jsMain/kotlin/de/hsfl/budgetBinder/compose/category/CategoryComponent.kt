@@ -12,7 +12,6 @@ import de.hsfl.budgetBinder.presentation.viewmodel.CategoryViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.serialization.json.JsonNull.content
 import org.jetbrains.compose.web.ExperimentalComposeWebSvgApi
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
@@ -43,28 +42,42 @@ fun CategoryComponent(screenState: MutableState<Screen>) {
     val viewState = categoryViewModel.state.collectAsState(scope)
 
     when (screenState.value) {
-        Screen.CategoryCreate -> CategoryCreateView(
+        is Screen.CategoryCreate -> CategoryCreateView(
             state = viewState,
             onCreateCategoryButtonPressed = { name, color, image, budget ->
-                categoryViewModel.createCategory(Category.In(name, color.drop(1), image, budget)) },
+                categoryViewModel.createCategory(Category.In(name, color.drop(1), image, budget))
+                screenState.value = Screen.CategorySummary },
             onChangeToDashboard = { screenState.value = Screen.Dashboard },
             onChangeToSettings = { screenState.value = Screen.Settings },
             onChangeToCategory = { screenState.value = Screen.CategorySummary },
         )
-        Screen.CategorySummary -> CategorySummaryView(
-            state = viewState,
-            onCategoryCreateButton = { screenState.value = Screen.CategoryCreate},
-            onEditButton = { screenState.value = Screen.CategoryEdit},
-            onDeleteButton = {id -> categoryViewModel.removeCategory(id)},
-            onChangeToDashboard = { screenState.value = Screen.Dashboard },
-            onChangeToSettings = { screenState.value = Screen.Settings },
-            onChangeToCategory = { screenState.value = Screen.CategorySummary },
-        )
-        Screen.CategoryEdit -> CategoryEditView(
-            state = viewState,
-            onBackButton = { screenState.value = Screen.CategorySummary }
-        )
-        Screen.CategoryCreateOnRegister -> CategoryCreateOnRegisterView(
+        is Screen.CategorySummary -> {
+            CategorySummaryView(
+                state = viewState,
+                onCategoryCreateButton = { screenState.value = Screen.CategoryCreate },
+                onEditButton = { id -> screenState.value = Screen.CategoryEdit(id) },
+                onDeleteButton = { id -> categoryViewModel.removeCategory(id) },
+                onChangeToDashboard = { screenState.value = Screen.Dashboard },
+                onChangeToSettings = { screenState.value = Screen.Settings },
+                onChangeToCategory = { screenState.value = Screen.CategorySummary },
+            )
+            categoryViewModel.getAllCategories()
+        }
+        is Screen.CategoryEdit -> {
+            CategoryEditView(
+                state = viewState,
+                onEditCategoryButtonPressed = { name, color, image, budget ->
+                    categoryViewModel.changeCategory(
+                        Category.Patch(name, color.drop(1), image, budget),
+                        (screenState.value as Screen.CategoryEdit).id
+                    ); screenState.value = Screen.CategorySummary },
+                onChangeToDashboard = { screenState.value = Screen.Dashboard },
+                onChangeToSettings = { screenState.value = Screen.Settings },
+                onChangeToCategory = { screenState.value = Screen.CategorySummary },
+            )
+            categoryViewModel.getCategoryById((screenState.value as Screen.CategoryEdit).id)
+        }
+        is Screen.CategoryCreateOnRegister -> CategoryCreateOnRegisterView(
             state = viewState,
             onFinishedButton = {
                 screenState.value = Screen.Dashboard
@@ -94,7 +107,7 @@ fun BudgetBar(category: Category, entryList: List<Entry>) {
     for (entry in entryList) {
         usedBudget -= entry.amount //Money spent negative, so we want to add the negative amount (- - = +)to usedBudget
     }
-    H1(attrs={classes("mdc-typography--headline4", AppStylesheet.flexContainer)}) {
+    H1(attrs = { classes("mdc-typography--headline4", AppStylesheet.flexContainer) }) {
         CategoryImageToIcon(category.image)
         Text("${category.name} - Budget")
     }
@@ -104,7 +117,8 @@ fun BudgetBar(category: Category, entryList: List<Entry>) {
             //Money Text
             MoneyTextDiv {
                 Div(attrs = {
-                    classes("mdc-typography--headline5") }) { Text(usedBudget.toString() + "€") }
+                    classes("mdc-typography--headline5")
+                }) { Text(usedBudget.toString() + "€") }
                 Div(attrs = { classes("mdc-typography--headline5") }) { Text(budget.toString() + "€") }
             }
             Svg(viewBox = "0 0 $width $height") {

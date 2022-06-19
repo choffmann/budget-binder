@@ -3,7 +3,6 @@ package de.hsfl.budgetBinder.compose.category
 import androidx.compose.runtime.*
 import de.hsfl.budgetBinder.common.Category
 import de.hsfl.budgetBinder.compose.CategoryList
-import de.hsfl.budgetBinder.compose.DeleteDialog
 import de.hsfl.budgetBinder.compose.MainFlexContainer
 import de.hsfl.budgetBinder.compose.theme.AppStylesheet
 import de.hsfl.budgetBinder.compose.topBarMain
@@ -17,7 +16,7 @@ import org.jetbrains.compose.web.dom.*
 fun CategorySummaryView(
     state: State<Any>,
     onCategoryCreateButton: () -> Unit,
-    onEditButton: () -> Unit,
+    onEditButton: (id: Int) -> Unit,
     onDeleteButton: (id: Int) -> Unit,
     onChangeToDashboard: () -> Unit,
     onChangeToCategory: () -> Unit,
@@ -78,7 +77,8 @@ fun CategorySummaryView(
         }) {
             Text("Create Category")
         }
-        CategoryList(categoryList, onEditButton, onDeleteButton)
+        CategoryList(categoryList, {id -> onEditButton(id)}, {id -> onDeleteButton(id)})
+
         Div {
             when (viewState) {
                 is UiState.Success<*> -> {

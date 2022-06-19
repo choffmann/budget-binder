@@ -10,7 +10,7 @@ sealed class Screen {
     object Settings : Screen()
     object SettingsChangeUserData : Screen()
     object CategorySummary : Screen()
-    object CategoryEdit : Screen()
+    data class CategoryEdit (val id: Int) : Screen()
     object CategoryCreate : Screen()
     object CategoryCreateOnRegister : Screen()
     data class EntryOverview (val id: Int) : Screen()
