@@ -102,7 +102,7 @@ interface ApiClient {
 
     /**
      * Get Entries from a Category ID. The request has a query in the link ?current
-     * @param id ID from category to get the Entries
+     * @param id ID from category to get the Entries. When ID null, the Api returns all entries with no category
      */
     suspend fun getEntriesFromCategory(id: Int?): APIResponse<List<Entry>>
 
