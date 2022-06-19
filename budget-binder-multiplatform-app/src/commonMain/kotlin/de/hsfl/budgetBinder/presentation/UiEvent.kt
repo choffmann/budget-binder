@@ -10,6 +10,6 @@ sealed class UiEvent {
     // Show Success
     data class ShowSuccess(val msg: String) : UiEvent()
 
-    // Call on Success, with could reset the loading state
+    // Call on Success, which could reset the loading state
     object HideSuccess : UiEvent()
 }

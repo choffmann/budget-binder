@@ -254,7 +254,7 @@ class DashboardViewModel(
 
     /**
      * First, calculate the next Month and Year to request
-     * After that, show on wich category we are at the moment and fetch old entries
+     * After that, show on which category we are at the moment and fetch old entries
      */
     private fun loadMoreEntries() {
         val nextMonth = when {
