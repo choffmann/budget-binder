@@ -1,4 +1,4 @@
-package de.hsfl.budgetBinder.presentation.viewmodel.category
+package de.hsfl.budgetBinder.presentation.viewmodel.category.summary
 
 import de.hsfl.budgetBinder.common.Category
 import de.hsfl.budgetBinder.common.DataResponse

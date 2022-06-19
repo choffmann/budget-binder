@@ -19,8 +19,8 @@ import de.hsfl.budgetBinder.presentation.flow.UiEventSharedFlow
 import de.hsfl.budgetBinder.presentation.viewmodel.login.LoginViewModel
 import de.hsfl.budgetBinder.presentation.viewmodel.register.RegisterViewModel
 import de.hsfl.budgetBinder.presentation.viewmodel.*
-import de.hsfl.budgetBinder.presentation.viewmodel.category.CategorySummaryViewModel
-import de.hsfl.budgetBinder.presentation.viewmodel.category.CategoryViewModel
+import de.hsfl.budgetBinder.presentation.viewmodel.category.summary.CategorySummaryViewModel
+import de.hsfl.budgetBinder.presentation.viewmodel.category._CategoryViewModel
 import de.hsfl.budgetBinder.presentation.viewmodel.settings.SettingsEditServerUrlViewModel
 import de.hsfl.budgetBinder.presentation.viewmodel.settings.SettingsEditUserViewModel
 import de.hsfl.budgetBinder.presentation.viewmodel.settings.SettingsViewModel
@@ -93,7 +93,7 @@ fun kodein(ktorEngine: HttpClientEngine) = DI {
     bindSingleton { SettingsViewModel(instance(), instance(), instance(), instance()) }
     bindSingleton { SettingsEditUserViewModel(instance(), instance(), instance(), instance()) }
     bindSingleton { SettingsEditServerUrlViewModel(instance(), instance(), instance()) }
-    bindSingleton { CategoryViewModel(instance(), instance()) }
+    bindSingleton { _CategoryViewModel(instance(), instance()) }
     bindSingleton { CategorySummaryViewModel(instance(), instance(), instance()) }
     bindSingleton { EntryViewModel(instance(), instance()) }
     bindSingleton { DashboardViewModel(instance(), instance(), instance(), instance(), instance(), instance()) }

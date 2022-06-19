@@ -5,7 +5,7 @@ import de.hsfl.budgetBinder.common.Category
 import de.hsfl.budgetBinder.common.Constants.DEFAULT_CATEGORY
 import de.hsfl.budgetBinder.common.Entry
 import de.hsfl.budgetBinder.presentation.Screen
-import de.hsfl.budgetBinder.presentation.viewmodel.category.CategoryViewModel
+import de.hsfl.budgetBinder.presentation.viewmodel.category._CategoryViewModel
 import di
 import org.jetbrains.compose.web.ExperimentalComposeWebSvgApi
 import org.jetbrains.compose.web.css.*
@@ -31,7 +31,7 @@ fun CategoryComponent(screenState: MutableState<Screen>) {
     val categoryViewModel = CategoryViewModel(getAllCategoriesUseCase, getCategoryByIdUseCase,createCategoryUseCase, changeCategoryByIdUseCase, deleteCategoryByIdUseCase, getAllEntriesByCategoryUseCase, scope)
     val viewState = categoryViewModel.state.collectAsState(scope)*/
 
-    val viewModel: CategoryViewModel by di.instance()
+    val viewModel: _CategoryViewModel by di.instance()
     val viewState = viewModel.state.collectAsState(scope.coroutineContext)
 
     when (screenState.value) {
