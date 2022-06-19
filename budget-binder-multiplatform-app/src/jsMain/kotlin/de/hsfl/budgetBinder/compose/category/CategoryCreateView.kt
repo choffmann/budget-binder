@@ -24,7 +24,7 @@ fun CategoryCreateView(
 ) {
     var categoryNameTextFieldState by remember { mutableStateOf("") }
     var categoryColorTextFieldState by remember { mutableStateOf("") }
-    var categoryImageState by remember { mutableStateOf(Category.Image.DEFAULT) }
+    var categoryImageState = remember { mutableStateOf(Category.Image.DEFAULT) }
     var categoryBudgetTextFieldState by remember { mutableStateOf("") }
     val viewState by remember { state }
 
@@ -79,7 +79,7 @@ fun CategoryCreateView(
                 onCreateCategoryButtonPressed(
                     categoryNameTextFieldState,
                     categoryColorTextFieldState,
-                    categoryImageState,
+                    categoryImageState.value,
                     categoryBudgetTextFieldState.toFloat()
                 )
                 it.preventDefault()
@@ -181,7 +181,7 @@ fun CategoryCreateView(
                             style { marginBottom(1.percent); marginLeft(2.percent) }
                         }
                     ) { Text("Image") }
-                    CategoryImagesToImageList(onClick = { categoryImageState = it })
+                    CategoryImagesToImageList(categoryImageState, onClick = { categoryImageState.value = it })
                 }
             }
             //Category Budget Input

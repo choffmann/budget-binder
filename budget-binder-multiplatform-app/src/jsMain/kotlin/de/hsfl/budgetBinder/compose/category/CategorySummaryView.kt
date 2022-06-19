@@ -3,7 +3,6 @@ package de.hsfl.budgetBinder.compose.category
 import androidx.compose.runtime.*
 import de.hsfl.budgetBinder.common.Category
 import de.hsfl.budgetBinder.compose.CategoryList
-import de.hsfl.budgetBinder.compose.DeleteDialog
 import de.hsfl.budgetBinder.compose.MainFlexContainer
 import de.hsfl.budgetBinder.compose.theme.AppStylesheet
 import de.hsfl.budgetBinder.compose.topBarMain
