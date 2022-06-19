@@ -7,12 +7,14 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import de.hsfl.budgetBinder.common.User
 import de.hsfl.budgetBinder.di.kodein
 import de.hsfl.budgetBinder.presentation.UiEvent
 import de.hsfl.budgetBinder.presentation.flow.DataFlow
 import de.hsfl.budgetBinder.presentation.flow.UiEventSharedFlow
 import io.ktor.client.engine.cio.*
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import org.kodein.di.compose.withDI
 import org.kodein.di.instance
 
@@ -26,6 +28,7 @@ fun App() = withDI(di) {
     val darkTheme = dataFlow.darkModeState.collectAsState(scope.coroutineContext)
     val scaffoldState = rememberScaffoldState()
     val loadingState = remember { mutableStateOf(false) }
+    val drawerState = rememberDrawerState(DrawerValue.Closed)
 
     LaunchedEffect(key1 = true) {
         uiEventFlow.eventFlow.collectLatest { event ->
@@ -55,14 +58,19 @@ fun App() = withDI(di) {
                 // TODO: Show NavDrawer not on Login und Register
                 TopAppBar(title = { Text("Budget Binder") }, navigationIcon = {
                     IconButton(onClick = {
-                        // TODO: Implement NavBar
+                        scope.launch {
+                            if (drawerState.isOpen) drawerState.close()
+                            else drawerState.open()
+                        }
                     }) {
                         Icon(Icons.Filled.Menu, contentDescription = null)
                     }
                 })
             }
         ) {
-            Router()
+            NavDrawer(drawerState = drawerState) {
+                Router()
+            }
         }
     }
 }
