@@ -9,7 +9,7 @@ import androidx.compose.ui.unit.dp
 import de.hsfl.budgetBinder.compose.icon.AvatarImage
 import de.hsfl.budgetBinder.di
 import de.hsfl.budgetBinder.presentation.Screen
-import de.hsfl.budgetBinder.presentation.UiEvent
+import de.hsfl.budgetBinder.presentation.event.UiEvent
 import de.hsfl.budgetBinder.presentation.flow.DataFlow
 import de.hsfl.budgetBinder.presentation.flow.RouterFlow
 import de.hsfl.budgetBinder.presentation.viewmodel.settings.SettingsViewModel

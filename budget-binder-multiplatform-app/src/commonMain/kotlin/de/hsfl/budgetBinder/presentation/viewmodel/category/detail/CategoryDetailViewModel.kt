@@ -4,13 +4,14 @@ import de.hsfl.budgetBinder.common.Category
 import de.hsfl.budgetBinder.common.Entry
 import de.hsfl.budgetBinder.domain.usecase.CategoriesUseCases
 import de.hsfl.budgetBinder.presentation.Screen
-import de.hsfl.budgetBinder.presentation.UiEvent
+import de.hsfl.budgetBinder.presentation.event.LifecycleEvent
+import de.hsfl.budgetBinder.presentation.event.handleLifeCycle
 import de.hsfl.budgetBinder.presentation.flow.RouterFlow
 import de.hsfl.budgetBinder.presentation.viewmodel.category.CategoryViewModel
+import de.hsfl.budgetBinder.presentation.viewmodel.category.edit.CategoryEditEvent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
 
 class CategoryDetailViewModel(
     categoriesUseCases: CategoriesUseCases,
@@ -39,7 +40,10 @@ class CategoryDetailViewModel(
             is CategoryDetailEvent.OnRefresh -> initStateFlows()
             is CategoryDetailEvent.OnEntry -> { /* TODO: Navigate to Entry detail */
             }
-            is CategoryDetailEvent.OnLaunch -> initStateFlows()
+            is CategoryDetailEvent.LifeCycle -> event.value.handleLifeCycle(
+                onLaunch = { initStateFlows() },
+                onDispose = { /* Nothing to do on dispose */ }
+            )
         }
     }
 

@@ -12,6 +12,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import de.hsfl.budgetBinder.di
 import de.hsfl.budgetBinder.presentation.Screen
+import de.hsfl.budgetBinder.presentation.event.LifecycleEvent
 import de.hsfl.budgetBinder.presentation.flow.RouterFlow
 import de.hsfl.budgetBinder.presentation.viewmodel.category.detail.CategoryDetailEvent
 import de.hsfl.budgetBinder.presentation.viewmodel.category.detail.CategoryDetailViewModel
@@ -26,7 +27,7 @@ fun CategoryDetailView() {
     val entryListState = viewModel.entryList.collectAsState()
 
     LaunchedEffect(Unit) {
-        viewModel.onEvent(CategoryDetailEvent.OnLaunch)
+        viewModel.onEvent(CategoryDetailEvent.LifeCycle(LifecycleEvent.OnLaunch))
     }
     DisposableEffect(Unit) {
         onDispose {
