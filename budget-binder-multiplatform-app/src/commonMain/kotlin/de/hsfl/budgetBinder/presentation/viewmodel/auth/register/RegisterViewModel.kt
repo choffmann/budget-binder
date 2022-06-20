@@ -1,23 +1,27 @@
-package de.hsfl.budgetBinder.presentation.viewmodel.register
+package de.hsfl.budgetBinder.presentation.viewmodel.auth.register
 
 import de.hsfl.budgetBinder.common.DataResponse
 import de.hsfl.budgetBinder.common.User
 import de.hsfl.budgetBinder.common.utils.validateEmail
-import de.hsfl.budgetBinder.domain.usecase.RegisterUseCases
+import de.hsfl.budgetBinder.domain.usecase.AuthUseCases
 import de.hsfl.budgetBinder.presentation.Screen
-import de.hsfl.budgetBinder.presentation.event.UiEvent
 import de.hsfl.budgetBinder.presentation.UiState
 import de.hsfl.budgetBinder.presentation.flow.DataFlow
 import de.hsfl.budgetBinder.presentation.flow.RouterFlow
-import de.hsfl.budgetBinder.presentation.flow.UiEventSharedFlow
+import de.hsfl.budgetBinder.presentation.viewmodel.auth.AuthViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.*
 
 class RegisterViewModel(
-    private val registerUseCases: RegisterUseCases,
+    private val authUseCases: AuthUseCases,
     private val routerFlow: RouterFlow,
-    private val dataFlow: DataFlow,
+    dataFlow: DataFlow,
     private val scope: CoroutineScope
+): AuthViewModel(
+    _scope = scope,
+    _authUseCases = authUseCases,
+    _dataFlow = dataFlow,
+    _routerFlow = routerFlow
 ) {
     private val _firstNameText = MutableStateFlow(RegisterTextFieldState())
     val firstNameText: StateFlow<RegisterTextFieldState> = _firstNameText
@@ -34,9 +38,6 @@ class RegisterViewModel(
     private val _confirmedPasswordText = MutableStateFlow(RegisterTextFieldState())
     val confirmedPasswordText: StateFlow<RegisterTextFieldState> = _confirmedPasswordText
 
-    private val _eventFlow = UiEventSharedFlow.mutableEventFlow
-    val eventFlow = UiEventSharedFlow.eventFlow
-
     fun onEvent(event: RegisterEvent) {
         when (event) {
             is RegisterEvent.EnteredFirstname -> _firstNameText.value =
@@ -50,7 +51,7 @@ class RegisterViewModel(
             is RegisterEvent.OnLoginScreen -> routerFlow.navigateTo(Screen.Login)
             is RegisterEvent.OnRegister -> {
                 if (validateInput()) {
-                    register(
+                    super.register(
                         User.In(
                             firstName = firstNameText.value.firstName,
                             name = lastNameText.value.lastName,
@@ -83,45 +84,6 @@ class RegisterViewModel(
         return checkEmail && checkConfirmedPassword
     }
 
-    fun register(user: User.In) {
-        registerUseCases.registerUseCase(user).onEach {
-            when (it) {
-                is DataResponse.Loading -> _eventFlow.emit(UiEvent.ShowLoading)
-                is DataResponse.Error -> _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
-                is DataResponse.Success<*> -> login(
-                    email = emailText.value.email,
-                    password = passwordText.value.password
-                )
-                is DataResponse.Unauthorized -> _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
-            }
-        }.launchIn(scope)
-    }
-
-    private fun login(email: String, password: String) {
-        registerUseCases.loginUseCase(email, password).onEach {
-            when (it) {
-                is DataResponse.Loading -> _eventFlow.emit(UiEvent.ShowLoading)
-                is DataResponse.Error -> _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
-                is DataResponse.Success<*> -> getMyUser()
-                is DataResponse.Unauthorized -> _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
-            }
-        }.launchIn(scope)
-    }
-
-    private fun getMyUser() {
-        registerUseCases.getMyUserUseCase().onEach {
-            when (it) {
-                is DataResponse.Loading -> _eventFlow.emit(UiEvent.ShowLoading)
-                is DataResponse.Success<*> -> {
-                    dataFlow.storeUserState(it.data!!)
-                    routerFlow.navigateTo(Screen.Dashboard)
-                }
-                is DataResponse.Error -> _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
-                else -> _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
-            }
-        }.launchIn(scope)
-    }
-
     private fun clearStateFlows() {
         _firstNameText.value = firstNameText.value.copy(firstName = "")
         _lastNameText.value = lastNameText.value.copy(lastName = "")
@@ -138,7 +100,7 @@ class RegisterViewModel(
 
     @Deprecated(message = "Use ViewModel function onEvent()")
     fun _register(user: User.In) {
-        registerUseCases.registerUseCase(user).onEach {
+        authUseCases.registerUseCase(user).onEach {
             when (it) {
                 is DataResponse.Success -> _login(user.email, user.password)
                 is DataResponse.Error -> _state.value = UiState.Error(it.error!!.message)
@@ -150,7 +112,7 @@ class RegisterViewModel(
 
     @Deprecated(message = "This is Deprecated")
     private fun _login(email: String, password: String) {
-        registerUseCases.loginUseCase(email, password).onEach {
+        authUseCases.loginUseCase(email, password).onEach {
             when (it) {
                 is DataResponse.Success -> _getMyUser()
                 is DataResponse.Error -> _state.value = UiState.Error(it.error!!.message)
@@ -162,7 +124,7 @@ class RegisterViewModel(
 
     @Deprecated(message = "This is Deprecated")
     private fun _getMyUser() {
-        registerUseCases.getMyUserUseCase().onEach {
+        authUseCases.getMyUserUseCase().onEach {
             when (it) {
                 is DataResponse.Success -> _state.value = UiState.Success(it.data)
                 is DataResponse.Error -> _state.value = UiState.Error(it.error!!.message)

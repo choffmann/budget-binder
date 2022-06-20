@@ -1,28 +1,31 @@
-package de.hsfl.budgetBinder.presentation.viewmodel.login
+package de.hsfl.budgetBinder.presentation.viewmodel.auth.login
 
 import de.hsfl.budgetBinder.common.DataResponse
 import de.hsfl.budgetBinder.common.User
 import de.hsfl.budgetBinder.common.handleDataResponse
 import de.hsfl.budgetBinder.common.utils.validateEmail
-import de.hsfl.budgetBinder.domain.usecase.LoginUseCases
+import de.hsfl.budgetBinder.domain.usecase.AuthUseCases
 import de.hsfl.budgetBinder.presentation.flow.RouterFlow
 import de.hsfl.budgetBinder.presentation.Screen
-import de.hsfl.budgetBinder.presentation.event.UiEvent
 import de.hsfl.budgetBinder.presentation.UiState
 import de.hsfl.budgetBinder.presentation.event.handleLifeCycle
 import de.hsfl.budgetBinder.presentation.flow.DataFlow
-import de.hsfl.budgetBinder.presentation.flow.UiEventSharedFlow
+import de.hsfl.budgetBinder.presentation.viewmodel.auth.AuthViewModel
 import io.ktor.http.*
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class LoginViewModel(
-    private val loginUseCases: LoginUseCases,
+    private val authUseCases: AuthUseCases,
     private val routerFlow: RouterFlow,
     private val dataFlow: DataFlow,
     private val scope: CoroutineScope
+) : AuthViewModel(
+    _scope = scope,
+    _routerFlow = routerFlow,
+    _dataFlow = dataFlow,
+    _authUseCases = authUseCases
 ) {
     private val screenAfterSuccess = Screen.Dashboard
 
@@ -38,8 +41,6 @@ class LoginViewModel(
     private val _dialogState = MutableStateFlow(false)
     val dialogState: StateFlow<Boolean> = _dialogState
 
-    val eventFlow = UiEventSharedFlow.eventFlow
-
     fun onEvent(event: LoginEvent) {
         when (event) {
             is LoginEvent.EnteredEmail -> _emailText.value =
@@ -48,7 +49,7 @@ class LoginViewModel(
                 passwordText.value.copy(password = event.value)
             is LoginEvent.EnteredServerUrl -> _serverUrlText.value =
                 serverUrlText.value.copy(serverAddress = event.value)
-            is LoginEvent.OnLogin -> onLogin()
+            is LoginEvent.OnLogin -> validateInput()
             is LoginEvent.OnRegisterScreen -> routerFlow.navigateTo(Screen.Register)
             is LoginEvent.OnServerUrlDialogConfirm -> onServerUrlDialogConfirm()
             is LoginEvent.OnServerUrlDialogDismiss -> toggleDialog()
@@ -59,7 +60,7 @@ class LoginViewModel(
         }
     }
 
-    private fun onLogin() {
+    private fun validateInput() {
         if (validateEmail(email = emailText.value.email)) {
             toggleDialog()
         } else {
@@ -70,11 +71,11 @@ class LoginViewModel(
     private fun onServerUrlDialogConfirm() {
         toggleDialog()
         dataFlow.storeServerUrl(Url(urlString = serverUrlText.value.serverAddress))
-        login()
+        super.login(email = emailText.value.email, password = passwordText.value.password)
     }
 
     private fun tryToLoginUserOnStart() = scope.launch {
-        loginUseCases.getMyUserUseCase()
+        authUseCases.getMyUserUseCase()
             .collect {
                 it.handleDataResponse(
                     onSuccess = { user ->
@@ -94,25 +95,6 @@ class LoginViewModel(
         _dialogState.value = !dialogState.value
     }
 
-    private fun login() = scope.launch {
-        loginUseCases.loginUseCase(
-            email = emailText.value.email,
-            password = passwordText.value.password
-        ).collect {
-            it.handleDataResponse(onSuccess = { getMyUser() })
-        }
-    }
-
-    private fun getMyUser() = scope.launch {
-        loginUseCases.getMyUserUseCase()
-            .collect {
-                it.handleDataResponse(onSuccess = { user ->
-                    dataFlow.storeUserState(user)
-                    routerFlow.navigateTo(Screen.Dashboard)
-                })
-            }
-    }
-
     private fun clearStateFlows() {
         _emailText.value = emailText.value.copy(email = "")
         _passwordText.value = passwordText.value.copy(password = "")
@@ -126,8 +108,8 @@ class LoginViewModel(
     val state: StateFlow<UiState> = _state
 
     @Deprecated(message = "Use ViewModel function onEvent()")
-    fun login(email: String, password: String) {
-        loginUseCases.loginUseCase(email, password).onEach {
+    fun _login(email: String, password: String) {
+        authUseCases.loginUseCase(email, password).onEach {
             when (it) {
                 is DataResponse.Loading -> _state.value = UiState.Loading
                 is DataResponse.Success<*> -> getMyUserDeprecated()
@@ -139,7 +121,7 @@ class LoginViewModel(
 
     @Deprecated(message = "Use new getMyUser function and SharedFlow UiEvents")
     private fun getMyUserDeprecated() {
-        loginUseCases.getMyUserUseCase().onEach {
+        authUseCases.getMyUserUseCase().onEach {
             when (it) {
                 is DataResponse.Loading -> _state.value = UiState.Loading
                 is DataResponse.Success<*> -> _state.value = UiState.Success(it.data)

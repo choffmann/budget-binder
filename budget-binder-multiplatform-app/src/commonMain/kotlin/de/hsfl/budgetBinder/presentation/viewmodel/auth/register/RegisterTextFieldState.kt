@@ -1,4 +1,4 @@
-package de.hsfl.budgetBinder.presentation.viewmodel.register
+package de.hsfl.budgetBinder.presentation.viewmodel.auth.register
 
 data class RegisterTextFieldState(
     val firstName: String = "",

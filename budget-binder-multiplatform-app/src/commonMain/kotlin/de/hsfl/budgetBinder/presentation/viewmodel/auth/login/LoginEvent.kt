@@ -1,8 +1,6 @@
-package de.hsfl.budgetBinder.presentation.viewmodel.login
+package de.hsfl.budgetBinder.presentation.viewmodel.auth.login
 
-import de.hsfl.budgetBinder.presentation.Screen
 import de.hsfl.budgetBinder.presentation.event.LifecycleEvent
-import de.hsfl.budgetBinder.presentation.viewmodel.category.edit.CategoryEditEvent
 
 sealed class LoginEvent {
     data class EnteredEmail(val value: String) : LoginEvent()

@@ -16,8 +16,8 @@ import de.hsfl.budgetBinder.compose.icon.AppIcon
 import de.hsfl.budgetBinder.compose.textfield.EmailTextField
 import de.hsfl.budgetBinder.presentation.event.LifecycleEvent
 import de.hsfl.budgetBinder.presentation.event.UiEvent
-import de.hsfl.budgetBinder.presentation.viewmodel.login.LoginViewModel
-import de.hsfl.budgetBinder.presentation.viewmodel.login.LoginEvent
+import de.hsfl.budgetBinder.presentation.viewmodel.auth.login.LoginViewModel
+import de.hsfl.budgetBinder.presentation.viewmodel.auth.login.LoginEvent
 import kotlinx.coroutines.flow.collectLatest
 import org.kodein.di.instance
 

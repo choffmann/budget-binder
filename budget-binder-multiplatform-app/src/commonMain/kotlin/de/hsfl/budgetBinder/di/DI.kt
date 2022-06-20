@@ -16,8 +16,8 @@ import de.hsfl.budgetBinder.domain.usecase.storage.StoreUserStateUseCase
 import de.hsfl.budgetBinder.presentation.flow.DataFlow
 import de.hsfl.budgetBinder.presentation.flow.RouterFlow
 import de.hsfl.budgetBinder.presentation.flow.UiEventSharedFlow
-import de.hsfl.budgetBinder.presentation.viewmodel.login.LoginViewModel
-import de.hsfl.budgetBinder.presentation.viewmodel.register.RegisterViewModel
+import de.hsfl.budgetBinder.presentation.viewmodel.auth.login.LoginViewModel
+import de.hsfl.budgetBinder.presentation.viewmodel.auth.register.RegisterViewModel
 import de.hsfl.budgetBinder.presentation.viewmodel.*
 import de.hsfl.budgetBinder.presentation.viewmodel.category.summary.CategorySummaryViewModel
 import de.hsfl.budgetBinder.presentation.viewmodel.category._CategoryViewModel
@@ -81,9 +81,8 @@ fun kodein(ktorEngine: HttpClientEngine) = DI {
     bindSingleton { EntriesUseCases(instance(), instance(), instance(), instance(), instance()) }
     bindSingleton { CategoriesUseCases(instance(), instance(), instance(), instance(), instance(), instance()) }
     bindSingleton { SettingsUseCases(instance(), instance(), instance()) }
-    bindSingleton { LoginUseCases(instance(), instance()) }
+    bindSingleton { AuthUseCases(instance(), instance(), instance()) }
     bindSingleton { DashboardUseCases(instance(), instance(), instance(), instance()) }
-    bindSingleton { RegisterUseCases(instance(), instance(), instance()) }
     bindSingleton { DataFlowUseCases(instance(), instance(), instance()) }
 
     // Flows
