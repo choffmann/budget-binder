@@ -45,9 +45,9 @@ sealed class Screen {
     @Deprecated(message = "use sealed class Category")
     object CategoryCreateOnRegister : Screen()
     @Deprecated(message = "use sealed class Category")
-    data class EntryOverview (val id: Int, val categoryList :List<de.hsfl.budgetBinder.common.Category>) : Screen()
+    data class EntryOverview (val id: Int) : Screen()
     @Deprecated(message = "use sealed class Entry")
-    data class EntryEdit (val id: Int, val categoryList :List<de.hsfl.budgetBinder.common.Category>): Screen()
+    data class EntryEdit (val id: Int): Screen()
     @Deprecated(message = "use sealed class Entry")
     data class EntryCreate (val categoryList :List<de.hsfl.budgetBinder.common.Category>): Screen()
 }

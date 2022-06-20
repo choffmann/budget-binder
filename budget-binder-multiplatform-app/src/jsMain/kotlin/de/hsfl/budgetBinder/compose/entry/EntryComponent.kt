@@ -48,7 +48,6 @@ fun EntryComponent(screenState: MutableState<Screen>) {
         is Screen.EntryEdit -> {
             EntryEditView(
                 state = viewState,
-                categoryList = (screenState.value as Screen.EntryEdit).categoryList,
                 onChangeToDashboard = { screenState.value = Screen.Dashboard },
                 onEditEntryButtonPressed = { name:String, amount:Float, repeat:Boolean, category:Entry.Category? ->
                     viewModel.changeEntry(
@@ -64,7 +63,7 @@ fun EntryComponent(screenState: MutableState<Screen>) {
         is Screen.EntryOverview -> {
             EntryOverviewView(
                 state = viewState,
-                onEditButton = {id -> screenState.value = Screen.EntryEdit(id)},
+                onEditButton = {id, -> screenState.value = Screen.EntryEdit(id)},
                 onDeleteButton = { id ->
                     viewModel.removeEntry(id)
                     screenState.value = Screen.Dashboard},
