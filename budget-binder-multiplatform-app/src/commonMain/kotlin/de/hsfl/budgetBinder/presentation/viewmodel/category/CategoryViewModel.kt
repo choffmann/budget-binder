@@ -22,8 +22,7 @@ open class CategoryViewModel(
     private val categoriesUseCases: CategoriesUseCases = _categoriesUseCases
     private val routerFlow: RouterFlow = _routerFlow
 
-    protected val _eventFlow = UiEventSharedFlow.mutableEventFlow
-    val eventFlow = UiEventSharedFlow.eventFlow
+    val eventFlow = UiEventSharedFlow.mutableEventFlow
 
     protected fun getAll(onSuccess: (List<Category>) -> Unit) = scope.launch {
         categoriesUseCases.getAllCategoriesUseCase.categories().collect { response ->
@@ -63,15 +62,15 @@ open class CategoryViewModel(
 
     private fun <T> handleDataResponse(response: DataResponse<T>, onSuccess: (T) -> Unit) = scope.launch {
         when (response) {
-            is DataResponse.Error -> _eventFlow.emit(UiEvent.ShowError(response.error!!.message))
-            is DataResponse.Loading -> _eventFlow.emit(UiEvent.ShowLoading)
+            is DataResponse.Error -> eventFlow.emit(UiEvent.ShowError(response.error!!.message))
+            is DataResponse.Loading -> eventFlow.emit(UiEvent.ShowLoading)
             is DataResponse.Success -> {
-                _eventFlow.emit(UiEvent.HideSuccess)
+                eventFlow.emit(UiEvent.HideSuccess)
                 onSuccess(response.data!!)
             }
             is DataResponse.Unauthorized -> {
                 routerFlow.navigateTo(Screen.Login)
-                _eventFlow.emit(UiEvent.ShowError(response.error!!.message))
+                eventFlow.emit(UiEvent.ShowError(response.error!!.message))
             }
         }
     }

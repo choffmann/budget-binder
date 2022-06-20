@@ -22,6 +22,7 @@ import de.hsfl.budgetBinder.presentation.viewmodel.*
 import de.hsfl.budgetBinder.presentation.viewmodel.category.summary.CategorySummaryViewModel
 import de.hsfl.budgetBinder.presentation.viewmodel.category._CategoryViewModel
 import de.hsfl.budgetBinder.presentation.viewmodel.category.detail.CategoryDetailViewModel
+import de.hsfl.budgetBinder.presentation.viewmodel.category.edit.CategoryEditViewModel
 import de.hsfl.budgetBinder.presentation.viewmodel.dashboard.DashboardViewModel
 import de.hsfl.budgetBinder.presentation.viewmodel.navdrawer.NavDrawerViewModel
 import de.hsfl.budgetBinder.presentation.viewmodel.settings.SettingsEditServerUrlViewModel
@@ -99,6 +100,7 @@ fun kodein(ktorEngine: HttpClientEngine) = DI {
     bindSingleton { _CategoryViewModel(instance(), instance()) }
     bindSingleton { CategorySummaryViewModel(instance(), instance(), instance()) }
     bindSingleton { CategoryDetailViewModel(instance(), instance(), instance()) }
+    bindSingleton { CategoryEditViewModel(instance(), instance(), instance()) }
     bindSingleton { EntryViewModel(instance(), instance()) }
     bindSingleton { DashboardViewModel(instance(), instance(), instance(), instance()) }
     bindSingleton { NavDrawerViewModel(instance(), instance(), instance()) }

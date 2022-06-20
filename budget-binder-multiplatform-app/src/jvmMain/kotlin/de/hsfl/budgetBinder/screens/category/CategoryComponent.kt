@@ -12,5 +12,6 @@ fun CategoryComponent() {
     when (routerFlow.state.value) {
         is Screen.Category.Summary -> CategorySummary()
         is Screen.Category.Detail -> CategoryDetailView()
+        is Screen.Category.Edit -> CategoryEditView()
     }
 }

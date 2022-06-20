@@ -59,3 +59,8 @@ actual fun AccountIcon() {
 actual fun DeleteForeverIcon() {
     Icon(imageVector = Icons.Default.DeleteForever, contentDescription = null)
 }
+
+@Composable
+actual fun SaveIcon() {
+    Icon(imageVector = Icons.Default.Save, contentDescription = null)
+}

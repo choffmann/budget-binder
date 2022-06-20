@@ -27,7 +27,8 @@ fun Router() {
         is Screen.Entry.Overview -> Text(text = "Entry Click with id: ${(screenState.value as Screen.Entry.Overview).id}")
         is Screen.Entry.Create -> Text(text = "Entry Create")
         is Screen.Category.Summary -> CategoryComponent()
-        is Screen.Category.Detail -> CategoryDetailView()
+        is Screen.Category.Detail -> CategoryComponent()
+        is Screen.Category.Edit -> CategoryComponent()
         else -> {}
     }
 }

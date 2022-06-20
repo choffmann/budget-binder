@@ -3,9 +3,9 @@ package de.hsfl.budgetBinder.screens.category
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ListItem
-import androidx.compose.material.Text
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -22,9 +22,9 @@ import org.kodein.di.instance
 @Composable
 fun CategoryDetailView() {
     val viewModel: CategoryDetailViewModel by di.instance()
-    val routerFlow: RouterFlow by di.instance()
     val categoryState = viewModel.categoryState.collectAsState()
     val entryListState = viewModel.entryList.collectAsState()
+    val scaffoldState = rememberScaffoldState()
 
     LaunchedEffect(Unit) {
         viewModel.onEvent(CategoryDetailEvent.LifeCycle(LifecycleEvent.OnLaunch))
@@ -35,12 +35,22 @@ fun CategoryDetailView() {
         }
     }
 
-    Column {
-        Text(categoryState.value.toString())
-        LazyColumn {
-            items(entryListState.value) { entry ->
-                ListItem(text = { Text(entry.name) }, trailing = { Text(entry.amount.toString()) })
+    Scaffold(scaffoldState = scaffoldState,
+        floatingActionButtonPosition = FabPosition.End,
+        floatingActionButton = {
+            FloatingActionButton(onClick = { viewModel.onEvent(CategoryDetailEvent.OnEdit) }) {
+                Icon(Icons.Default.Edit, contentDescription = null)
+            }
+        }
+    ) {
+        Column {
+            Text(categoryState.value.toString())
+            LazyColumn {
+                items(entryListState.value) { entry ->
+                    ListItem(text = { Text(entry.name) }, trailing = { Text(entry.amount.toString()) })
+                }
             }
         }
     }
+
 }
