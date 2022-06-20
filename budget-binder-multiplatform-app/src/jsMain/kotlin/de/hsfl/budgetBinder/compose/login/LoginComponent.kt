@@ -99,7 +99,7 @@ fun LoginComponent() {
             attrs = {
                 this.addEventListener("submit") {
                     console.log("$emailTextState, $passwordTextState")
-                    viewModel.onEvent(LoginEvent.OnLogin)
+                    viewModel.onEvent(LoginEvent.OnServerUrlDialogConfirm) //TODO: Change to OnLogin as soon as LoginViewModel has corresponding logic
                     it.preventDefault()
                 }
             }
