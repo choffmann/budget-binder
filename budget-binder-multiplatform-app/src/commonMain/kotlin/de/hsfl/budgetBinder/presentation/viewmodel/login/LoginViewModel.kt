@@ -69,6 +69,9 @@ class LoginViewModel(
                 serverUrlText.value.copy(serverAddress = event.value)
             is LoginEvent.OnLogin -> {
                 if (validateEmail(email = emailText.value.email)) {
+                    //TODO: Check what frontend this is opened from.
+                    // Web -> auth(...),
+                    // everyone else -> toggleDialog()
                     toggleDialog()
                 } else {
                     _emailText.value = emailText.value.copy(emailValid = false)
