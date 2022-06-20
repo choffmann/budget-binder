@@ -32,7 +32,7 @@ fun MainFlexContainer(content: @Composable () -> Unit) {
                 content()
             }
         }
-        Div(attrs = { classes(AppStylesheet.pufferFlexContainer)})
+        Div(attrs = { classes(AppStylesheet.pufferFlexContainer) })
     }
 }
 
@@ -168,7 +168,10 @@ fun CategoryImagesToImageList(
                                     "mdc-icon-button",
                                     "mdc-button--raised"
                                 )
-                            else classes("mdc-image-list__image-aspect-container", "mdc-icon-button")
+                            else classes(
+                                "mdc-image-list__image-aspect-container",
+                                "mdc-icon-button"
+                            )
                             onClick { onClick(image); highlightImage.value = image }
                         }
                     ) {
@@ -271,7 +274,12 @@ fun CategoryList(
 }
 
 @Composable
-fun DeleteDialog(hidden: Boolean, buttonAction: () -> Unit, resetDialog: () -> Unit, content: @Composable () -> Unit) {
+fun DeleteDialog(
+    hidden: Boolean,
+    buttonAction: () -> Unit,
+    resetDialog: () -> Unit,
+    content: @Composable () -> Unit
+) {
     var hiddenValue by remember { mutableStateOf(hidden) }
     Div(
         attrs = {
@@ -405,7 +413,7 @@ fun ChooseCategoryMenu(
                         onClick { chosenCategory = category; getCategoryId(category.id) }
                     }) {
                         Span(attrs = { classes("mdc-list-item__ripple") }) { }
-                        Span(attrs = {  }) { Text(category.name) }
+                        Span(attrs = { }) { Text(category.name) }
                     }
                 }
             }
