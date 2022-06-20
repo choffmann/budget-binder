@@ -25,7 +25,7 @@ fun Router() {
         is Screen.Welcome -> {}
         is Screen.Register -> RegisterComponent()
         is Screen.Login -> LoginComponent()
-        is Screen.Dashboard -> Text("Dashboard")//DashboardComponent()
+        is Screen.Dashboard -> DashboardComponent()
         //is Screen.Settings, is Screen.SettingsChangeUserData -> SettingsComponent(screenState = screenState)
         //is Screen.CategorySummary, is Screen.CategoryEdit, is Screen.CategoryCreate, is Screen.CategoryCreateOnRegister -> CategoryComponent(screenState = screenState)
         //is Screen.EntryCreate, is Screen.EntryEdit, is Screen.EntryOverview -> EntryComponent(screenState = screenState)
