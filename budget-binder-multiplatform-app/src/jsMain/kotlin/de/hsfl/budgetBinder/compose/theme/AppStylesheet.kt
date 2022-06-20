@@ -58,7 +58,7 @@ object AppStylesheet : StyleSheet() {
         flex("90%")
     }
     //Container for arrow in BudgetBar
-    val arrowFlexContainer by style {
+    val imageFlexContainer by style {
         flex("0.1 0.1 5%")
         height(auto)
     }
@@ -78,6 +78,10 @@ object AppStylesheet : StyleSheet() {
         justifyContent(JustifyContent.Center)
     }
 
+    val text by style {
+        textAlign("center")
+        padding(10.px)
+    }
     //EntryList
     val entryListElement by style{
         flexDirection(FlexDirection("row"))
@@ -88,6 +92,7 @@ object AppStylesheet : StyleSheet() {
     val entryListElementText by style{
         flex("2 2 90%")
     }
+
     val moneyText by style{
         textAlign("center")
         padding(10.px)
@@ -97,26 +102,6 @@ object AppStylesheet : StyleSheet() {
         position(Position.Fixed)
         bottom(16.px)
         marginRight(20.px)
-    }
-    val categoryListElement by style{
-        flexDirection(FlexDirection("row"))
-        alignItems(AlignItems.Center)
-        margin(10.px)
-        marginTop(0.px)
-    }
-
-    val categoryListElementText by style{
-        flex("2 2 90%")
-    }
-
-    val imageFlexContainer by style {
-        flex("0.1 0.1 5%")
-        height(auto)
-    }
-
-    val text by style{
-        textAlign("center")
-        padding(10.px)
     }
 
     val card by style {
