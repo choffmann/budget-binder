@@ -179,10 +179,10 @@ class Client(engine: HttpClientEngine) : ApiClient {
             refreshPath = "/refresh_token"
         }
 
-        /*install(Logging) {
+        install(Logging) {
             logger = Logger.DEFAULT
             level = LogLevel.HEADERS
-        }*/
+        }
 
         defaultRequest {
             url(BASE_URL)
