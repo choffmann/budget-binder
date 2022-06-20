@@ -24,13 +24,13 @@ import org.jetbrains.compose.web.svg.Svg
 @Composable
 fun EntryEditView(
     state: State<Any>,
-    categoryList: List<Category>,
     onChangeToDashboard: () -> Unit,
     onChangeToSettings: () -> Unit,
     onChangeToCategory: () -> Unit,
     onEditEntryButtonPressed: (name: String, amount: Float, repeat: Boolean, category: Entry.Category) -> Unit,
 ) {
     var entry by remember { mutableStateOf(Entry(0, "", 0f, false, 0)) }
+    var categoryList by remember { mutableStateOf<List<Category>>(emptyList()) }
     var switchState by remember { mutableStateOf(false) }
     var entryNameTextFieldState by remember { mutableStateOf("") }
     var entryAmountTextFieldState by remember { mutableStateOf("") }
