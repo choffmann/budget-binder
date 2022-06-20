@@ -10,12 +10,8 @@ import de.hsfl.budgetBinder.presentation.CategoryImageToIcon
 import de.hsfl.budgetBinder.presentation.Screen
 import de.hsfl.budgetBinder.presentation.viewmodel.EntryViewModel
 import di
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import org.jetbrains.compose.web.dom.Div
 import org.jetbrains.compose.web.dom.Text
-import org.kodein.di.compose.localDI
 import org.kodein.di.instance
 import kotlin.math.absoluteValue
 
@@ -41,10 +37,10 @@ fun EntryComponent(screenState: MutableState<Screen>) {
                 state = viewState,
                 categoryList = (screenState.value as Screen.EntryCreate).categoryList,
                 onChangeToDashboard = { screenState.value = Screen.Dashboard },
-                onCreateEntryButtonPressed = { name, amount, repeat, category_id ->
-                    userViewModel.createEntry(Entry.In(name, amount, repeat, category_id))
+                onCreateEntryButtonPressed = { name:String, amount:Float, repeat:Boolean, category_id:Int ->
+                    viewModel.createEntry(Entry.In(name, amount, repeat, category_id))
                 },
-                onChangeToSettings = { screenState.value = Screen.Settings },
+                onChangeToSettings = { screenState.value = Screen._Settings },
                 onChangeToCategory = { screenState.value = Screen.CategorySummary },
             )
 
@@ -54,29 +50,29 @@ fun EntryComponent(screenState: MutableState<Screen>) {
                 state = viewState,
                 categoryList = (screenState.value as Screen.EntryEdit).categoryList,
                 onChangeToDashboard = { screenState.value = Screen.Dashboard },
-                onEditEntryButtonPressed = { name, amount, repeat, category ->
-                    entryViewModel.changeEntry(
+                onEditEntryButtonPressed = { name:String, amount:Float, repeat:Boolean, category:Entry.Category? ->
+                    viewModel.changeEntry(
                         Entry.Patch(name, amount, repeat, category),
                         (screenState.value as Screen.EntryEdit).id
                     )
                 },
-                onChangeToSettings = { screenState.value = Screen.Settings },
+                onChangeToSettings = { screenState.value = Screen._Settings },
                 onChangeToCategory = { screenState.value = Screen.CategorySummary },
             )
-            entryViewModel.getEntryById((screenState.value as Screen.EntryEdit).id)//(screenState.value as Screen.EntryEdit).id)
+            viewModel.getEntryById((screenState.value as Screen.EntryEdit).id)//(screenState.value as Screen.EntryEdit).id)
         }
         is Screen.EntryOverview -> {
             EntryOverviewView(
                 state = viewState,
                 onEditButton = {id -> screenState.value = Screen.EntryEdit(id)},
                 onDeleteButton = { id ->
-                    entryViewModel.removeEntry(id)
+                    viewModel.removeEntry(id)
                     screenState.value = Screen.Dashboard},
                 onChangeToDashboard = { screenState.value = Screen.Dashboard },
-                onChangeToSettings = { screenState.value = Screen.Settings },
+                onChangeToSettings = { screenState.value = Screen._Settings },
                 onChangeToCategory = { screenState.value = Screen.CategorySummary },
             )
-            entryViewModel.getEntryById((screenState.value as Screen.EntryOverview).id)
+            viewModel.getEntryById((screenState.value as Screen.EntryOverview).id)
         }
         else -> {}
     }
