@@ -55,7 +55,7 @@ fun DashboardComponent() {
             )
         }
 
-        CreateNewEntryButton(viewModel.onEvent(DashboardEvent.OnEntryCreate))
+        CreateNewEntryButton { viewModel.onEvent(DashboardEvent.OnEntryCreate) }
     }
 }
 
@@ -78,14 +78,14 @@ fun DashboardData(
 
 
 @Composable
-fun CreateNewEntryButton(onEntryCreateButton: Unit) {
+fun CreateNewEntryButton(onEntryCreateButton: () -> Unit) {
     Div (attrs = {style {
         display(DisplayStyle.Flex)
         justifyContent(JustifyContent.FlexEnd)
     }}) {
         Button(attrs = {
             classes("mdc-fab", "mdc-fab--touch", AppStylesheet.newEntryButton)
-            onClick { onEntryCreateButton }
+            onClick { onEntryCreateButton() }
         }) {
             Div(attrs = { classes("mdc-fab__ripple") })
             Icon("add")
