@@ -3,6 +3,7 @@ package de.hsfl.budgetBinder.presentation.viewmodel.category.summary
 import de.hsfl.budgetBinder.common.Category
 import de.hsfl.budgetBinder.domain.usecase.CategoriesUseCases
 import de.hsfl.budgetBinder.presentation.Screen
+import de.hsfl.budgetBinder.presentation.event.handleLifeCycle
 import de.hsfl.budgetBinder.presentation.flow.RouterFlow
 import de.hsfl.budgetBinder.presentation.viewmodel.category.CategoryViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -21,15 +22,15 @@ class CategorySummaryViewModel(
     private val _categoryList = MutableStateFlow<List<Category>>(emptyList())
     val categoryList: StateFlow<List<Category>> = _categoryList
 
-    init {
-        getAllCategories()
-    }
-
     fun onEvent(event: CategorySummaryEvent) {
         when (event) {
             is CategorySummaryEvent.OnCategory -> routerFlow.navigateTo(Screen.Category.Detail(event.id))
             is CategorySummaryEvent.OnCategoryCreate -> routerFlow.navigateTo(Screen.Category.Summary)
             is CategorySummaryEvent.OnRefresh -> getAllCategories()
+            is CategorySummaryEvent.LifeCycle -> event.value.handleLifeCycle(
+                onLaunch = { getAllCategories() },
+                onDispose = {}
+            )
         }
     }
 
