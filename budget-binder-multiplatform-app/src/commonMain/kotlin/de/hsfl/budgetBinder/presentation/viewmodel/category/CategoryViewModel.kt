@@ -1,11 +1,9 @@
 package de.hsfl.budgetBinder.presentation.viewmodel.category
 
 import de.hsfl.budgetBinder.common.Category
-import de.hsfl.budgetBinder.common.DataResponse
 import de.hsfl.budgetBinder.common.Entry
+import de.hsfl.budgetBinder.common.handleDataResponse
 import de.hsfl.budgetBinder.domain.usecase.CategoriesUseCases
-import de.hsfl.budgetBinder.presentation.Screen
-import de.hsfl.budgetBinder.presentation.event.UiEvent
 import de.hsfl.budgetBinder.presentation.flow.RouterFlow
 import de.hsfl.budgetBinder.presentation.flow.UiEventSharedFlow
 import kotlinx.coroutines.CoroutineScope
@@ -25,53 +23,32 @@ open class CategoryViewModel(
     val eventFlow = UiEventSharedFlow.mutableEventFlow
 
     protected fun getAll(onSuccess: (List<Category>) -> Unit) = scope.launch {
-        categoriesUseCases.getAllCategoriesUseCase.categories().collect { response ->
-            handleDataResponse(response = response, onSuccess = onSuccess)
-        }
+        categoriesUseCases.getAllCategoriesUseCase.categories()
+            .collect { it.handleDataResponse(scope = scope, routerFlow = routerFlow, onSuccess = onSuccess) }
     }
 
     protected fun getById(id: Int, onSuccess: (Category) -> Unit) = scope.launch {
-        categoriesUseCases.getCategoryByIdUseCase(id = id).collect { response ->
-            handleDataResponse(response = response, onSuccess = onSuccess)
-        }
+        categoriesUseCases.getCategoryByIdUseCase(id = id)
+            .collect { it.handleDataResponse(scope = scope, routerFlow = routerFlow, onSuccess = onSuccess) }
     }
 
     protected fun create(category: Category.In, onSuccess: (Category) -> Unit) = scope.launch {
-        categoriesUseCases.createCategoryUseCase(category = category).collect { response ->
-            handleDataResponse(response = response, onSuccess = onSuccess)
-        }
+        categoriesUseCases.createCategoryUseCase(category = category)
+            .collect { it.handleDataResponse(scope = scope, routerFlow = routerFlow, onSuccess = onSuccess) }
     }
 
     protected fun change(id: Int, category: Category.Patch, onSuccess: (Category) -> Unit) = scope.launch {
-        categoriesUseCases.changeCategoryByIdUseCase(id = id, category = category).collect { response ->
-            handleDataResponse(response = response, onSuccess = onSuccess)
-        }
+        categoriesUseCases.changeCategoryByIdUseCase(id = id, category = category)
+            .collect { it.handleDataResponse(scope = scope, routerFlow = routerFlow, onSuccess = onSuccess) }
     }
 
     protected fun delete(id: Int, onSuccess: (Category) -> Unit) = scope.launch {
-        categoriesUseCases.deleteCategoryByIdUseCase(id = id).collect { response ->
-            handleDataResponse(response = response, onSuccess = onSuccess)
-        }
+        categoriesUseCases.deleteCategoryByIdUseCase(id = id)
+            .collect { it.handleDataResponse(scope = scope, routerFlow = routerFlow, onSuccess = onSuccess) }
     }
 
     protected fun entries(id: Int, onSuccess: (List<Entry>) -> Unit) = scope.launch {
-        categoriesUseCases.getAllEntriesByCategoryUseCase(id = id).collect { response ->
-            handleDataResponse(response = response, onSuccess = onSuccess)
-        }
-    }
-
-    private fun <T> handleDataResponse(response: DataResponse<T>, onSuccess: (T) -> Unit) = scope.launch {
-        when (response) {
-            is DataResponse.Error -> eventFlow.emit(UiEvent.ShowError(response.error!!.message))
-            is DataResponse.Loading -> eventFlow.emit(UiEvent.ShowLoading)
-            is DataResponse.Success -> {
-                eventFlow.emit(UiEvent.HideSuccess)
-                onSuccess(response.data!!)
-            }
-            is DataResponse.Unauthorized -> {
-                routerFlow.navigateTo(Screen.Login)
-                eventFlow.emit(UiEvent.ShowError(response.error!!.message))
-            }
-        }
+        categoriesUseCases.getAllEntriesByCategoryUseCase(id = id)
+            .collect { it.handleDataResponse(scope = scope, routerFlow = routerFlow, onSuccess = onSuccess) }
     }
 }

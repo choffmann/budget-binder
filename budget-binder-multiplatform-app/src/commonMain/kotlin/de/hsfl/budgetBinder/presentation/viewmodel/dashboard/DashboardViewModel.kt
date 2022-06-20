@@ -3,6 +3,7 @@ package de.hsfl.budgetBinder.presentation.viewmodel.dashboard
 import de.hsfl.budgetBinder.common.Category
 import de.hsfl.budgetBinder.common.DataResponse
 import de.hsfl.budgetBinder.common.Entry
+import de.hsfl.budgetBinder.common.handleDataResponse
 import de.hsfl.budgetBinder.domain.usecase.*
 import de.hsfl.budgetBinder.presentation.Screen
 import de.hsfl.budgetBinder.presentation.event.UiEvent
@@ -99,26 +100,26 @@ class DashboardViewModel(
 
     private fun getAllEntries(onSuccess: (List<Entry>) -> Unit) = scope.launch {
         dashboardUseCases.getAllEntriesUseCase.entries()
-            .collect { handleDataResponse(response = it, onSuccess = onSuccess) }
+            .collect { it.handleDataResponse(scope = scope, routerFlow = routerFlow, onSuccess = onSuccess) }
     }
 
 
     private fun getAllCategories(onSuccess: (List<Category>) -> Unit) = scope.launch {
         dashboardUseCases.getAllCategoriesUseCase.categories()
-            .collect { handleDataResponse(response = it, onSuccess = onSuccess) }
+            .collect { it.handleDataResponse(scope = scope, routerFlow = routerFlow, onSuccess = onSuccess) }
     }
 
 
     private fun getEntriesByCategory(id: Int? = null, period: String? = null, onSuccess: (List<Entry>) -> Unit) =
         scope.launch {
             dashboardUseCases.getAllEntriesByCategoryUseCase(id, period)
-                .collect { handleDataResponse(response = it, onSuccess = onSuccess) }
+                .collect { it.handleDataResponse(scope = scope, routerFlow = routerFlow, onSuccess = onSuccess) }
         }
 
 
     private fun getAllEntriesFromMonth(period: String, onSuccess: (List<Entry>) -> Unit) = scope.launch {
         dashboardUseCases.getAllEntriesUseCase.entries(period)
-            .collect { handleDataResponse(response = it, onSuccess = onSuccess) }
+            .collect { it.handleDataResponse(scope = scope, routerFlow = routerFlow, onSuccess = onSuccess) }
     }
 
     private fun deleteEntry(id: Int) = scope.launch {
