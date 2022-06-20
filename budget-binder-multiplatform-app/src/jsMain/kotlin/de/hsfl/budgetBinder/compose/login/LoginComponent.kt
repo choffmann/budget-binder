@@ -1,10 +1,9 @@
 package de.hsfl.budgetBinder.compose.login
+
 import androidx.compose.runtime.*
 import de.hsfl.budgetBinder.compose.MainFlexContainer
 import de.hsfl.budgetBinder.compose.theme.AppStylesheet
-import de.hsfl.budgetBinder.presentation.Screen
 import de.hsfl.budgetBinder.presentation.UiEvent
-import de.hsfl.budgetBinder.presentation.UiState
 import de.hsfl.budgetBinder.presentation.viewmodel.login.LoginEvent
 import de.hsfl.budgetBinder.presentation.viewmodel.login.LoginViewModel
 import di
@@ -12,7 +11,6 @@ import kotlinx.coroutines.flow.collectLatest
 import org.jetbrains.compose.web.css.percent
 import org.jetbrains.compose.web.css.width
 import org.jetbrains.compose.web.dom.*
-import org.kodein.di.compose.withDI
 import org.kodein.di.instance
 
 
@@ -74,7 +72,11 @@ fun LoginComponent() {
             ) {
                 Button(
                     attrs = {
-                        classes("mdc-button", "mdc-button--raised", "mdc-top-app-bar__navigation-icon")
+                        classes(
+                            "mdc-button",
+                            "mdc-button--raised",
+                            "mdc-top-app-bar__navigation-icon"
+                        )
                         onClick { viewModel.onEvent(LoginEvent.OnRegisterScreen) }
                     }
                 ) {

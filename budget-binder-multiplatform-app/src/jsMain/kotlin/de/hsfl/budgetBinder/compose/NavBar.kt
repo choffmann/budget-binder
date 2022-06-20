@@ -1,7 +1,6 @@
 package de.hsfl.budgetBinder.compose
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import de.hsfl.budgetBinder.compose.theme.AppStylesheet
 import de.hsfl.budgetBinder.presentation.viewmodel.navdrawer.NavDrawerEvent
 import de.hsfl.budgetBinder.presentation.viewmodel.navdrawer.NavDrawerViewModel
@@ -49,7 +48,11 @@ fun NavBar(content: @Composable () -> Unit) {
             ) {
                 Button(
                     attrs = {
-                        classes("mdc-button", "mdc-button--raised", "mdc-top-app-bar__navigation-icon")
+                        classes(
+                            "mdc-button",
+                            "mdc-button--raised",
+                            "mdc-top-app-bar__navigation-icon"
+                        )
                         onClick { viewModel.onEvent(NavDrawerEvent.OnCreateEntry) }
                     }
                 ) {
@@ -63,7 +66,11 @@ fun NavBar(content: @Composable () -> Unit) {
                 }
                 Button(
                     attrs = {
-                        classes("mdc-button", "mdc-button--raised", "mdc-top-app-bar__navigation-icon")
+                        classes(
+                            "mdc-button",
+                            "mdc-button--raised",
+                            "mdc-top-app-bar__navigation-icon"
+                        )
                         onClick { viewModel.onEvent(NavDrawerEvent.OnCategory) }
                     }
                 ) {
@@ -77,7 +84,11 @@ fun NavBar(content: @Composable () -> Unit) {
                 }
                 Button(
                     attrs = {
-                        classes("mdc-button", "mdc-button--raised", "mdc-top-app-bar__navigation-icon")
+                        classes(
+                            "mdc-button",
+                            "mdc-button--raised",
+                            "mdc-top-app-bar__navigation-icon"
+                        )
                         onClick { viewModel.onEvent(NavDrawerEvent.OnSettings) }
                     }
                 ) {
@@ -91,7 +102,11 @@ fun NavBar(content: @Composable () -> Unit) {
                 }
                 Button(
                     attrs = {
-                        classes("mdc-button", "mdc-button--raised", "mdc-top-app-bar__navigation-icon")
+                        classes(
+                            "mdc-button",
+                            "mdc-button--raised",
+                            "mdc-top-app-bar__navigation-icon"
+                        )
                         onClick { viewModel.onEvent(NavDrawerEvent.OnLogout) }
                     }
                 ) {

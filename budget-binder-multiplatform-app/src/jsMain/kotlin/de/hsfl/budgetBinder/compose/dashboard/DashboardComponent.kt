@@ -40,7 +40,7 @@ fun DashboardComponent() {
             }
         }
     }
-    NavBar{}
+    NavBar {}
     MainFlexContainer {
         Div {
             DashboardData(
