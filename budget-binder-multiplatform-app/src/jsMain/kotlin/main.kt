@@ -19,6 +19,5 @@ val di = kodein(ktorEngine = Js.create())
 
 @Composable
 fun App() = withDI(di) {
-    val screenState = remember { mutableStateOf<Screen>(Screen.Login) }
-    Router(screenState = screenState)
+    Router()
 }
