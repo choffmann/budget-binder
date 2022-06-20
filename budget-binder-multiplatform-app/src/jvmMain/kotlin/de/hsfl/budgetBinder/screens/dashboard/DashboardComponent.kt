@@ -3,7 +3,6 @@ package de.hsfl.budgetBinder.screens.dashboard
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.*
-import androidx.compose.foundation.interaction.DragInteraction
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -17,13 +16,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import de.hsfl.budgetBinder.common.Category
-import de.hsfl.budgetBinder.common.Entry
 import de.hsfl.budgetBinder.di
 import de.hsfl.budgetBinder.presentation.CategoryImageToIcon
-import de.hsfl.budgetBinder.presentation.UiEvent
+import de.hsfl.budgetBinder.presentation.event.UiEvent
 import de.hsfl.budgetBinder.presentation.viewmodel.dashboard.DashboardEntryState
 import de.hsfl.budgetBinder.presentation.viewmodel.dashboard.DashboardEvent
 import de.hsfl.budgetBinder.presentation.viewmodel.dashboard.DashboardState

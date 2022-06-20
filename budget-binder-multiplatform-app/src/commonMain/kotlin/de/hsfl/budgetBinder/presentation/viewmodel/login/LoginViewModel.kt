@@ -5,7 +5,7 @@ import de.hsfl.budgetBinder.common.utils.validateEmail
 import de.hsfl.budgetBinder.domain.usecase.LoginUseCases
 import de.hsfl.budgetBinder.presentation.flow.RouterFlow
 import de.hsfl.budgetBinder.presentation.Screen
-import de.hsfl.budgetBinder.presentation.UiEvent
+import de.hsfl.budgetBinder.presentation.event.UiEvent
 import de.hsfl.budgetBinder.presentation.UiState
 import de.hsfl.budgetBinder.presentation.flow.DataFlow
 import de.hsfl.budgetBinder.presentation.flow.UiEventSharedFlow

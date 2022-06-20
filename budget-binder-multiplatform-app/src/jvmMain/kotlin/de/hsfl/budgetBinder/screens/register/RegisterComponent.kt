@@ -14,7 +14,7 @@ import androidx.compose.ui.unit.dp
 import de.hsfl.budgetBinder.compose.icon.AppIcon
 import de.hsfl.budgetBinder.di
 import de.hsfl.budgetBinder.compose.textfield.EmailTextField
-import de.hsfl.budgetBinder.presentation.UiEvent
+import de.hsfl.budgetBinder.presentation.event.UiEvent
 import de.hsfl.budgetBinder.presentation.viewmodel.register.RegisterEvent
 import de.hsfl.budgetBinder.presentation.viewmodel.register.RegisterViewModel
 import kotlinx.coroutines.flow.collectLatest

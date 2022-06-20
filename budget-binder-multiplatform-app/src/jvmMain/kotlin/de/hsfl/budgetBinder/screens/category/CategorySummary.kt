@@ -17,7 +17,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import de.hsfl.budgetBinder.di
 import de.hsfl.budgetBinder.presentation.CategoryImageToIcon
-import de.hsfl.budgetBinder.presentation.UiEvent
+import de.hsfl.budgetBinder.presentation.event.UiEvent
 import de.hsfl.budgetBinder.presentation.viewmodel.category.summary.CategorySummaryEvent
 import de.hsfl.budgetBinder.presentation.viewmodel.category.summary.CategorySummaryViewModel
 import kotlinx.coroutines.flow.collectLatest
