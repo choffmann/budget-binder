@@ -55,17 +55,21 @@ fun CategorySummary() {
             items(categoryList.value) { category ->
                 ListItem(
                     modifier = Modifier.clickable(onClick = { viewModel.onEvent(CategorySummaryEvent.OnCategory(category.id)) }),
-                    text = { Text("Budget: ${category.name}") },
-                    secondaryText = { Text(category.budget.toString()) },
+                    text = { Text(category.name) },
+                    secondaryText = { Text("Budget: ${category.budget}") },
                     icon = {
-                        Box(modifier = Modifier.clip(CircleShape).background(Color("af${category.color}".toLong(16)))) {
+                        Box(modifier = Modifier.clip(CircleShape).background(category.color.toColor("af"))) {
                             Box(modifier = Modifier.align(Alignment.Center).padding(12.dp)) {
                                 CategoryImageToIcon(category.image)
                             }
                         }
-                    },
+                    }
                 )
             }
         }
     }
+}
+
+fun String.toColor(alpha: String): Color {
+    return Color("$alpha$this".toLong(16))
 }

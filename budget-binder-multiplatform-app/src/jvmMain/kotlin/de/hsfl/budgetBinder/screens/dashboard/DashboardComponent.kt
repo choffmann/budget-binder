@@ -18,6 +18,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import de.hsfl.budgetBinder.common.Category
+import de.hsfl.budgetBinder.compose.BudgetBar
 import de.hsfl.budgetBinder.di
 import de.hsfl.budgetBinder.presentation.CategoryImageToIcon
 import de.hsfl.budgetBinder.presentation.event.LifecycleEvent
@@ -84,17 +85,6 @@ fun DashboardComponent() {
             }
         }
     }
-}
-
-@Composable
-fun BudgetBar(modifier: Modifier = Modifier, progress: Float) {
-    var _progress = progress
-    if (progress > 1f) _progress = 1f
-    if (progress < 0f) _progress = 0f
-    val animatedProgress = animateFloatAsState(
-        targetValue = _progress, animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec
-    ).value
-    LinearProgressIndicator(modifier = modifier, progress = animatedProgress)
 }
 
 @Composable

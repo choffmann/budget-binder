@@ -1,6 +1,7 @@
 package de.hsfl.budgetBinder.screens.category
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
@@ -10,6 +11,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Modifier
+import de.hsfl.budgetBinder.compose.BudgetBar
 import de.hsfl.budgetBinder.di
 import de.hsfl.budgetBinder.presentation.Screen
 import de.hsfl.budgetBinder.presentation.event.LifecycleEvent
@@ -44,7 +47,9 @@ fun CategoryDetailView() {
             }
         }
     ) {
-        Column {
+        Column(modifier = Modifier.fillMaxSize()) {
+            Text(text = categoryState.value.name, style = MaterialTheme.typography.h6)
+            BudgetBar(progress = 0.5f)
             Text(categoryState.value.toString())
             LazyColumn {
                 items(entryListState.value) { entry ->
