@@ -1,19 +1,16 @@
 package de.hsfl.budgetBinder.presentation.viewmodel.navdrawer
 
 import de.hsfl.budgetBinder.common.DataResponse
+import de.hsfl.budgetBinder.common.handleDataResponse
 import de.hsfl.budgetBinder.domain.usecase.LogoutUseCase
 import de.hsfl.budgetBinder.presentation.Screen
-import de.hsfl.budgetBinder.presentation.event.UiEvent
 import de.hsfl.budgetBinder.presentation.UiState
 import de.hsfl.budgetBinder.presentation.flow.RouterFlow
 import de.hsfl.budgetBinder.presentation.flow.UiEventSharedFlow
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class NavDrawerViewModel(
@@ -22,7 +19,6 @@ class NavDrawerViewModel(
     private val scope: CoroutineScope = CoroutineScope(Dispatchers.Unconfined + SupervisorJob()),
 ) {
 
-    private val _eventFlow = UiEventSharedFlow.mutableEventFlow
     val eventFlow = UiEventSharedFlow.eventFlow
 
     fun onEvent(event: NavDrawerEvent) {
@@ -31,25 +27,14 @@ class NavDrawerViewModel(
             is NavDrawerEvent.OnCreateEntry -> routerFlow.navigateTo(Screen.Entry.Create)
             is NavDrawerEvent.OnCategory -> routerFlow.navigateTo(Screen.Category.Summary)
             is NavDrawerEvent.OnSettings -> routerFlow.navigateTo(Screen.Settings.Menu)
-            is NavDrawerEvent.OnLogout -> scope.launch {
-                logoutUseCase(onAllDevices = false).collect {
-                    when (it) {
-                        is DataResponse.Success -> {
-                            routerFlow.navigateTo(Screen.Login)
-                            _eventFlow.emit(UiEvent.ShowSuccess("Your are logged out"))
-                        }
-                        is DataResponse.Error -> _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
-                        is DataResponse.Loading -> _eventFlow.emit(UiEvent.ShowLoading)
-                        is DataResponse.Unauthorized -> {
-                            routerFlow.navigateTo(Screen.Login)
-                            _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
-                        }
-                    }
-                }
-            }
+            is NavDrawerEvent.OnLogout -> logout()
         }
     }
 
+    private fun logout() = scope.launch {
+        logoutUseCase(onAllDevices = false)
+            .collect { it.handleDataResponse(onSuccess = { routerFlow.navigateTo(Screen.Login) }) }
+    }
 
     // Old
     private val _state = MutableStateFlow<UiState>(UiState.Empty)
