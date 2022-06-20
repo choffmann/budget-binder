@@ -26,6 +26,9 @@ open class CategoryDetailViewModel(
     protected val _categoryState = MutableStateFlow(initCategory)
     val categoryState: StateFlow<Category> = _categoryState
 
+    private val _budgetOnAllEntries = MutableStateFlow(0f)
+    val budgetOnAllEntries: StateFlow<Float> = _budgetOnAllEntries
+
     private val _entryList = MutableStateFlow<List<Entry>>(emptyList())
     val entryList: StateFlow<List<Entry>> = _entryList
 
@@ -82,7 +85,22 @@ open class CategoryDetailViewModel(
     }
 
     private fun setEntryList() {
-        super.entries(id = currentCategoryId, onSuccess = { _entryList.value = it })
+        super.entries(id = currentCategoryId, onSuccess = {
+            _entryList.value = it
+            calculateBudget(it)
+        })
+    }
+
+    private fun calculateBudget(entryList: List<Entry>) {
+        var spendMoney = 0F
+        entryList.onEach {
+            if (it.amount > 0) {
+                spendMoney -= it.amount
+            } else {
+                spendMoney += (it.amount * -1)
+            }
+        }
+        _budgetOnAllEntries.value = spendMoney
     }
 
     /**
