@@ -92,56 +92,54 @@ fun categoryIdToCategory(category_id: Int?, categoryList: List<Category>): Categ
 
 @OptIn(ExperimentalComposeWebSvgApi::class)
 @Composable
-fun BudgetBar(category: Category, entryList: List<Entry>) {
-    //category = Category we want to show
-    //entryList = List of entries
+fun BudgetBar(
+    focusedCategory: Category,
+    totalSpendBudget: Float,
+    totalBudget: Float,
+) {
     //width and height are for aspect ratio - tries to fill out wherever its in, so its more like
     val width = 20
     val height = 2
-    val budget = category.budget
-    var usedBudget = 0f
-    for (entry in entryList) {
-        usedBudget -= entry.amount //Money spent negative, so we want to add the negative amount (- - = +)to usedBudget
-    }
+
     H1(attrs = { classes("mdc-typography--headline4", AppStylesheet.flexContainer) }) {
-        CategoryImageToIcon(category.image)
-        Text("${category.name} - Budget")
+        CategoryImageToIcon(focusedCategory.image)
+        Text("${focusedCategory.name} - Budget")
     }
 
     Div {
-        if (usedBudget <= budget && budget > 0) { //Normal not Spent Budget
+        if (totalSpendBudget <= totalBudget && totalBudget > 0) { //Normal not Spent Budget
             //Money Text
             MoneyTextDiv {
                 Div(attrs = {
                     classes("mdc-typography--headline5")
-                }) { Text(usedBudget.toString() + "€") }
-                Div(attrs = { classes("mdc-typography--headline5") }) { Text(budget.toString() + "€") }
+                }) { Text(totalSpendBudget.toString() + "€") }
+                Div(attrs = { classes("mdc-typography--headline5") }) { Text(totalBudget.toString() + "€") }
             }
             Svg(viewBox = "0 0 $width $height") {
                 Rect(x = 0, y = 0, width = width, height = height, {
                     attr("fill", Color.lightgray.toString())
                 })
-                if (0 < usedBudget) // If there is used budget, draw it
-                    Rect(x = 0, y = 0, width = usedBudget / budget * width, height = height, {
-                        attr("fill", "#" + category.color)
+                if (0 < totalSpendBudget) // If there is used budget, draw it
+                    Rect(x = 0, y = 0, width = totalSpendBudget/ totalBudget * width, height = height, {
+                        attr("fill", "#" + focusedCategory.color)
                     })
             }
-        } else if (usedBudget > budget && budget > 0) { //Over Budget
+        } else if (totalSpendBudget> totalBudget && totalBudget > 0) { //Over Budget
             MoneyTextDiv {
-                Div(attrs = { classes("mdc-typography--headline5") }) { Text("Budget limit for " + category.name + " reached! " + usedBudget.toString() + "€ of " + budget.toString() + "€ Budget spent") }
+                Div(attrs = { classes("mdc-typography--headline5") }) { Text("Budget limit for " + focusedCategory.name + " reached! " + totalSpendBudget.toString() + "€ of " + totalBudget.toString() + "€ Budget spent") }
             }
             Svg(viewBox = "0 0 $width $height") {
                 Rect(x = 0, y = 0, width = width, height = height, {
                     attr("fill", "#b00020")
                 })
             }
-        } else if (budget <= 0f) { //No Category View or other unpredictable case (or no categories, overall screen)
+        } else if (totalBudget <= 0f) { //No Category View or other unpredictable case (or no categories, overall screen)
             MoneyTextDiv {
-                Div(attrs = { classes("mdc-typography--headline5") }) { Text(usedBudget.toString() + "€ spent") }
+                Div(attrs = { classes("mdc-typography--headline5") }) { Text(totalSpendBudget.toString() + "€ spent") }
             }
             Svg(viewBox = "0 0 $width $height") {
                 Rect(x = 0, y = 0, width = width, height = height, {
-                    attr("fill", "#" + category.color)
+                    attr("fill", "#" + focusedCategory.color)
                 })
             }
         }
