@@ -6,6 +6,7 @@ import de.hsfl.budgetBinder.common.utils.validateEmail
 import de.hsfl.budgetBinder.domain.usecase.AuthUseCases
 import de.hsfl.budgetBinder.presentation.Screen
 import de.hsfl.budgetBinder.presentation.UiState
+import de.hsfl.budgetBinder.presentation.event.handleLifeCycle
 import de.hsfl.budgetBinder.presentation.flow.DataFlow
 import de.hsfl.budgetBinder.presentation.flow.RouterFlow
 import de.hsfl.budgetBinder.presentation.viewmodel.auth.AuthViewModel
@@ -17,7 +18,7 @@ class RegisterViewModel(
     private val routerFlow: RouterFlow,
     dataFlow: DataFlow,
     private val scope: CoroutineScope
-): AuthViewModel(
+) : AuthViewModel(
     _scope = scope,
     _authUseCases = authUseCases,
     _dataFlow = dataFlow,
@@ -61,6 +62,10 @@ class RegisterViewModel(
                     )
                 }
             }
+            is RegisterEvent.LifeCycle -> event.value.handleLifeCycle(
+                onLaunch = {},
+                onDispose = { resetStateFlows() }
+            )
         }
     }
 
@@ -84,11 +89,12 @@ class RegisterViewModel(
         return checkEmail && checkConfirmedPassword
     }
 
-    private fun clearStateFlows() {
+    private fun resetStateFlows() {
         _firstNameText.value = firstNameText.value.copy(firstName = "")
         _lastNameText.value = lastNameText.value.copy(lastName = "")
         _emailText.value = emailText.value.copy(email = "")
         _passwordText.value = passwordText.value.copy(password = "")
+        _confirmedPasswordText.value = _confirmedPasswordText.value.copy(confirmedPassword = "")
     }
 
     // OLD!!!

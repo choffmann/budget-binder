@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.dp
 import de.hsfl.budgetBinder.compose.icon.AppIcon
 import de.hsfl.budgetBinder.di
 import de.hsfl.budgetBinder.compose.textfield.EmailTextField
+import de.hsfl.budgetBinder.presentation.event.LifecycleEvent
 import de.hsfl.budgetBinder.presentation.event.UiEvent
 import de.hsfl.budgetBinder.presentation.viewmodel.auth.register.RegisterEvent
 import de.hsfl.budgetBinder.presentation.viewmodel.auth.register.RegisterViewModel
@@ -31,6 +32,7 @@ fun RegisterComponent() {
     val loadingState = remember { mutableStateOf(false) }
 
     LaunchedEffect(key1 = true) {
+        viewModel.onEvent(RegisterEvent.LifeCycle(LifecycleEvent.OnLaunch))
         viewModel.eventFlow.collectLatest { event ->
             when (event) {
                 is UiEvent.ShowLoading -> {
@@ -39,6 +41,11 @@ fun RegisterComponent() {
                 }
                 else -> loadingState.value = false
             }
+        }
+    }
+    DisposableEffect(Unit) {
+        onDispose {
+            viewModel.onEvent(RegisterEvent.LifeCycle(LifecycleEvent.OnDispose))
         }
     }
 
