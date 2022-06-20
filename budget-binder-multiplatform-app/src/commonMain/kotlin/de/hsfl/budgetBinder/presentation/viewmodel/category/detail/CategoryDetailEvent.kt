@@ -4,5 +4,6 @@ sealed class CategoryDetailEvent {
     object OnEdit: CategoryDetailEvent()
     object OnDelete: CategoryDetailEvent()
     object OnBack: CategoryDetailEvent()
+    object OnRefresh: CategoryDetailEvent()
     data class OnEntry(val id: Int): CategoryDetailEvent()
 }
