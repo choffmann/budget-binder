@@ -13,8 +13,8 @@ sealed class Screen {
     data class CategoryEdit (val id: Int) : Screen()
     object CategoryCreate : Screen()
     object CategoryCreateOnRegister : Screen()
-    data class EntryOverview (val id: Int) : Screen()
-    data class EntryEdit (val id: Int): Screen()
+    data class EntryOverview (val id: Int, val categoryList :List<Category>) : Screen()
+    data class EntryEdit (val id: Int, val categoryList :List<Category>): Screen()
     data class EntryCreate (val categoryList :List<Category>): Screen()
 
 }

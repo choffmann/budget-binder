@@ -2,8 +2,10 @@ package de.hsfl.budgetBinder.compose
 
 import androidx.compose.runtime.*
 import de.hsfl.budgetBinder.common.Category
+import de.hsfl.budgetBinder.common.StateManager.screenState
 import de.hsfl.budgetBinder.compose.theme.AppStylesheet
 import de.hsfl.budgetBinder.presentation.CategoryImageToIcon
+import de.hsfl.budgetBinder.presentation.Screen
 import org.jetbrains.compose.web.ExperimentalComposeWebSvgApi
 import org.jetbrains.compose.web.attributes.ButtonType
 import org.jetbrains.compose.web.attributes.type
@@ -373,7 +375,7 @@ fun DeleteDialog(hidden: Boolean, buttonAction: () -> Unit, resetDialog: () -> U
 @Composable
 fun ChooseCategoryMenu(
     categoryList: List<Category>,
-    getCategoryId: (Int) -> Unit
+    getCategoryId: (Int?) -> Unit
 ) {
     var chosenCategory by remember { mutableStateOf(categoryList[0]) }
     var showList by remember { mutableStateOf(false) }
@@ -400,14 +402,10 @@ fun ChooseCategoryMenu(
                     Li(attrs = {
                         classes("mdc-list-item")
                         attr("role", "menuitem")
-                        onClick { }
+                        onClick { chosenCategory = category; getCategoryId(category.id) }
                     }) {
                         Span(attrs = { classes("mdc-list-item__ripple") }) { }
-                        Span(attrs = { onClick { chosenCategory = category; getCategoryId(category.id) } }) {
-                            Text(
-                                category.name
-                            )
-                        }
+                        Span(attrs = {  }) { Text(category.name) }
                     }
                 }
             }

@@ -25,6 +25,6 @@ fun DashboardComponent(screenState: MutableState<Screen>) {
         onCategorySummaryButton = { screenState.value = Screen.CategorySummary},
         onSettingsButton = {screenState.value = Screen.Settings},
         onEntryCreateButton = {categoryList -> screenState.value = Screen.EntryCreate(categoryList)},
-        onEntryOverviewButton = {id -> screenState.value = Screen.EntryOverview(id)}
+        onEntryOverviewButton = {id, categoryList -> screenState.value = Screen.EntryOverview(id, categoryList)}
     )
 }
