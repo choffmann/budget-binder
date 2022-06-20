@@ -14,13 +14,13 @@ import de.hsfl.budgetBinder.domain.usecase.storage.StoreDarkModeUseCase
 import de.hsfl.budgetBinder.domain.usecase.storage.StoreServerUrlUseCase
 import de.hsfl.budgetBinder.domain.usecase.storage.StoreUserStateUseCase
 import de.hsfl.budgetBinder.presentation.flow.DataFlow
-import de.hsfl.budgetBinder.presentation.flow.RouterFlow
 import de.hsfl.budgetBinder.presentation.flow.UiEventSharedFlow
 import de.hsfl.budgetBinder.presentation.viewmodel.login.LoginViewModel
 import de.hsfl.budgetBinder.presentation.viewmodel.register.RegisterViewModel
 import de.hsfl.budgetBinder.presentation.viewmodel.*
 import de.hsfl.budgetBinder.presentation.viewmodel.category.summary.CategorySummaryViewModel
 import de.hsfl.budgetBinder.presentation.viewmodel.category._CategoryViewModel
+import de.hsfl.budgetBinder.presentation.viewmodel.category.detail.CategoryDetailViewModel
 import de.hsfl.budgetBinder.presentation.viewmodel.dashboard.DashboardViewModel
 import de.hsfl.budgetBinder.presentation.viewmodel.navdrawer.NavDrawerViewModel
 import de.hsfl.budgetBinder.presentation.viewmodel.settings.SettingsEditServerUrlViewModel
@@ -85,7 +85,6 @@ fun kodein(ktorEngine: HttpClientEngine) = DI {
     bindSingleton { DataFlowUseCases(instance(), instance(), instance()) }
 
     // Flows
-    bindSingleton { RouterFlow(instance(), instance()) }
     bindSingleton { DataFlow(instance(), instance()) }
     bindSingleton { UiEventSharedFlow }
 
@@ -96,7 +95,8 @@ fun kodein(ktorEngine: HttpClientEngine) = DI {
     bindSingleton { SettingsEditUserViewModel(instance(), instance(), instance(), instance()) }
     bindSingleton { SettingsEditServerUrlViewModel(instance(), instance(), instance()) }
     bindSingleton { _CategoryViewModel(instance(), instance()) }
-    bindSingleton { CategorySummaryViewModel(instance(), instance(), instance()) }
+    bindSingleton { CategorySummaryViewModel(instance(), instance()) }
+    bindSingleton { CategoryDetailViewModel(instance(), instance()) }
     bindSingleton { EntryViewModel(instance(), instance()) }
     bindSingleton { DashboardViewModel(instance(), instance(), instance(), instance()) }
     bindSingleton { NavDrawerViewModel(instance(), instance(), instance()) }
