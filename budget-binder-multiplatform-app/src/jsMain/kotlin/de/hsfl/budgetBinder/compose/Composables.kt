@@ -2,11 +2,9 @@ package de.hsfl.budgetBinder.compose
 
 import androidx.compose.runtime.*
 import de.hsfl.budgetBinder.common.Category
-import de.hsfl.budgetBinder.common.StateManager.screenState
 import androidx.compose.runtime.Composable
 import de.hsfl.budgetBinder.compose.theme.AppStylesheet
 import de.hsfl.budgetBinder.presentation.CategoryImageToIcon
-import de.hsfl.budgetBinder.presentation.Screen
 import org.jetbrains.compose.web.ExperimentalComposeWebSvgApi
 import org.jetbrains.compose.web.attributes.ButtonType
 import org.jetbrains.compose.web.attributes.type
@@ -144,7 +142,7 @@ fun CategoryImagesToImageList(
     inputImage: MutableState<Category.Image>,
     onClick: (Category.Image) -> Unit
 ) {
-    var highlightImage by remember { mutableStateOf(inputImage) }
+    val highlightImage by remember { mutableStateOf(inputImage) }
     Div(
         attrs = {
             classes("mdc-card", AppStylesheet.card)

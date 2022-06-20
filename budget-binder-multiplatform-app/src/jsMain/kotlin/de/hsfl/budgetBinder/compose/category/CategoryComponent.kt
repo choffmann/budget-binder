@@ -10,15 +10,11 @@ import de.hsfl.budgetBinder.presentation.CategoryImageToIcon
 import de.hsfl.budgetBinder.presentation.Screen
 import de.hsfl.budgetBinder.presentation.viewmodel.CategoryViewModel
 import di
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import org.jetbrains.compose.web.ExperimentalComposeWebSvgApi
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
 import org.jetbrains.compose.web.svg.Rect
 import org.jetbrains.compose.web.svg.Svg
-import org.kodein.di.compose.localDI
 import org.kodein.di.instance
 
 @Composable
@@ -45,37 +41,37 @@ fun CategoryComponent(screenState: MutableState<Screen>) {
         is Screen.CategoryCreate -> CategoryCreateView(
             state = viewState,
             onCreateCategoryButtonPressed = { name, color, image, budget ->
-                categoryViewModel.createCategory(Category.In(name, color.drop(1), image, budget))
+                viewModel.createCategory(Category.In(name, color.drop(1), image, budget))
                 screenState.value = Screen.CategorySummary },
             onChangeToDashboard = { screenState.value = Screen.Dashboard },
-            onChangeToSettings = { screenState.value = Screen.Settings },
+            onChangeToSettings = { screenState.value = Screen._Settings },
             onChangeToCategory = { screenState.value = Screen.CategorySummary },
         )
         is Screen.CategorySummary -> {
             CategorySummaryView(
                 state = viewState,
                 onCategoryCreateButton = { screenState.value = Screen.CategoryCreate },
-                onEditButton = { id -> screenState.value = Screen.CategoryEdit(id) },
-                onDeleteButton = { id -> categoryViewModel.removeCategory(id) },
+                onEditButton = { id -> screenState.value = Screen.Category.Edit(id) },
+                onDeleteButton = { id -> viewModel.removeCategory(id) },
                 onChangeToDashboard = { screenState.value = Screen.Dashboard },
-                onChangeToSettings = { screenState.value = Screen.Settings },
+                onChangeToSettings = { screenState.value = Screen._Settings },
                 onChangeToCategory = { screenState.value = Screen.CategorySummary },
             )
-            categoryViewModel.getAllCategories()
+            viewModel.getAllCategories()
         }
         is Screen.CategoryEdit -> {
             CategoryEditView(
                 state = viewState,
                 onEditCategoryButtonPressed = { name, color, image, budget ->
-                    categoryViewModel.changeCategory(
+                    viewModel.changeCategory(
                         Category.Patch(name, color.drop(1), image, budget),
                         (screenState.value as Screen.CategoryEdit).id
                     ); screenState.value = Screen.CategorySummary },
                 onChangeToDashboard = { screenState.value = Screen.Dashboard },
-                onChangeToSettings = { screenState.value = Screen.Settings },
+                onChangeToSettings = { screenState.value = Screen._Settings },
                 onChangeToCategory = { screenState.value = Screen.CategorySummary },
             )
-            categoryViewModel.getCategoryById((screenState.value as Screen.CategoryEdit).id)
+            viewModel.getCategoryById((screenState.value as Screen.CategoryEdit).id)
         }
         is Screen.CategoryCreateOnRegister -> CategoryCreateOnRegisterView(
             state = viewState,
