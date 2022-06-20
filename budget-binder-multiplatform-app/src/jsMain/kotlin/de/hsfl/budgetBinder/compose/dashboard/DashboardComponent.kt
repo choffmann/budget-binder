@@ -14,6 +14,7 @@ import de.hsfl.budgetBinder.compose.topBarMain
 import de.hsfl.budgetBinder.presentation.Screen
 import de.hsfl.budgetBinder.presentation.UiEvent
 import de.hsfl.budgetBinder.presentation.UiState
+import de.hsfl.budgetBinder.presentation.viewmodel.dashboard.DashboardEvent
 import de.hsfl.budgetBinder.presentation.viewmodel.dashboard.DashboardViewModel
 import di
 import kotlinx.coroutines.flow.collectLatest
@@ -22,7 +23,7 @@ import org.jetbrains.compose.web.dom.*
 import org.kodein.di.instance
 
 @Composable
-fun DashboardComponent(screenState: MutableState<Screen>) {
+fun DashboardComponent() {
     val viewModel: DashboardViewModel by di.instance()
     val entryList = viewModel.entryListState.collectAsState()
     val focusedCategory = viewModel.focusedCategoryState.collectAsState()
@@ -42,57 +43,20 @@ fun DashboardComponent(screenState: MutableState<Screen>) {
     }
     //TODO: TOPBAR
     MainFlexContainer {
-        Div { DashboardData(categoryList, entryList) { id -> onEntryOverviewButton(id) } }
-        CreateNewEntryButton({ onEntryCreateButton(categoryList) })
-        //Process new Category Data
-        when (categoriesViewState) {
-            is UiState.Success<*> -> {
-                //Updates Data
-                // https://stackoverflow.com/questions/36569421/kotlin-how-to-work-with-list-casts-unchecked-cast-kotlin-collections-listkot
-                when (val element = (categoriesViewState as UiState.Success<*>).element) {
-                    is List<*> -> {
-                        element.filterIsInstance<Category>()
-                            .let {
-                                if (it.size == element.size) {
-                                    categoryList = it
-                                }
-                            }
-                    }
-                }
-            }
-            is UiState.Error -> {
-                FeedbackSnackbar((entriesViewState as UiState.Error).error)
-            }
-            is UiState.Loading -> {
-                //CircularProgressIndicator()
-            }
+        Div {
+            DashboardData(
+                focusedCategory = focusedCategory.value.category,
+                totalSpendBudget = totalSpendBudget.value.spendBudgetOnCurrentCategory,
+                totalBudget = focusedCategory.value.category.budget,
+                hasPrev = focusedCategory.value.hasPrev,
+                hasNext = focusedCategory.value.hasNext,
+                onPrevClicked = { viewModel.onEvent(DashboardEvent.OnPrevCategory) },
+                onNextClicked = { viewModel.onEvent(DashboardEvent.OnNextCategory) }
+            )
         }
-        //Process new Entry Data
-        when (entriesViewState) {
-            is UiState.Success<*> -> {
-                //Updates Data
-                when (val element = (entriesViewState as UiState.Success<*>).element) {
-                    is List<*> -> {
-                        element.filterIsInstance<Entry>()
-                            .let {
-                                if (it.size == element.size) {
-                                    entryList = it
-                                }
-                            }
-                    }
-                }
-            }
-            is UiState.Error -> {
-                FeedbackSnackbar((entriesViewState as UiState.Error).error)
-            }
-            is UiState.Loading -> {
-                //CircularProgressIndicator()
-            }
-        }
+
+        CreateNewEntryButton(viewModel.onEvent(DashboardEvent.OnEntryCreate))
     }
-
-
-
 }
 
 @Composable
@@ -108,20 +72,20 @@ fun DashboardData(
     SwipeContainer (
         hasPrev, hasNext, onPrevClicked, onNextClicked
     ){
-        BudgetBar(categoryList[focusedCategory], filteredEntryList)
+        BudgetBar(focusedCategory,totalSpendBudget,totalBudget)
     }
 }
 
 
 @Composable
-fun CreateNewEntryButton(onEntryCreateButton: () -> Unit) {
+fun CreateNewEntryButton(onEntryCreateButton: Unit) {
     Div (attrs = {style {
         display(DisplayStyle.Flex)
         justifyContent(JustifyContent.FlexEnd)
     }}) {
         Button(attrs = {
             classes("mdc-fab", "mdc-fab--touch", AppStylesheet.newEntryButton)
-            onClick { onEntryCreateButton() }
+            onClick { onEntryCreateButton }
         }) {
             Div(attrs = { classes("mdc-fab__ripple") })
             Icon("add")
