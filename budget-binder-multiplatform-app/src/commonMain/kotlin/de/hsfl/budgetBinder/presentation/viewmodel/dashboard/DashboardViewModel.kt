@@ -99,13 +99,13 @@ class DashboardViewModel(
     }
 
     private fun getAllEntries(onSuccess: (List<Entry>) -> Unit) = scope.launch {
-        dashboardUseCases.getAllEntriesUseCase.entries()
+        dashboardUseCases.getAllEntriesUseCase()
             .collect { it.handleDataResponse(scope = scope, routerFlow = routerFlow, onSuccess = onSuccess) }
     }
 
 
     private fun getAllCategories(onSuccess: (List<Category>) -> Unit) = scope.launch {
-        dashboardUseCases.getAllCategoriesUseCase.categories()
+        dashboardUseCases.getAllCategoriesUseCase()
             .collect { it.handleDataResponse(scope = scope, routerFlow = routerFlow, onSuccess = onSuccess) }
     }
 
@@ -118,7 +118,7 @@ class DashboardViewModel(
 
 
     private fun getAllEntriesFromMonth(period: String, onSuccess: (List<Entry>) -> Unit) = scope.launch {
-        dashboardUseCases.getAllEntriesUseCase.entries(period)
+        dashboardUseCases.getAllEntriesUseCase(period)
             .collect { it.handleDataResponse(scope = scope, routerFlow = routerFlow, onSuccess = onSuccess) }
     }
 
@@ -334,7 +334,7 @@ class DashboardViewModel(
 
     @Deprecated(message = "Use new StateFlow")
     private fun _getAllCategories() {
-        dashboardUseCases.getAllCategoriesUseCase.categories().onEach {
+        dashboardUseCases.getAllCategoriesUseCase().onEach {
             when (it) {
                 is DataResponse.Success -> _categoriesState.value = UiState.Success(it.data)
                 is DataResponse.Error -> _categoriesState.value = UiState.Error(it.error!!.message)
@@ -346,7 +346,7 @@ class DashboardViewModel(
 
     @Deprecated(message = "Use new StateFlow")
     private fun _getAllEntries() {
-        dashboardUseCases.getAllEntriesUseCase.entries().onEach {
+        dashboardUseCases.getAllEntriesUseCase().onEach {
             when (it) {
                 is DataResponse.Success -> _entriesState.value = UiState.Success(it.data)
                 is DataResponse.Error -> _entriesState.value = UiState.Error(it.error!!.message)

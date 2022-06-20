@@ -23,7 +23,7 @@ open class CategoryViewModel(
     val eventFlow = UiEventSharedFlow.mutableEventFlow
 
     protected fun getAll(onSuccess: (List<Category>) -> Unit) = scope.launch {
-        categoriesUseCases.getAllCategoriesUseCase.categories()
+        categoriesUseCases.getAllCategoriesUseCase()
             .collect { it.handleDataResponse(scope = scope, routerFlow = routerFlow, onSuccess = onSuccess) }
     }
 

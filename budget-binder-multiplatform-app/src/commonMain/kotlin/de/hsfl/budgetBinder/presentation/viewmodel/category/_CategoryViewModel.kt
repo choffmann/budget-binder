@@ -21,7 +21,7 @@ class _CategoryViewModel(
 
     @Deprecated(message = "Use StateFlow")
     fun getAllCategories() {
-        categoryUseCases.getAllCategoriesUseCase.categories().onEach {
+        categoryUseCases.getAllCategoriesUseCase().onEach {
             when (it) {
                 is DataResponse.Success -> _state.value = UiState.Success(it.data)
                 is DataResponse.Error -> _state.value = UiState.Error(it.error!!.message)
