@@ -36,42 +36,6 @@ fun MainFlexContainer(content: @Composable () -> Unit) {
     }
 }
 
-@Composable
-fun topBarMain(logoButton: @Composable () -> Unit, navButtons: @Composable () -> Unit) {
-    Header(
-        attrs = {
-            classes("mdc-top-app-bar")
-        }
-    ) {
-        Div(
-            attrs = {
-                classes("mdc-top-app-bar__row")
-            }
-        ) {
-            Section(
-                attrs = {
-                    classes("mdc-top-app-bar__section", "mdc-top-app-bar__section--align-start")
-                }
-            ) {
-                logoButton()
-                Span(
-                    attrs = {
-                        classes("mdc-top-app-bar__title")
-                    }
-                ) {
-                    Text("Budget-Binder")
-                }
-            }
-            Section(
-                attrs = {
-                    classes("mdc-top-app-bar__section", "mdc-top-app-bar__section--align-end")
-                }
-            ) {
-                navButtons()
-            }
-        }
-    }
-}
 
 
 ///* Gives a material icon based on the icon name*///
