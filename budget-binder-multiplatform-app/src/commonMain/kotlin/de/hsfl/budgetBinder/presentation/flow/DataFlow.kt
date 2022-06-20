@@ -16,7 +16,7 @@ class DataFlow(
     private val _userState = MutableStateFlow(User(0, "", "", ""))
     val userState: StateFlow<User> = _userState
 
-    suspend fun storeUserState(user: User) = scope.launch {
+    fun storeUserState(user: User) = scope.launch {
         dataFlowUseCases.storeUserStateUseCase(user).collect {
             _userState.value = it
         }

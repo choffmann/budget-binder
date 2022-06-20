@@ -14,6 +14,7 @@ import de.hsfl.budgetBinder.di
 import de.hsfl.budgetBinder.compose.dialog.ServerUrlDialog
 import de.hsfl.budgetBinder.compose.icon.AppIcon
 import de.hsfl.budgetBinder.compose.textfield.EmailTextField
+import de.hsfl.budgetBinder.presentation.event.LifecycleEvent
 import de.hsfl.budgetBinder.presentation.event.UiEvent
 import de.hsfl.budgetBinder.presentation.viewmodel.login.LoginViewModel
 import de.hsfl.budgetBinder.presentation.viewmodel.login.LoginEvent
@@ -33,6 +34,7 @@ fun LoginComponent() {
 
 
     LaunchedEffect(key1 = true) {
+        viewModel.onEvent(LoginEvent.LifeCycle(LifecycleEvent.OnLaunch))
         viewModel.eventFlow.collectLatest { event ->
             when (event) {
                 is UiEvent.ShowLoading -> loadingState.value = true

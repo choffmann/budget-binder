@@ -1,12 +1,15 @@
 package de.hsfl.budgetBinder.presentation.viewmodel.login
 
 import de.hsfl.budgetBinder.common.DataResponse
+import de.hsfl.budgetBinder.common.User
+import de.hsfl.budgetBinder.common.handleDataResponse
 import de.hsfl.budgetBinder.common.utils.validateEmail
 import de.hsfl.budgetBinder.domain.usecase.LoginUseCases
 import de.hsfl.budgetBinder.presentation.flow.RouterFlow
 import de.hsfl.budgetBinder.presentation.Screen
 import de.hsfl.budgetBinder.presentation.event.UiEvent
 import de.hsfl.budgetBinder.presentation.UiState
+import de.hsfl.budgetBinder.presentation.event.handleLifeCycle
 import de.hsfl.budgetBinder.presentation.flow.DataFlow
 import de.hsfl.budgetBinder.presentation.flow.UiEventSharedFlow
 import io.ktor.http.*
@@ -21,6 +24,7 @@ class LoginViewModel(
     private val dataFlow: DataFlow,
     private val scope: CoroutineScope
 ) {
+    private val screenAfterSuccess = Screen.Dashboard
 
     private val _emailText = MutableStateFlow(LoginTextFieldState())
     val emailText: StateFlow<LoginTextFieldState> = _emailText
@@ -34,30 +38,7 @@ class LoginViewModel(
     private val _dialogState = MutableStateFlow(false)
     val dialogState: StateFlow<Boolean> = _dialogState
 
-    private val _eventFlow = UiEventSharedFlow.mutableEventFlow
     val eventFlow = UiEventSharedFlow.eventFlow
-
-    init {
-        // try to fetch user '/me' on start. If successful, the user is already authorized
-        scope.launch {
-            loginUseCases.getMyUserUseCase().collect {
-                when (it) {
-                    is DataResponse.Success -> {
-                        _eventFlow.emit(UiEvent.ShowLoading)
-                        dataFlow.storeUserState(it.data!!)
-                        delay(1000L)
-                        routerFlow.navigateTo(Screen.Dashboard)
-                    }
-                    else -> {
-                        // If the request failed
-
-                        // Debug:
-                        // _eventFlow.emit(UiEvent.ShowError("init: user is nor authorized"))
-                    }
-                }
-            }
-        }
-    }
 
     fun onEvent(event: LoginEvent) {
         when (event) {
@@ -67,51 +48,69 @@ class LoginViewModel(
                 passwordText.value.copy(password = event.value)
             is LoginEvent.EnteredServerUrl -> _serverUrlText.value =
                 serverUrlText.value.copy(serverAddress = event.value)
-            is LoginEvent.OnLogin -> {
-                if (validateEmail(email = emailText.value.email)) {
-                    toggleDialog()
-                } else {
-                    _emailText.value = emailText.value.copy(emailValid = false)
-                }
-            }
+            is LoginEvent.OnLogin -> onLogin()
             is LoginEvent.OnRegisterScreen -> routerFlow.navigateTo(Screen.Register)
-            is LoginEvent.OnServerUrlDialogConfirm -> {
-                toggleDialog()
-                dataFlow.storeServerUrl(Url(urlString = serverUrlText.value.serverAddress))
-                auth(email = emailText.value.email, password = passwordText.value.password)
-            }
+            is LoginEvent.OnServerUrlDialogConfirm -> onServerUrlDialogConfirm()
             is LoginEvent.OnServerUrlDialogDismiss -> toggleDialog()
+            is LoginEvent.LifeCycle -> event.value.handleLifeCycle(
+                onLaunch = { tryToLoginUserOnStart() },
+                onDispose = { clearStateFlows() }
+            )
         }
+    }
+
+    private fun onLogin() {
+        if (validateEmail(email = emailText.value.email)) {
+            toggleDialog()
+        } else {
+            _emailText.value = emailText.value.copy(emailValid = false)
+        }
+    }
+
+    private fun onServerUrlDialogConfirm() {
+        toggleDialog()
+        dataFlow.storeServerUrl(Url(urlString = serverUrlText.value.serverAddress))
+        login()
+    }
+
+    private fun tryToLoginUserOnStart() = scope.launch {
+        loginUseCases.getMyUserUseCase()
+            .collect {
+                it.handleDataResponse(
+                    onSuccess = { user ->
+                        storeUser(user)
+                        routerFlow.navigateTo(screenAfterSuccess)
+                    },
+                    onUnauthorized = { /* Don't show an error message on unauthorized */ }
+                )
+            }
+    }
+
+    private fun storeUser(user: User) {
+        dataFlow.storeUserState(user)
     }
 
     private fun toggleDialog() {
         _dialogState.value = !dialogState.value
     }
 
-    private fun auth(email: String, password: String) {
-        loginUseCases.loginUseCase(email, password).onEach {
-            when (it) {
-                is DataResponse.Loading -> _eventFlow.emit(UiEvent.ShowLoading)
-                is DataResponse.Error -> _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
-                is DataResponse.Success<*> -> getMyUser()
-                is DataResponse.Unauthorized -> _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
-            }
-        }.launchIn(scope)
+    private fun login() = scope.launch {
+        loginUseCases.loginUseCase(
+            email = emailText.value.email,
+            password = passwordText.value.password
+        ).collect {
+            it.handleDataResponse(onSuccess = { getMyUser() })
+        }
     }
 
-    private fun getMyUser() {
-        loginUseCases.getMyUserUseCase().onEach {
-            when (it) {
-                is DataResponse.Loading -> _eventFlow.emit(UiEvent.ShowLoading)
-                is DataResponse.Success<*> -> {
-                    dataFlow.storeUserState(it.data!!)
+    private fun getMyUser() = scope.launch {
+        loginUseCases.getMyUserUseCase()
+            .collect {
+                it.handleDataResponse(onSuccess = { user ->
+                    dataFlow.storeUserState(user)
                     routerFlow.navigateTo(Screen.Dashboard)
-                    clearStateFlows()
-                }
-                is DataResponse.Error -> _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
-                else -> _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
+                })
             }
-        }.launchIn(scope)
     }
 
     private fun clearStateFlows() {
@@ -119,6 +118,8 @@ class LoginViewModel(
         _passwordText.value = passwordText.value.copy(password = "")
     }
 
+
+    // Old
     private val _state = MutableStateFlow<UiState>(UiState.Empty)
 
     @Deprecated(message = "Old ViewModel, use the new State")
