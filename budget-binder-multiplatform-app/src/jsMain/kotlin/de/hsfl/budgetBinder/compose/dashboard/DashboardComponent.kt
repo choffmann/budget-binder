@@ -12,6 +12,7 @@ import de.hsfl.budgetBinder.presentation.viewmodel.dashboard.DashboardEntryState
 import de.hsfl.budgetBinder.presentation.viewmodel.dashboard.DashboardEvent
 import de.hsfl.budgetBinder.presentation.viewmodel.dashboard.DashboardState
 import de.hsfl.budgetBinder.presentation.viewmodel.dashboard.DashboardViewModel
+import de.hsfl.budgetBinder.presentation.viewmodel.login.LoginEvent
 import di
 import kotlinx.coroutines.flow.collectLatest
 import org.jetbrains.compose.web.css.*
@@ -27,7 +28,7 @@ fun DashboardComponent() {
     val totalSpendBudget = viewModel.spendBudgetOnCurrentCategory.collectAsState()
     val olderEntries = viewModel.oldEntriesMapState.collectAsState()
     val loadingState = remember { mutableStateOf(false) }
-   // val scaffoldState = rememberScaffoldState()
+    // val scaffoldState = rememberScaffoldState()
 
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->
@@ -71,20 +72,22 @@ fun DashboardData(
     onPrevClicked: () -> Unit,
     onNextClicked: () -> Unit
 ) {
-    SwipeContainer (
+    SwipeContainer(
         hasPrev, hasNext, onPrevClicked, onNextClicked
-    ){
-        BudgetBar(focusedCategory,totalSpendBudget,totalBudget)
+    ) {
+        BudgetBar(focusedCategory, totalSpendBudget, totalBudget)
     }
 }
 
 
 @Composable
 fun CreateNewEntryButton(onEntryCreateButton: () -> Unit) {
-    Div (attrs = {style {
-        display(DisplayStyle.Flex)
-        justifyContent(JustifyContent.FlexEnd)
-    }}) {
+    Div(attrs = {
+        style {
+            display(DisplayStyle.Flex)
+            justifyContent(JustifyContent.FlexEnd)
+        }
+    }) {
         Button(attrs = {
             classes("mdc-fab", "mdc-fab--touch", AppStylesheet.newEntryButton)
             onClick { onEntryCreateButton() }
@@ -109,44 +112,81 @@ fun SwipeContainer(
             classes(AppStylesheet.flexContainer)
         }) {
         Div(attrs = {
-            if(hasPrev) {
+            if (hasPrev) {
                 classes(AppStylesheet.imageFlexContainer, "mdc-button")
                 onClick { onPrevClicked() }
-            }
-            else{
+            } else {
                 classes(AppStylesheet.imageFlexContainer)
-                style{
+                style {
                     paddingLeft(8.px)
                     paddingRight(8.px)
                 }
             }
-        }){
-            if(hasPrev) Icon("arrow_back_ios_new")
+        }) {
+            if (hasPrev) Icon("arrow_back_ios_new")
         }
         Div(attrs = { classes(AppStylesheet.budgetBarContainer) })
         {
             content()
         }
         Div(attrs = {
-            if(hasNext) {
+            if (hasNext) {
                 classes(AppStylesheet.imageFlexContainer, "mdc-button")
                 onClick { onNextClicked() }
-            }
-            else{
+            } else {
                 classes(AppStylesheet.imageFlexContainer)
-                style{
+                style {
                     paddingLeft(8.px)
                     paddingRight(8.px)
                 }
             }
         }) {
-            if(hasNext) Icon("arrow_forward_ios_new")
+            if (hasNext) Icon("arrow_forward_ios_new")
+        }
+    }
+}
+
+//TODO: Load Old Data and old Entries
+@Composable
+fun EntryList(
+    entryList: List<DashboardEntryState>,
+    oldEntries: Map<String, DashboardState>,
+    onItemClicked: (Int) -> Unit,
+    onLoadMore: () -> Unit,
+    onEntryDelete: (Int) -> Unit
+
+) {
+    if (entryList.isEmpty()) {
+        Div(attrs = {
+            classes(
+                "mdc-typography--headline5",
+                AppStylesheet.text
+            )
+        }) { Text("This category has no entries. You can create an new entry.") }
+    } else {
+        for (entry in entryList) {
+            EntryListElement(entry, onItemClicked, onEntryDelete)
+        }
+        Text("Older entries...")
+        for ((date, dashboardState) in oldEntries) {
+            Text(date) //TODO-WEB: Sticky?
+            for (entry in dashboardState.entryList) {
+                EntryListElement(entry, onItemClicked, onEntryDelete)
+            }
+        }
+        Button(
+            attrs = {
+                classes("mdc-button", "mdc-button--raised", "mdc-top-app-bar__navigation-icon")
+                onClick { onLoadMore() }
+            }
+        ) {
+            Span(attrs = { classes("mdc-button__label") }
+            ) { Text("Load more Entries") }
         }
     }
 }
 
 
-//Should be put in own File
 @Composable
 fun EntryListElement(
     entry: DashboardEntryState,
@@ -182,27 +222,6 @@ fun amountToString(amount: Float): String {
     val x = if (amount < 0) "-" else ""
     return "$x ${amount.absoluteValue} €"
 }
-//TODO: Load Old Data and old Entries
-@Composable
-fun EntryList(
-    entryList: List<DashboardEntryState>,
-    oldEntries: Map<String, DashboardState>,
-    onItemClicked: (Int) -> Unit,
-    onLoadMore: () -> Unit,
-    onEntryDelete: (Int) -> Unit
 
-) {
-    if (entryList.isEmpty()) {
-        Div(attrs = {
-            classes(
-                "mdc-typography--headline5",
-                AppStylesheet.text
-            )
-        }) { Text("This category has no entries. You can create an new entry.") }
-    } else {
-        for (entry in entryList) {
-            EntryListElement(entry, onItemClicked, onEntryDelete)
-        }
-    }
-}
+
 
