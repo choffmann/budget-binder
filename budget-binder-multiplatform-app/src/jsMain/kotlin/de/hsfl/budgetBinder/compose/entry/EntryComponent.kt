@@ -52,7 +52,16 @@ fun EntryComponent(screenState: MutableState<Screen>) {
         is Screen.EntryEdit -> {
             EntryEditView(
                 state = viewState,
-                onBackButton = { screenState.value = Screen.Dashboard }
+                categoryList = (screenState.value as Screen.EntryEdit).categoryList,
+                onChangeToDashboard = { screenState.value = Screen.Dashboard },
+                onEditEntryButtonPressed = { name, amount, repeat, category ->
+                    entryViewModel.changeEntry(
+                        Entry.Patch(name, amount, repeat, category),
+                        (screenState.value as Screen.EntryEdit).id
+                    )
+                },
+                onChangeToSettings = { screenState.value = Screen.Settings },
+                onChangeToCategory = { screenState.value = Screen.CategorySummary },
             )
             entryViewModel.getEntryById((screenState.value as Screen.EntryEdit).id)//(screenState.value as Screen.EntryEdit).id)
         }

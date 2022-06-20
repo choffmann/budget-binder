@@ -25,7 +25,7 @@ fun EntryOverviewView(
     onChangeToCategory: () -> Unit,
     onChangeToSettings: () -> Unit
 ) {
-    var entry by remember { mutableStateOf<Entry>(Entry(0, "", 0f, false, null)) }
+    var entry by remember { mutableStateOf(Entry(0, "", 0f, false, null)) }
     val viewState by remember { state }
 
     topBarMain(
@@ -68,25 +68,19 @@ fun EntryOverviewView(
         })
 
     MainFlexContainer {
-        Div(attrs = {
-            classes("mdc-card", AppStylesheet.card)
-        }
-        ) {
-            H1(
-                attrs = {
-                    style { margin(2.percent) }
-                }
-            ) { Text(" Entry") }
+        H1(
+            attrs = {
+                style { margin(2.percent) }
+            }
+        ) { Text(" Entry") }
 
-            EntryOverview(entry, onEditButton, onDeleteButton)
-        }
+        EntryOverview(entry, onEditButton, onDeleteButton)
         when (viewState) {
             is UiState.Success<*> -> {
                 when (val element = (viewState as UiState.Success<*>).element) {
                     is Entry -> entry = element
                     else -> {}
                 }
-
             }
             is UiState.Error -> {
                 Text((viewState as UiState.Error).error)
