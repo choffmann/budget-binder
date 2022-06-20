@@ -35,3 +35,9 @@ expect fun DeleteForeverIcon()
 
 @Composable
 expect fun SaveIcon()
+
+@Composable
+expect fun ReplyIcon()
+
+@Composable
+expect fun ForwardIcon()

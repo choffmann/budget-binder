@@ -62,3 +62,13 @@ actual fun DeleteForeverIcon() {
 actual fun SaveIcon() {
     Icon(imageVector = Icons.Default.Save, contentDescription = null)
 }
+
+@Composable
+actual fun ReplyIcon() {
+    Icon(imageVector = Icons.Default.Reply, contentDescription = null)
+}
+
+@Composable
+actual fun ForwardIcon() {
+    Icon(imageVector = Icons.Default.Forward, contentDescription = null)
+}
