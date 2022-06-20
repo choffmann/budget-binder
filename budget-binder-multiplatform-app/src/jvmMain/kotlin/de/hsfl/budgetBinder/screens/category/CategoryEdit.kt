@@ -59,6 +59,9 @@ fun CategoryEditView() {
                 label = { Text("Category Budget") }
             )
             CategoryImageToIcon(categoryImageState.value)
+            Button(onClick = {viewModel.onEvent(CategoryEditEvent.OnCancel)}) {
+                Text("Cancel")
+            }
         }
     }
 }

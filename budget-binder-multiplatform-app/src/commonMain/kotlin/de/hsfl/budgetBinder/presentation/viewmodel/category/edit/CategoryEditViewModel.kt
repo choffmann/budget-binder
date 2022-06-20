@@ -44,7 +44,7 @@ class CategoryEditViewModel(
                 category = createCategoryPathFromState(),
                 onSuccess = { routerFlow.navigateTo(Screen.Category.Detail(it.id)) }
             )
-            is CategoryEditEvent.OnCancel -> routerFlow.navigateTo(Screen.Category.Summary)
+            is CategoryEditEvent.OnCancel -> routerFlow.navigateTo(Screen.Category.Detail(currentCategoryId))
             is CategoryEditEvent.OnDelete -> super.delete(
                 id = currentCategoryId,
                 onSuccess = { routerFlow.navigateTo(Screen.Category.Summary) }

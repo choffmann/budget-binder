@@ -16,6 +16,7 @@ import de.hsfl.budgetBinder.presentation.event.LifecycleEvent
 import de.hsfl.budgetBinder.presentation.flow.RouterFlow
 import de.hsfl.budgetBinder.presentation.viewmodel.category.detail.CategoryDetailEvent
 import de.hsfl.budgetBinder.presentation.viewmodel.category.detail.CategoryDetailViewModel
+import de.hsfl.budgetBinder.presentation.viewmodel.category.edit.CategoryEditEvent
 import org.kodein.di.instance
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -31,7 +32,7 @@ fun CategoryDetailView() {
     }
     DisposableEffect(Unit) {
         onDispose {
-            println("CategoryDetailView::Dispos")
+            viewModel.onEvent(CategoryDetailEvent.LifeCycle(LifecycleEvent.OnDispose))
         }
     }
 
@@ -49,6 +50,9 @@ fun CategoryDetailView() {
                 items(entryListState.value) { entry ->
                     ListItem(text = { Text(entry.name) }, trailing = { Text(entry.amount.toString()) })
                 }
+            }
+            Button(onClick = { viewModel.onEvent(CategoryDetailEvent.OnBack) }) {
+                Text("Back")
             }
         }
     }

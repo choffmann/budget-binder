@@ -55,7 +55,7 @@ open class CategoryDetailViewModel(
             }
             is CategoryDetailEvent.LifeCycle -> event.value.handleLifeCycle(
                 onLaunch = { initStateFlows() },
-                onDispose = { }
+                onDispose = { resetStateFlows() }
             )
         }
     }
