@@ -22,9 +22,9 @@ sealed class Screen {
         object CreateOnRegister: Category()
     }
     sealed class Entry: Screen() {
-        data class Overview(val id: Int, val categoryList :List<Category>): Entry()
-        data class Edit(val id: Int, val categoryList :List<Category>): Entry()
-        data class Create (val categoryList :List<Category>): Entry()
+        data class Overview(val id: Int): Entry()
+        data class Edit(val id: Int): Entry()
+        object Create: Entry()
     }
     object Login : Screen()
     object Register : Screen()
