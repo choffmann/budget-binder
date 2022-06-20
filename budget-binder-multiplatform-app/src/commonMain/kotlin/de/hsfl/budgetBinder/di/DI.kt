@@ -23,9 +23,6 @@ import de.hsfl.budgetBinder.presentation.viewmodel.category.summary.CategorySumm
 import de.hsfl.budgetBinder.presentation.viewmodel.category._CategoryViewModel
 import de.hsfl.budgetBinder.presentation.viewmodel.dashboard.DashboardViewModel
 import de.hsfl.budgetBinder.presentation.viewmodel.navdrawer.NavDrawerViewModel
-import de.hsfl.budgetBinder.presentation.viewmodel.dashboard.DashboardViewModel
-import de.hsfl.budgetBinder.presentation.viewmodel.category.summary.CategorySummaryViewModel
-import de.hsfl.budgetBinder.presentation.viewmodel.category._CategoryViewModel
 import de.hsfl.budgetBinder.presentation.viewmodel.settings.SettingsEditServerUrlViewModel
 import de.hsfl.budgetBinder.presentation.viewmodel.settings.SettingsEditUserViewModel
 import de.hsfl.budgetBinder.presentation.viewmodel.settings.SettingsViewModel
