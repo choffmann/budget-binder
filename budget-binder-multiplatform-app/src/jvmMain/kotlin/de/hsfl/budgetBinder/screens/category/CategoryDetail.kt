@@ -7,8 +7,13 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ListItem
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import de.hsfl.budgetBinder.di
+import de.hsfl.budgetBinder.presentation.Screen
+import de.hsfl.budgetBinder.presentation.flow.RouterFlow
+import de.hsfl.budgetBinder.presentation.viewmodel.category.detail.CategoryDetailEvent
 import de.hsfl.budgetBinder.presentation.viewmodel.category.detail.CategoryDetailViewModel
 import org.kodein.di.instance
 
@@ -16,8 +21,18 @@ import org.kodein.di.instance
 @Composable
 fun CategoryDetailView() {
     val viewModel: CategoryDetailViewModel by di.instance()
+    val routerFlow: RouterFlow by di.instance()
     val categoryState = viewModel.categoryState.collectAsState()
     val entryListState = viewModel.entryList.collectAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.onEvent(CategoryDetailEvent.OnLaunch)
+    }
+    DisposableEffect(Unit) {
+        onDispose {
+            println("CategoryDetailView::Dispos")
+        }
+    }
 
     Column {
         Text(categoryState.value.toString())

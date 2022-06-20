@@ -14,6 +14,7 @@ import de.hsfl.budgetBinder.domain.usecase.storage.StoreDarkModeUseCase
 import de.hsfl.budgetBinder.domain.usecase.storage.StoreServerUrlUseCase
 import de.hsfl.budgetBinder.domain.usecase.storage.StoreUserStateUseCase
 import de.hsfl.budgetBinder.presentation.flow.DataFlow
+import de.hsfl.budgetBinder.presentation.flow.RouterFlow
 import de.hsfl.budgetBinder.presentation.flow.UiEventSharedFlow
 import de.hsfl.budgetBinder.presentation.viewmodel.login.LoginViewModel
 import de.hsfl.budgetBinder.presentation.viewmodel.register.RegisterViewModel
@@ -86,6 +87,7 @@ fun kodein(ktorEngine: HttpClientEngine) = DI {
 
     // Flows
     bindSingleton { DataFlow(instance(), instance()) }
+    bindSingleton { RouterFlow(instance(), instance()) }
     bindSingleton { UiEventSharedFlow }
 
     // ViewModels
@@ -95,8 +97,8 @@ fun kodein(ktorEngine: HttpClientEngine) = DI {
     bindSingleton { SettingsEditUserViewModel(instance(), instance(), instance(), instance()) }
     bindSingleton { SettingsEditServerUrlViewModel(instance(), instance(), instance()) }
     bindSingleton { _CategoryViewModel(instance(), instance()) }
-    bindSingleton { CategorySummaryViewModel(instance(), instance()) }
-    bindSingleton { CategoryDetailViewModel(instance(), instance()) }
+    bindSingleton { CategorySummaryViewModel(instance(), instance(), instance()) }
+    bindSingleton { CategoryDetailViewModel(instance(), instance(), instance()) }
     bindSingleton { EntryViewModel(instance(), instance()) }
     bindSingleton { DashboardViewModel(instance(), instance(), instance(), instance()) }
     bindSingleton { NavDrawerViewModel(instance(), instance(), instance()) }

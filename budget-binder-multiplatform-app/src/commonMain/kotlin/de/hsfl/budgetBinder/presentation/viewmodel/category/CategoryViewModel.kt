@@ -15,12 +15,14 @@ import kotlinx.coroutines.launch
 
 open class CategoryViewModel(
     _categoriesUseCases: CategoriesUseCases,
-    _scope: CoroutineScope = CoroutineScope(Dispatchers.Unconfined + SupervisorJob())
+    _scope: CoroutineScope = CoroutineScope(Dispatchers.Unconfined + SupervisorJob()),
+    _routerFlow: RouterFlow
 ) {
     private val scope: CoroutineScope = _scope
     private val categoriesUseCases: CategoriesUseCases = _categoriesUseCases
+    private val routerFlow: RouterFlow = _routerFlow
 
-    private val _eventFlow = UiEventSharedFlow.mutableEventFlow
+    protected val _eventFlow = UiEventSharedFlow.mutableEventFlow
     val eventFlow = UiEventSharedFlow.eventFlow
 
     protected fun getAll(onSuccess: (List<Category>) -> Unit) = scope.launch {
@@ -68,7 +70,7 @@ open class CategoryViewModel(
                 onSuccess(response.data!!)
             }
             is DataResponse.Unauthorized -> {
-                RouterFlow.navigateTo(Screen.Login)
+                routerFlow.navigateTo(Screen.Login)
                 _eventFlow.emit(UiEvent.ShowError(response.error!!.message))
             }
         }

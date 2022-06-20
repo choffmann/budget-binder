@@ -10,6 +10,7 @@ import de.hsfl.budgetBinder.screens.register.RegisterComponent
 import de.hsfl.budgetBinder.presentation.flow.RouterFlow
 import de.hsfl.budgetBinder.presentation.Screen
 import de.hsfl.budgetBinder.screens.category.CategoryComponent
+import de.hsfl.budgetBinder.screens.category.CategoryDetailView
 import de.hsfl.budgetBinder.screens.settings.SettingsView
 import org.kodein.di.instance
 
@@ -26,6 +27,7 @@ fun Router() {
         is Screen.Entry.Overview -> Text(text = "Entry Click with id: ${(screenState.value as Screen.Entry.Overview).id}")
         is Screen.Entry.Create -> Text(text = "Entry Create")
         is Screen.Category.Summary -> CategoryComponent()
+        is Screen.Category.Detail -> CategoryDetailView()
         else -> {}
     }
 }

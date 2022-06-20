@@ -17,9 +17,11 @@ import kotlinx.coroutines.launch
 
 class CategorySummaryViewModel(
     categoriesUseCases: CategoriesUseCases,
-    scope: CoroutineScope
-): CategoryViewModel(
-    _categoriesUseCases =  categoriesUseCases,
+    scope: CoroutineScope,
+    private val routerFlow: RouterFlow
+) : CategoryViewModel(
+    _routerFlow = routerFlow,
+    _categoriesUseCases = categoriesUseCases,
     _scope = scope
 ) {
     private val _categoryList = MutableStateFlow<List<Category>>(emptyList())
@@ -31,13 +33,13 @@ class CategorySummaryViewModel(
 
     fun onEvent(event: CategorySummaryEvent) {
         when (event) {
-            is CategorySummaryEvent.OnCategory -> RouterFlow.navigateTo(Screen.Category.Detail(event.id))
-            is CategorySummaryEvent.OnCategoryCreate -> RouterFlow.navigateTo(Screen.Category.Summary)
+            is CategorySummaryEvent.OnCategory -> routerFlow.navigateTo(Screen.Category.Detail(event.id))
+            is CategorySummaryEvent.OnCategoryCreate -> routerFlow.navigateTo(Screen.Category.Summary)
             is CategorySummaryEvent.OnRefresh -> getAllCategories()
         }
     }
 
     private fun getAllCategories() {
-        super.getAll(onSuccess = {_categoryList.value = it})
+        super.getAll(onSuccess = { _categoryList.value = it })
     }
 }
