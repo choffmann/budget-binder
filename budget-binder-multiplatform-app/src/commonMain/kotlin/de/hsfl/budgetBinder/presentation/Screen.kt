@@ -39,7 +39,7 @@ sealed class Screen {
     @Deprecated(message = "use sealed class Category")
     object CategorySummary : Screen()
     @Deprecated(message = "use sealed class Category")
-    object CategoryEdit : Screen()
+    data class CategoryEdit(val id: Int) : Screen()
     @Deprecated(message = "use sealed class Category")
     object CategoryCreate : Screen()
     @Deprecated(message = "use sealed class Category")
