@@ -20,18 +20,33 @@ sealed class DataResponse<T>(val data: T? = null, val error: ErrorModel? = null)
 fun <T> DataResponse<T>.handleDataResponse(
     scope: CoroutineScope = CoroutineScope(Dispatchers.Unconfined + SupervisorJob()),
     routerFlow: RouterFlow = RouterFlow(NavigateToScreenUseCase(), scope),
-    onSuccess: (T) -> Unit
+    onSuccess: (T) -> Unit,
+    onError: ((ErrorModel) -> Unit)? = null,
+    onLoading: (() -> Unit)? = null,
+    onUnauthorized: (() -> Unit)? = null
 ) = scope.launch {
     when (this@handleDataResponse) {
-        is DataResponse.Error -> UiEventSharedFlow.mutableEventFlow.emit(UiEvent.ShowError(this@handleDataResponse.error!!.message))
-        is DataResponse.Loading -> UiEventSharedFlow.mutableEventFlow.emit(UiEvent.ShowLoading)
+        is DataResponse.Error -> {
+            onError?.let {
+                onError(this@handleDataResponse.error!!)
+            } ?: UiEventSharedFlow.mutableEventFlow.emit(UiEvent.ShowError(this@handleDataResponse.error!!.message))
+        }
+        is DataResponse.Loading -> {
+            onLoading?.let {
+                onLoading()
+            } ?: UiEventSharedFlow.mutableEventFlow.emit(UiEvent.ShowLoading)
+        }
         is DataResponse.Success -> {
             UiEventSharedFlow.mutableEventFlow.emit(UiEvent.HideSuccess)
             onSuccess(this@handleDataResponse.data!!)
         }
         is DataResponse.Unauthorized -> {
-            routerFlow.navigateTo(Screen.Login)
-            UiEventSharedFlow.mutableEventFlow.emit(UiEvent.ShowError(this@handleDataResponse.error!!.message))
+            onUnauthorized?.let {
+                onUnauthorized()
+            } ?: run {
+                routerFlow.navigateTo(Screen.Login)
+                UiEventSharedFlow.mutableEventFlow.emit(UiEvent.ShowError(this@handleDataResponse.error!!.message))
+            }
         }
     }
 }
