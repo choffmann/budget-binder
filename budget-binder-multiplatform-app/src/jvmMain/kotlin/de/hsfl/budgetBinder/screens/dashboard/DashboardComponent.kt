@@ -20,7 +20,9 @@ import androidx.compose.ui.graphics.Color
 import de.hsfl.budgetBinder.common.Category
 import de.hsfl.budgetBinder.di
 import de.hsfl.budgetBinder.presentation.CategoryImageToIcon
+import de.hsfl.budgetBinder.presentation.event.LifecycleEvent
 import de.hsfl.budgetBinder.presentation.event.UiEvent
+import de.hsfl.budgetBinder.presentation.viewmodel.category.edit.CategoryEditEvent
 import de.hsfl.budgetBinder.presentation.viewmodel.dashboard.DashboardEntryState
 import de.hsfl.budgetBinder.presentation.viewmodel.dashboard.DashboardEvent
 import de.hsfl.budgetBinder.presentation.viewmodel.dashboard.DashboardState
@@ -39,6 +41,7 @@ fun DashboardComponent() {
     val scaffoldState = rememberScaffoldState()
 
     LaunchedEffect(key1 = true) {
+        viewModel.onEvent(DashboardEvent.LifeCycle(LifecycleEvent.OnLaunch))
         viewModel.eventFlow.collectLatest { event ->
             when (event) {
                 is UiEvent.ShowLoading -> loadingState.value = true
@@ -47,6 +50,12 @@ fun DashboardComponent() {
             }
         }
     }
+    DisposableEffect(Unit) {
+        onDispose {
+            viewModel.onEvent(DashboardEvent.LifeCycle(LifecycleEvent.OnDispose))
+        }
+    }
+
 
 
     Scaffold(scaffoldState = scaffoldState, floatingActionButtonPosition = FabPosition.End, floatingActionButton = {

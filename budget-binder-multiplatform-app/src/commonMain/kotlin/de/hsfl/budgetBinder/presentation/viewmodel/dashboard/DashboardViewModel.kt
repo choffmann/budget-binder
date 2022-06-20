@@ -7,6 +7,7 @@ import de.hsfl.budgetBinder.domain.usecase.*
 import de.hsfl.budgetBinder.presentation.Screen
 import de.hsfl.budgetBinder.presentation.event.UiEvent
 import de.hsfl.budgetBinder.presentation.UiState
+import de.hsfl.budgetBinder.presentation.event.handleLifeCycle
 import de.hsfl.budgetBinder.presentation.flow.RouterFlow
 import de.hsfl.budgetBinder.presentation.flow.UiEventSharedFlow
 import io.ktor.util.date.*
@@ -43,18 +44,6 @@ class DashboardViewModel(
     private val _eventFlow = UiEventSharedFlow.mutableEventFlow
     val eventFlow = _eventFlow.asSharedFlow()
 
-    init {
-        // Throws nullPointerException, crash on Android?
-        //_getAllEntries()
-        //_getAllCategories()
-
-        getAllCategories(onSuccess = { categories ->
-            _categoryListState.value = categories
-            setOverallCategoryState()
-        })
-
-    }
-
     fun onEvent(event: DashboardEvent) {
         when (event) {
             is DashboardEvent.OnNextCategory -> changedFocusedCategory(increase = true)
@@ -64,7 +53,26 @@ class DashboardViewModel(
             is DashboardEvent.OnRefresh -> refresh()
             is DashboardEvent.OnLoadMore -> loadMoreEntries()
             is DashboardEvent.OnEntryDelete -> deleteEntry(id = event.id)
+            is DashboardEvent.LifeCycle -> event.value.handleLifeCycle(
+                onLaunch = { initStateFlows() },
+                onDispose = { resetStateFlows() }
+            )
         }
+    }
+
+    private fun initStateFlows() {
+        getAllCategories(onSuccess = { categories ->
+            _categoryListState.value = categories
+            setOverallCategoryState()
+        })
+    }
+
+    private fun resetStateFlows() {
+        resetOldEntries()
+        _categoryListState.value = emptyList()
+        _entryListState.value = DashboardState()
+        _focusedCategoryState.value = DashboardState()
+        _spendBudgetOnCurrentCategory.value = DashboardState()
     }
 
     private fun fillEntryListStateWithResult(entryList: List<Entry>) {
