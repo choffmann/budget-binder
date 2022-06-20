@@ -77,54 +77,5 @@ fun EntryComponent(screenState: MutableState<Screen>) {
     }
 }
 
-//Should be put in own File
-@Composable
-fun EntryListElement(entry: Entry, categoryList: List<Category>, onEntry: (id: Int) -> Unit) {
-    Div(attrs = {
-        classes("mdc-card", "mdc-card--outlined", AppStylesheet.entryListElement)
-        onClick { onEntry(entry.id) }
-    }) {
-        CategoryImageToIcon(categoryIdToCategory(entry.category_id, categoryList).image)
-        Div(attrs = { classes(AppStylesheet.entryListElementText) }) {
-            Div(attrs = {
-                classes(
-                    "mdc-typography--headline5",
-                    AppStylesheet.text
-                )
-            }) { Text(entry.name) }
-        }
-        Div(attrs = { classes(AppStylesheet.imageFlexContainer) }) {
-            Div(attrs = {
-                classes(
-                    "mdc-typography--headline5",
-                    AppStylesheet.moneyText
-                )
-            }) { Text(amountToString(entry.amount)) }
-        }
-    }
-}
-
-fun amountToString(amount: Float): String {
-    //This whole thing just so it's "- 10 €" and not "-10 €"
-    val x = if (amount < 0) "-" else ""
-    return "$x ${amount.absoluteValue} €"
-}
-
-@Composable
-fun EntryList(list: List<Entry>, categoryList: List<Category>, onEntry: (id: Int) -> Unit) {
-    if (list.isEmpty()) {
-        Div(attrs = {
-            classes(
-                "mdc-typography--headline5",
-                AppStylesheet.text
-            )
-        }) { Text("No Entries in this category") }
-    } else {
-        for (entry in list) {
-            EntryListElement(entry, categoryList, onEntry)
-        }
-    }
-}
-
 fun entriesFromCategory(list: List<Entry>, category_id: Int?): List<Entry> =
     list.filter { it.category_id == category_id }

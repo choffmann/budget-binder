@@ -2,25 +2,22 @@ package de.hsfl.budgetBinder.compose.dashboard
 
 import androidx.compose.runtime.*
 import de.hsfl.budgetBinder.common.Category
-import de.hsfl.budgetBinder.common.Entry
-import de.hsfl.budgetBinder.compose.FeedbackSnackbar
 import de.hsfl.budgetBinder.compose.Icon
 import de.hsfl.budgetBinder.compose.MainFlexContainer
 import de.hsfl.budgetBinder.compose.category.BudgetBar
-import de.hsfl.budgetBinder.compose.entry.EntryList
-import de.hsfl.budgetBinder.compose.entry.entriesFromCategory
 import de.hsfl.budgetBinder.compose.theme.AppStylesheet
-import de.hsfl.budgetBinder.compose.topBarMain
-import de.hsfl.budgetBinder.presentation.Screen
+import de.hsfl.budgetBinder.presentation.CategoryImageToIcon
 import de.hsfl.budgetBinder.presentation.UiEvent
-import de.hsfl.budgetBinder.presentation.UiState
+import de.hsfl.budgetBinder.presentation.viewmodel.dashboard.DashboardEntryState
 import de.hsfl.budgetBinder.presentation.viewmodel.dashboard.DashboardEvent
+import de.hsfl.budgetBinder.presentation.viewmodel.dashboard.DashboardState
 import de.hsfl.budgetBinder.presentation.viewmodel.dashboard.DashboardViewModel
 import di
 import kotlinx.coroutines.flow.collectLatest
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
 import org.kodein.di.instance
+import kotlin.math.absoluteValue
 
 @Composable
 fun DashboardComponent() {
@@ -53,8 +50,13 @@ fun DashboardComponent() {
                 onPrevClicked = { viewModel.onEvent(DashboardEvent.OnPrevCategory) },
                 onNextClicked = { viewModel.onEvent(DashboardEvent.OnNextCategory) }
             )
+            EntryList(entryList = entryList.value.entryList,
+                oldEntries = olderEntries.value,
+                onItemClicked = { viewModel.onEvent(DashboardEvent.OnEntry(it)) },
+                onLoadMore = { viewModel.onEvent(DashboardEvent.OnLoadMore) },
+                onEntryDelete = { viewModel.onEvent(DashboardEvent.OnEntryDelete(it)) }
+            )
         }
-
         CreateNewEntryButton { viewModel.onEvent(DashboardEvent.OnEntryCreate) }
     }
 }
@@ -139,6 +141,67 @@ fun SwipeContainer(
             }
         }) {
             if(hasNext) Icon("arrow_forward_ios_new")
+        }
+    }
+}
+
+
+//Should be put in own File
+@Composable
+fun EntryListElement(
+    entry: DashboardEntryState,
+    onItemClicked: (Int) -> Unit,
+    onEntryDelete: (Int) -> Unit
+) {
+    Div(attrs = {
+        classes("mdc-card", "mdc-card--outlined", AppStylesheet.entryListElement)
+        onClick { onItemClicked(entry.entry.id) }
+    }) {
+        CategoryImageToIcon(entry.categoryImage)
+        Div(attrs = { classes(AppStylesheet.entryListElementText) }) {
+            Div(attrs = {
+                classes(
+                    "mdc-typography--headline5",
+                    AppStylesheet.text
+                )
+            }) { Text(entry.entry.name) }
+        }
+        Div(attrs = { classes(AppStylesheet.imageFlexContainer) }) {
+            Div(attrs = {
+                classes(
+                    "mdc-typography--headline5",
+                    AppStylesheet.moneyText
+                )
+            }) { Text(amountToString(entry.entry.amount)) }
+        }
+    }
+}
+
+fun amountToString(amount: Float): String {
+    //This whole thing just so it's "- 10 €" and not "-10 €"
+    val x = if (amount < 0) "-" else ""
+    return "$x ${amount.absoluteValue} €"
+}
+//TODO: Load Old Data and old Entries
+@Composable
+fun EntryList(
+    entryList: List<DashboardEntryState>,
+    oldEntries: Map<String, DashboardState>,
+    onItemClicked: (Int) -> Unit,
+    onLoadMore: () -> Unit,
+    onEntryDelete: (Int) -> Unit
+
+) {
+    if (entryList.isEmpty()) {
+        Div(attrs = {
+            classes(
+                "mdc-typography--headline5",
+                AppStylesheet.text
+            )
+        }) { Text("This category has no entries. You can create an new entry.") }
+    } else {
+        for (entry in entryList) {
+            EntryListElement(entry, onItemClicked, onEntryDelete)
         }
     }
 }
