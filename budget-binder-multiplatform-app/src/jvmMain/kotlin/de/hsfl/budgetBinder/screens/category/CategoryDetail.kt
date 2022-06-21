@@ -93,19 +93,19 @@ fun TopCategoryDetailSection(
             Spacer(modifier = Modifier.height(8.dp))
             Text(text = category.name, style = MaterialTheme.typography.h6)
             Spacer(modifier = Modifier.height(8.dp))
-            BudgetBar(
-                modifier = Modifier.fillMaxWidth().padding(16.dp).height(32.dp).clip(RoundedCornerShape(8.dp)),
-                progress = totalSpendBudget / totalBudget,
-                color = category.color.toColor("af")
-            )
-            Row(modifier = Modifier.fillMaxWidth().padding(16.dp), horizontalArrangement = Arrangement.SpaceBetween) {
+            Row(modifier = Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp), horizontalArrangement = Arrangement.SpaceBetween) {
                 Text("Spend: $totalSpendBudget")
-                Row {
+                Row(verticalAlignment = Alignment.Bottom) {
                     Text("Color: ")
                     Box(modifier = Modifier.clip(CircleShape).size(16.dp).background(category.color.toColor("af")))
                 }
                 Text("Budget: $totalBudget")
             }
+            BudgetBar(
+                modifier = Modifier.fillMaxWidth().padding(16.dp).height(32.dp).clip(RoundedCornerShape(8.dp)),
+                progress = totalSpendBudget / totalBudget,
+                color = category.color.toColor("af")
+            )
             Spacer(modifier = Modifier.height(8.dp))
         }
     }
