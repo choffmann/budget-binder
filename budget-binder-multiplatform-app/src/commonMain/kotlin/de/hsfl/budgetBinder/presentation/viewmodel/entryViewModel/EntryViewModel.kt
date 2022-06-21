@@ -38,6 +38,8 @@ class EntryViewModel(
     private val _amountSignState = MutableStateFlow(EntryInputState().amountSign)
     val amountSignState: StateFlow<Boolean> = _amountSignState
 
+    private val _selectedEntry = MutableStateFlow(EntryState().selectedEntry)
+    val selectedEntry: StateFlow<Entry> = _selectedEntry
 
     // --- Default ViewModel Variables ----
     private val _dialogState = MutableStateFlow(false)
@@ -73,7 +75,7 @@ class EntryViewModel(
             }
             is EntryEvent.OnEditEntry -> routerFlow.navigateTo(Screen.Settings.Server)
             is EntryEvent.OnDeleteEntry -> _dialogState.value = true
-            is EntryEvent.OnDeleteDialogConfirm -> removeEntry()//TODO Entry ID
+            is EntryEvent.OnDeleteDialogConfirm -> removeEntry(selectedEntry.value.id)//TODO Entry ID
             is EntryEvent.OnDeleteDialogDismiss -> _dialogState.value = false
             else -> {
                 throw Exception("Unhandled EntryEvent in EntryViewModel")
