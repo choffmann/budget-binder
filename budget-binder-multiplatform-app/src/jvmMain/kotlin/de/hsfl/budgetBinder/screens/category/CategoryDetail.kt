@@ -5,8 +5,6 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -100,18 +98,13 @@ fun TopCategoryDetailSection(
                 progress = totalSpendBudget / totalBudget,
                 color = category.color.toColor("af")
             )
-            LazyVerticalGrid(
-                columns = GridCells.Adaptive(minSize = 250.dp),
-                modifier = Modifier.align(Alignment.CenterHorizontally)
-            ) {
-                item { Text("Spend: $totalSpendBudget") }
-                item {
-                    Row {
-                        Text("Color: ")
-                        Box(modifier = Modifier.clip(CircleShape).size(16.dp).background(category.color.toColor("af")))
-                    }
+            Row(modifier = Modifier.fillMaxWidth().padding(16.dp), horizontalArrangement = Arrangement.SpaceBetween) {
+                Text("Spend: $totalSpendBudget")
+                Row {
+                    Text("Color: ")
+                    Box(modifier = Modifier.clip(CircleShape).size(16.dp).background(category.color.toColor("af")))
                 }
-                item { Text("Budget: $totalBudget") }
+                Text("Budget: $totalBudget")
             }
             Spacer(modifier = Modifier.height(8.dp))
         }

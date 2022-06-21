@@ -2,20 +2,15 @@ package de.hsfl.budgetBinder.screens.category
 
 import androidx.compose.animation.Animatable
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Send
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
 import de.hsfl.budgetBinder.compose.icon.SaveIcon
 import de.hsfl.budgetBinder.di
@@ -28,6 +23,7 @@ import org.kodein.di.instance
 
 @Composable
 fun CategoryEditView() {
+    val scope = rememberCoroutineScope()
     val viewModel: CategoryEditViewModel by di.instance()
     val categoryNameState = viewModel.categoryNameState.collectAsState()
     val categoryColorState = viewModel.categoryColorState.collectAsState()
@@ -37,7 +33,7 @@ fun CategoryEditView() {
     val categoryImageState = viewModel.categoryImageState.collectAsState()
     val categoryBudgetState = viewModel.categoryBudgetState.collectAsState()
     val scaffoldState = rememberScaffoldState()
-    val scope = rememberCoroutineScope()
+
 
     LaunchedEffect(Unit) {
         viewModel.onEvent(CategoryEditEvent.LifeCycle(LifecycleEvent.OnLaunch))
@@ -54,23 +50,14 @@ fun CategoryEditView() {
         }
     }) {
         Column(modifier = Modifier.fillMaxSize().background(animatableColor.value)) {
-            Row(modifier = Modifier.fillMaxWidth().padding(8.dp), horizontalArrangement = Arrangement.SpaceBetween) {
-                CategoryColors.colors.forEach { color ->
-                    Box(
-                        modifier = Modifier.size(50.dp).shadow(15.dp, CircleShape).clip(CircleShape).background(color)
-                            .border(
-                                width = 3.dp,
-                                color = if (color == categoryColorState.value.toColor("af")) Color.White else Color.Transparent,
-                                shape = CircleShape
-                            )
-                            .clickable {
-                                scope.launch {
-                                    animatableColor.animateTo(targetValue = color, animationSpec = tween(durationMillis = 500))
-                                }
-                            }
-                    )
-                }
-            }
+            ColorPicker(
+                colorState = categoryColorState.value,
+                onColorPicked = {
+                    scope.launch {
+                        animatableColor.animateTo(targetValue = it.first, animationSpec = tween(durationMillis = 500))
+                    }
+                    viewModel.onEvent(CategoryEditEvent.EnteredCategoryColor(it.second))
+                })
             OutlinedTextField(value = categoryNameState.value,
                 onValueChange = { viewModel.onEvent(CategoryEditEvent.EnteredCategoryName(it)) },
                 label = { Text("Category Name") })
@@ -84,6 +71,32 @@ fun CategoryEditView() {
             Button(onClick = { viewModel.onEvent(CategoryEditEvent.OnCancel) }) {
                 Text("Cancel")
             }
+        }
+    }
+}
+
+
+@Composable
+fun ColorPicker(
+    modifier: Modifier = Modifier,
+    colorState: String,
+    onColorPicked: (Pair<Color, String>) -> Unit
+) {
+
+    Row(modifier = Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 8.dp).horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.SpaceBetween) {
+        CategoryColors.colors.forEach { (color, colorString) ->
+            Spacer(modifier = modifier.width(8.dp))
+            Box(
+                modifier = Modifier.size(50.dp).shadow(15.dp, CircleShape).clip(CircleShape).background(color)
+                    .border(
+                        width = 3.dp,
+                        color = if (colorString == colorState) Color.White else Color.Transparent,
+                        shape = CircleShape
+                    )
+                    .clickable {
+                        onColorPicked(Pair(color, colorString))
+                    }
+            )
         }
     }
 }
