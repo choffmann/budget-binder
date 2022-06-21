@@ -49,7 +49,11 @@ class EntryViewModel(
     // ----
 
     init {
-        //Do we need something to init?
+        when (routerFlow.state.value) {
+            is Screen.Entry.Overview -> getEntryById((routerFlow.state.value as Screen.Entry.Overview).id)
+            is Screen.Entry.Edit -> getEntryById((routerFlow.state.value as Screen.Entry.Edit).id)
+            else -> {}
+        }
     }
 
     /* *** Event Handling *** */
@@ -86,7 +90,7 @@ class EntryViewModel(
                     else -> routerFlow.navigateTo(Screen.Entry.Edit(selectedEntry.value.id)) //using ID seems... unnecessary?
                 }
             is EntryEvent.OnDeleteEntry -> _dialogState.value = true
-            is EntryEvent.OnDeleteDialogConfirm -> removeEntry(selectedEntry.value.id)//TODO Entry ID
+            is EntryEvent.OnDeleteDialogConfirm -> removeEntry(selectedEntry.value.id)
             is EntryEvent.OnDeleteDialogDismiss -> _dialogState.value = false
             else -> {
                 throw Exception("Unhandled EntryEvent in EntryViewModel")
@@ -96,7 +100,7 @@ class EntryViewModel(
     }
 
 
-    /* *** Use Case usages *** */
+    /* *** Use Case usages *** */ //TODO Implement use cases
     fun getEntryById(id: Int) {}
     fun createEntry(entry: Entry.In) {}
     fun changeEntry(entry: Entry.Patch, id: Int) {}
