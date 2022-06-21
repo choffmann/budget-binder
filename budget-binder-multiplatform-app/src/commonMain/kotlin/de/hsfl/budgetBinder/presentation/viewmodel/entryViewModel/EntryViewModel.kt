@@ -17,7 +17,7 @@ class EntryViewModel(
     private val routerFlow: RouterFlow,
     private val dataFlow: DataFlow,
     private val scope: CoroutineScope
-    ) {
+) {
     /* *** Variables *** */
 
     //Dialog used to confirm deletion
@@ -27,13 +27,28 @@ class EntryViewModel(
     val eventFlow = UiEventSharedFlow.eventFlow
 
 
-    init{
+    init {
         //Do we need something to init?
     }
 
     /* *** Event Handling *** */
-    fun onEvent(event: EntryEvent){
-        //TODO Event action
+    fun onEvent(event: EntryEvent) {
+        when (event) {
+            is EntryEvent.EnteredName -> {}
+            is EntryEvent.EnteredAmount -> {}
+            is EntryEvent.EnteredRepeatState -> {}
+            is EntryEvent.EnteredCategoryID -> {}
+            is EntryEvent.EnteredAmountInputType -> {}
+            is EntryEvent.OnCreateEntry -> {}
+            is EntryEvent.OnEditEntry -> {}
+            is EntryEvent.OnDeleteEntry -> {}
+            is EntryEvent.OnDeleteDialogConfirm -> {}
+            is EntryEvent.OnDeleteDialogDismiss -> {}
+            else -> {
+                throw Exception("Unhandled EntryEvent in EntryViewModel")
+            }
+        }
+
     }
 
 
