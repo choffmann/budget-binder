@@ -20,6 +20,20 @@ class EntryViewModel(
     private val scope: CoroutineScope
 ) {
     /* *** Variables *** */
+    private val _nameText = MutableStateFlow(EntryInputState())
+    val nameText: StateFlow<EntryInputState> = _nameText
+
+    private val _amountText = MutableStateFlow(EntryInputState())
+    val amountText: StateFlow<EntryInputState> = _amountText
+
+    private val _repeatText = MutableStateFlow(EntryInputState())
+    val repeatText: StateFlow<EntryInputState> = _repeatText
+
+    private val _categoryIDText = MutableStateFlow(EntryInputState())
+    val categoryIDText: StateFlow<EntryInputState> = _categoryIDText
+
+    private val _amountSignText = MutableStateFlow(EntryInputState())
+    val amountSignText: StateFlow<EntryInputState> = _amountSignText
 
 
     //Default ViewModel Variables
