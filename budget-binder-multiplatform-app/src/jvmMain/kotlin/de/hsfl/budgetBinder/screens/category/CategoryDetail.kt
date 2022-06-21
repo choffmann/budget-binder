@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import de.hsfl.budgetBinder.common.Entry
 import de.hsfl.budgetBinder.compose.BudgetBar
 import de.hsfl.budgetBinder.compose.icon.ForwardIcon
 import de.hsfl.budgetBinder.compose.icon.ReplyIcon
@@ -32,7 +33,6 @@ import de.hsfl.budgetBinder.presentation.viewmodel.category.edit.CategoryEditEve
 import kotlinx.coroutines.flow.collectLatest
 import org.kodein.di.instance
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
 @Composable
 fun CategoryDetailView() {
     val viewModel: CategoryDetailViewModel by di.instance()
@@ -75,28 +75,39 @@ fun CategoryDetailView() {
                 color = categoryState.value.color.toColor("af")
             )
             Text(categoryState.value.toString())
-            LazyColumn {
-                items(
-                    items = entryListState.value,
-                    key = { entry -> entry.id }
-                ) { entry ->
-                    ListItem(
-                        modifier = Modifier.animateItemPlacement(tween(durationMillis = 1000)),
-                        text = { Text(entry.name) },
-                        trailing = {
-                            if (entry.amount > 0) Text("+${entry.amount}", color = Color.Green)
-                            else Text("${entry.amount}", color = Color.Red)
-                           },
-                        icon = {
-                            if (entry.amount > 0) ForwardIcon()
-                            else ReplyIcon()
-                        }
-                    )
+            if (loadingState.value) {
+                CircularProgressIndicator()
+            } else {
+                EntryList(entryList = entryListState.value)
+                Button(onClick = { viewModel.onEvent(CategoryDetailEvent.OnBack) }) {
+                    Text("Back")
                 }
-            }
-            Button(onClick = { viewModel.onEvent(CategoryDetailEvent.OnBack) }) {
-                Text("Back")
             }
         }
     }
+}
+
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
+@Composable
+private fun EntryList(entryList: List<Entry>) {
+    LazyColumn {
+        items(
+            items = entryList,
+            key = { entry -> entry.id }
+        ) { entry ->
+            ListItem(
+                modifier = Modifier.animateItemPlacement(tween(durationMillis = 1000)),
+                text = { Text(entry.name) },
+                trailing = {
+                    if (entry.amount > 0) Text("+${entry.amount}", color = Color.Green)
+                    else Text("${entry.amount}", color = Color.Red)
+                },
+                icon = {
+                    if (entry.amount > 0) ForwardIcon()
+                    else ReplyIcon()
+                }
+            )
+        }
+    }
+
 }
