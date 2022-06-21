@@ -5,19 +5,22 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import de.hsfl.budgetBinder.common.Category
 import de.hsfl.budgetBinder.common.Entry
 import de.hsfl.budgetBinder.compose.BudgetBar
 import de.hsfl.budgetBinder.compose.icon.ForwardIcon
@@ -68,13 +71,11 @@ fun CategoryDetailView() {
         }
     ) {
         Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(text = categoryState.value.name, style = MaterialTheme.typography.h6)
-            BudgetBar(
-                modifier = Modifier.fillMaxWidth().padding(16.dp).height(32.dp).clip(RoundedCornerShape(8.dp)),
-                progress = spendBudgetState.value / categoryState.value.budget,
-                color = categoryState.value.color.toColor("af")
+            TopCategoryDetailSection(
+                totalBudget = categoryState.value.budget,
+                totalSpendBudget = spendBudgetState.value,
+                category = categoryState.value
             )
-            Text(categoryState.value.toString())
             if (loadingState.value) {
                 CircularProgressIndicator()
             } else {
@@ -83,6 +84,40 @@ fun CategoryDetailView() {
                     Text("Back")
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun TopCategoryDetailSection(
+    totalSpendBudget: Float,
+    totalBudget: Float,
+    category: Category
+) {
+    Surface(elevation = 8.dp) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(text = category.name, style = MaterialTheme.typography.h6)
+            Spacer(modifier = Modifier.height(8.dp))
+            BudgetBar(
+                modifier = Modifier.fillMaxWidth().padding(16.dp).height(32.dp).clip(RoundedCornerShape(8.dp)),
+                progress = totalSpendBudget / totalBudget,
+                color = category.color.toColor("af")
+            )
+            LazyVerticalGrid(
+                columns = GridCells.Adaptive(minSize = 250.dp),
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            ) {
+                item { Text("Spend: $totalSpendBudget") }
+                item {
+                    Row {
+                        Text("Color: ")
+                        Box(modifier = Modifier.clip(CircleShape).size(16.dp).background(category.color.toColor("af")))
+                    }
+                }
+                item { Text("Budget: $totalBudget") }
+            }
+            Spacer(modifier = Modifier.height(8.dp))
         }
     }
 }
