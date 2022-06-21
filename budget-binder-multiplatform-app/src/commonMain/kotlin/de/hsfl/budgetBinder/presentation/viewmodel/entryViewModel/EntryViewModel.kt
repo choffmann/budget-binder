@@ -31,10 +31,19 @@ class EntryViewModel(
         //Do we need something to init?
     }
 
+    /* *** Event Handling *** */
     fun onEvent(event: EntryEvent){
         //TODO Event action
     }
 
+
+    /* *** Use Case usages *** */
+    fun getEntryById(id: Int) {}
+    fun createEntry(entry: Entry.In) {}
+    fun changeEntry(entry: Entry.Patch, id: Int) {}
+    fun removeEntry(id: Int) {}
+
+    /* *** Helper *** */
     private fun toggleDialog() {
         _dialogState.value = !dialogState.value
     }
