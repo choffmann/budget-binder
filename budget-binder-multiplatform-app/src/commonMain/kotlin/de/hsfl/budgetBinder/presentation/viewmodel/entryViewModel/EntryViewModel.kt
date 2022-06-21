@@ -23,20 +23,20 @@ class EntryViewModel(
     /* *** Variables *** */
 
     // ---- Data Input Variables ----
-    private val _nameText = MutableStateFlow(EntryInputState())
-    val nameText: StateFlow<EntryInputState> = _nameText
+    private val _nameText = MutableStateFlow(EntryInputState().name)
+    val nameText: StateFlow<String> = _nameText
 
-    private val _amountText = MutableStateFlow(EntryInputState())
-    val amountText: StateFlow<EntryInputState> = _amountText
+    private val _amountText = MutableStateFlow(EntryInputState().amount)
+    val amountText: StateFlow<Float> = _amountText
 
-    private val _repeatState = MutableStateFlow(EntryInputState())
-    val repeatState: StateFlow<EntryInputState> = _repeatState
+    private val _repeatState = MutableStateFlow(EntryInputState().repeat)
+    val repeatState: StateFlow<Boolean> = _repeatState
 
-    private val _categoryIDState = MutableStateFlow(EntryInputState())
-    val categoryIDState: StateFlow<EntryInputState> = _categoryIDState
+    private val _categoryIDState = MutableStateFlow(EntryInputState().categoryID)
+    val categoryIDState: StateFlow<Int?> = _categoryIDState
 
-    private val _amountSignState = MutableStateFlow(EntryInputState())
-    val amountSignState: StateFlow<EntryInputState> = _amountSignState
+    private val _amountSignState = MutableStateFlow(EntryInputState().amountSign)
+    val amountSignState: StateFlow<Boolean> = _amountSignState
 
 
     // --- Default ViewModel Variables ----
@@ -62,10 +62,10 @@ class EntryViewModel(
                 when (routerFlow.state.value) {
                     is Screen.Entry.Create -> createEntry(
                         Entry.In(
-                            nameText,
-                            amountState,
-                            repeatState,
-                            categoryIDState
+                            nameText.value,
+                            amountText.value,
+                            repeatState.value,
+                            categoryIDState.value
                         )
                     )
                     else -> routerFlow.navigateTo(Screen.Entry.Create)
