@@ -6,7 +6,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -26,13 +25,10 @@ import de.hsfl.budgetBinder.compose.BudgetBar
 import de.hsfl.budgetBinder.compose.icon.ForwardIcon
 import de.hsfl.budgetBinder.compose.icon.ReplyIcon
 import de.hsfl.budgetBinder.di
-import de.hsfl.budgetBinder.presentation.Screen
 import de.hsfl.budgetBinder.presentation.event.LifecycleEvent
 import de.hsfl.budgetBinder.presentation.event.UiEvent
-import de.hsfl.budgetBinder.presentation.flow.RouterFlow
 import de.hsfl.budgetBinder.presentation.viewmodel.category.detail.CategoryDetailEvent
 import de.hsfl.budgetBinder.presentation.viewmodel.category.detail.CategoryDetailViewModel
-import de.hsfl.budgetBinder.presentation.viewmodel.category.edit.CategoryEditEvent
 import kotlinx.coroutines.flow.collectLatest
 import org.kodein.di.instance
 
