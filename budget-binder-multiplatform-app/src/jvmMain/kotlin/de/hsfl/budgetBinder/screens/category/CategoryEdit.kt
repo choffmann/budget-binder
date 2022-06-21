@@ -12,6 +12,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import de.hsfl.budgetBinder.common.Category
+import de.hsfl.budgetBinder.compose.dialog.PickIconDialog
 import de.hsfl.budgetBinder.compose.icon.SaveIcon
 import de.hsfl.budgetBinder.di
 import de.hsfl.budgetBinder.presentation.CategoryImageToIcon
@@ -33,6 +35,7 @@ fun CategoryEditView() {
     val categoryImageState = viewModel.categoryImageState.collectAsState()
     val categoryBudgetState = viewModel.categoryBudgetState.collectAsState()
     val scaffoldState = rememberScaffoldState()
+    val dialogState = remember { mutableStateOf(false) }
 
 
     LaunchedEffect(Unit) {
@@ -49,6 +52,17 @@ fun CategoryEditView() {
             SaveIcon()
         }
     }) {
+        PickIconDialog(
+            categoryName = categoryNameState.value,
+            categoryBudget = categoryBudgetState.value,
+            openDialog = dialogState.value,
+            onConfirm = {
+                dialogState.value = false
+                viewModel.onEvent(CategoryEditEvent.EnteredCategoryImage(it))
+            },
+            onDismiss = { dialogState.value = false },
+            selectColor = animatableColor.value
+        )
         Column(modifier = Modifier.fillMaxSize().background(animatableColor.value)) {
             ColorPicker(
                 colorState = categoryColorState.value,
@@ -67,7 +81,9 @@ fun CategoryEditView() {
             OutlinedTextField(value = categoryBudgetState.value.toString(),
                 onValueChange = { viewModel.onEvent(CategoryEditEvent.EnteredCategoryBudget(it.toFloat())) },
                 label = { Text("Category Budget") })
-            CategoryImageToIcon(categoryImageState.value)
+            Box(modifier = Modifier.clickable {
+                dialogState.value = true
+            }) { CategoryImageToIcon(categoryImageState.value) }
             Button(onClick = { viewModel.onEvent(CategoryEditEvent.OnCancel) }) {
                 Text("Cancel")
             }
@@ -83,7 +99,10 @@ fun ColorPicker(
     onColorPicked: (Pair<Color, String>) -> Unit
 ) {
 
-    Row(modifier = Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 8.dp).horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.SpaceBetween) {
+    Row(
+        modifier = Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 8.dp).horizontalScroll(rememberScrollState()),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
         CategoryColors.colors.forEach { (color, colorString) ->
             Spacer(modifier = modifier.width(8.dp))
             Box(
