@@ -60,7 +60,7 @@ class EntryViewModel(
             is EntryEvent.EnteredRepeat -> _repeatState.value = repeatState.value
             is EntryEvent.EnteredCategoryID -> _categoryIDState.value = categoryIDState.value
             is EntryEvent.EnteredAmountSign -> _amountSignState.value = amountSignState.value
-            is EntryEvent.OnCreateEntry -> {
+            is EntryEvent.OnCreateEntry ->
                 when (routerFlow.state.value) {
                     is Screen.Entry.Create -> createEntry(
                         Entry.In(
@@ -72,8 +72,19 @@ class EntryViewModel(
                     )
                     else -> routerFlow.navigateTo(Screen.Entry.Create)
                 }
-            }
-            is EntryEvent.OnEditEntry -> routerFlow.navigateTo(Screen.Settings.Server)
+
+            is EntryEvent.OnEditEntry ->
+                when (routerFlow.state.value) {
+                    is Screen.Entry.Edit -> changeEntry(
+                        Entry.Patch(
+                            nameText.value,
+                            amountText.value,
+                            repeatState.value,
+                            Entry.Category(categoryIDState.value)
+                        ), selectedEntry.value.id
+                    )
+                    else -> routerFlow.navigateTo(Screen.Entry.Edit(selectedEntry.value.id)) //using ID seems... unnecessary?
+                }
             is EntryEvent.OnDeleteEntry -> _dialogState.value = true
             is EntryEvent.OnDeleteDialogConfirm -> removeEntry(selectedEntry.value.id)//TODO Entry ID
             is EntryEvent.OnDeleteDialogDismiss -> _dialogState.value = false
