@@ -7,6 +7,7 @@ import de.hsfl.budgetBinder.presentation.UiState
 import de.hsfl.budgetBinder.presentation.flow.DataFlow
 import de.hsfl.budgetBinder.presentation.flow.RouterFlow
 import de.hsfl.budgetBinder.presentation.flow.UiEventSharedFlow
+import de.hsfl.budgetBinder.presentation.viewmodel.login.LoginTextFieldState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -20,7 +21,8 @@ class EntryViewModel(
 ) {
     /* *** Variables *** */
 
-    //Dialog used to confirm deletion
+
+    //Default ViewModel Variables
     private val _dialogState = MutableStateFlow(false)
     val dialogState: StateFlow<Boolean> = _dialogState
     private val _eventFlow = UiEventSharedFlow.mutableEventFlow
@@ -36,9 +38,9 @@ class EntryViewModel(
         when (event) {
             is EntryEvent.EnteredName -> {}
             is EntryEvent.EnteredAmount -> {}
-            is EntryEvent.EnteredRepeatState -> {}
+            is EntryEvent.EnteredRepeat -> {}
             is EntryEvent.EnteredCategoryID -> {}
-            is EntryEvent.EnteredAmountInputType -> {}
+            is EntryEvent.EnteredAmountSign -> {}
             is EntryEvent.OnCreateEntry -> {}
             is EntryEvent.OnEditEntry -> {}
             is EntryEvent.OnDeleteEntry -> {}

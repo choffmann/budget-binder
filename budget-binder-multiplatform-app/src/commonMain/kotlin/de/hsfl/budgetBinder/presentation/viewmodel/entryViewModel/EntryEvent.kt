@@ -4,12 +4,12 @@ package de.hsfl.budgetBinder.presentation.viewmodel.entryViewModel
 
 sealed class EntryEvent {
     data class EnteredName(val value: String) : EntryEvent()
-
-    //If the amount will be added or subtracted from the current spent sum
-    data class EnteredAmountInputType(val value: Boolean) : EntryEvent()
     data class EnteredAmount(val value: Float) : EntryEvent()
-    data class EnteredRepeatState(val value: Boolean) : EntryEvent()
+    data class EnteredRepeat(val value: Boolean) : EntryEvent()
     data class EnteredCategoryID(val value: Int) : EntryEvent()
+    data class EnteredAmountSign(val value: Boolean) :
+        EntryEvent() //If the amount will be added or subtracted from the current spent sum
+
     object OnCreateEntry : EntryEvent()
     object OnEditEntry : EntryEvent()
     object OnDeleteEntry : EntryEvent()
