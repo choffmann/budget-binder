@@ -7,8 +7,7 @@ sealed class EntryEvent {
     data class EnteredAmount(val value: Float) : EntryEvent()
     data class EnteredRepeat(val value: Boolean) : EntryEvent()
     data class EnteredCategoryID(val value: Int) : EntryEvent()
-    data class EnteredAmountSign(val value: Boolean) :
-        EntryEvent() //If the amount will be added or subtracted from the current spent sum
+    data class EnteredAmountSign(val value: Boolean) : EntryEvent()
 
     object OnCreateEntry : EntryEvent()
     object OnEditEntry : EntryEvent()
