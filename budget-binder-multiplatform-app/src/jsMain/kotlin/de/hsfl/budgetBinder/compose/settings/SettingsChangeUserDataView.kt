@@ -1,78 +1,50 @@
 package de.hsfl.budgetBinder.compose.settings
 
 import androidx.compose.runtime.*
+import de.hsfl.budgetBinder.compose.FeedbackSnackbar
 import de.hsfl.budgetBinder.compose.MainFlexContainer
+import de.hsfl.budgetBinder.compose.NavBar
 import de.hsfl.budgetBinder.compose.theme.AppStylesheet
-import de.hsfl.budgetBinder.compose.topBarMain
-import de.hsfl.budgetBinder.presentation.UiState
+import de.hsfl.budgetBinder.presentation.UiEvent
+import de.hsfl.budgetBinder.presentation.viewmodel.settings.EditUserEvent
+import de.hsfl.budgetBinder.presentation.viewmodel.settings.SettingsEditUserViewModel
+import di
+import kotlinx.coroutines.flow.collectLatest
 import org.jetbrains.compose.web.attributes.InputType
+import org.jetbrains.compose.web.attributes.required
 import org.jetbrains.compose.web.css.percent
 import org.jetbrains.compose.web.css.width
 import org.jetbrains.compose.web.dom.*
+import org.kodein.di.instance
 
 
 @Composable
-fun SettingsChangeUserDataView(
-    state: State<Any>,
-    onChangeToDashboard: () -> Unit,
-    onChangeToSettings: () -> Unit,
-    onChangeToCategory: () -> Unit,
-    onChangeDataButtonPressed: (firstName: String, lastName: String, password: String) -> Unit
-) {
-    var firstNameTextFieldState by remember { mutableStateOf("") }
-    var lastNameTextFieldState by remember { mutableStateOf("") }
-    var passwordTextFieldState by remember { mutableStateOf("") }
-    val viewState by remember { state }
+fun SettingsChangeUserDataView() {
+    val viewModel: SettingsEditUserViewModel by di.instance()
+    val loadingState = remember { mutableStateOf(false) }
+    val firstNameText = viewModel.firstNameText.collectAsState()
+    val lastNameText = viewModel.lastNameText.collectAsState()
+    val passwordText = viewModel.passwordText.collectAsState()
+    val confirmedPasswordText = viewModel.confirmedPassword.collectAsState()
+    var checkPassword by remember { mutableStateOf(true) }
 
-    topBarMain(
-        logoButton = {
-            Img(
-                src = "images/Logo.png", alt = "Logo", attrs = {
-                    classes("mdc-icon-button", AppStylesheet.image)
-                    onClick { onChangeToDashboard() }
-                }
-            )
-        }, navButtons = {
-            Button(
-                attrs = {
-                    classes("mdc-button", "mdc-button--raised", "mdc-top-app-bar__navigation-icon")
-                    onClick { onChangeToCategory() }
-                }
-            ) {
-                Span(
-                    attrs = {
-                        classes("mdc-button__label")
-                    }
-                ) {
-                    Text("Categories")
-                }
+    LaunchedEffect(key1 = true) {
+        viewModel.eventFlow.collectLatest { event ->
+            when (event) {
+                is UiEvent.ShowLoading -> loadingState.value = true
+                is UiEvent.HideSuccess -> loadingState.value = false
+                else -> loadingState.value = false
             }
-            Button(
-                attrs = {
-                    classes("mdc-button", "mdc-button--raised", "mdc-top-app-bar__navigation-icon")
-                    onClick { onChangeToSettings() }
-                }
-            ) {
-                Span(
-                    attrs = {
-                        classes("mdc-button__label")
-                    }
-                ) {
-                    Text("Settings")
-                }
-            }
-        })
-
+        }
+    }
+    NavBar {}
     MainFlexContainer {
         H1 { Text("Change User Data") }
         Form(attrs = {
             this.addEventListener("submit") {
-                console.log("$firstNameTextFieldState, $lastNameTextFieldState, $passwordTextFieldState")
-                onChangeDataButtonPressed(
-                    firstNameTextFieldState,
-                    lastNameTextFieldState,
-                    passwordTextFieldState
-                )
+                checkPassword = passwordText == confirmedPasswordText
+                console.log(checkPassword)
+                if (checkPassword) viewModel.onEvent(EditUserEvent.OnUpdate)
                 it.preventDefault()
             }
         }
@@ -101,10 +73,11 @@ fun SettingsChangeUserDataView(
                     Input(
                         type = InputType.Text
                     ) {
+                        required()
                         classes("mdc-text-field__input")
-                        value(firstNameTextFieldState)
+                        value(firstNameText.value.firstName)
                         onInput {
-                            firstNameTextFieldState = it.value
+                            viewModel.onEvent(EditUserEvent.EnteredFirstName(it.value))
                         }
                     }
                     Span(
@@ -138,10 +111,11 @@ fun SettingsChangeUserDataView(
                     Input(
                         type = InputType.Text
                     ) {
+                        required()
                         classes("mdc-text-field__input")
-                        value(lastNameTextFieldState)
+                        value(lastNameText.value.lastName)
                         onInput {
-                            lastNameTextFieldState = it.value
+                            viewModel.onEvent(EditUserEvent.EnteredLastName(it.value))
                         }
                     }
                     Span(
@@ -172,11 +146,48 @@ fun SettingsChangeUserDataView(
                             classes("mdc-floating-label", "mdc-floating-label--float-above")
                         }
                     ) { Text("Password") }
-                    PasswordInput(value = passwordTextFieldState,
+                    PasswordInput(value = passwordText.value.password,
                         attrs = {
+                            required()
                             classes("mdc-text-field__input")
                             onInput {
-                                passwordTextFieldState = it.value
+                                viewModel.onEvent(EditUserEvent.EnteredPassword(it.value))
+                            }
+                        })
+                    Span(
+                        attrs = {
+                            classes("mdc-line-ripple")
+                        }
+                    ) { }
+                }
+            }
+            Div(
+                attrs = {
+                    classes(AppStylesheet.margin)
+                }
+            ) {
+                Label(
+                    attrs = {
+                        classes("mdc-text-field", "mdc-text-field--filled")
+                        style { width(100.percent) }
+                    }
+                ) {
+                    Span(
+                        attrs = {
+                            classes("mdc-text-field__ripple")
+                        }
+                    ) { }
+                    Span(
+                        attrs = {
+                            classes("mdc-floating-label", "mdc-floating-label--float-above")
+                        }
+                    ) { Text("Repeat Password") }
+                    PasswordInput(value = confirmedPasswordText.value.confirmedPassword,
+                        attrs = {
+                            required()
+                            classes("mdc-text-field__input")
+                            onInput {
+                                viewModel.onEvent(EditUserEvent.EnteredConfirmedPassword(it.value))
                             }
                         })
                     Span(
@@ -197,17 +208,9 @@ fun SettingsChangeUserDataView(
                         value("Submit")
                     })
             }
-            when (viewState) {
-                is UiState.Success<*> -> {
-                    Text((viewState as UiState.Success<*>).element.toString())
-                }
-                is UiState.Error -> {
-                    Text((viewState as UiState.Error).error)
-                }
-                is UiState.Loading -> {
-                    //CircularProgressIndicator()
-                }
-            }
         }
+    }
+    if (!checkPassword) {
+        FeedbackSnackbar("Passwords do not match")
     }
 }

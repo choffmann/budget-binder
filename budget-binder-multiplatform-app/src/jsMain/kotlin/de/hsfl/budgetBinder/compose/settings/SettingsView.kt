@@ -2,84 +2,29 @@ package de.hsfl.budgetBinder.compose.settings
 
 import androidx.compose.runtime.*
 import de.hsfl.budgetBinder.compose.DeleteDialog
-import de.hsfl.budgetBinder.presentation.UiState
 import de.hsfl.budgetBinder.compose.MainFlexContainer
+import de.hsfl.budgetBinder.compose.NavBar
 import de.hsfl.budgetBinder.compose.theme.AppStylesheet
-import de.hsfl.budgetBinder.compose.topBarMain
-import org.jetbrains.compose.web.css.flex
-import org.jetbrains.compose.web.css.marginLeft
-import org.jetbrains.compose.web.css.percent
+import de.hsfl.budgetBinder.presentation.viewmodel.settings.SettingsEvent
+import de.hsfl.budgetBinder.presentation.viewmodel.settings.SettingsViewModel
+import di
+import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
+import org.kodein.di.instance
 
 
 @Composable
-fun SettingsView(
-    state: State<Any>,
-    onChangeToDashboard: () -> Unit,
-    onChangeToSettings: () -> Unit,
-    onChangeToCategory: () -> Unit,
-    onDeleteButtonPressed: () -> Unit,
-    onChangeButtonPressed: () -> Unit
-) {
+fun SettingsView() {
+    val viewModel: SettingsViewModel by di.instance()
     var deleteDialog by remember { mutableStateOf(false) }
-    val viewState by remember { state }
 
-    topBarMain(
-        logoButton = {
-            Img(
-                src = "images/Logo.png", alt = "Logo", attrs = {
-                    classes("mdc-icon-button", AppStylesheet.image)
-                    onClick { onChangeToDashboard() }
-                }
-            )
-        }, navButtons = {
-            Button(
-                attrs = {
-                    classes("mdc-button", "mdc-button--raised", "mdc-top-app-bar__navigation-icon")
-                    onClick { onChangeToCategory() }
-                }
-            ) {
-                Span(
-                    attrs = {
-                        classes("mdc-button__label")
-                    }
-                ) {
-                    Text("Categories")
-                }
-            }
-            Button(
-                attrs = {
-                    classes("mdc-button", "mdc-button--raised", "mdc-top-app-bar__navigation-icon")
-                    onClick { onChangeToSettings() }
-                }
-            ) {
-                Span(
-                    attrs = {
-                        classes("mdc-button__label")
-                    }
-                ) {
-                    Text("Settings")
-                }
-            }
-        })
-
+    NavBar { }
     MainFlexContainer {
         H1(
             attrs = {
                 style { marginLeft(2.percent) }
             }
         ) { Text("Settings") }
-        when (viewState) {
-            is UiState.Success<*> -> {
-                Text((viewState as UiState.Success<*>).element.toString())
-            }
-            is UiState.Error -> {
-                Text((viewState as UiState.Error).error)
-            }
-            is UiState.Loading -> {
-                //CircularProgressIndicator()
-            }
-        }
         Div(
             attrs = {
                 classes(AppStylesheet.margin, AppStylesheet.flexContainer)
@@ -88,7 +33,7 @@ fun SettingsView(
             Button(
                 attrs = {
                     classes("mdc-button", "mdc-button--raised")
-                    onClick { onChangeButtonPressed() }
+                    onClick { viewModel.onEvent(SettingsEvent.OnChangeToSettingsUserEdit) }
                     style { flex(100.percent) }
                 }
             ) {
@@ -103,10 +48,24 @@ fun SettingsView(
             Button(
                 attrs = {
                     classes("mdc-button", "mdc-button--raised")
-                    onClick {
-                        deleteDialog = true
-                    }
+                    onClick { viewModel.onEvent(SettingsEvent.OnLogoutAllDevices) }
                     style { flex(100.percent) }
+                }
+            ) {
+                Text("Logout on all device")
+            }
+        }
+        Div(
+            attrs = {
+                classes(AppStylesheet.margin, AppStylesheet.flexContainer)
+            }
+        ) {
+            Button(
+                attrs = {
+                    classes("mdc-button", "mdc-button--raised")
+                    onClick { deleteDialog = true }
+                    style { flex(100.percent)
+                            backgroundColor(Color("#b00020"))}
                 }
             ) {
                 Text("Delete User")
@@ -114,6 +73,9 @@ fun SettingsView(
         }
     }
     if (deleteDialog) {
-        DeleteDialog(false, { onDeleteButtonPressed() }, { deleteDialog = false }) { Text("Delete User?") }
+        DeleteDialog(
+            false,
+            { viewModel.onEvent(SettingsEvent.OnDeleteDialogConfirm) },
+            { deleteDialog = false }) { Text("Delete User?") }
     }
 }
