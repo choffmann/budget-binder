@@ -169,7 +169,7 @@ fun RegisterComponent() {
                         type = InputType.Text
                     ) {
                         classes("mdc-text-field__input")
-                        value(lastNameTextState.value.firstName)
+                        value(lastNameTextState.value.lastName)
                         onInput {
                             viewModel.onEvent(RegisterEvent.EnteredLastname(it.value))
                         }
