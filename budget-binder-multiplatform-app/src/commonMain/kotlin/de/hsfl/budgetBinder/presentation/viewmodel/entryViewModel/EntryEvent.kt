@@ -6,9 +6,9 @@ sealed class EntryEvent {
     //User-made Data Input
     data class EnteredName(val value: String) : EntryEvent()
     data class EnteredAmount(val value: Float) : EntryEvent()
-    data class EnteredRepeat(val value: Boolean) : EntryEvent()
-    data class EnteredCategoryID(val value: Int) : EntryEvent()
-    data class EnteredAmountSign(val value: Boolean) : EntryEvent()
+    object EnteredRepeat : EntryEvent()
+    data class EnteredCategoryID(val value: Int?) : EntryEvent()
+    object EnteredAmountSign : EntryEvent()
 
     //Action
     object OnCreateEntry : EntryEvent()

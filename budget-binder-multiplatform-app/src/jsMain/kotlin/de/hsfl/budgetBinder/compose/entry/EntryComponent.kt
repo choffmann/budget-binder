@@ -49,8 +49,6 @@ fun EntryComponent() {
         when (screenState.value) {
             is Screen.Entry.Create -> {
                 EntryCreateView(
-                    onRepeatClicked = { input -> viewModel.onEvent(EntryEvent.EnteredRepeat(input))},
-                    onAmountTypeSwitched = { input -> viewModel.onEvent(EntryEvent.EnteredAmountSign(input))},
                     onCreateEntryButtonPressed = { viewModel.onEvent(EntryEvent.OnCreateEntry) }
                 )
 
