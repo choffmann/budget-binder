@@ -55,14 +55,13 @@ class EntryViewModel(
     // ----
 
     init {
+        getCategoryList()
         when (routerFlow.state.value) {
             is Screen.Entry.Overview -> {
                 getEntryById((routerFlow.state.value as Screen.Entry.Overview).id)
-                getCategoryList()
             }
             is Screen.Entry.Edit -> {
                 getEntryById((routerFlow.state.value as Screen.Entry.Edit).id)
-                getCategoryList()
             }
             else -> {}
         }
@@ -71,10 +70,10 @@ class EntryViewModel(
     /* *** Event Handling *** */
     fun onEvent(event: EntryEvent) {
         when (event) {
-            is EntryEvent.EnteredName -> _nameText.value = nameText.value
-            is EntryEvent.EnteredAmount -> _amountText.value = amountText.value
+            is EntryEvent.EnteredName -> _nameText.value = event.value
+            is EntryEvent.EnteredAmount -> _amountText.value = event.value
             is EntryEvent.EnteredRepeat -> _repeatState.value = !repeatState.value
-            is EntryEvent.EnteredCategoryID -> _categoryIDState.value = categoryIDState.value
+            is EntryEvent.EnteredCategoryID -> _categoryIDState.value = event.value
             is EntryEvent.EnteredAmountSign -> _amountSignState.value = !amountSignState.value
             is EntryEvent.OnCreateEntry ->
                 when (routerFlow.state.value) {
@@ -125,7 +124,7 @@ class EntryViewModel(
             }
         }
     }
-    private fun getCategoryList() = scope.launch {
+    fun getCategoryList() = scope.launch {
         entryUseCases.getCategoryListUseCase.categories()
             .collect { handleDataResponse(response = it, onSuccess = {cl -> _categoryListState.value = cl}) }
     }
@@ -135,7 +134,10 @@ class EntryViewModel(
             when (it) {
                 is DataResponse.Loading -> _eventFlow.emit(UiEvent.ShowLoading)
                 is DataResponse.Error -> _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
-                is DataResponse.Success<*> -> _eventFlow.emit(UiEvent.ShowSuccess("Entry successfully created")) //TODO?: Change the msg
+                is DataResponse.Success<*> -> {
+                    _eventFlow.emit(UiEvent.ShowSuccess("Entry successfully created")) //TODO?: Change the msg
+                    routerFlow.navigateTo(Screen.Dashboard)
+                }
                 is DataResponse.Unauthorized -> _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
             }
         }

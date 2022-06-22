@@ -8,6 +8,7 @@ import de.hsfl.budgetBinder.presentation.CategoryImageToIcon
 import org.jetbrains.compose.web.ExperimentalComposeWebSvgApi
 import org.jetbrains.compose.web.attributes.ButtonType
 import org.jetbrains.compose.web.attributes.type
+import org.jetbrains.compose.web.attributes.value
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
 import org.jetbrains.compose.web.svg.Circle
@@ -383,9 +384,20 @@ fun DeleteDialog(
 @Composable
 fun ChooseCategoryMenu(
     categoryList: List<Category>,
+    selectedCategory: Int?,
     getCategoryId: (Int?) -> Unit
 ) {
-    var chosenCategory by remember { mutableStateOf(categoryList[0]) }
+    var chosenCategory by remember {
+        mutableStateOf(
+            if (selectedCategory == null) {
+                categoryList[0]
+            } else {
+                categoryList[selectedCategory]
+            }
+        )
+    }
+
+
     var showList by remember { mutableStateOf(false) }
 
     Button(attrs = {

@@ -25,7 +25,7 @@ fun EntryCreateView(
     val entryNameTextField by viewModel.nameText.collectAsState()
     val entryAmountTextField by viewModel.amountText.collectAsState()
     val entryRepeat by viewModel.repeatState.collectAsState()
-    val entryCategoryIDTextField by viewModel.repeatState.collectAsState()
+    val entryCategoryIDTextField by viewModel.categoryIDState.collectAsState()
     val amountSign by viewModel.amountSignState.collectAsState()
     //Data
     val categoryList by viewModel.categoryListState.collectAsState()
@@ -194,7 +194,7 @@ fun EntryCreateView(
                 }
             }
             Div(attrs = { style { flex(50.percent) } }) {
-                ChooseCategoryMenu(categoryList) { id ->
+                ChooseCategoryMenu(categoryList, entryCategoryIDTextField) { id ->
                     viewModel.onEvent(EntryEvent.EnteredCategoryID(id))
                 }
             }

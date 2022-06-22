@@ -244,7 +244,7 @@ fun EntryEditView(
                     }
                 }
                 Div(attrs = { style { flex(50.percent) } }) {
-                    ChooseCategoryMenu(categoryList) { id -> entryCategoryIDTextFieldState = id.toString() }
+                    //ChooseCategoryMenu(categoryList, ) { id -> entryCategoryIDTextFieldState = id.toString() }
                 }
             }
             Div(

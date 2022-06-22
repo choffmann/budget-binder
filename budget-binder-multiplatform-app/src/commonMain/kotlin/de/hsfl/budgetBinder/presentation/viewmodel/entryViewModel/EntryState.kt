@@ -5,5 +5,5 @@ import de.hsfl.budgetBinder.common.Entry
 
 data class EntryState(
     val selectedEntry: Entry = Entry(0,"",0f,false,null),
-    val categoryList: List<Category> = listOf()
+    val categoryList: List<Category> = listOf(Category(0,"","ffffff",Category.Image.DEFAULT,0f))
 )

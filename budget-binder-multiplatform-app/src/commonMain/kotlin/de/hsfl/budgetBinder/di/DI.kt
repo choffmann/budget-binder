@@ -25,6 +25,7 @@ import de.hsfl.budgetBinder.presentation.viewmodel.category.create.CategoryCreat
 import de.hsfl.budgetBinder.presentation.viewmodel.category.detail.CategoryDetailViewModel
 import de.hsfl.budgetBinder.presentation.viewmodel.category.edit.CategoryEditViewModel
 import de.hsfl.budgetBinder.presentation.viewmodel.dashboard.DashboardViewModel
+import de.hsfl.budgetBinder.presentation.viewmodel.entry.EntryViewModel
 import de.hsfl.budgetBinder.presentation.viewmodel.navdrawer.NavDrawerViewModel
 import de.hsfl.budgetBinder.presentation.viewmodel.settings.SettingsEditServerUrlViewModel
 import de.hsfl.budgetBinder.presentation.viewmodel.settings.SettingsEditUserViewModel
@@ -79,7 +80,7 @@ fun kodein(ktorEngine: HttpClientEngine) = DI {
     bindSingleton { StoreUserStateUseCase() }
     bindSingleton { StoreServerUrlUseCase() }
     bindSingleton { StoreDarkModeUseCase() }
-    bindSingleton { EntriesUseCases(instance(), instance(), instance(), instance(), instance()) }
+    bindSingleton { EntryUseCases(instance(), instance(), instance(), instance(), instance(), instance()) }
     bindSingleton { CategoriesUseCases(instance(), instance(), instance(), instance(), instance(), instance()) }
     bindSingleton { SettingsUseCases(instance(), instance(), instance()) }
     bindSingleton { AuthUseCases(instance(), instance(), instance()) }
@@ -102,7 +103,7 @@ fun kodein(ktorEngine: HttpClientEngine) = DI {
     bindSingleton { CategoryDetailViewModel(instance(), instance(), instance()) }
     bindSingleton { CategoryEditViewModel(instance(), instance(), instance()) }
     bindSingleton { CategoryCreateViewModel(instance(), instance(), instance()) }
-    bindSingleton { EntryViewModel(instance(), instance()) }
+    bindSingleton { EntryViewModel(instance(), instance(), instance(), instance()) }
     bindSingleton { DashboardViewModel(instance(), instance(), instance(), instance()) }
     bindSingleton { NavDrawerViewModel(instance(), instance(), instance()) }
 }
