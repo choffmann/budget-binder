@@ -10,7 +10,7 @@ import java.io.File
 fun Application.baseRoutes() {
     routing {
         static("/") {
-            staticRootFolder = File("files")
+            staticRootFolder = File("public")
             files(".")
             default("index.html")
         }
