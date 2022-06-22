@@ -25,7 +25,7 @@ class CategorySummaryViewModel(
     fun onEvent(event: CategorySummaryEvent) {
         when (event) {
             is CategorySummaryEvent.OnCategory -> routerFlow.navigateTo(Screen.Category.Detail(event.id))
-            is CategorySummaryEvent.OnCategoryCreate -> routerFlow.navigateTo(Screen.Category.Summary)
+            is CategorySummaryEvent.OnCategoryCreate -> routerFlow.navigateTo(Screen.Category.Create)
             is CategorySummaryEvent.OnRefresh -> getAllCategories()
             is CategorySummaryEvent.LifeCycle -> event.value.handleLifeCycle(
                 onLaunch = { getAllCategories() },
