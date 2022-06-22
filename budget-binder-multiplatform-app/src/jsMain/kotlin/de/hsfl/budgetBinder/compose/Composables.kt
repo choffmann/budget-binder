@@ -93,19 +93,15 @@ fun Icon(icon_name: String) {
 
 // Snackbar that shows msg
 @Composable
-fun FeedbackSnackbar(msg: String, hidden: Boolean = false) {
-    var hiddenValue by remember { mutableStateOf(hidden) }
+fun FeedbackSnackbar(msg: String, hidden: Boolean = false, onDismiss: () -> Unit) {
     Aside(
         attrs = {
-            when (hiddenValue) {
+            when (hidden) {
                 false -> classes("mdc-snackbar", "mdc-snackbar--open")
                 true -> classes("mdc-snackbar", "maria")
             }
             onClick {
-                hiddenValue = true
-                console.log(this@Aside)
-                console.log("ldsadsad")
-
+                onDismiss()
             }
         }) {
         Div(attrs = {
@@ -387,15 +383,20 @@ fun ChooseCategoryMenu(
     selectedCategory: Int?,
     getCategoryId: (Int?) -> Unit
 ) {
-    var chosenCategory by remember {
-        mutableStateOf(
-            if (selectedCategory == null) {
-                categoryList[0]
-            } else {
-                categoryList[selectedCategory]
-            }
-        )
+    console.log(categoryList)
+    var choseCat = categoryList[0]
+
+    for (category in categoryList) {
+        if (category.id == selectedCategory) {
+            choseCat = category
+            break
+        }
     }
+
+    var chosenCategory by remember {
+        mutableStateOf(choseCat)
+    }
+    console.log(chosenCategory)
 
 
     var showList by remember { mutableStateOf(false) }
@@ -433,4 +434,5 @@ fun ChooseCategoryMenu(
         Text(chosenCategory.name)
     }
 }
+
 
