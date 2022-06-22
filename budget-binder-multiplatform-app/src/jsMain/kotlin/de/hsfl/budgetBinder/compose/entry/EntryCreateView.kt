@@ -18,13 +18,12 @@ import org.kodein.di.instance
 @OptIn(ExperimentalComposeWebSvgApi::class)
 @Composable
 fun EntryCreateView(
-    onCreateEntryButtonPressed: () -> Unit,
+    onCreateButton: () -> Unit,
 ) {
     val viewModel: EntryViewModel by di.instance()
     //Input
     val entryNameTextField by viewModel.nameText.collectAsState()
     val entryAmountTextField by viewModel.amountText.collectAsState()
-    val entryRepeat by viewModel.repeatState.collectAsState()
     val entryCategoryIDTextField by viewModel.categoryIDState.collectAsState()
     val amountSign by viewModel.amountSignState.collectAsState()
     //Data
@@ -37,7 +36,7 @@ fun EntryCreateView(
     ) { Text("Create new Entry") }
     Form(attrs = {
         this.addEventListener("submit") {
-            onCreateEntryButtonPressed()
+            onCreateButton()
             it.preventDefault()
         }
     }
