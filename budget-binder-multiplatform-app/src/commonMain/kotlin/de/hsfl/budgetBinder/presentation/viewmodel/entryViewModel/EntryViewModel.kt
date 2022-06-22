@@ -114,7 +114,16 @@ class EntryViewModel(
             }
         }
     }
-    fun createEntry(entry: Entry.In) {}
+    fun createEntry(entry: Entry.In) {
+        entryUseCases.createNewEntryUseCase(entry).onEach {
+            when (it){
+                is DataResponse.Loading -> _eventFlow.emit(UiEvent.ShowLoading)
+                is DataResponse.Error -> _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
+                is DataResponse.Success<*> -> _eventFlow.emit(UiEvent.ShowSuccess("Entry successfully created")) //TODO?: Change the msg
+                is DataResponse.Unauthorized -> _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
+            }
+        }
+    }
     fun changeEntry(entry: Entry.Patch, id: Int) {}
     fun removeEntry(id: Int) {}
 
