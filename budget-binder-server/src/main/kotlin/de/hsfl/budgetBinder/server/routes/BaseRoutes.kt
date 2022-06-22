@@ -29,18 +29,21 @@ fun Application.baseRoutes() {
                     div {
                         id = "swagger-ui"
                     }
-                    unsafe {
-                        +"""
-                            <script src="https://unpkg.com/swagger-ui-dist@4.5.0/swagger-ui-bundle.js" crossorigin></script>
-                            <script>
+                    script {
+                        src = "https://unpkg.com/swagger-ui-dist@4.5.0/swagger-ui-bundle.js"
+                        attributes["crossorigin"] = "crossorigin"
+                    }
+                    script {
+                        unsafe {
+                            +"""
                                 window.onload = () => {
                                     window.ui = SwaggerUIBundle({
                                         url: '/openapi.json',
                                         dom_id: '#swagger-ui',
                                     });
                                 };
-                            </script>
-                        """.trimIndent()
+                            """.trimIndent()
+                        }
                     }
                 }
             }
