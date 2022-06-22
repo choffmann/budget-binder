@@ -1,5 +1,6 @@
 package de.hsfl.budgetBinder.compose.dialog
 
+import android.util.Log
 import androidx.compose.animation.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -18,12 +19,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import de.hsfl.budgetBinder.common.Category
+import de.hsfl.budgetBinder.screens.category.CategoryColorBubble
 import de.hsfl.budgetBinder.screens.category.CategoryColors
 import de.hsfl.budgetBinder.screens.category.CategoryListItem
 import de.hsfl.budgetBinder.screens.category.toColor
@@ -44,7 +42,10 @@ actual fun PickColorDialog(
     val animatableColor = remember { Animatable(categoryColor.toColor("af")) }
     val rememberColorString = remember { mutableStateOf(categoryColor) }
     val colorList = remember { CategoryColors.colors }
+    val size = 50.dp
+    val padding = 8.dp
     if (openDialog) {
+        Log.d("DialogDebug", "size - padding: ${size - padding}")
         AlertDialog(onDismissRequest = onDismiss,
             title = { Text(text = "Choose a Color for the Category") },
             confirmButton = {
@@ -61,23 +62,17 @@ actual fun PickColorDialog(
                         color = animatableColor.value
                     )
                     LazyVerticalGrid(
-                        cells = GridCells.Adaptive(80.dp)
+                        cells = GridCells.Adaptive(size + padding),
+                        contentPadding = PaddingValues(padding),
+                        verticalArrangement = Arrangement.spacedBy(padding),
+                        horizontalArrangement = Arrangement.spacedBy(padding)
                     ) {
                         colorList.forEach { (color, colorString) ->
                             item {
-                                Box(modifier = Modifier
-                                    .size(50.dp)
-                                    .padding(8.dp)
-                                    //.aspectRatio(1f)
-                                    .shadow(15.dp, CircleShape)
-                                    .clip(CircleShape)
-                                    .background(color)
-                                    .border(
-                                        width = 3.dp,
-                                        color = if (colorString == rememberColorString.value) Color.White else Color.Transparent,
-                                        shape = CircleShape
-                                    )
-                                    .clickable {
+                                CategoryColorBubble(size = size,
+                                    hasBorder = colorString == rememberColorString.value,
+                                    backgroundColor = color,
+                                    onClick = {
                                         scope.launch {
                                             animatableColor.animateTo(
                                                 targetValue = color, animationSpec = tween(durationMillis = 500)
