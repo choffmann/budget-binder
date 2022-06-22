@@ -20,7 +20,6 @@ import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
-import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.plugins.callloging.CallLogging
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
@@ -86,6 +85,18 @@ fun Application.mainModule(config: Config) {
                 val userService: UserService by closestDI().instance()
                 userService.findUserByEmailAndPassword(it.name, it.password)
             }
+
+            challenge {
+                call.respond(
+                    HttpStatusCode.Unauthorized,
+                    APIResponse<String>(
+                        ErrorModel(
+                            "Your username and/or password do not match.",
+                            HttpStatusCode.Unauthorized.value
+                        )
+                    )
+                )
+            }
         }
 
         jwt("auth-jwt") {
@@ -98,6 +109,19 @@ fun Application.mainModule(config: Config) {
                 val tokenVersion = it.payload.getClaim("token_version").asInt()
                 val userService: UserService by closestDI().instance()
                 userService.getUserPrincipalByIDAndTokenVersion(id, tokenVersion)
+            }
+
+            challenge { defaultScheme, realm ->
+                call.response.headers.append(HttpHeaders.WWWAuthenticate, "$defaultScheme realm=$realm")
+                call.respond(
+                    HttpStatusCode.Unauthorized,
+                    APIResponse<String>(
+                        ErrorModel(
+                            "Your accessToken is absent or does not match.",
+                            HttpStatusCode.Unauthorized.value
+                        )
+                    )
+                )
             }
         }
     }
@@ -128,25 +152,6 @@ fun Application.mainModule(config: Config) {
                         )
                     )
                     throw cause
-                }
-            }
-        }
-        status(HttpStatusCode.Unauthorized) { call, status ->
-            when (call.request.uri) {
-                "/login" -> call.respond(
-                    status,
-                    APIResponse<String>(ErrorModel("Your username and/or password do not match.", status.value))
-                )
-                else -> {
-                    val jwtService: JWTService by this@mainModule.closestDI().instance()
-                    call.response.headers.append(
-                        HttpHeaders.WWWAuthenticate,
-                        "Bearer realm=\"${jwtService.getRealm()}\""
-                    )
-                    call.respond(
-                        status,
-                        APIResponse<String>(ErrorModel("Your accessToken is absent or does not match.", status.value))
-                    )
                 }
             }
         }
