@@ -33,6 +33,7 @@ fun EntryComponent() {
     //Data to load
     val entry = viewModel.selectedEntryState.collectAsState()
     val categoryList = viewModel.categoryListState.collectAsState()
+    //Inputs
 
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->
@@ -48,7 +49,8 @@ fun EntryComponent() {
         when (screenState.value) {
             is Screen.Entry.Create -> {
                 EntryCreateView(
-                    categoryList = categoryList.value,
+                    onRepeatClicked = { input -> viewModel.onEvent(EntryEvent.EnteredRepeat(input))},
+                    onAmountTypeSwitched = { input -> viewModel.onEvent(EntryEvent.EnteredAmountSign(input))},
                     onCreateEntryButtonPressed = { viewModel.onEvent(EntryEvent.OnCreateEntry) }
                 )
 
