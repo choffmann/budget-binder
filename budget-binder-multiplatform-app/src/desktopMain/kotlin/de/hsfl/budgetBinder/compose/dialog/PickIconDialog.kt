@@ -1,27 +1,21 @@
 package de.hsfl.budgetBinder.compose.dialog
 
-import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.material.AlertDialog
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Text
-import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import de.hsfl.budgetBinder.common.Category
 import de.hsfl.budgetBinder.screens.category.CategoryIconBubble
-import de.hsfl.budgetBinder.screens.category.CategoryListItem
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
 @Composable
 actual fun PickIconDialog(
     openDialog: Boolean,
@@ -35,38 +29,29 @@ actual fun PickIconDialog(
     val selectedIcon = remember { mutableStateOf(Category.Image.DEFAULT) }
     val size = 50.dp
     val padding = 8.dp
-    if (openDialog) {
-        AlertDialog(
-            onDismissRequest = onDismiss,
-            title = { Text("Choose a Icon for the Category") },
-            confirmButton = {
-                TextButton(onClick = { onConfirm(selectedIcon.value) }) {
-                    Text(text = "Confirm")
-                }
-            },
-            text = {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    CategoryListItem(
-                        name = categoryName,
-                        budget = categoryBudget.toString(),
-                        icon = selectedIcon.value,
-                        color = selectColor
-                    )
-                    LazyVerticalGrid(
-                        columns = GridCells.Fixed(4),
-                    ) {
-                        items(rememberIcon) { icon ->
-                            CategoryIconBubble(
-                                size = size,
-                                hasBorder = selectedIcon.value == icon,
-                                onClick = { selectedIcon.value = icon },
-                                icon = icon
-                            )
-                        }
-                    }
-                }
+    AnimatedVisibility(
+        visible = openDialog,
+        enter = expandVertically(),
+        exit = shrinkVertically()
+    ) {
+        LazyVerticalGrid(
+            columns = GridCells.Adaptive(size + padding),
+            contentPadding = PaddingValues(padding),
+            horizontalArrangement = Arrangement.spacedBy(padding),
+            verticalArrangement = Arrangement.spacedBy(padding)
+        ) {
+            items(rememberIcon) { icon ->
+                CategoryIconBubble(
+                    size = size,
+                    hasBorder = selectedIcon.value == icon,
+                    onClick = {
+                        selectedIcon.value = icon
+                        onConfirm(selectedIcon.value)
+                    },
+                    icon = icon
+                )
             }
-        )
+        }
     }
 }
 

@@ -8,10 +8,12 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -36,9 +38,6 @@ fun CategoryEditView() {
     val viewModel: CategoryEditViewModel by di.instance()
     val categoryNameState = viewModel.categoryNameState.collectAsState()
     val categoryColorState = viewModel.categoryColorState.collectAsState()
-    val animatableColor = remember {
-        Animatable(categoryColorState.value.toColor("af"))
-    }
     val categoryImageState = viewModel.categoryImageState.collectAsState()
     val categoryBudgetState = viewModel.categoryBudgetState.collectAsState()
     val scaffoldState = rememberScaffoldState()
@@ -60,29 +59,6 @@ fun CategoryEditView() {
             SaveIcon()
         }
     }) {
-        PickIconDialog(
-            categoryName = categoryNameState.value,
-            categoryBudget = categoryBudgetState.value,
-            selectColor = categoryColorState.value.toColor("af"),
-            openDialog = iconDialogState.value,
-            onConfirm = {
-                iconDialogState.value = false
-                viewModel.onEvent(CategoryEditEvent.EnteredCategoryImage(it))
-            },
-            onDismiss = { iconDialogState.value = false },
-        )
-        PickColorDialog(categoryName = categoryNameState.value,
-            categoryImage = categoryImageState.value,
-            categoryBudget = categoryBudgetState.value,
-            categoryColor = categoryColorState.value,
-            openDialog = colorDialogState.value,
-            onDismiss = {
-                colorDialogState.value = false
-            },
-            onConfirm = {
-                colorDialogState.value = false
-                viewModel.onEvent(CategoryEditEvent.EnteredCategoryColor(it))
-            })
 
         Column(modifier = Modifier.fillMaxSize().fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
             Spacer(modifier = Modifier.height(16.dp))
@@ -97,11 +73,24 @@ fun CategoryEditView() {
                         CategoryColorBubble(size = 50.dp,
                             hasBorder = true,
                             backgroundColor = categoryColorState.value.toColor("af"),
-                            onClick = { colorDialogState.value = true })
+                            onClick = {
+                                iconDialogState.value = false
+                                colorDialogState.value = !colorDialogState.value
+                            })
                         Box(
                             modifier = Modifier.align(Alignment.BottomEnd).clip(CircleShape).background(Color.White)
                         ) {
-                            Icon(Icons.Default.ArrowDropDown, contentDescription = null, tint = Color.Black)
+                            if (colorDialogState.value) Icon(
+                                Icons.Default.ArrowDropDown,
+                                contentDescription = null,
+                                tint = Color.Black,
+                                modifier = Modifier.rotate(180f)
+                            )
+                            else Icon(
+                                Icons.Default.ArrowDropDown,
+                                contentDescription = null,
+                                tint = Color.Black
+                            )
                         }
                     }
 
@@ -112,16 +101,52 @@ fun CategoryEditView() {
                         CategoryIconBubble(size = 50.dp,
                             hasBorder = true,
                             icon = categoryImageState.value,
-                            onClick = { iconDialogState.value = true })
+                            onClick = {
+                                colorDialogState.value = false
+                                iconDialogState.value = !iconDialogState.value
+                            })
                         Box(
                             modifier = Modifier.align(Alignment.BottomEnd).clip(CircleShape).background(Color.White)
                         ) {
-                            Icon(Icons.Default.ArrowDropDown, contentDescription = null, tint = Color.Black)
+                            if (iconDialogState.value) Icon(
+                                Icons.Default.ArrowDropDown,
+                                contentDescription = null,
+                                tint = Color.Black,
+                                modifier = Modifier.rotate(180f)
+                            )
+                            else Icon(
+                                Icons.Default.ArrowDropDown,
+                                contentDescription = null,
+                                tint = Color.Black
+                            )
                         }
                     }
 
                 }
             }
+            PickIconDialog(
+                categoryName = categoryNameState.value,
+                categoryBudget = categoryBudgetState.value,
+                selectColor = categoryColorState.value.toColor("af"),
+                openDialog = iconDialogState.value,
+                onConfirm = {
+                    //iconDialogState.value = false
+                    viewModel.onEvent(CategoryEditEvent.EnteredCategoryImage(it))
+                },
+                onDismiss = { iconDialogState.value = false },
+            )
+            PickColorDialog(categoryName = categoryNameState.value,
+                categoryImage = categoryImageState.value,
+                categoryBudget = categoryBudgetState.value,
+                categoryColor = categoryColorState.value,
+                openDialog = colorDialogState.value,
+                onDismiss = {
+                    colorDialogState.value = false
+                },
+                onConfirm = {
+                    //colorDialogState.value = false
+                    viewModel.onEvent(CategoryEditEvent.EnteredCategoryColor(it))
+                })
             Spacer(modifier = Modifier.height(16.dp))
             TextField(value = categoryNameState.value,
                 singleLine = true,

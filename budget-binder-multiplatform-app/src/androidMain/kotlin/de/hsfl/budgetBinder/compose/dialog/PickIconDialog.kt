@@ -31,17 +31,24 @@ actual fun PickIconDialog(
     val size = 50.dp
     val padding = 8.dp
     if (openDialog) {
-        AlertDialog(
-            onDismissRequest = onDismiss,
+        AlertDialog(onDismissRequest = onDismiss,
             title = { Text(text = "Choose a Icon for the Category") },
             confirmButton = {
-                TextButton(onClick = { onConfirm(selectedIcon.value) }) {
+                TextButton(onClick = {
+                    onConfirm(selectedIcon.value)
+                    onDismiss()
+                }) {
                     Text(text = "Confirm")
                 }
             },
             text = {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    CategoryListItem(name = categoryName, budget = categoryBudget.toString(), icon = selectedIcon.value, color = selectColor)
+                    CategoryListItem(
+                        name = categoryName,
+                        budget = categoryBudget.toString(),
+                        icon = selectedIcon.value,
+                        color = selectColor
+                    )
                     LazyVerticalGrid(
                         cells = GridCells.Adaptive(size + padding),
                         contentPadding = PaddingValues(padding),
@@ -58,8 +65,7 @@ actual fun PickIconDialog(
                         }
                     }
                 }
-            }
-        )
+            })
     }
 }
 

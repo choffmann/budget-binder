@@ -49,7 +49,10 @@ actual fun PickColorDialog(
         AlertDialog(onDismissRequest = onDismiss,
             title = { Text(text = "Choose a Color for the Category") },
             confirmButton = {
-                TextButton(onClick = { onConfirm(rememberColorString.value) }) {
+                TextButton(onClick = {
+                    onConfirm(rememberColorString.value)
+                    onDismiss()
+                }) {
                     Text(text = "Confirm")
                 }
             },
