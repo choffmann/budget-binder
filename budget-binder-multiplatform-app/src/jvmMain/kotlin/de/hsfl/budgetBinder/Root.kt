@@ -9,7 +9,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import de.hsfl.budgetBinder.common.User
 import de.hsfl.budgetBinder.di.kodein
-import de.hsfl.budgetBinder.presentation.UiEvent
+import de.hsfl.budgetBinder.presentation.event.UiEvent
 import de.hsfl.budgetBinder.presentation.flow.DataFlow
 import de.hsfl.budgetBinder.presentation.flow.UiEventSharedFlow
 import io.ktor.client.engine.cio.*

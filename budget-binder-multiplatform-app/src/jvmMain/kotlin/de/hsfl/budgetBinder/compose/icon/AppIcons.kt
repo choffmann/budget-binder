@@ -32,3 +32,6 @@ expect fun AccountIcon()
 
 @Composable
 expect fun DeleteForeverIcon()
+
+@Composable
+expect fun SaveIcon()

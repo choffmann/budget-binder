@@ -1,6 +1,10 @@
-package de.hsfl.budgetBinder.presentation.viewmodel.register
+package de.hsfl.budgetBinder.presentation.viewmodel.auth.register
+
+import de.hsfl.budgetBinder.presentation.event.LifecycleEvent
+import de.hsfl.budgetBinder.presentation.viewmodel.category.edit.CategoryEditEvent
 
 sealed class RegisterEvent {
+    data class LifeCycle(val value: LifecycleEvent): RegisterEvent()
     data class EnteredFirstname(val value: String): RegisterEvent()
     data class EnteredLastname(val value: String): RegisterEvent()
     data class EnteredEmail(val value: String): RegisterEvent()

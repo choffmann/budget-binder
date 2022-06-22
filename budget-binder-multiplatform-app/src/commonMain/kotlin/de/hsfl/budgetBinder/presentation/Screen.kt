@@ -1,6 +1,5 @@
 package de.hsfl.budgetBinder.presentation
 
-import de.hsfl.budgetBinder.domain.usecase.DeleteEntryByIdUseCase
 
 sealed class Screen {
     sealed class Welcome: Screen() {
@@ -14,8 +13,9 @@ sealed class Screen {
         object Server: Settings()
     }
     sealed class Category: Screen() {
+        data class Detail(val id: Int): Category()
         object Summary: Category()
-        object Edit: Category()
+        data class Edit(val id: Int): Category()
         object Create: Category()
         object CreateOnRegister: Category()
     }

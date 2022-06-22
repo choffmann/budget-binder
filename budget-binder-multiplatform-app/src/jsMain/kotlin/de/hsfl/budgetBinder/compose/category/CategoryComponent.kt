@@ -4,19 +4,14 @@ import androidx.compose.runtime.*
 import de.hsfl.budgetBinder.common.Category
 import de.hsfl.budgetBinder.common.Constants.DEFAULT_CATEGORY
 import de.hsfl.budgetBinder.common.Entry
-import de.hsfl.budgetBinder.domain.usecase.*
 import de.hsfl.budgetBinder.presentation.Screen
-import de.hsfl.budgetBinder.presentation.viewmodel.CategoryViewModel
+import de.hsfl.budgetBinder.presentation.viewmodel.category._CategoryViewModel
 import di
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import org.jetbrains.compose.web.ExperimentalComposeWebSvgApi
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
 import org.jetbrains.compose.web.svg.Rect
 import org.jetbrains.compose.web.svg.Svg
-import org.kodein.di.compose.localDI
 import org.kodein.di.instance
 
 @Composable
@@ -36,7 +31,7 @@ fun CategoryComponent(screenState: MutableState<Screen>) {
     val categoryViewModel = CategoryViewModel(getAllCategoriesUseCase, getCategoryByIdUseCase,createCategoryUseCase, changeCategoryByIdUseCase, deleteCategoryByIdUseCase, getAllEntriesByCategoryUseCase, scope)
     val viewState = categoryViewModel.state.collectAsState(scope)*/
 
-    val viewModel: CategoryViewModel by di.instance()
+    val viewModel: _CategoryViewModel by di.instance()
     val viewState = viewModel.state.collectAsState(scope.coroutineContext)
 
     when (screenState.value) {

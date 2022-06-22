@@ -17,7 +17,7 @@ class EntryViewModel(
     val state: StateFlow<UiState> = _state
 
     fun getAllEntries() {
-        entriesUseCases.getAllEntriesUseCase.entries().onEach {
+        entriesUseCases.getAllEntriesUseCase().onEach {
             when (it) {
                 is DataResponse.Success -> _state.value = UiState.Success(it.data)
                 is DataResponse.Error -> _state.value = UiState.Error(it.error!!.message)

@@ -1,4 +1,4 @@
-package de.hsfl.budgetBinder.presentation
+package de.hsfl.budgetBinder.presentation.event
 
 sealed class UiEvent {
     // Show Loading State in Ui
