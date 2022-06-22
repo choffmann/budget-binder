@@ -15,7 +15,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.*
 
 class EntryViewModel(
-    private val loginUseCases: LoginUseCases,
+    private val entryUseCases: EntryUseCases,
     private val routerFlow: RouterFlow,
     private val dataFlow: DataFlow,
     private val scope: CoroutineScope
@@ -101,7 +101,9 @@ class EntryViewModel(
 
 
     /* *** Use Case usages *** */ //TODO Implement use cases
-    fun getEntryById(id: Int) {}
+    fun getEntryById(id: Int) {
+
+    }
     fun createEntry(entry: Entry.In) {}
     fun changeEntry(entry: Entry.Patch, id: Int) {}
     fun removeEntry(id: Int) {}
