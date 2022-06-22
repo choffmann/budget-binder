@@ -3,42 +3,34 @@ package de.hsfl.budgetBinder.compose.settings
 import androidx.compose.runtime.*
 import de.hsfl.budgetBinder.common.User
 import de.hsfl.budgetBinder.presentation.Screen
+import de.hsfl.budgetBinder.presentation.UiEvent
+import de.hsfl.budgetBinder.presentation.flow.DataFlow
+import de.hsfl.budgetBinder.presentation.flow.RouterFlow
 import de.hsfl.budgetBinder.presentation.viewmodel.settings.SettingsViewModel
 import di
+import kotlinx.coroutines.flow.collectLatest
 import org.kodein.di.instance
 
 @Composable
-fun SettingsComponent(screenState: MutableState<Screen>) {
-    /*val scope = CoroutineScope(Dispatchers.Unconfined + SupervisorJob())
-    val di = localDI()
-    val changeMyUserUseCase: ChangeMyUserUseCase by di.instance()
-    val deleteMyUserUseCase: DeleteMyUserUseCase by di.instance()
-    val settingsViewModel = SettingsViewModel(changeMyUserUseCase, deleteMyUserUseCase, scope)
-    val viewState = settingsViewModel.state.collectAsState(scope)*/
-    val scope = rememberCoroutineScope()
-    val settingsViewModel: SettingsViewModel by di.instance()
-    val viewState = settingsViewModel.state.collectAsState(scope)
+fun SettingsComponent() {
+    val viewModel: SettingsViewModel by di.instance()
+    val dataFlow: DataFlow by di.instance()
+    val routerFlow: RouterFlow by di.instance()
+    val userState = dataFlow.userState.collectAsState()
+    val screenState = routerFlow.state.collectAsState()
+    val loadingState = remember { mutableStateOf(false) }
 
-
+    LaunchedEffect(key1 = true) {
+        viewModel.eventFlow.collectLatest {
+            when (it) {
+                is UiEvent.ShowLoading -> loadingState.value = true
+                else -> loadingState.value = false
+            }
+        }
+    }
     when (screenState.value) {
-        Screen._Settings -> SettingsView(
-            state = viewState,
-            onChangeToDashboard = { screenState.value = Screen.Dashboard },
-            onChangeToSettings = { screenState.value = Screen._Settings },
-            onChangeToCategory = { screenState.value = Screen.CategorySummary },
-            onDeleteButtonPressed = { settingsViewModel.deleteMyUser(); screenState.value = Screen.Login },
-            onChangeButtonPressed = { screenState.value = Screen.SettingsChangeUserData }
-        )
-        Screen.SettingsChangeUserData -> SettingsChangeUserDataView(
-            state = viewState,
-            onChangeDataButtonPressed = { firstName, lastName, password ->
-                settingsViewModel.changeMyUser(User.Patch(firstName, lastName, password)); screenState.value =
-                Screen._Settings
-            },
-            onChangeToDashboard = { screenState.value = Screen.Dashboard },
-            onChangeToSettings = { screenState.value = Screen._Settings },
-            onChangeToCategory = { screenState.value = Screen.CategorySummary },
-        )
+        is Screen.Settings.Menu -> SettingsView()
+        is Screen.Settings.User -> SettingsChangeUserDataView()
         else -> {}
     }
 }
