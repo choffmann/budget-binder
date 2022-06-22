@@ -14,6 +14,7 @@ import de.hsfl.budgetBinder.presentation.UiEvent
 import de.hsfl.budgetBinder.presentation.flow.RouterFlow
 
 import de.hsfl.budgetBinder.presentation.viewmodel.dashboard.DashboardViewModel
+import de.hsfl.budgetBinder.presentation.viewmodel.entryViewModel.EntryEvent
 import de.hsfl.budgetBinder.presentation.viewmodel.entryViewModel.EntryViewModel
 import di
 import kotlinx.coroutines.flow.collectLatest
@@ -45,12 +46,10 @@ fun EntryComponent() {
     NavBar {}
     MainFlexContainer {
         when (screenState.value) {
-            is Screen.EntryCreate -> {
+            is Screen.Entry.Create -> {
                 EntryCreateView(
-                    categoryList = (screenState.value as Screen.EntryCreate).categoryList,
-                    onCreateEntryButtonPressed = { name: String, amount: Float, repeat: Boolean, category_id: Int ->
-                        viewModel.createEntry(Entry.In(name, amount, repeat, category_id))
-                    }
+                    categoryList = categoryList.value,
+                    onCreateEntryButtonPressed = { viewModel.onEvent(EntryEvent.OnCreateEntry) }
                 )
 
             }

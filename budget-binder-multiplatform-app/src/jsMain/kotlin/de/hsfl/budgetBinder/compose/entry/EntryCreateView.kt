@@ -16,12 +16,8 @@ import org.jetbrains.compose.web.svg.Svg
 @OptIn(ExperimentalComposeWebSvgApi::class)
 @Composable
 fun EntryCreateView(
-    state: State<Any>,
     categoryList: List<Category>,
-    onChangeToDashboard: () -> Unit,
-    onChangeToSettings: () -> Unit,
-    onChangeToCategory: () -> Unit,
-    onCreateEntryButtonPressed: (name: String, amount: Float, repeat: Boolean, category_id: Int) -> Unit,
+    onCreateEntryButtonPressed: () -> Unit,
 ) {
     var switchState by remember { mutableStateOf(false) }
     var entryNameTextFieldState by remember { mutableStateOf("") }
