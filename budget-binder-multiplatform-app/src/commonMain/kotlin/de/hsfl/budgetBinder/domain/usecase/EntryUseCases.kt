@@ -1,6 +1,6 @@
 package de.hsfl.budgetBinder.domain.usecase
 
-data class EntriesUseCases(
+data class EntryUseCases(
     val getAllEntriesUseCase: GetAllEntriesUseCase,
     val getEntryByIdUseCase: GetEntryByIdUseCase,
     val createNewEntryUseCase: CreateNewEntryUseCase,
