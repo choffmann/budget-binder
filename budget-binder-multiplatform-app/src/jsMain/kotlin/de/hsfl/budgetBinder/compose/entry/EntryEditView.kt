@@ -159,6 +159,7 @@ fun EntryEditView(
                 ) {
                     attr("step", "0.01")
                     classes("mdc-text-field__input")
+                    value(entryAmountTextField)
                     onInput {
                         viewModel.onEvent(EntryEvent.EnteredAmount(it.value as Float))
                     }
