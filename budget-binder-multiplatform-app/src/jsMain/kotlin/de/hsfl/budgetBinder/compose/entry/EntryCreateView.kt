@@ -1,12 +1,10 @@
 package de.hsfl.budgetBinder.compose.entry
 
 import androidx.compose.runtime.*
-import de.hsfl.budgetBinder.common.Category
 import de.hsfl.budgetBinder.compose.*
 import de.hsfl.budgetBinder.compose.theme.AppStylesheet
-import de.hsfl.budgetBinder.presentation.UiState
+import de.hsfl.budgetBinder.presentation.viewmodel.entryViewModel.EntryEvent
 import de.hsfl.budgetBinder.presentation.viewmodel.entryViewModel.EntryViewModel
-import de.hsfl.budgetBinder.presentation.viewmodel.settings.SettingsEditUserViewModel
 import di
 import org.jetbrains.compose.web.ExperimentalComposeWebSvgApi
 import org.jetbrains.compose.web.attributes.*
@@ -20,16 +18,17 @@ import org.kodein.di.instance
 @OptIn(ExperimentalComposeWebSvgApi::class)
 @Composable
 fun EntryCreateView(
-    onRepeatClicked: (Boolean) -> Unit,
-    onAmountTypeSwitched: (Boolean) -> Unit,
     onCreateEntryButtonPressed: () -> Unit,
 ) {
     val viewModel: EntryViewModel by di.instance()
+    //Input
     val entryNameTextField by viewModel.nameText.collectAsState()
     val entryAmountTextField by viewModel.amountText.collectAsState()
     val entryRepeat by viewModel.repeatState.collectAsState()
     val entryCategoryIDTextField by viewModel.repeatState.collectAsState()
     val amountSign by viewModel.amountSignState.collectAsState()
+    //Data
+    val categoryList by viewModel.categoryListState.collectAsState()
 
     H1(
         attrs = {
@@ -68,10 +67,10 @@ fun EntryCreateView(
                     type = InputType.Text
                 ) {
                     classes("mdc-text-field__input")
-                    value(entryNameTextFieldState)
+                    value(entryNameTextField)
                     required(true)
                     onInput {
-                        entryNameTextFieldState = it.value
+                        viewModel.onEvent(EntryEvent.EnteredName(it.value))
                     }
                 }
                 Span(
@@ -106,13 +105,13 @@ fun EntryCreateView(
                 Div {
                     Button(
                         attrs = {
-                            if (!switchState) classes("mdc-switch", "mdc-switch--unselected")
+                            if (!amountSign) classes("mdc-switch", "mdc-switch--unselected")
                             else classes("mdc-switch", "mdc-switch--selected")
                             id("basic-switch")
                             attr("role", "switch")
                             attr("aria-checked", "false")
                             type(ButtonType.Button)
-                            onClick { switchState = !switchState }
+                            onClick { viewModel.onEvent(EntryEvent.EnteredAmountSign) }
                         }
                     ) {
                         Div(attrs = { classes("mdc-switch__track") }) { }
@@ -143,15 +142,16 @@ fun EntryCreateView(
                 Div(attrs = {
                     classes("mdc-typography--headline6", AppStylesheet.text)
                 }) {
-                    Text(if (switchState) "+" else "-")
+                    Text(if (amountSign) "+" else "-")
                 }
                 Input(
                     type = InputType.Number
                 ) {
                     attr("step", "0.01")
+                    value(entryAmountTextField)
                     classes("mdc-text-field__input")
                     onInput {
-                        entryAmountTextFieldState = it.value.toString()
+                        viewModel.onEvent(EntryEvent.EnteredAmount(it.value!!.toFloat()))
                     }
                 }
                 Span(
@@ -174,7 +174,7 @@ fun EntryCreateView(
                             classes("mdc-checkbox__native-control")
                             id("checkbox-1")
                             onInput {
-                                entryRepeatState = it.value.toString()
+                                viewModel.onEvent(EntryEvent.EnteredRepeat)
                             }
                         }
                         Div(attrs = { classes("mdc-checkbox__background") }) {
@@ -195,7 +195,7 @@ fun EntryCreateView(
             }
             Div(attrs = { style { flex(50.percent) } }) {
                 ChooseCategoryMenu(categoryList) { id ->
-                    entryCategoryIDTextFieldState = id.toString()
+                    viewModel.onEvent(EntryEvent.EnteredCategoryID(id))
                 }
             }
         }
@@ -209,19 +209,6 @@ fun EntryCreateView(
                     classes("mdc-button", "mdc-button--raised")
                     value("Submit")
                 })
-        }
-        Div {
-            when (viewState) {
-                is UiState.Success<*> -> {
-                    Text((viewState as UiState.Success<*>).element.toString())
-                }
-                is UiState.Error -> {
-                    Text((viewState as UiState.Error).error)
-                }
-                is UiState.Loading -> {
-                    //CircularProgressIndicator()
-                }
-            }
         }
     }
 }

@@ -73,9 +73,9 @@ class EntryViewModel(
         when (event) {
             is EntryEvent.EnteredName -> _nameText.value = nameText.value
             is EntryEvent.EnteredAmount -> _amountText.value = amountText.value
-            is EntryEvent.EnteredRepeat -> _repeatState.value = repeatState.value
+            is EntryEvent.EnteredRepeat -> _repeatState.value = !repeatState.value
             is EntryEvent.EnteredCategoryID -> _categoryIDState.value = categoryIDState.value
-            is EntryEvent.EnteredAmountSign -> _amountSignState.value = amountSignState.value
+            is EntryEvent.EnteredAmountSign -> _amountSignState.value = !amountSignState.value
             is EntryEvent.OnCreateEntry ->
                 when (routerFlow.state.value) {
                     is Screen.Entry.Create -> createEntry(
