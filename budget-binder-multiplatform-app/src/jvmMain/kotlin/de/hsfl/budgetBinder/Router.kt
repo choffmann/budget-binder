@@ -29,6 +29,7 @@ fun Router() {
         is Screen.Category.Summary -> CategoryComponent()
         is Screen.Category.Detail -> CategoryComponent()
         is Screen.Category.Edit -> CategoryComponent()
+        is Screen.Category.Create -> CategoryComponent()
         else -> {}
     }
 }
