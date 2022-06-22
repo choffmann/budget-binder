@@ -104,7 +104,7 @@ class EntryViewModel(
     /* *** Use Case usages *** */ //TODO Implement use cases
     fun getEntryById(id: Int) {
         entryUseCases.getEntryByIdUseCase(id).onEach {
-            when (it){
+            when (it) {
                 is DataResponse.Loading -> _eventFlow.emit(UiEvent.ShowLoading)
                 is DataResponse.Error -> _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
                 is DataResponse.Success<*> -> {
@@ -114,9 +114,10 @@ class EntryViewModel(
             }
         }
     }
+
     fun createEntry(entry: Entry.In) {
         entryUseCases.createNewEntryUseCase(entry).onEach {
-            when (it){
+            when (it) {
                 is DataResponse.Loading -> _eventFlow.emit(UiEvent.ShowLoading)
                 is DataResponse.Error -> _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
                 is DataResponse.Success<*> -> _eventFlow.emit(UiEvent.ShowSuccess("Entry successfully created")) //TODO?: Change the msg
@@ -124,9 +125,10 @@ class EntryViewModel(
             }
         }
     }
+
     fun changeEntry(entry: Entry.Patch, id: Int) {
-        entryUseCases.changeEntryByIdUseCase(entry,id).onEach {
-            when (it){
+        entryUseCases.changeEntryByIdUseCase(entry, id).onEach {
+            when (it) {
                 is DataResponse.Loading -> _eventFlow.emit(UiEvent.ShowLoading)
                 is DataResponse.Error -> _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
                 is DataResponse.Success<*> -> _eventFlow.emit(UiEvent.ShowSuccess("Entry successfully changed")) //TODO?: Change the msg
@@ -134,10 +136,15 @@ class EntryViewModel(
             }
         }
     }
-    fun removeEntry(id: Int) {}
 
-    /* *** Helper *** */
-    private fun toggleDialog() {
-        _dialogState.value = !dialogState.value
+    fun removeEntry(id: Int) {
+        entryUseCases.deleteEntryByIdUseCase(id).onEach {
+            when (it) {
+                is DataResponse.Loading -> _eventFlow.emit(UiEvent.ShowLoading)
+                is DataResponse.Error -> _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
+                is DataResponse.Success<*> -> _eventFlow.emit(UiEvent.ShowSuccess("Entry successfully deleted")) //TODO?: Change the msg
+                is DataResponse.Unauthorized -> _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
+            }
+        }
     }
 }
