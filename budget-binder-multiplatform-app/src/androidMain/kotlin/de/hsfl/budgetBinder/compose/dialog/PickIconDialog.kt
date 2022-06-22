@@ -40,7 +40,7 @@ actual fun PickIconDialog(
     if (openDialog) {
         AlertDialog(
             onDismissRequest = onDismiss,
-            title = { Text(text = "Choose a Icon") },
+            title = { Text(text = "Choose a Icon for the Category") },
             confirmButton = {
                 TextButton(onClick = { onConfirm(selectedIcon.value) }) {
                     Text(text = "Confirm")

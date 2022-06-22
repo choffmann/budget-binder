@@ -6,10 +6,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
@@ -65,12 +62,14 @@ actual fun PickColorDialog(
                         color = animatableColor.value
                     )
                     LazyVerticalGrid(
-                        cells = GridCells.Fixed(4), contentPadding = PaddingValues(8.dp)
+                        cells = GridCells.Adaptive(80.dp)
                     ) {
                         colorList.forEach { (color, colorString) ->
                             item {
                                 Box(modifier = Modifier
                                     .size(50.dp)
+                                    .padding(8.dp)
+                                    //.aspectRatio(1f)
                                     .shadow(15.dp, CircleShape)
                                     .clip(CircleShape)
                                     .background(color)

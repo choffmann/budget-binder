@@ -13,6 +13,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import de.hsfl.budgetBinder.common.Category
@@ -83,7 +84,7 @@ fun CategoryListItem(
         text = { Text(name) },
         secondaryText = { Text("Budget: $budget") },
         icon = {
-            Box(modifier = Modifier.clip(CircleShape).background(color)) {
+            Box(modifier = Modifier.shadow(15.dp, CircleShape).clip(CircleShape).background(color)) {
                 Box(modifier = Modifier.align(Alignment.Center).padding(12.dp)) {
                     CategoryImageToIcon(icon)
                 }
