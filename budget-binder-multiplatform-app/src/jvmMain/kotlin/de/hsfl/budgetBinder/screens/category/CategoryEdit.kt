@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.Dp
 import de.hsfl.budgetBinder.common.Category
 import de.hsfl.budgetBinder.compose.dialog.PickColorDialog
 import de.hsfl.budgetBinder.compose.dialog.PickIconDialog
+import de.hsfl.budgetBinder.compose.icon.EuroIcon
 import de.hsfl.budgetBinder.compose.icon.SaveIcon
 import de.hsfl.budgetBinder.di
 import de.hsfl.budgetBinder.presentation.CategoryImageToIcon
@@ -83,9 +84,13 @@ fun CategoryEditView() {
                 viewModel.onEvent(CategoryEditEvent.EnteredCategoryColor(it))
             })
 
-        Column(modifier = Modifier.fillMaxSize().background(animatableColor.value)) {
+        Column(modifier = Modifier.fillMaxSize().fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
             Spacer(modifier = Modifier.height(16.dp))
-            Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.padding(start = 32.dp, end = 32.dp).fillMaxWidth()) {
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.defaultMinSize(
+                    minWidth = TextFieldDefaults.MinWidth, minHeight = TextFieldDefaults.MinHeight
+                )
+            ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text("Pick your Color", fontWeight = FontWeight.Bold)
                     Box {
@@ -94,8 +99,7 @@ fun CategoryEditView() {
                             backgroundColor = categoryColorState.value.toColor("af"),
                             onClick = { colorDialogState.value = true })
                         Box(
-                            modifier = Modifier.align(Alignment.BottomEnd).clip(CircleShape)
-                                .background(Color.White)
+                            modifier = Modifier.align(Alignment.BottomEnd).clip(CircleShape).background(Color.White)
                         ) {
                             Icon(Icons.Default.ArrowDropDown, contentDescription = null, tint = Color.Black)
                         }
@@ -110,8 +114,7 @@ fun CategoryEditView() {
                             icon = categoryImageState.value,
                             onClick = { iconDialogState.value = true })
                         Box(
-                            modifier = Modifier.align(Alignment.BottomEnd).clip(CircleShape)
-                                .background(Color.White)
+                            modifier = Modifier.align(Alignment.BottomEnd).clip(CircleShape).background(Color.White)
                         ) {
                             Icon(Icons.Default.ArrowDropDown, contentDescription = null, tint = Color.Black)
                         }
@@ -120,20 +123,19 @@ fun CategoryEditView() {
                 }
             }
             Spacer(modifier = Modifier.height(16.dp))
-            Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-                TextField(value = categoryNameState.value,
-                    singleLine = true,
-                    onValueChange = { viewModel.onEvent(CategoryEditEvent.EnteredCategoryName(it)) },
-                    label = { Text("Category Name") })
-                Spacer(modifier = Modifier.height(8.dp))
-                TextField(value = categoryBudgetState.value.toString(),
-                    singleLine = true,
-                    onValueChange = { viewModel.onEvent(CategoryEditEvent.EnteredCategoryBudget(it.toFloat())) },
-                    label = { Text("Category Budget") })
-                Spacer(modifier = Modifier.height(16.dp))
-                TextButton(onClick = { viewModel.onEvent(CategoryEditEvent.OnCancel) }) {
-                    Text("Cancel")
-                }
+            TextField(value = categoryNameState.value,
+                singleLine = true,
+                onValueChange = { viewModel.onEvent(CategoryEditEvent.EnteredCategoryName(it)) },
+                label = { Text("Category Name") })
+            Spacer(modifier = Modifier.height(8.dp))
+            TextField(value = categoryBudgetState.value.toString(),
+                singleLine = true,
+                onValueChange = { viewModel.onEvent(CategoryEditEvent.EnteredCategoryBudget(it.toFloat())) },
+                label = { Text("Category Budget") },
+                trailingIcon = { EuroIcon() })
+            Spacer(modifier = Modifier.height(16.dp))
+            TextButton(onClick = { viewModel.onEvent(CategoryEditEvent.OnCancel) }) {
+                Text("Cancel")
             }
         }
     }

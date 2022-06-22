@@ -74,3 +74,8 @@ actual fun ReplyIcon() {
 actual fun ForwardIcon() {
     Icon(imageVector = Icons.Default.Forward, contentDescription = null)
 }
+
+@Composable
+actual fun EuroIcon() {
+    Icon(imageVector = Icons.Default.Euro, contentDescription = null)
+}

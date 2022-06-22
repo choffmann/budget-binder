@@ -41,3 +41,6 @@ expect fun ReplyIcon()
 
 @Composable
 expect fun ForwardIcon()
+
+@Composable
+expect fun EuroIcon()
