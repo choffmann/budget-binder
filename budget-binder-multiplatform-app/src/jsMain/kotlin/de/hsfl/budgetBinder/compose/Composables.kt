@@ -426,7 +426,7 @@ fun ChooseCategoryMenu(
                         onClick { chosenCategory = category; getCategoryId(category.id) }
                     }) {
                         Span(attrs = { classes("mdc-list-item__ripple") }) { }
-                        Span(attrs = { }) { Text(category.name) }
+                        Span(attrs = { classes(AppStylesheet.moneyText)}) { Text(category.name) }
                     }
                 }
             }
