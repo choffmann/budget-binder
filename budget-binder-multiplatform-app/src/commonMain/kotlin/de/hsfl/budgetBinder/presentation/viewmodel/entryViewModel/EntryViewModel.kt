@@ -1,5 +1,6 @@
 package de.hsfl.budgetBinder.presentation.viewmodel.entryViewModel
 
+import de.hsfl.budgetBinder.common.Category
 import de.hsfl.budgetBinder.common.DataResponse
 import de.hsfl.budgetBinder.common.Entry
 import de.hsfl.budgetBinder.domain.usecase.*
@@ -14,6 +15,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 
 class EntryViewModel(
     private val entryUseCases: EntryUseCases,
@@ -42,6 +44,9 @@ class EntryViewModel(
     private val _selectedEntryState = MutableStateFlow(EntryState().selectedEntry)
     val selectedEntryState: StateFlow<Entry> = _selectedEntryState
 
+    private val _categoryListState = MutableStateFlow(EntryState().categoryList)
+    val categoryListState: StateFlow<List<Category>> = _categoryListState
+
     // --- Default ViewModel Variables ----
     private val _dialogState = MutableStateFlow(false)
     val dialogState: StateFlow<Boolean> = _dialogState
@@ -51,8 +56,14 @@ class EntryViewModel(
 
     init {
         when (routerFlow.state.value) {
-            is Screen.Entry.Overview -> getEntryById((routerFlow.state.value as Screen.Entry.Overview).id)
-            is Screen.Entry.Edit -> getEntryById((routerFlow.state.value as Screen.Entry.Edit).id)
+            is Screen.Entry.Overview -> {
+                getEntryById((routerFlow.state.value as Screen.Entry.Overview).id)
+                getCategoryList()
+            }
+            is Screen.Entry.Edit -> {
+                getEntryById((routerFlow.state.value as Screen.Entry.Edit).id)
+                getCategoryList()
+            }
             else -> {}
         }
     }
@@ -114,6 +125,10 @@ class EntryViewModel(
             }
         }
     }
+    private fun getCategoryList() = scope.launch {
+        entryUseCases.getCategoryListUseCase.categories()
+            .collect { handleDataResponse(response = it, onSuccess = {cl -> _categoryListState.value = cl}) }
+    }
 
     fun createEntry(entry: Entry.In) {
         entryUseCases.createNewEntryUseCase(entry).onEach {
@@ -144,6 +159,20 @@ class EntryViewModel(
                 is DataResponse.Error -> _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
                 is DataResponse.Success<*> -> _eventFlow.emit(UiEvent.ShowSuccess("Entry successfully deleted")) //TODO?: Change the msg
                 is DataResponse.Unauthorized -> _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
+            }
+        }
+    }
+    private suspend fun <T> handleDataResponse(response: DataResponse<T>, onSuccess: (T) -> Unit) {
+        when (response) {
+            is DataResponse.Loading -> _eventFlow.emit(UiEvent.ShowLoading)
+            is DataResponse.Error -> _eventFlow.emit(UiEvent.ShowError(response.error!!.message))
+            is DataResponse.Success -> {
+                _eventFlow.emit(UiEvent.HideSuccess)
+                onSuccess(response.data!!)
+            }
+            is DataResponse.Unauthorized -> {
+                _eventFlow.emit(UiEvent.ShowError(response.error!!.message))
+                routerFlow.navigateTo(Screen.Login)
             }
         }
     }
