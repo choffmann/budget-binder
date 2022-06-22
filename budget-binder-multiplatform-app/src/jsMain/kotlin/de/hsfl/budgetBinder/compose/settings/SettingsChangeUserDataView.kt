@@ -26,7 +26,7 @@ fun SettingsChangeUserDataView() {
     val lastNameText = viewModel.lastNameText.collectAsState()
     val passwordText = viewModel.passwordText.collectAsState()
     val confirmedPasswordText = viewModel.confirmedPassword.collectAsState()
-    var checkPassword by remember { mutableStateOf(true) }
+    var openSnackbar by remember { mutableStateOf(false) }
 
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->
@@ -42,9 +42,10 @@ fun SettingsChangeUserDataView() {
         H1 { Text("Change User Data") }
         Form(attrs = {
             this.addEventListener("submit") {
-                checkPassword = passwordText == confirmedPasswordText
-                console.log(checkPassword)
-                if (checkPassword) viewModel.onEvent(EditUserEvent.OnUpdate)
+                if (passwordText != confirmedPasswordText) {
+                    openSnackbar = true
+                }
+                viewModel.onEvent(EditUserEvent.OnUpdate)
                 it.preventDefault()
             }
         }
@@ -210,7 +211,7 @@ fun SettingsChangeUserDataView() {
             }
         }
     }
-    if (!checkPassword) {
-        FeedbackSnackbar("Passwords do not match")
+    if (openSnackbar) {
+        FeedbackSnackbar("Passwords do not match") { openSnackbar = false }
     }
 }
