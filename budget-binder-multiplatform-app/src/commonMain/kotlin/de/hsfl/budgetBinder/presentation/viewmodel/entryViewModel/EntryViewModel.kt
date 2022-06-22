@@ -39,8 +39,8 @@ class EntryViewModel(
     private val _amountSignState = MutableStateFlow(EntryInputState().amountSign)
     val amountSignState: StateFlow<Boolean> = _amountSignState
 
-    private val _selectedEntry = MutableStateFlow(EntryState().selectedEntry)
-    val selectedEntry: StateFlow<Entry> = _selectedEntry
+    private val _selectedEntryState = MutableStateFlow(EntryState().selectedEntry)
+    val selectedEntryState: StateFlow<Entry> = _selectedEntryState
 
     // --- Default ViewModel Variables ----
     private val _dialogState = MutableStateFlow(false)
@@ -86,12 +86,12 @@ class EntryViewModel(
                             amountText.value,
                             repeatState.value,
                             Entry.Category(categoryIDState.value)
-                        ), selectedEntry.value.id
+                        ), selectedEntryState.value.id
                     )
-                    else -> routerFlow.navigateTo(Screen.Entry.Edit(selectedEntry.value.id)) //using ID seems... unnecessary?
+                    else -> routerFlow.navigateTo(Screen.Entry.Edit(selectedEntryState.value.id)) //using ID seems... unnecessary?
                 }
             is EntryEvent.OnDeleteEntry -> _dialogState.value = true
-            is EntryEvent.OnDeleteDialogConfirm -> deleteEntry(selectedEntry.value.id)
+            is EntryEvent.OnDeleteDialogConfirm -> deleteEntry(selectedEntryState.value.id)
             is EntryEvent.OnDeleteDialogDismiss -> _dialogState.value = false
             else -> {
                 throw Exception("Unhandled EntryEvent in EntryViewModel")
@@ -101,14 +101,14 @@ class EntryViewModel(
     }
 
 
-    /* *** Use Case usages *** */ //TODO Implement use cases
+    /* *** Use Case usages *** */
     fun getEntryById(id: Int) {
         entryUseCases.getEntryByIdUseCase(id).onEach {
             when (it) {
                 is DataResponse.Loading -> _eventFlow.emit(UiEvent.ShowLoading)
                 is DataResponse.Error -> _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
                 is DataResponse.Success<*> -> {
-                    _selectedEntry.value = it.data!!
+                    _selectedEntryState.value = it.data!!
                 }
                 is DataResponse.Unauthorized -> _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
             }
