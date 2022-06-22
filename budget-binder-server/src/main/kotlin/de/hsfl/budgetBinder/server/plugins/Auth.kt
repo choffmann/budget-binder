@@ -38,7 +38,7 @@ fun Application.configureAuth() {
         jwt("auth-jwt") {
             val jwtService: JWTService by this@configureAuth.closestDI().instance()
             realm = jwtService.getRealm()
-            verifier(jwtService.getAccessTokenVerifier())
+            verifier(jwtService.accessTokenVerifier)
 
             validate {
                 val id = it.payload.getClaim("userid").asInt()
