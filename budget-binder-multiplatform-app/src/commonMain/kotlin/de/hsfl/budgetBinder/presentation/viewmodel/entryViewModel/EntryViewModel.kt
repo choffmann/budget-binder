@@ -80,7 +80,7 @@ class EntryViewModel(
 
             is EntryEvent.OnEditEntry ->
                 when (routerFlow.state.value) {
-                    is Screen.Entry.Edit -> changeEntry(
+                    is Screen.Entry.Edit -> updateEntry(
                         Entry.Patch(
                             nameText.value,
                             amountText.value,
@@ -91,7 +91,7 @@ class EntryViewModel(
                     else -> routerFlow.navigateTo(Screen.Entry.Edit(selectedEntry.value.id)) //using ID seems... unnecessary?
                 }
             is EntryEvent.OnDeleteEntry -> _dialogState.value = true
-            is EntryEvent.OnDeleteDialogConfirm -> removeEntry(selectedEntry.value.id)
+            is EntryEvent.OnDeleteDialogConfirm -> deleteEntry(selectedEntry.value.id)
             is EntryEvent.OnDeleteDialogDismiss -> _dialogState.value = false
             else -> {
                 throw Exception("Unhandled EntryEvent in EntryViewModel")
@@ -126,7 +126,7 @@ class EntryViewModel(
         }
     }
 
-    fun changeEntry(entry: Entry.Patch, id: Int) {
+    fun updateEntry(entry: Entry.Patch, id: Int) {
         entryUseCases.changeEntryByIdUseCase(entry, id).onEach {
             when (it) {
                 is DataResponse.Loading -> _eventFlow.emit(UiEvent.ShowLoading)
@@ -137,7 +137,7 @@ class EntryViewModel(
         }
     }
 
-    fun removeEntry(id: Int) {
+    fun deleteEntry(id: Int) {
         entryUseCases.deleteEntryByIdUseCase(id).onEach {
             when (it) {
                 is DataResponse.Loading -> _eventFlow.emit(UiEvent.ShowLoading)
