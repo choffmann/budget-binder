@@ -124,7 +124,16 @@ class EntryViewModel(
             }
         }
     }
-    fun changeEntry(entry: Entry.Patch, id: Int) {}
+    fun changeEntry(entry: Entry.Patch, id: Int) {
+        entryUseCases.changeEntryByIdUseCase(entry,id).onEach {
+            when (it){
+                is DataResponse.Loading -> _eventFlow.emit(UiEvent.ShowLoading)
+                is DataResponse.Error -> _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
+                is DataResponse.Success<*> -> _eventFlow.emit(UiEvent.ShowSuccess("Entry successfully changed")) //TODO?: Change the msg
+                is DataResponse.Unauthorized -> _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
+            }
+        }
+    }
     fun removeEntry(id: Int) {}
 
     /* *** Helper *** */
