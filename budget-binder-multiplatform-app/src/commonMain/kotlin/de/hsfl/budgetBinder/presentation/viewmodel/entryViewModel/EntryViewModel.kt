@@ -4,6 +4,7 @@ import de.hsfl.budgetBinder.common.DataResponse
 import de.hsfl.budgetBinder.common.Entry
 import de.hsfl.budgetBinder.domain.usecase.*
 import de.hsfl.budgetBinder.presentation.Screen
+import de.hsfl.budgetBinder.presentation.UiEvent
 import de.hsfl.budgetBinder.presentation.UiState
 import de.hsfl.budgetBinder.presentation.flow.DataFlow
 import de.hsfl.budgetBinder.presentation.flow.RouterFlow
@@ -102,7 +103,16 @@ class EntryViewModel(
 
     /* *** Use Case usages *** */ //TODO Implement use cases
     fun getEntryById(id: Int) {
-
+        entryUseCases.getEntryByIdUseCase(id).onEach {
+            when (it){
+                is DataResponse.Loading -> _eventFlow.emit(UiEvent.ShowLoading)
+                is DataResponse.Error -> _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
+                is DataResponse.Success<*> -> {
+                    _selectedEntry.value = it.data!!
+                }
+                is DataResponse.Unauthorized -> _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
+            }
+        }
     }
     fun createEntry(entry: Entry.In) {}
     fun changeEntry(entry: Entry.Patch, id: Int) {}
