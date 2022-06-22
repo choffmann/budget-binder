@@ -16,6 +16,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlin.math.absoluteValue
+import kotlin.math.sign
+import kotlin.math.withSign
 
 class EntryViewModel(
     private val entryUseCases: EntryUseCases,
@@ -124,6 +127,12 @@ class EntryViewModel(
                 is DataResponse.Error -> _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
                 is DataResponse.Success<*> -> {
                     _selectedEntryState.value = it.data!!
+                    //Load data into variables for edit
+                    _nameText.value = _selectedEntryState.value.name
+                    _amountText.value = _selectedEntryState.value.amount.absoluteValue
+                    _amountSignState.value = _selectedEntryState.value.amount >= 0
+                    _repeatState.value = _selectedEntryState.value.repeat
+                    _categoryIDState.value = _selectedEntryState.value.category_id
                 }
                 is DataResponse.Unauthorized -> _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
             }
@@ -173,7 +182,7 @@ class EntryViewModel(
 
     fun deleteEntry(id: Int) {
         scope.launch {
-        entryUseCases.deleteEntryByIdUseCase(id).collect { response ->
+            entryUseCases.deleteEntryByIdUseCase(id).collect { response ->
                 when (response) {
                     is DataResponse.Loading -> _eventFlow.emit(UiEvent.ShowLoading)
                     is DataResponse.Error -> _eventFlow.emit(UiEvent.ShowError(response.error!!.message))
@@ -216,7 +225,7 @@ class EntryViewModel(
     /**
      * Resets Data Input Variables
      */
-    private fun resetFlows(){
+    private fun resetFlows() {
         _nameText.value = EntryInputState().name
         _amountText.value = EntryInputState().amount
         _amountSignState.value = EntryInputState().amountSign
