@@ -75,18 +75,22 @@ class EntryViewModel(
             is EntryEvent.EnteredRepeat -> _repeatState.value = !repeatState.value
             is EntryEvent.EnteredCategoryID -> _categoryIDState.value = event.value
             is EntryEvent.EnteredAmountSign -> _amountSignState.value = !amountSignState.value
-            is EntryEvent.OnCreateEntry ->
+            is EntryEvent.OnCreateEntry -> {
                 when (routerFlow.state.value) {
                     is Screen.Entry.Create -> createEntry(
                         Entry.In(
                             nameText.value,
-                            amountText.value,
+                            buildAmount(),
                             repeatState.value,
                             categoryIDState.value
                         )
                     )
-                    else -> routerFlow.navigateTo(Screen.Entry.Create)
+
+                    else -> {
+                        routerFlow.navigateTo(Screen.Entry.Create)
+                    }
                 }
+            }
 
             is EntryEvent.OnEditEntry ->
                 when (routerFlow.state.value) {
@@ -124,21 +128,28 @@ class EntryViewModel(
             }
         }
     }
+
     fun getCategoryList() = scope.launch {
         entryUseCases.getCategoryListUseCase.categories()
-            .collect { handleDataResponse(response = it, onSuccess = {cl -> _categoryListState.value = cl}) }
+            .collect {
+                handleDataResponse(
+                    response = it,
+                    onSuccess = { cl -> _categoryListState.value = cl })
+            }
     }
 
     fun createEntry(entry: Entry.In) {
-        entryUseCases.createNewEntryUseCase(entry).onEach {
-            when (it) {
-                is DataResponse.Loading -> _eventFlow.emit(UiEvent.ShowLoading)
-                is DataResponse.Error -> _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
-                is DataResponse.Success<*> -> {
-                    _eventFlow.emit(UiEvent.ShowSuccess("Entry successfully created")) //TODO?: Change the msg
-                    routerFlow.navigateTo(Screen.Dashboard)
+        scope.launch {
+            entryUseCases.createNewEntryUseCase(entry).collect { response ->
+                when (response) {
+                    is DataResponse.Loading -> _eventFlow.emit(UiEvent.ShowLoading)
+                    is DataResponse.Error -> _eventFlow.emit(UiEvent.ShowError(response.error!!.message))
+                    is DataResponse.Success<*> -> {
+                        _eventFlow.emit(UiEvent.ShowSuccess("Entry successfully created")) //TODO?: Change the msg
+                        routerFlow.navigateTo(Screen.Dashboard)
+                    }
+                    is DataResponse.Unauthorized -> _eventFlow.emit(UiEvent.ShowError(response.error!!.message))
                 }
-                is DataResponse.Unauthorized -> _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
             }
         }
     }
@@ -164,6 +175,7 @@ class EntryViewModel(
             }
         }
     }
+
     private suspend fun <T> handleDataResponse(response: DataResponse<T>, onSuccess: (T) -> Unit) {
         when (response) {
             is DataResponse.Loading -> _eventFlow.emit(UiEvent.ShowLoading)
@@ -176,6 +188,13 @@ class EntryViewModel(
                 _eventFlow.emit(UiEvent.ShowError(response.error!!.message))
                 routerFlow.navigateTo(Screen.Login)
             }
+        }
+    }
+    private fun buildAmount(): Float{
+        return if(_amountSignState.value){
+            _amountText.value
+        }else{
+            _amountText.value*-1
         }
     }
 }
