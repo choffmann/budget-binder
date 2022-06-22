@@ -40,6 +40,15 @@ fun EntryComponent() {
                 )
                 viewModel.onEvent(EntryEvent.LoadCreate)
             }
+            is Screen.Entry.Overview -> {
+                EntryOverviewView(
+                    onEditButton = { viewModel.onEvent(EntryEvent.OnEditEntry) },
+                    onDeleteButton = { viewModel.onEvent(EntryEvent.OnDeleteEntry) },
+                    onDeleteDialogConfirmButton = { viewModel.onEvent(EntryEvent.OnDeleteDialogConfirm) },
+                    onDeleteDialogDismissButton = { viewModel.onEvent(EntryEvent.OnDeleteDialogDismiss) }
+                )
+                viewModel.onEvent(EntryEvent.LoadOverview)
+            }
             else -> {}
         }
     }

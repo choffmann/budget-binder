@@ -10,95 +10,52 @@ import de.hsfl.budgetBinder.compose.theme.AppStylesheet
 import de.hsfl.budgetBinder.compose.topBarMain
 import de.hsfl.budgetBinder.presentation.CategoryImageToIcon
 import de.hsfl.budgetBinder.presentation.UiState
+import de.hsfl.budgetBinder.presentation.viewmodel.entryViewModel.EntryViewModel
+import di
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
 import org.jetbrains.compose.web.svg.Circle
 import org.jetbrains.compose.web.svg.Svg
+import org.kodein.di.instance
 
 
 @Composable
 fun EntryOverviewView(
-    state: State<Any>,
-    onEditButton: (id: Int) -> Unit,
-    onDeleteButton: (id: Int) -> Unit,
-    onChangeToDashboard: () -> Unit,
-    onChangeToCategory: () -> Unit,
-    onChangeToSettings: () -> Unit
+    onEditButton: () -> Unit,
+    onDeleteButton: () -> Unit,
+    onDeleteDialogConfirmButton: () -> Unit,
+    onDeleteDialogDismissButton: () -> Unit
 ) {
-    var entry by remember { mutableStateOf(Entry(0, "", 0f, false, null)) }
-    val viewState by remember { state }
-
-    topBarMain(
-        logoButton = {
-            Img(
-                src = "images/Logo.png", alt = "Logo", attrs = {
-                    classes("mdc-icon-button", AppStylesheet.image)
-                    onClick { onChangeToDashboard() }
-                }
-            )
-        }, navButtons = {
-            Button(
-                attrs = {
-                    classes("mdc-button", "mdc-button--raised", "mdc-top-app-bar__navigation-icon")
-                    onClick { onChangeToCategory() }
-                }
-            ) {
-                Span(
-                    attrs = {
-                        classes("mdc-button__label")
-                    }
-                ) {
-                    Text("Categories")
-                }
-            }
-            Button(
-                attrs = {
-                    classes("mdc-button", "mdc-button--raised", "mdc-top-app-bar__navigation-icon")
-                    onClick { onChangeToSettings() }
-                }
-            ) {
-                Span(
-                    attrs = {
-                        classes("mdc-button__label")
-                    }
-                ) {
-                    Text("Settings")
-                }
-            }
-        })
-
-    MainFlexContainer {
-        H1(
-            attrs = {
-                style { margin(2.percent) }
-            }
-        ) { Text(" Entry") }
-
-        EntryOverview(entry, onEditButton, onDeleteButton)
-        when (viewState) {
-            is UiState.Success<*> -> {
-                when (val element = (viewState as UiState.Success<*>).element) {
-                    is Entry -> entry = element
-                    else -> {}
-                }
-            }
-            is UiState.Error -> {
-                Text((viewState as UiState.Error).error)
-            }
-            is UiState.Loading -> {
-                //CircularProgressIndicator()
-            }
+    val viewModel: EntryViewModel by di.instance()
+    //Data
+    val entry by viewModel.selectedEntryState.collectAsState()
+    console.log("Our Entry is $entry")
+    val deleteDialog by viewModel.dialogState.collectAsState()
+    H1(
+        attrs = {
+            style { margin(2.percent) }
         }
-    }
+    ) { Text(" Entry") }
+
+    EntryOverview(
+        entry,
+        deleteDialog,
+        onEditButton,
+        onDeleteButton,
+        onDeleteDialogConfirmButton,
+        onDeleteDialogDismissButton
+    )
 }
 
 @Composable
 fun EntryOverview(
     entry: Entry,
-    onEditButton: (Int) -> Unit,
-    onDeleteButton: (Int) -> Unit
+    deleteDialog: Boolean,
+    onEditButton: () -> Unit,
+    onDeleteButton: () -> Unit,
+    onDeleteDialogConfirmButton: () -> Unit,
+    onDeleteDialogDismissButton: () -> Unit
 ) {
-    var deleteDialog by remember { mutableStateOf(false) }
     Div(
         attrs = {
             classes(AppStylesheet.categoryListElement, AppStylesheet.flexContainer)
@@ -127,7 +84,7 @@ fun EntryOverview(
     ) {
         Button(attrs = {
             classes("mdc-button", "mdc-button--raised", AppStylesheet.marginRight)
-            onClick { onEditButton(entry.id) }
+            onClick { onEditButton() }
             style {
                 flex(50.percent)
                 margin(1.5.percent)
@@ -137,7 +94,7 @@ fun EntryOverview(
         }
         Button(attrs = {
             classes("mdc-button", "mdc-button--raised")
-            onClick { deleteDialog = true }
+            onClick { onDeleteButton() }
             style {
                 flex(50.percent)
                 margin(1.5.percent)
@@ -150,8 +107,9 @@ fun EntryOverview(
     if (deleteDialog) {
         DeleteDialog(
             false,
-            { onDeleteButton(entry.id) },
-            { deleteDialog = false }) { Text("Delete Entry?") }
+            { onDeleteDialogConfirmButton() },
+            { onDeleteDialogDismissButton() })
+        { Text("Delete Entry?") }
     }
 }
 
