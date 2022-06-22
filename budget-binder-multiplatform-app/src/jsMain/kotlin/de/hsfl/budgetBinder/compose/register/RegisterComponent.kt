@@ -15,6 +15,7 @@ import di
 import kotlinx.coroutines.flow.collectLatest
 import org.jetbrains.compose.web.attributes.InputType
 import org.jetbrains.compose.web.attributes.required
+import org.jetbrains.compose.web.css.marginLeft
 import org.jetbrains.compose.web.css.percent
 import org.jetbrains.compose.web.css.width
 import org.jetbrains.compose.web.dom.*
@@ -101,10 +102,15 @@ fun RegisterComponent() {
 
     MainFlexContainer {
         // -- Register Form --
-        H1 { Text(" Register") }
+        H1(
+            attrs = {
+                style { marginLeft(2.percent) }
+            }
+        )  { Text("Register") }
         Form(attrs = { //Probably possible with just a button OnClick instead of Form&Submit
             this.addEventListener("submit") {
-                if (passwordTextState != confirmedPasswordTextState) {
+                console.log("$firstNameTextState, $lastNameTextState, $emailTextState, $passwordTextState")
+                if (!confirmedPasswordTextState.value.confirmedPasswordValid) {
                     openSnackbar = true
                 }
                 viewModel.onEvent(RegisterEvent.OnRegister)
