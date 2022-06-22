@@ -38,7 +38,7 @@ fun EntryComponent() {
                 EntryCreateView(
                     onCreateEntryButtonPressed = { viewModel.onEvent(EntryEvent.OnCreateEntry) }
                 )
-
+                viewModel.onEvent(EntryEvent.LoadCreate)
             }
             else -> {}
         }

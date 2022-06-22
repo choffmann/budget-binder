@@ -54,18 +54,6 @@ class EntryViewModel(
     val eventFlow = UiEventSharedFlow.eventFlow
     // ----
 
-    init {
-        getCategoryList()
-        when (routerFlow.state.value) {
-            is Screen.Entry.Overview -> {
-                getEntryById((routerFlow.state.value as Screen.Entry.Overview).id)
-            }
-            is Screen.Entry.Edit -> {
-                getEntryById((routerFlow.state.value as Screen.Entry.Edit).id)
-            }
-            else -> {}
-        }
-    }
 
     /* *** Event Handling *** */
     fun onEvent(event: EntryEvent) {
@@ -88,6 +76,7 @@ class EntryViewModel(
 
                     else -> {
                         routerFlow.navigateTo(Screen.Entry.Create)
+
                     }
                 }
             }
@@ -102,16 +91,32 @@ class EntryViewModel(
                             Entry.Category(categoryIDState.value)
                         ), selectedEntryState.value.id
                     )
-                    else -> routerFlow.navigateTo(Screen.Entry.Edit(selectedEntryState.value.id)) //using ID seems... unnecessary?
+                    else -> {
+                        resetFlows()
+                        routerFlow.navigateTo(Screen.Entry.Edit(selectedEntryState.value.id))
+                    } //using ID seems... unnecessary?}
                 }
             is EntryEvent.OnDeleteEntry -> _dialogState.value = true
             is EntryEvent.OnDeleteDialogConfirm -> deleteEntry(selectedEntryState.value.id)
             is EntryEvent.OnDeleteDialogDismiss -> _dialogState.value = false
+            is EntryEvent.LoadCreate -> {
+                resetFlows()
+                getCategoryList()
+            }
+            is EntryEvent.LoadOverview -> {
+                resetFlows()
+                getCategoryList()
+                getEntryById((routerFlow.state.value as Screen.Entry.Overview).id)
+            }
+            is EntryEvent.LoadEdit -> {
+                resetFlows()
+                getCategoryList()
+                getEntryById((routerFlow.state.value as Screen.Entry.Edit).id)
+            }
             else -> {
                 throw Exception("Unhandled EntryEvent in EntryViewModel")
             }
         }
-
     }
 
 
@@ -201,6 +206,9 @@ class EntryViewModel(
         }
     }
 
+    /**
+     * Negates amount if amountSign is false
+     *  */
     private fun buildAmount(): Float {
         return if (_amountSignState.value) {
             _amountText.value
@@ -208,4 +216,16 @@ class EntryViewModel(
             _amountText.value * -1
         }
     }
+
+    /**
+     * Resets Data Input Variables
+     */
+    private fun resetFlows(){
+        _nameText.value = EntryInputState().name
+        _amountText.value = EntryInputState().amount
+        _amountSignState.value = EntryInputState().amountSign
+        _repeatState.value = EntryInputState().repeat
+        _categoryIDState.value = EntryInputState().categoryID
+    }
+
 }
