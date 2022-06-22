@@ -8,7 +8,7 @@ import androidx.compose.ui.graphics.Color
 expect fun PickColorDialog(
     openDialog: Boolean,
     categoryName: String,
-    categoryColor: String,
+    categoryColor: Color,
     categoryImage: Category.Image,
     categoryBudget: Float,
     onConfirm: (String) -> Unit,

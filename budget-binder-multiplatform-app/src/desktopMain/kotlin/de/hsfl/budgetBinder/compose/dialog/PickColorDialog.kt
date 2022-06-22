@@ -15,6 +15,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
 import de.hsfl.budgetBinder.common.Category
 import de.hsfl.budgetBinder.screens.category.CategoryColorBubble
@@ -27,15 +28,15 @@ import kotlinx.coroutines.launch
 actual fun PickColorDialog(
     openDialog: Boolean,
     categoryName: String,
-    categoryColor: String,
+    categoryColor: Color,
     categoryImage: Category.Image,
     categoryBudget: Float,
     onConfirm: (String) -> Unit,
     onDismiss: () -> Unit
 ) {
     val scope = rememberCoroutineScope()
-    val animatableColor = remember { Animatable(categoryColor.toColor("af")) }
-    val rememberColorString = remember { mutableStateOf(categoryColor) }
+    val animatableColor = remember { Animatable(categoryColor) }
+    val rememberColorString = remember { mutableStateOf("") }
     val colorList = remember { CategoryColors.colors }
     val size = 50.dp
     val padding = 8.dp
@@ -51,9 +52,10 @@ actual fun PickColorDialog(
             verticalArrangement = Arrangement.spacedBy(padding)
         ) {
             colorList.forEach { (color, colorString) ->
+                val colorInt = color.toArgb()
                 item {
                     CategoryColorBubble(size = size,
-                        hasBorder = colorString == rememberColorString.value,
+                        hasBorder = colorInt == animatableColor.value.toArgb(),
                         backgroundColor = color,
                         onClick = {
                             scope.launch {
