@@ -84,7 +84,8 @@ fun CategoryEditView() {
             })
 
         Column(modifier = Modifier.fillMaxSize().background(animatableColor.value)) {
-            Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.padding(16.dp).fillMaxWidth()) {
+            Spacer(modifier = Modifier.height(16.dp))
+            Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.padding(start = 32.dp, end = 32.dp).fillMaxWidth()) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text("Pick your Color", fontWeight = FontWeight.Bold)
                     Box {
@@ -118,6 +119,7 @@ fun CategoryEditView() {
 
                 }
             }
+            Spacer(modifier = Modifier.height(16.dp))
             Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
                 TextField(value = categoryNameState.value,
                     singleLine = true,
@@ -154,7 +156,7 @@ fun CategoryIconBubble(
 ) {
     Box(
         modifier = Modifier.size(size).shadow(15.dp, CircleShape).clip(CircleShape)
-            .background(MaterialTheme.colors.onSurface.copy(alpha = TextFieldDefaults.BackgroundOpacity)).border(
+            .background(MaterialTheme.colors.onBackground.copy(alpha = TextFieldDefaults.BackgroundOpacity)).border(
                 width = 3.dp, color = if (hasBorder) Color.White else Color.Transparent, shape = CircleShape
             ).clickable(onClick = onClick)
     ) {

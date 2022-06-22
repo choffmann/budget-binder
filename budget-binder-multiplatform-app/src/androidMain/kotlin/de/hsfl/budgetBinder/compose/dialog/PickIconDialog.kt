@@ -28,6 +28,8 @@ actual fun PickIconDialog(
 ) {
     val rememberIcon = remember { allAvailableCategoryIcons() }
     val selectedIcon = remember { mutableStateOf(Category.Image.DEFAULT) }
+    val size = 50.dp
+    val padding = 8.dp
     if (openDialog) {
         AlertDialog(
             onDismissRequest = onDismiss,
@@ -41,14 +43,14 @@ actual fun PickIconDialog(
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     CategoryListItem(name = categoryName, budget = categoryBudget.toString(), icon = selectedIcon.value, color = selectColor)
                     LazyVerticalGrid(
-                        cells = GridCells.Fixed(4),
-                        contentPadding = PaddingValues(8.dp),
-                        horizontalArrangement = Arrangement.spacedBy(10.dp),
-                        verticalArrangement = Arrangement.spacedBy(10.dp)
+                        cells = GridCells.Adaptive(size + padding),
+                        contentPadding = PaddingValues(padding),
+                        horizontalArrangement = Arrangement.spacedBy(padding),
+                        verticalArrangement = Arrangement.spacedBy(padding)
                     ) {
                         items(rememberIcon) { icon ->
                             CategoryIconBubble(
-                                size = 50.dp,
+                                size = size,
                                 hasBorder = selectedIcon.value == icon,
                                 onClick = { selectedIcon.value = icon },
                                 icon = icon
