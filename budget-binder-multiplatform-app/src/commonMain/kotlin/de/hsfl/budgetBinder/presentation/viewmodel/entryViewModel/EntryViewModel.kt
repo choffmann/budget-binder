@@ -105,7 +105,6 @@ class EntryViewModel(
             }
             is EntryEvent.LoadOverview -> {
                 resetFlows()
-                getCategoryList()
                 getEntryById((routerFlow.state.value as Screen.Entry.Overview).id)
             }
             is EntryEvent.LoadEdit -> {
@@ -113,16 +112,13 @@ class EntryViewModel(
                 getCategoryList()
                 getEntryById((routerFlow.state.value as Screen.Entry.Edit).id)
             }
-            else -> {
-                throw Exception("Unhandled EntryEvent in EntryViewModel")
-            }
         }
     }
 
 
     /* *** Use Case usages *** */
-    fun getEntryById(id: Int) {
-        entryUseCases.getEntryByIdUseCase(id).onEach {
+    fun getEntryById(id: Int) = scope.launch {
+        entryUseCases.getEntryByIdUseCase(id).collect {
             when (it) {
                 is DataResponse.Loading -> _eventFlow.emit(UiEvent.ShowLoading)
                 is DataResponse.Error -> _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
