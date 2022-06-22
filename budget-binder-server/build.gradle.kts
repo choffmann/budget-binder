@@ -1,5 +1,8 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
+val ktorVersion: String by project
+val exposedVersion: String by project
+
 plugins {
     application
     kotlin("jvm")
@@ -25,7 +28,6 @@ dependencies {
     implementation(project(":budget-binder-common"))
     implementation(kotlin("stdlib"))
 
-    val ktorVersion = "2.0.2"
     implementation("io.ktor:ktor-network-tls-certificates-jvm:$ktorVersion")
     implementation("io.ktor:ktor-server-core-jvm:$ktorVersion")
     implementation("io.ktor:ktor-server-auth-jvm:$ktorVersion")
@@ -45,10 +47,8 @@ dependencies {
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.2")
 
-
     implementation("ch.qos.logback:logback-classic:1.2.11")
 
-    val exposedVersion = "0.38.2"
     implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
     implementation("org.jetbrains.exposed:exposed-dao:$exposedVersion")
     implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
