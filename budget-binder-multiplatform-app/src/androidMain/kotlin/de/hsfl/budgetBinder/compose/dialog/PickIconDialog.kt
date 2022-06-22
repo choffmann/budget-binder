@@ -1,5 +1,6 @@
 package de.hsfl.budgetBinder.compose.dialog
 
+import android.graphics.drawable.Icon
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -11,6 +12,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
+import androidx.compose.material.icons.Icons
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -49,10 +51,12 @@ actual fun PickIconDialog(
                     CategoryListItem(name = categoryName, budget = categoryBudget.toString(), icon = selectedIcon.value, color = selectColor)
                     LazyVerticalGrid(
                         cells = GridCells.Fixed(4),
-                        contentPadding = PaddingValues(8.dp)
+                        contentPadding = PaddingValues(8.dp),
+                        horizontalArrangement = Arrangement.spacedBy(10.dp),
+                        verticalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
                         items(rememberIcon) { icon ->
-                            Box(modifier = Modifier.clickable { selectedIcon.value = icon }) {
+                            Box(modifier = Modifier.size(50.dp).clickable { selectedIcon.value = icon }) {
                                 CategoryImageToIcon(icon)
                             }
                         }
