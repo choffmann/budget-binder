@@ -1,14 +1,8 @@
 package de.hsfl.budgetBinder.compose.entry
 
 import androidx.compose.runtime.*
-import de.hsfl.budgetBinder.common.Category
-import de.hsfl.budgetBinder.common.Entry
 import de.hsfl.budgetBinder.compose.ChooseCategoryMenu
-import de.hsfl.budgetBinder.compose.MainFlexContainer
-import de.hsfl.budgetBinder.compose.category.categoryIdToCategory
 import de.hsfl.budgetBinder.compose.theme.AppStylesheet
-import de.hsfl.budgetBinder.compose.topBarMain
-import de.hsfl.budgetBinder.presentation.UiState
 import de.hsfl.budgetBinder.presentation.viewmodel.entryViewModel.EntryEvent
 import de.hsfl.budgetBinder.presentation.viewmodel.entryViewModel.EntryViewModel
 import di
@@ -204,7 +198,10 @@ fun EntryEditView(
                     Label(forId = "checkbox-1") { Text("repeat") }
                 }
             }
-            Div(attrs = { style { flex(50.percent) } }) {
+            Div(attrs = { style {
+                flex(50.percent)
+                alignItems(AlignItems.Stretch)
+            } }) {
                 ChooseCategoryMenu(categoryList, entryCategoryIDTextField) { id ->
                     viewModel.onEvent(EntryEvent.EnteredCategoryID(id))
                 }
