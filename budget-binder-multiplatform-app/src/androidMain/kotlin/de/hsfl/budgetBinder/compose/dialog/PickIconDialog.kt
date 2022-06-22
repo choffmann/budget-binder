@@ -1,29 +1,20 @@
 package de.hsfl.budgetBinder.compose.dialog
 
-import android.graphics.drawable.Icon
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
-import androidx.compose.material.icons.Icons
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import de.hsfl.budgetBinder.common.Category
-import de.hsfl.budgetBinder.compose.icon.CategoryIcon
-import de.hsfl.budgetBinder.presentation.CategoryImageToIcon
+import de.hsfl.budgetBinder.screens.category.CategoryIconBubble
 import de.hsfl.budgetBinder.screens.category.CategoryListItem
-import de.hsfl.budgetBinder.screens.category.toColor
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -56,9 +47,12 @@ actual fun PickIconDialog(
                         verticalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
                         items(rememberIcon) { icon ->
-                            Box(modifier = Modifier.size(50.dp).clickable { selectedIcon.value = icon }) {
-                                CategoryImageToIcon(icon)
-                            }
+                            CategoryIconBubble(
+                                size = 50.dp,
+                                hasBorder = selectedIcon.value == icon,
+                                onClick = { selectedIcon.value = icon },
+                                icon = icon
+                            )
                         }
                     }
                 }
