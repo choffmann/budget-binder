@@ -39,9 +39,9 @@ import org.slf4j.event.Level
 import java.sql.DriverManager
 
 fun Application.mainModule(config: Config) {
-    val url: String = when (config.dataBase.dbType) {
+    val url: String = when (config.database.dbType) {
         Config.DBType.SQLITE -> {
-            val url = "jdbc:sqlite:${config.dataBase.sqlitePath}"
+            val url = "jdbc:sqlite:${config.database.sqlitePath}"
             /*
             * The url is used in the tests to not create or alter the normal database.
             * the connection must be held because exposed closes the connection to the db
@@ -52,11 +52,11 @@ fun Application.mainModule(config: Config) {
             }
             url
         }
-        Config.DBType.MYSQL -> "jdbc:mysql://${config.dataBase.serverAddress}:${config.dataBase.serverPort}/${config.dataBase.name}"
-        Config.DBType.POSTGRES -> "jdbc:postgresql://${config.dataBase.serverAddress}:${config.dataBase.serverPort}/${config.dataBase.name}"
+        Config.DBType.MYSQL -> "jdbc:mysql://${config.database.serverAddress}:${config.database.serverPort}/${config.database.name}"
+        Config.DBType.POSTGRES -> "jdbc:postgresql://${config.database.serverAddress}:${config.database.serverPort}/${config.database.name}"
     }
 
-    Database.connect(url, user = config.dataBase.user, password = config.dataBase.password)
+    Database.connect(url, user = config.database.user, password = config.database.password)
 
     transaction {
         SchemaUtils.create(Users, Categories, Entries)

@@ -14,7 +14,7 @@ fun customTestApplication(block: suspend ApplicationTestBuilder.(client: HttpCli
     testApplication {
         application {
             val configString = """
-            dataBase:
+            database:
                 dbType: SQLITE
                 sqlitePath: file:test?mode=memory&cache=shared
             jwt:

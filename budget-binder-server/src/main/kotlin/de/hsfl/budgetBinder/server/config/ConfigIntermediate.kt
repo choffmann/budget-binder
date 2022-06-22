@@ -5,7 +5,7 @@ import com.sksamuel.hoplite.addFileSource
 import com.sksamuel.hoplite.yaml.YamlPropertySource
 import java.io.File
 
-data class ConfigIntermediate(val server: Server?, val dataBase: DataBase, val jwt: JWT) {
+data class ConfigIntermediate(val server: Server?, val database: Database, val jwt: JWT) {
     data class Server(
         val dev: Boolean?,
         val ssl: Boolean?,
@@ -18,7 +18,7 @@ data class ConfigIntermediate(val server: Server?, val dataBase: DataBase, val j
         val noForwardedHeaderSupport: Boolean?
     )
 
-    data class DataBase(
+    data class Database(
         val dbType: Config.DBType,
         val sqlitePath: String?,
         val serverAddress: String?,
@@ -39,7 +39,7 @@ data class ConfigIntermediate(val server: Server?, val dataBase: DataBase, val j
     )
 
     fun toConfig(): Config {
-        val dbType = dataBase.dbType
+        val dbType = database.dbType
 
         val sqlitePath: String
         val dbServerAddress: String
@@ -48,7 +48,7 @@ data class ConfigIntermediate(val server: Server?, val dataBase: DataBase, val j
         val dbUser: String
         val dbPassword: String
         if (dbType == Config.DBType.SQLITE) {
-            sqlitePath = dataBase.sqlitePath ?: (System.getProperty("user.dir") + "/data/data.db")
+            sqlitePath = database.sqlitePath ?: (System.getProperty("user.dir") + "/data/data.db")
             dbServerAddress = ""
             dbServerPort = ""
             dbName = ""
@@ -56,11 +56,11 @@ data class ConfigIntermediate(val server: Server?, val dataBase: DataBase, val j
             dbPassword = ""
         } else {
             sqlitePath = ""
-            dbServerAddress = dataBase.serverAddress ?: error("No dbServerAddress specified")
-            dbServerPort = dataBase.serverPort ?: error("No dbServerPort specified")
-            dbName = dataBase.name ?: error("No dbDatabaseName specified")
-            dbUser = dataBase.user ?: error("No dbUser specified")
-            dbPassword = dataBase.password ?: error("No dbPassword specified")
+            dbServerAddress = database.serverAddress ?: error("No dbServerAddress specified")
+            dbServerPort = database.serverPort ?: error("No dbServerPort specified")
+            dbName = database.name ?: error("No dbDatabaseName specified")
+            dbUser = database.user ?: error("No dbUser specified")
+            dbPassword = database.password ?: error("No dbPassword specified")
         }
 
         val dev = server?.dev ?: false
@@ -94,7 +94,7 @@ data class ConfigIntermediate(val server: Server?, val dataBase: DataBase, val j
         val jwtAudience = jwt.audience ?: "http://0.0.0.0:8080/"
 
         return Config(
-            dataBase = Config.DataBase(
+            database = Config.Database(
                 dbType,
                 sqlitePath,
                 dbServerAddress,
@@ -145,7 +145,7 @@ private fun getConfigIntermediateFromEnv(): ConfigIntermediate {
         else -> error("No Database Type given")
     }
 
-    val dataBase = ConfigIntermediate.DataBase(
+    val dataBase = ConfigIntermediate.Database(
         dbType,
         System.getenv("SQLITE_PATH"),
         System.getenv("DB_SERVER"),
