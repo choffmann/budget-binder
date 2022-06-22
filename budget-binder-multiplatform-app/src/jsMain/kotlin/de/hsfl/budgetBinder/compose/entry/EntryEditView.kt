@@ -178,14 +178,15 @@ fun EntryEditView(
             Div(attrs = { style { flex(50.percent) } }) {
                 Div(attrs = { classes("mdc-form-field") }) {
                     Div(attrs = { classes("mdc-checkbox") }) {
-                        Input(type = InputType.Checkbox)
+                        CheckboxInput (attrs =
                         {
+                            checked(entryRepeat)
                             classes("mdc-checkbox__native-control")
                             id("checkbox-1")
                             onInput {
                                 viewModel.onEvent(EntryEvent.EnteredRepeat)
                             }
-                        }
+                        })
                         Div(attrs = { classes("mdc-checkbox__background") }) {
                             Svg(
                                 attrs = { classes("mdc-checkbox__checkmark") },
