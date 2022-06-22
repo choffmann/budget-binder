@@ -155,23 +155,33 @@ class EntryViewModel(
     }
 
     fun updateEntry(entry: Entry.Patch, id: Int) {
-        entryUseCases.changeEntryByIdUseCase(entry, id).onEach {
-            when (it) {
-                is DataResponse.Loading -> _eventFlow.emit(UiEvent.ShowLoading)
-                is DataResponse.Error -> _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
-                is DataResponse.Success<*> -> _eventFlow.emit(UiEvent.ShowSuccess("Entry successfully changed")) //TODO?: Change the msg
-                is DataResponse.Unauthorized -> _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
+        scope.launch {
+            entryUseCases.changeEntryByIdUseCase(entry, id).collect { response ->
+                when (response) {
+                    is DataResponse.Loading -> _eventFlow.emit(UiEvent.ShowLoading)
+                    is DataResponse.Error -> _eventFlow.emit(UiEvent.ShowError(response.error!!.message))
+                    is DataResponse.Success<*> -> {
+                        _eventFlow.emit(UiEvent.ShowSuccess("Entry successfully updated")) //TODO?: Change the msg
+                        routerFlow.navigateTo(Screen.Dashboard)
+                    }
+                    is DataResponse.Unauthorized -> _eventFlow.emit(UiEvent.ShowError(response.error!!.message))
+                }
             }
         }
     }
 
     fun deleteEntry(id: Int) {
-        entryUseCases.deleteEntryByIdUseCase(id).onEach {
-            when (it) {
-                is DataResponse.Loading -> _eventFlow.emit(UiEvent.ShowLoading)
-                is DataResponse.Error -> _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
-                is DataResponse.Success<*> -> _eventFlow.emit(UiEvent.ShowSuccess("Entry successfully deleted")) //TODO?: Change the msg
-                is DataResponse.Unauthorized -> _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
+        scope.launch {
+        entryUseCases.deleteEntryByIdUseCase(id).collect { response ->
+                when (response) {
+                    is DataResponse.Loading -> _eventFlow.emit(UiEvent.ShowLoading)
+                    is DataResponse.Error -> _eventFlow.emit(UiEvent.ShowError(response.error!!.message))
+                    is DataResponse.Success<*> -> {
+                        _eventFlow.emit(UiEvent.ShowSuccess("Entry successfully deleted")) //TODO?: Change the msg
+                        routerFlow.navigateTo(Screen.Dashboard)
+                    }
+                    is DataResponse.Unauthorized -> _eventFlow.emit(UiEvent.ShowError(response.error!!.message))
+                }
             }
         }
     }
@@ -190,11 +200,12 @@ class EntryViewModel(
             }
         }
     }
-    private fun buildAmount(): Float{
-        return if(_amountSignState.value){
+
+    private fun buildAmount(): Float {
+        return if (_amountSignState.value) {
             _amountText.value
-        }else{
-            _amountText.value*-1
+        } else {
+            _amountText.value * -1
         }
     }
 }
