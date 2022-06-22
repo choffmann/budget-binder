@@ -8,7 +8,7 @@ server:
     keyStorePassword: null
     keyStorePath: null
     noForwardedHeaderSupport: false
-dataBase:
+database:
     dbType: SQLITE
     sqlitePath: null
     serverAddress: null

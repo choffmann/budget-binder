@@ -1,7 +1,7 @@
 package de.hsfl.budgetBinder.server.config
 
 
-data class Config(val server: Server, val dataBase: DataBase, val jwt: JWT) {
+data class Config(val server: Server, val database: Database, val jwt: JWT) {
     data class Server(
         val dev: Boolean,
         val ssl: Boolean,
@@ -20,7 +20,7 @@ data class Config(val server: Server, val dataBase: DataBase, val jwt: JWT) {
         POSTGRES,
     }
 
-    data class DataBase(
+    data class Database(
         val dbType: DBType,
         val sqlitePath: String,
         val serverAddress: String,
