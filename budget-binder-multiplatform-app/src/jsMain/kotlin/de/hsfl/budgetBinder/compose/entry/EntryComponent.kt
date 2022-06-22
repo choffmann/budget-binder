@@ -36,7 +36,7 @@ fun EntryComponent() {
         when (screenState.value) {
             is Screen.Entry.Create -> {
                 EntryCreateView(
-                    onCreateEntryButtonPressed = { viewModel.onEvent(EntryEvent.OnCreateEntry) }
+                    onCreateButton = { viewModel.onEvent(EntryEvent.OnCreateEntry) }
                 )
                 viewModel.onEvent(EntryEvent.LoadCreate)
             }
@@ -48,6 +48,13 @@ fun EntryComponent() {
                     onDeleteDialogDismissButton = { viewModel.onEvent(EntryEvent.OnDeleteDialogDismiss) }
                 )
                 viewModel.onEvent(EntryEvent.LoadOverview)
+            }
+            is Screen.Entry.Edit -> {
+                EntryEditView(
+                    onEditButton = { viewModel.onEvent(EntryEvent.OnEditEntry)}
+                )
+                viewModel.onEvent(EntryEvent.LoadEdit)
+
             }
             else -> {}
         }

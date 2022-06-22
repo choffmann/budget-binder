@@ -9,6 +9,9 @@ import de.hsfl.budgetBinder.compose.category.categoryIdToCategory
 import de.hsfl.budgetBinder.compose.theme.AppStylesheet
 import de.hsfl.budgetBinder.compose.topBarMain
 import de.hsfl.budgetBinder.presentation.UiState
+import de.hsfl.budgetBinder.presentation.viewmodel.entryViewModel.EntryEvent
+import de.hsfl.budgetBinder.presentation.viewmodel.entryViewModel.EntryViewModel
+import di
 import org.jetbrains.compose.web.ExperimentalComposeWebSvgApi
 import org.jetbrains.compose.web.attributes.ButtonType
 import org.jetbrains.compose.web.attributes.InputType
@@ -18,269 +21,203 @@ import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
 import org.jetbrains.compose.web.svg.Path
 import org.jetbrains.compose.web.svg.Svg
+import org.kodein.di.instance
 
 
 @OptIn(ExperimentalComposeWebSvgApi::class)
 @Composable
 fun EntryEditView(
-    state: State<Any>,
-    onChangeToDashboard: () -> Unit,
-    onChangeToSettings: () -> Unit,
-    onChangeToCategory: () -> Unit,
-    onEditEntryButtonPressed: (name: String, amount: Float, repeat: Boolean, category: Entry.Category) -> Unit,
+    onEditButton: () -> Unit,
 ) {
-    var entry by remember { mutableStateOf(Entry(0, "", 0f, false, 0)) }
-    var categoryList by remember { mutableStateOf<List<Category>>(emptyList()) }
-    var switchState by remember { mutableStateOf(false) }
-    var entryNameTextFieldState by remember { mutableStateOf("") }
-    var entryAmountTextFieldState by remember { mutableStateOf("") }
-    var entryRepeatState by remember { mutableStateOf("") }
-    var entryCategoryIDTextFieldState by remember { mutableStateOf("") }
-    val viewState by remember { state }
+    val viewModel: EntryViewModel by di.instance()
+    //Input
+    val entryNameTextField by viewModel.nameText.collectAsState()
+    val entryAmountTextField by viewModel.amountText.collectAsState()
+    val entryRepeat by viewModel.repeatState.collectAsState()
+    val entryCategoryIDTextField by viewModel.categoryIDState.collectAsState()
+    val amountSign by viewModel.amountSignState.collectAsState()
+    //Data
+    val categoryList by viewModel.categoryListState.collectAsState()
+    val entry by viewModel.selectedEntryState.collectAsState()
 
-    topBarMain(
-        logoButton = {
-            Img(
-                src = "images/Logo.png", alt = "Logo", attrs = {
-                    classes("mdc-icon-button", AppStylesheet.image)
-                    onClick { onChangeToDashboard() }
-                }
-            )
-        }, navButtons = {
-            Button(
-                attrs = {
-                    classes("mdc-button", "mdc-button--raised", "mdc-top-app-bar__navigation-icon")
-                    onClick { onChangeToCategory() }
-                }
-            ) {
-                Span(
-                    attrs = {
-                        classes("mdc-button__label")
-                    }
-                ) {
-                    Text("Categories")
-                }
-            }
-            Button(
-                attrs = {
-                    classes("mdc-button", "mdc-button--raised", "mdc-top-app-bar__navigation-icon")
-                    onClick { onChangeToSettings() }
-                }
-            ) {
-                Span(
-                    attrs = {
-                        classes("mdc-button__label")
-                    }
-                ) {
-                    Text("Settings")
-                }
-            }
-        })
-
-    MainFlexContainer {
-        H1(
+    H1(
+        attrs = {
+            style { margin(2.percent) }
+        }
+    ) { Text("Edit Entry") }
+    Form(attrs = {
+        this.addEventListener("submit") {
+            onEditButton()
+            it.preventDefault()
+        }
+    }
+    ) {
+        Div(
             attrs = {
-                style { margin(2.percent) }
+                classes(AppStylesheet.margin)
             }
-        ) { Text("Edit Entry") }
-        Form(attrs = {
-            this.addEventListener("submit") {
-                console.log("$entryNameTextFieldState, $entryAmountTextFieldState, $entryRepeatState, ${entryCategoryIDTextFieldState.toInt()}")
-                onEditEntryButtonPressed(
-                    entryNameTextFieldState,
-                    (if (!switchState) "-$entryAmountTextFieldState" else entryAmountTextFieldState).toFloat(),
-                    entryRepeatState.toBoolean(),
-                    Entry.Category(entryCategoryIDTextFieldState.toInt())
-                )
-                it.preventDefault()
+        ) {
+            Label(
+                attrs = {
+                    classes("mdc-text-field", "mdc-text-field--filled")
+                    style { width(100.percent) }
+                }
+            ) {
+                Span(
+                    attrs = {
+                        classes("mdc-text-field__ripple")
+                    }
+                ) { }
+                Span(
+                    attrs = {
+                        classes("mdc-floating-label", "mdc-floating-label--float-above")
+                    }
+                ) { Text("Entry Name") }
+                Input(
+                    type = InputType.Text
+                ) {
+                    classes("mdc-text-field__input")
+                    value(entryNameTextField)
+                    required(true)
+                    onInput {
+                        viewModel.onEvent(EntryEvent.EnteredName(it.value))
+                    }
+                }
+                Span(
+                    attrs = {
+                        classes("mdc-line-ripple")
+                    }
+                ) { }
             }
         }
+        Div(
+            attrs = {
+                classes(AppStylesheet.margin)
+            }
         ) {
-            Div(
+            Label(
                 attrs = {
-                    classes(AppStylesheet.margin)
+                    classes("mdc-text-field", "mdc-text-field--outlined")
+                    style { width(100.percent) }
                 }
             ) {
-                Label(
+                Span(
                     attrs = {
-                        classes("mdc-text-field", "mdc-text-field--filled")
-                        style { width(100.percent) }
+                        classes("mdc-text-field__ripple")
                     }
-                ) {
-                    Span(
+                ) { }
+                Span(
+                    attrs = {
+                        classes("mdc-floating-label", "mdc-floating-label--float-above")
+                        style { marginBottom(1.percent) }
+                    }
+                ) { Text("Amount") }
+                Div {
+                    Button(
                         attrs = {
-                            classes("mdc-text-field__ripple")
+                            if (!amountSign) classes("mdc-switch", "mdc-switch--unselected")
+                            else classes("mdc-switch", "mdc-switch--selected")
+                            id("basic-switch")
+                            attr("role", "switch")
+                            attr("aria-checked", "false")
+                            type(ButtonType.Button)
+                            onClick { viewModel.onEvent(EntryEvent.EnteredAmountSign) }
                         }
-                    ) { }
-                    Span(
-                        attrs = {
-                            classes("mdc-floating-label", "mdc-floating-label--float-above")
-                        }
-                    ) { Text("Entry Name") }
-                    Input(
-                        type = InputType.Text
                     ) {
-                        classes("mdc-text-field__input")
-                        value(entryNameTextFieldState)
-                        required(true)
-                        onInput {
-                            entryNameTextFieldState = it.value
-                        }
-                    }
-                    Span(
-                        attrs = {
-                            classes("mdc-line-ripple")
-                        }
-                    ) { }
-                }
-            }
-            Div(
-                attrs = {
-                    classes(AppStylesheet.margin)
-                }
-            ) {
-                Label(
-                    attrs = {
-                        classes("mdc-text-field", "mdc-text-field--outlined")
-                        style { width(100.percent) }
-                    }
-                ) {
-                    Span(
-                        attrs = {
-                            classes("mdc-text-field__ripple")
-                        }
-                    ) { }
-                    Span(
-                        attrs = {
-                            classes("mdc-floating-label", "mdc-floating-label--float-above")
-                            style { marginBottom(1.percent) }
-                        }
-                    ) { Text("Amount") }
-                    Div {
-                        Button(
-                            attrs = {
-                                if (!switchState) classes("mdc-switch", "mdc-switch--unselected")
-                                else classes("mdc-switch", "mdc-switch--selected")
-                                id("basic-switch")
-                                attr("role", "switch")
-                                attr("aria-checked", "false")
-                                type(ButtonType.Button)
-                                onClick { switchState = !switchState }
-                            }
-                        ) {
-                            Div(attrs = { classes("mdc-switch__track") }) { }
-                            Div(attrs = { classes("mdc-switch__handle-track") }) {
-                                Div(attrs = { classes("mdc-switch__handle") }) {
-                                    Div(attrs = { classes("mdc-switch__shadow") }) {
-                                        Div(attrs = { classes("mdc-elevation-overlay") }) { }
+                        Div(attrs = { classes("mdc-switch__track") }) { }
+                        Div(attrs = { classes("mdc-switch__handle-track") }) {
+                            Div(attrs = { classes("mdc-switch__handle") }) {
+                                Div(attrs = { classes("mdc-switch__shadow") }) {
+                                    Div(attrs = { classes("mdc-elevation-overlay") }) { }
+                                }
+                                Div(attrs = { classes("mdc-switch__ripple") }) { }
+                                Div(attrs = { classes("mdc-switch__icons") }) {
+                                    Svg(
+                                        attrs = { classes("mdc-switch__icon", "mdc-switch__icon") },
+                                        viewBox = "0 0 24 24"
+                                    ) {
+                                        Path("M19.69,5.23L8.96,15.96l-4.23-4.23L2.96,13.5l6,6L21.46,7L19.69,5.23z")
                                     }
-                                    Div(attrs = { classes("mdc-switch__ripple") }) { }
-                                    Div(attrs = { classes("mdc-switch__icons") }) {
-                                        Svg(
-                                            attrs = { classes("mdc-switch__icon", "mdc-switch__icon") },
-                                            viewBox = "0 0 24 24"
-                                        ) {
-                                            Path("M19.69,5.23L8.96,15.96l-4.23-4.23L2.96,13.5l6,6L21.46,7L19.69,5.23z")
-                                        }
-                                        Svg(
-                                            attrs = { classes("mdc-switch__icon", "mdc-switch__icon") },
-                                            viewBox = "0 0 24 24"
-                                        ) {
-                                            Path("M20 13H4v-2h16v2z")
-                                        }
+                                    Svg(
+                                        attrs = { classes("mdc-switch__icon", "mdc-switch__icon") },
+                                        viewBox = "0 0 24 24"
+                                    ) {
+                                        Path("M20 13H4v-2h16v2z")
                                     }
                                 }
                             }
                         }
                     }
-                    Div(attrs = {
-                        classes("mdc-typography--headline6", AppStylesheet.text)
-                    }) {
-                        Text(if (switchState) "+" else "-")
-                    }
-                    Input(
-                        type = InputType.Number
-                    ) {
-                        attr("step", "0.01")
-                        classes("mdc-text-field__input")
-                        onInput {
-                            entryAmountTextFieldState = it.value.toString()
-                        }
-                    }
-                    Span(
-                        attrs = {
-                            classes("mdc-line-ripple")
-                        }
-                    ) { }
                 }
-            }
-            Div(
-                attrs = {
-                    classes(AppStylesheet.margin, AppStylesheet.flexContainer)
+                Div(attrs = {
+                    classes("mdc-typography--headline6", AppStylesheet.text)
+                }) {
+                    Text(if (amountSign) "+" else "-")
                 }
-            ) {
-                Div(attrs = { style { flex(50.percent) } }) {
-                    Div(attrs = { classes("mdc-form-field") }) {
-                        Div(attrs = { classes("mdc-checkbox") }) {
-                            Input(type = InputType.Checkbox)
-                            {
-                                classes("mdc-checkbox__native-control")
-                                id("checkbox-1")
-                                onInput {
-                                    entryRepeatState = it.value.toString()
-                                }
-                            }
-                            Div(attrs = { classes("mdc-checkbox__background") }) {
-                                Svg(attrs = { classes("mdc-checkbox__checkmark") }, viewBox = "0 0 24 24") {
-                                    Path(
-                                        "M1.73,12.91 8.1,19.28 22.79,4.59",
-                                        attrs = { classes("mdc-checkbox__checkmark") })
-                                }
-                                Div(attrs = { classes("mdc-checkbox__mixedmark") }) { }
-                            }
-                            Div(attrs = { classes("mdc-checkbox__ripple") }) { }
-                        }
-                        Label(forId = "checkbox-1") { Text("repeat") }
+                Input(
+                    type = InputType.Number
+                ) {
+                    attr("step", "0.01")
+                    classes("mdc-text-field__input")
+                    onInput {
+                        viewModel.onEvent(EntryEvent.EnteredAmount(it.value as Float))
                     }
                 }
-                Div(attrs = { style { flex(50.percent) } }) {
-                    //ChooseCategoryMenu(categoryList, ) { id -> entryCategoryIDTextFieldState = id.toString() }
-                }
-            }
-            Div(
-                attrs = {
-                    classes(AppStylesheet.margin)
-                }
-            ) {
-                SubmitInput(
+                Span(
                     attrs = {
-                        classes("mdc-button", "mdc-button--raised")
-                        value("Submit")
-                    })
+                        classes("mdc-line-ripple")
+                    }
+                ) { }
             }
-            Div {
-                when (viewState) {
-                    is UiState.Success<*> -> {
-                        when (val element = (viewState as UiState.Success<*>).element) {
-                            is Entry -> {
-                                entry = element
-                                entryNameTextFieldState = entry.name
-                                entryAmountTextFieldState = entry.amount.toString()
-                                switchState = !entry.amount.toString().startsWith("-")
-                                entryRepeatState = entry.repeat.toString()
-                                entryCategoryIDTextFieldState = entry.category_id.toString()
+        }
+        Div(
+            attrs = {
+                classes(AppStylesheet.margin, AppStylesheet.flexContainer)
+            }
+        ) {
+            Div(attrs = { style { flex(50.percent) } }) {
+                Div(attrs = { classes("mdc-form-field") }) {
+                    Div(attrs = { classes("mdc-checkbox") }) {
+                        Input(type = InputType.Checkbox)
+                        {
+                            classes("mdc-checkbox__native-control")
+                            id("checkbox-1")
+                            onInput {
+                                viewModel.onEvent(EntryEvent.EnteredRepeat)
                             }
                         }
-                        Text((viewState as UiState.Success<*>).element.toString())
+                        Div(attrs = { classes("mdc-checkbox__background") }) {
+                            Svg(
+                                attrs = { classes("mdc-checkbox__checkmark") },
+                                viewBox = "0 0 24 24"
+                            ) {
+                                Path(
+                                    "M1.73,12.91 8.1,19.28 22.79,4.59",
+                                    attrs = { classes("mdc-checkbox__checkmark") })
+                            }
+                            Div(attrs = { classes("mdc-checkbox__mixedmark") }) { }
+                        }
+                        Div(attrs = { classes("mdc-checkbox__ripple") }) { }
                     }
-                    is UiState.Error -> {
-                        Text((viewState as UiState.Error).error)
-                    }
-                    is UiState.Loading -> {
-                        //CircularProgressIndicator()
-                    }
+                    Label(forId = "checkbox-1") { Text("repeat") }
                 }
             }
+            Div(attrs = { style { flex(50.percent) } }) {
+                ChooseCategoryMenu(categoryList, entryCategoryIDTextField) { id ->
+                    viewModel.onEvent(EntryEvent.EnteredCategoryID(id))
+                }
+            }
+        }
+        Div(
+            attrs = {
+                classes(AppStylesheet.margin)
+            }
+        ) {
+            SubmitInput(
+                attrs = {
+                    classes("mdc-button", "mdc-button--raised")
+                    value("Submit")
+                })
         }
     }
 }
