@@ -17,6 +17,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import de.hsfl.budgetBinder.BudgetBinderNavDrawer
+import de.hsfl.budgetBinder.BudgetBinderTopBar
+import de.hsfl.budgetBinder.TopBarMenuIcon
 import de.hsfl.budgetBinder.common.Category
 import de.hsfl.budgetBinder.compose.BudgetBar
 import de.hsfl.budgetBinder.di
@@ -63,25 +66,30 @@ fun DashboardComponent() {
         FloatingActionButton(onClick = { viewModel.onEvent(DashboardEvent.OnEntryCreate) }) {
             Icon(Icons.Default.Add, contentDescription = null)
         }
+    }, topBar = {
+        BudgetBinderTopBar(navigationIcon = { TopBarMenuIcon(scaffoldState = scaffoldState) })
     }) {
-        Column {
-            if (loadingState.value) {
-                LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
-            }
-            TopDashboardSection(focusedCategory = focusedCategory.value.category,
-                totalSpendBudget = totalSpendBudget.value.spendBudgetOnCurrentCategory,
-                totalBudget = focusedCategory.value.category.budget,
-                hasPrev = focusedCategory.value.hasPrev,
-                hasNext = focusedCategory.value.hasNext,
-                onPrevClicked = { viewModel.onEvent(DashboardEvent.OnPrevCategory) },
-                onNextClicked = { viewModel.onEvent(DashboardEvent.OnNextCategory) })
+        BudgetBinderNavDrawer(
+            scaffoldState.drawerState, gesturesEnabled = true
+        ) {
             Column {
-                EntryList(entryList = entryList.value.entryList,
-                    oldEntries = olderEntries.value,
-                    onItemClicked = { viewModel.onEvent(DashboardEvent.OnEntry(it)) },
-                    onLoadMore = { viewModel.onEvent(DashboardEvent.OnLoadMore) },
-                    onEntryDelete = { viewModel.onEvent(DashboardEvent.OnEntryDelete(it)) }
-                )
+                if (loadingState.value) {
+                    LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+                }
+                TopDashboardSection(focusedCategory = focusedCategory.value.category,
+                    totalSpendBudget = totalSpendBudget.value.spendBudgetOnCurrentCategory,
+                    totalBudget = focusedCategory.value.category.budget,
+                    hasPrev = focusedCategory.value.hasPrev,
+                    hasNext = focusedCategory.value.hasNext,
+                    onPrevClicked = { viewModel.onEvent(DashboardEvent.OnPrevCategory) },
+                    onNextClicked = { viewModel.onEvent(DashboardEvent.OnNextCategory) })
+                Column {
+                    EntryList(entryList = entryList.value.entryList,
+                        oldEntries = olderEntries.value,
+                        onItemClicked = { viewModel.onEvent(DashboardEvent.OnEntry(it)) },
+                        onLoadMore = { viewModel.onEvent(DashboardEvent.OnLoadMore) },
+                        onEntryDelete = { viewModel.onEvent(DashboardEvent.OnEntryDelete(it)) })
+                }
             }
         }
     }
@@ -214,11 +222,7 @@ fun SwipeToDelete(dismissState: DismissState, content: @Composable RowScope.() -
             }
             val scale by animateFloatAsState(targetValue = if (dismissState.targetValue == DismissValue.Default) 0.75f else 1f)
             Box(
-                Modifier
-                    .fillMaxSize()
-                    .background(color)
-                    .padding(horizontal = 20.dp),
-                contentAlignment = alignment
+                Modifier.fillMaxSize().background(color).padding(horizontal = 20.dp), contentAlignment = alignment
             ) {
                 if (direction == DismissDirection.EndToStart) {
                     Icon(Icons.Default.Delete, contentDescription = null, modifier = Modifier.scale(scale))
