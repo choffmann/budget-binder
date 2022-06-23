@@ -2,9 +2,13 @@ package de.hsfl.budgetBinder.screens.category
 
 import androidx.compose.runtime.*
 import de.hsfl.budgetBinder.compose.CategoryList
+import de.hsfl.budgetBinder.presentation.event.LifecycleEvent
+import de.hsfl.budgetBinder.presentation.event.UiEvent
 import de.hsfl.budgetBinder.presentation.viewmodel.category.summary.CategorySummaryEvent
 import de.hsfl.budgetBinder.presentation.viewmodel.category.summary.CategorySummaryViewModel
+import de.hsfl.budgetBinder.presentation.viewmodel.dashboard.DashboardEvent
 import di
+import kotlinx.coroutines.flow.collectLatest
 import org.jetbrains.compose.web.css.margin
 import org.jetbrains.compose.web.css.percent
 import org.jetbrains.compose.web.dom.*
@@ -17,6 +21,12 @@ fun CategorySummaryView(
     val viewModel: CategorySummaryViewModel by di.instance()
     val categoryList by viewModel.categoryList.collectAsState()
 
+    //LifeCycle
+    LaunchedEffect(key1 = true) {
+        viewModel.onEvent(CategorySummaryEvent.LifeCycle(LifecycleEvent.OnLaunch))
+    }
+
+    //Webpage Content
     H1(
         attrs = {
             style { margin(2.percent) }

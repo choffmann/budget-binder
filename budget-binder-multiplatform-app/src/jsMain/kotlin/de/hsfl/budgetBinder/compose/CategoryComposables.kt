@@ -90,16 +90,16 @@ fun CategoryList(
 ) {
     Div {
         for (category in categoryList)
-            categoryElement(category, onClicked = onClicked(category.id))
+            CategoryElement(category, onClicked = onClicked)
     }
 }
 
 @OptIn(ExperimentalComposeWebSvgApi::class)
 @Composable
-fun categoryElement(category: Category, onClicked: Unit){
+fun CategoryElement(category: Category, onClicked: (Int) -> Unit){
     Div(attrs = {
         classes("mdc-card", AppStylesheet.card)
-        onClick { onClicked }
+        onClick { onClicked(category.id) }
     }
     ) {
         Div(
@@ -143,9 +143,8 @@ fun categoryElement(category: Category, onClicked: Unit){
 }
 @OptIn(ExperimentalComposeWebSvgApi::class)
 @Composable
-fun categoryDetailed(category: Category, onEditButton: (id:Int) -> Unit, onDeleteButton:(id:Int) -> Unit){
+fun CategoryDetailed(category: Category, onEditButton: () -> Unit, onDeleteButton:() -> Unit){
     var deleteDialog by remember { mutableStateOf(false) }
-    var id by remember { mutableStateOf(0) }
     Div(attrs = {
         classes("mdc-card", AppStylesheet.card)
     }
@@ -153,7 +152,7 @@ fun categoryDetailed(category: Category, onEditButton: (id:Int) -> Unit, onDelet
         if (deleteDialog) {
             DeleteDialog(
                 false,
-                { onDeleteButton(id) },
+                { onDeleteButton() },
                 { deleteDialog = false }) { Text("Delete Category?") }
         }
         Div(
@@ -200,7 +199,7 @@ fun categoryDetailed(category: Category, onEditButton: (id:Int) -> Unit, onDelet
         ) {
             Button(attrs = {
                 classes("mdc-button", "mdc-button--raised", AppStylesheet.marginRight)
-                onClick { onEditButton?.let { it1 -> it1(category.id) } }
+                onClick { onEditButton() }
                 style {
                     flex(50.percent)
                     margin(1.5.percent)
@@ -210,7 +209,7 @@ fun categoryDetailed(category: Category, onEditButton: (id:Int) -> Unit, onDelet
             }
             Button(attrs = {
                 classes("mdc-button", "mdc-button--raised")
-                onClick { deleteDialog = !deleteDialog; id = category.id }
+                onClick { deleteDialog = !deleteDialog }
                 style {
                     flex(50.percent)
                     margin(1.5.percent)

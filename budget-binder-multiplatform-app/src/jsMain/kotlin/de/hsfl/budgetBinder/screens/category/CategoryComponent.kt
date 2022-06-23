@@ -3,6 +3,8 @@ package de.hsfl.budgetBinder.screens.category
 import androidx.compose.runtime.*
 import de.hsfl.budgetBinder.common.Category
 import de.hsfl.budgetBinder.common.Constants.DEFAULT_CATEGORY
+import de.hsfl.budgetBinder.compose.MainFlexContainer
+import de.hsfl.budgetBinder.compose.NavBar
 import de.hsfl.budgetBinder.compose.theme.AppStylesheet
 import de.hsfl.budgetBinder.presentation.CategoryImageToIcon
 import de.hsfl.budgetBinder.presentation.Screen
@@ -23,21 +25,17 @@ import org.kodein.di.instance
 @Composable
 fun CategoryComponent() {
     val routerFlow: RouterFlow by di.instance()
-    when (routerFlow.state.value) {
-        is Screen.Category.Summary -> CategorySummaryView()
-        //is Screen.Category.Detail -> CategoryDetailView()
-        is Screen.Category.Edit -> CategoryEditView()
-        is Screen.Category.Create -> CategoryCreateView()
-        else -> {}
+    //Webpage content
+    NavBar {}
+    MainFlexContainer {
+        when (routerFlow.state.value) {
+            is Screen.Category.Summary -> CategorySummaryView()
+            is Screen.Category.Detail -> CategoryDetailView()
+            //is Screen.Category.Edit -> CategoryEditView()
+            //is Screen.Category.Create -> CategoryCreateView()
+            else -> {}
+        }
     }
 }
-
-fun categoryIdToCategory(category_id: Int?, categoryList: List<Category>): Category {
-    for (category in categoryList) {
-        if (category.id == category_id) return category
-    }
-    return DEFAULT_CATEGORY //If the category wasn't found (or is set to no category) return default
-}
-
 
 
