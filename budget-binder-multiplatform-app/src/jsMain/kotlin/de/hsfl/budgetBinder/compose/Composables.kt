@@ -8,6 +8,7 @@ import de.hsfl.budgetBinder.presentation.CategoryImageToIcon
 import org.jetbrains.compose.web.ExperimentalComposeWebSvgApi
 import org.jetbrains.compose.web.attributes.ButtonType
 import org.jetbrains.compose.web.attributes.type
+import org.jetbrains.compose.web.attributes.value
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
 import org.jetbrains.compose.web.svg.Circle
@@ -92,19 +93,15 @@ fun Icon(icon_name: String) {
 
 // Snackbar that shows msg
 @Composable
-fun FeedbackSnackbar(msg: String, hidden: Boolean = false, resetSnackbar: () -> Unit) {
-    var hiddenValue by remember { mutableStateOf(hidden) }
+fun FeedbackSnackbar(msg: String, hidden: Boolean = false, onDismiss: () -> Unit) {
     Aside(
         attrs = {
-            when (hiddenValue) {
+            when (hidden) {
                 false -> classes("mdc-snackbar", "mdc-snackbar--open")
                 true -> classes("mdc-snackbar", "maria")
             }
             onClick {
-                hiddenValue = true
-                console.log(this@Aside)
-                console.log("ldsadsad")
-
+                onDismiss()
             }
         }) {
         Div(attrs = {
@@ -125,7 +122,7 @@ fun FeedbackSnackbar(msg: String, hidden: Boolean = false, resetSnackbar: () -> 
             }) {
                 Button(attrs = {
                     classes("mdc-button", "mdc-snackbar__action")
-                    onClick { resetSnackbar() }
+                    onClick { onDismiss() }
                 }) {
                     Div(attrs = {
                         classes("mdc-button__ripple")
@@ -384,9 +381,25 @@ fun DeleteDialog(
 @Composable
 fun ChooseCategoryMenu(
     categoryList: List<Category>,
+    selectedCategory: Int?,
     getCategoryId: (Int?) -> Unit
 ) {
-    var chosenCategory by remember { mutableStateOf(categoryList[0]) }
+    console.log(categoryList)
+    var choseCat = categoryList[0]
+
+    for (category in categoryList) {
+        if (category.id == selectedCategory) {
+            choseCat = category
+            break
+        }
+    }
+
+    var chosenCategory by remember {
+        mutableStateOf(choseCat)
+    }
+    console.log(chosenCategory)
+
+
     var showList by remember { mutableStateOf(false) }
 
     Button(attrs = {
@@ -414,7 +427,7 @@ fun ChooseCategoryMenu(
                         onClick { chosenCategory = category; getCategoryId(category.id) }
                     }) {
                         Span(attrs = { classes("mdc-list-item__ripple") }) { }
-                        Span(attrs = { }) { Text(category.name) }
+                        Span(attrs = { classes(AppStylesheet.moneyText)}) { Text(category.name) }
                     }
                 }
             }
@@ -422,4 +435,5 @@ fun ChooseCategoryMenu(
         Text(chosenCategory.name)
     }
 }
+
 

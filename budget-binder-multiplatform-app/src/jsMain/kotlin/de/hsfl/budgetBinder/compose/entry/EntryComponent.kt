@@ -1,81 +1,60 @@
 package de.hsfl.budgetBinder.compose.entry
 
 import androidx.compose.runtime.*
-import de.hsfl.budgetBinder.common.Category
-import de.hsfl.budgetBinder.common.Entry
-import de.hsfl.budgetBinder.compose.category.categoryIdToCategory
-import de.hsfl.budgetBinder.compose.theme.AppStylesheet
-import de.hsfl.budgetBinder.domain.usecase.*
-import de.hsfl.budgetBinder.presentation.CategoryImageToIcon
+import de.hsfl.budgetBinder.compose.MainFlexContainer
+import de.hsfl.budgetBinder.compose.NavBar
 import de.hsfl.budgetBinder.presentation.Screen
-import de.hsfl.budgetBinder.presentation.viewmodel.EntryViewModel
+import de.hsfl.budgetBinder.presentation.UiEvent
+import de.hsfl.budgetBinder.presentation.flow.RouterFlow
+import de.hsfl.budgetBinder.presentation.viewmodel.entry.EntryEvent
+import de.hsfl.budgetBinder.presentation.viewmodel.entry.EntryViewModel
 import di
-import org.jetbrains.compose.web.dom.Div
-import org.jetbrains.compose.web.dom.Text
+import kotlinx.coroutines.flow.collectLatest
 import org.kodein.di.instance
-import kotlin.math.absoluteValue
 
 @Composable
-fun EntryComponent(screenState: MutableState<Screen>) {
-    //val scope = CoroutineScope(Dispatchers.Unconfined + SupervisorJob())
-    val scope = rememberCoroutineScope()
-    /*val di = localDI()
-    val getAllEntriesUseCase: GetAllEntriesUseCase by di.instance()
-    val getEntryByIdUseCase: GetEntryByIdUseCase by di.instance()
-    val changeEntryByIdUseCase: ChangeEntryByIdUseCase by di.instance()
-    val deleteEntryByIdUseCase: DeleteEntryByIdUseCase by di.instance()
-    val createNewEntryUseCase: CreateNewEntryUseCase by di.instance()
-    val userViewModel = EntryViewModel(getAllEntriesUseCase, getEntryByIdUseCase, createNewEntryUseCase,changeEntryByIdUseCase,deleteEntryByIdUseCase, scope)
-    val viewState = userViewModel.state.collectAsState(scope)*/
+fun EntryComponent() {
 
     val viewModel: EntryViewModel by di.instance()
-    val viewState = viewModel.state.collectAsState(scope.coroutineContext)
+    val routerFlow: RouterFlow by di.instance()
+    val screenState = routerFlow.state.collectAsState()
+    val loadingState = remember { mutableStateOf(false) }
 
-    when (screenState.value) {
-        is Screen.EntryCreate -> {
-            EntryCreateView(
-                state = viewState,
-                categoryList = (screenState.value as Screen.EntryCreate).categoryList,
-                onChangeToDashboard = { screenState.value = Screen.Dashboard },
-                onCreateEntryButtonPressed = { name:String, amount:Float, repeat:Boolean, category_id:Int ->
-                    viewModel.createEntry(Entry.In(name, amount, repeat, category_id))
-                },
-                onChangeToSettings = { screenState.value = Screen._Settings },
-                onChangeToCategory = { screenState.value = Screen.CategorySummary },
-            )
+    LaunchedEffect(key1 = true) {
+        viewModel.eventFlow.collectLatest { event ->
+            when (event) {
+                is UiEvent.ShowLoading -> loadingState.value = true
+                is UiEvent.HideSuccess -> loadingState.value = false
+                else -> loadingState.value = false
+            }
+        }
+    }
+    NavBar {}
+    MainFlexContainer {
+        when (screenState.value) {
+            is Screen.Entry.Create -> {
+                EntryCreateView(
+                    onCreateButton = { viewModel.onEvent(EntryEvent.OnCreateEntry) }
+                )
+                viewModel.onEvent(EntryEvent.LoadCreate)
+            }
+            is Screen.Entry.Overview -> {
+                EntryOverviewView(
+                    onEditButton = { viewModel.onEvent(EntryEvent.OnEditEntry) },
+                    onDeleteButton = { viewModel.onEvent(EntryEvent.OnDeleteEntry) },
+                    onDeleteDialogConfirmButton = { viewModel.onEvent(EntryEvent.OnDeleteDialogConfirm) },
+                    onDeleteDialogDismissButton = { viewModel.onEvent(EntryEvent.OnDeleteDialogDismiss) }
+                )
+                viewModel.onEvent(EntryEvent.LoadOverview)
+            }
+            is Screen.Entry.Edit -> {
+                EntryEditView(
+                    onEditButton = { viewModel.onEvent(EntryEvent.OnEditEntry)}
+                )
+                viewModel.onEvent(EntryEvent.LoadEdit)
 
+            }
+            else -> {}
         }
-        is Screen.EntryEdit -> {
-            EntryEditView(
-                state = viewState,
-                onChangeToDashboard = { screenState.value = Screen.Dashboard },
-                onEditEntryButtonPressed = { name:String, amount:Float, repeat:Boolean, category:Entry.Category? ->
-                    viewModel.changeEntry(
-                        Entry.Patch(name, amount, repeat, category),
-                        (screenState.value as Screen.EntryEdit).id
-                    )
-                },
-                onChangeToSettings = { screenState.value = Screen._Settings },
-                onChangeToCategory = { screenState.value = Screen.CategorySummary },
-            )
-            viewModel.getEntryById((screenState.value as Screen.EntryEdit).id)//(screenState.value as Screen.EntryEdit).id)
-        }
-        is Screen.EntryOverview -> {
-            EntryOverviewView(
-                state = viewState,
-                onEditButton = {id, -> screenState.value = Screen.EntryEdit(id)},
-                onDeleteButton = { id ->
-                    viewModel.removeEntry(id)
-                    screenState.value = Screen.Dashboard},
-                onChangeToDashboard = { screenState.value = Screen.Dashboard },
-                onChangeToSettings = { screenState.value = Screen._Settings },
-                onChangeToCategory = { screenState.value = Screen.CategorySummary },
-            )
-            viewModel.getEntryById((screenState.value as Screen.EntryOverview).id)
-        }
-        else -> {}
     }
 }
-
-fun entriesFromCategory(list: List<Entry>, category_id: Int?): List<Entry> =
-    list.filter { it.category_id == category_id }
