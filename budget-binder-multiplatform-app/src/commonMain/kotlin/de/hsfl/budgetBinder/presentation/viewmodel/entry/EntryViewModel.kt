@@ -89,8 +89,9 @@ class EntryViewModel(
                     } //using ID seems... unnecessary?}
                 }
             is EntryEvent.OnDeleteEntry -> _dialogState.value = true
-            is EntryEvent.OnDeleteDialogConfirm -> deleteEntry(selectedEntryState.value.id)
+            is EntryEvent.OnDeleteDialogConfirm -> delete(selectedEntryState.value.id)
             is EntryEvent.OnDeleteDialogDismiss -> _dialogState.value = false
+            //TODO: Replace Loads with LifeCycle
             is EntryEvent.LoadCreate -> {
                 resetFlows()
                 getCategoryList()
@@ -136,52 +137,20 @@ class EntryViewModel(
         }
     }
 
-    fun update(entry: Entry.Patch, id: Int) {
-        scope.launch {
-            entryUseCases.changeEntryByIdUseCase(entry, id).collect { response ->
-                when (response) {
-                    is DataResponse.Loading -> _eventFlow.emit(UiEvent.ShowLoading)
-                    is DataResponse.Error -> _eventFlow.emit(UiEvent.ShowError(response.error!!.message))
-                    is DataResponse.Success<*> -> {
-                        _eventFlow.emit(UiEvent.ShowSuccess("Entry successfully updated")) //TODO?: Change the msg
-                        routerFlow.navigateTo(Screen.Dashboard)
-                    }
-                    is DataResponse.Unauthorized -> _eventFlow.emit(UiEvent.ShowError(response.error!!.message))
-                }
-            }
+    fun update(entry: Entry.Patch, id: Int) = scope.launch {
+        entryUseCases.changeEntryByIdUseCase(entry, id).collect {
+            it.handleDataResponse<Entry>(
+                routerFlow = routerFlow, onSuccess = { routerFlow.navigateTo(Screen.Dashboard) })
         }
     }
 
-    fun deleteEntry(id: Int) {
-        scope.launch {
-            entryUseCases.deleteEntryByIdUseCase(id).collect { response ->
-                when (response) {
-                    is DataResponse.Loading -> _eventFlow.emit(UiEvent.ShowLoading)
-                    is DataResponse.Error -> _eventFlow.emit(UiEvent.ShowError(response.error!!.message))
-                    is DataResponse.Success<*> -> {
-                        _eventFlow.emit(UiEvent.ShowSuccess("Entry successfully deleted")) //TODO?: Change the msg
-                        routerFlow.navigateTo(Screen.Dashboard)
-                    }
-                    is DataResponse.Unauthorized -> _eventFlow.emit(UiEvent.ShowError(response.error!!.message))
-                }
-            }
+    fun delete(id: Int) = scope.launch {
+        entryUseCases.deleteEntryByIdUseCase(id).collect {
+            it.handleDataResponse<Entry>(
+                routerFlow = routerFlow, onSuccess = { routerFlow.navigateTo(Screen.Dashboard) })
         }
     }
 
-    private suspend fun <T> handleDataResponse(response: DataResponse<T>, onSuccess: (T) -> Unit) {
-        when (response) {
-            is DataResponse.Loading -> _eventFlow.emit(UiEvent.ShowLoading)
-            is DataResponse.Error -> _eventFlow.emit(UiEvent.ShowError(response.error!!.message))
-            is DataResponse.Success -> {
-                _eventFlow.emit(UiEvent.HideSuccess)
-                onSuccess(response.data!!)
-            }
-            is DataResponse.Unauthorized -> {
-                _eventFlow.emit(UiEvent.ShowError(response.error!!.message))
-                routerFlow.navigateTo(Screen.Login)
-            }
-        }
-    }
 
     /**
      * Negates amount if amountSign is false
