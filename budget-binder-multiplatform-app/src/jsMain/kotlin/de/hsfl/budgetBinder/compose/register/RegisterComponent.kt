@@ -29,7 +29,9 @@ fun RegisterComponent() {
     val confirmedPasswordTextState = viewModel.confirmedPasswordText.collectAsState()
     val loadingState = remember { mutableStateOf(false) }
     var openSnackbar by remember { mutableStateOf(false) }
-    
+
+
+    //LifeCycle
     LaunchedEffect(key1 = true) {
         viewModel.onEvent(RegisterEvent.LifeCycle(LifecycleEvent.OnLaunch))
         viewModel.eventFlow.collectLatest { event ->
@@ -47,11 +49,8 @@ fun RegisterComponent() {
             viewModel.onEvent(RegisterEvent.LifeCycle(LifecycleEvent.OnDispose))
         }
     }
-    if (loadingState.value) {
-        Text("Loading")
-        //TODO: LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
-    }
-    //Body
+
+    //Webpage content
     Header(
         attrs = {
             classes("mdc-top-app-bar")
@@ -87,7 +86,11 @@ fun RegisterComponent() {
             ) {
                 Button(
                     attrs = {
-                        classes("mdc-button", "mdc-button--raised", "mdc-top-app-bar__navigation-icon")
+                        classes(
+                            "mdc-button",
+                            "mdc-button--raised",
+                            "mdc-top-app-bar__navigation-icon"
+                        )
                         onClick { viewModel.onEvent(RegisterEvent.OnLoginScreen) }
                     }
                 ) {
@@ -109,7 +112,7 @@ fun RegisterComponent() {
             attrs = {
                 style { marginLeft(2.percent) }
             }
-        )  { Text("Register") }
+        ) { Text("Register") }
         Form(attrs = { //Probably possible with just a button OnClick instead of Form&Submit
             this.addEventListener("submit") {
                 console.log("$firstNameTextState, $lastNameTextState, $emailTextState, $passwordTextState")

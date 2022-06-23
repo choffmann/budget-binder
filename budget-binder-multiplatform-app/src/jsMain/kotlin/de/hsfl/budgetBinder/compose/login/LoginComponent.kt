@@ -24,6 +24,7 @@ fun LoginComponent() {
     val loadingState = remember { mutableStateOf(false) }
 
 
+    //LifeCycle
     LaunchedEffect(key1 = true) {
         viewModel.onEvent(LoginEvent.LifeCycle(LifecycleEvent.OnLaunch))
         viewModel.eventFlow.collectLatest { event ->
@@ -41,11 +42,7 @@ fun LoginComponent() {
         }
     }
 
-    if (loadingState.value) {
-        Text("Loading")
-        //LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
-    }
-    //Body
+    //Webpage content
     Header(
         attrs = {
             classes("mdc-top-app-bar")

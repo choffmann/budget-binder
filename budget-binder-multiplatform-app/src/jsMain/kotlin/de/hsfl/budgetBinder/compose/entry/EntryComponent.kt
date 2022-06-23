@@ -22,6 +22,8 @@ fun EntryComponent() {
     val screenState = routerFlow.state.collectAsState()
     val loadingState = remember { mutableStateOf(false) }
 
+
+    //LifeCycle
     LaunchedEffect(Unit) {
         viewModel.onEvent(EntryEvent.LifeCycle(LifecycleEvent.OnLaunch))
         viewModel.eventFlow.collectLatest { event ->
@@ -37,6 +39,8 @@ fun EntryComponent() {
             viewModel.onEvent(EntryEvent.LifeCycle(LifecycleEvent.OnDispose))
         }
     }
+
+    //Webpage content
     NavBar {}
     MainFlexContainer {
         when (screenState.value) {

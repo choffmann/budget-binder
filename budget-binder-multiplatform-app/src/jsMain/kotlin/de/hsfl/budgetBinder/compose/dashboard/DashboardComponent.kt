@@ -31,6 +31,7 @@ fun DashboardComponent() {
     val olderEntries = viewModel.oldEntriesMapState.collectAsState()
     val loadingState = remember { mutableStateOf(false) }
 
+
     //LifeCycle
     LaunchedEffect(key1 = true) {
         viewModel.onEvent(DashboardEvent.LifeCycle(LifecycleEvent.OnLaunch))
