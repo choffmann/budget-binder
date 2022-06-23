@@ -18,7 +18,6 @@ import kotlin.math.absoluteValue
 class EntryViewModel(
     private val entryUseCases: EntryUseCases,
     private val routerFlow: RouterFlow,
-    private val dataFlow: DataFlow,
     private val scope: CoroutineScope
 ) {
     /* *** Variables *** */
@@ -48,8 +47,7 @@ class EntryViewModel(
     // --- Default ViewModel Variables ----
     private val _dialogState = MutableStateFlow(false)
     val dialogState: StateFlow<Boolean> = _dialogState
-    private val _eventFlow = UiEventSharedFlow.mutableEventFlow
-    val eventFlow = UiEventSharedFlow.eventFlow
+    val eventFlow = UiEventSharedFlow.mutableEventFlow
     // ----
 
 
