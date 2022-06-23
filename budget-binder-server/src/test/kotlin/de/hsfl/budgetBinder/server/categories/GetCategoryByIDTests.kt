@@ -40,28 +40,6 @@ class GetCategoryByIDTests {
     }
 
     @Test
-    fun testGetCategoryByIDTooHigh() = customTestApplicationWithLogin { client ->
-        client.sendAuthenticatedRequest(HttpMethod.Get, "/categories/5000") { response ->
-            assertEquals(HttpStatusCode.OK, response.status)
-            val responseBody: APIResponse<Category> = response.body()
-            val shouldResponse: APIResponse<Category> = wrapFailure("Your category was not found.")
-            assertEquals(shouldResponse, responseBody)
-        }
-    }
-
-    @Test
-    fun testGetCategoryByIDTooLow() = customTestApplicationWithLogin { client ->
-        val id = transaction { CategoryEntity.all().first().id.value }
-
-        client.sendAuthenticatedRequest(HttpMethod.Get, "/categories/${id - 1}") { response ->
-            assertEquals(HttpStatusCode.OK, response.status)
-            val responseBody: APIResponse<Category> = response.body()
-            val shouldResponse: APIResponse<Category> = wrapFailure("Your category was not found.")
-            assertEquals(shouldResponse, responseBody)
-        }
-    }
-
-    @Test
     fun testGetCategoryByID() = customTestApplicationWithLogin { client ->
         val id = transaction { CategoryEntity.all().first().id.value }
 
