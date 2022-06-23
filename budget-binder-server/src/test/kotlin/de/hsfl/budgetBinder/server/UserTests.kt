@@ -99,7 +99,7 @@ class UserTests {
     @Test
     fun testDeleteMe() = customTestApplicationWithLogin { client ->
         val userId = transaction { UserEntity.all().first().id.value }
-        client.delete("/me").let { response ->
+        client.sendAuthenticatedRequest(HttpMethod.Delete, "/me") { response ->
             assertEquals(HttpStatusCode.OK, response.status)
             val user: APIResponse<User> = response.body()
             val shouldUser = wrapSuccess(TestUser.getTestUser(userId))

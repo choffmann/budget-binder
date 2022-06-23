@@ -2,6 +2,7 @@ package de.hsfl.budgetBinder.server
 
 import de.hsfl.budgetBinder.common.APIResponse
 import de.hsfl.budgetBinder.common.User
+import de.hsfl.budgetBinder.server.models.UserEntity
 import de.hsfl.budgetBinder.server.utils.TestUser
 import de.hsfl.budgetBinder.server.utils.customTestApplication
 import de.hsfl.budgetBinder.server.utils.registerUser
@@ -9,10 +10,16 @@ import de.hsfl.budgetBinder.server.utils.wrapFailure
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.http.*
-import org.junit.Test
+import org.jetbrains.exposed.sql.transactions.transaction
+import kotlin.test.*
 import kotlin.test.assertEquals
 
 class RegisterTests {
+
+    @AfterTest
+    fun deleteTestUser() = transaction {
+        UserEntity.all().forEach { it.delete() }
+    }
 
     @Test
     fun testRegisterWithoutBody() = customTestApplication { client ->
