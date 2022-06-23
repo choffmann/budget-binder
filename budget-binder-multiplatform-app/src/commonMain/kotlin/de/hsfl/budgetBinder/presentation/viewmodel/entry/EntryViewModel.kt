@@ -110,7 +110,7 @@ class EntryViewModel(
 
 
     /* *** Use Case usages *** */
-    protected fun getById(id: Int) = scope.launch {
+    private fun getById(id: Int) = scope.launch {
         entryUseCases.getEntryByIdUseCase(id).collect {
             it.handleDataResponse<Entry>(routerFlow = routerFlow, onSuccess = { entry ->
                 _selectedEntryState.value = entry
@@ -123,28 +123,28 @@ class EntryViewModel(
         }
     }
 
-    protected fun getCategoryList() = scope.launch {
+    private fun getCategoryList() = scope.launch {
         entryUseCases.getCategoryListUseCase().collect {
             it.handleDataResponse<List<Category>>(
                 routerFlow = routerFlow, onSuccess = { cl -> _categoryListState.value = cl })
         }
     }
 
-    fun create(entry: Entry.In) = scope.launch {
+    private fun create(entry: Entry.In) = scope.launch {
         entryUseCases.createNewEntryUseCase(entry).collect {
             it.handleDataResponse<Entry>(
                 routerFlow = routerFlow, onSuccess = { routerFlow.navigateTo(Screen.Dashboard) })
         }
     }
 
-    fun update(entry: Entry.Patch, id: Int) = scope.launch {
+    private fun update(entry: Entry.Patch, id: Int) = scope.launch {
         entryUseCases.changeEntryByIdUseCase(entry, id).collect {
             it.handleDataResponse<Entry>(
                 routerFlow = routerFlow, onSuccess = { routerFlow.navigateTo(Screen.Dashboard) })
         }
     }
 
-    fun delete(id: Int) = scope.launch {
+    private fun delete(id: Int) = scope.launch {
         entryUseCases.deleteEntryByIdUseCase(id).collect {
             it.handleDataResponse<Entry>(
                 routerFlow = routerFlow, onSuccess = { routerFlow.navigateTo(Screen.Dashboard) })
