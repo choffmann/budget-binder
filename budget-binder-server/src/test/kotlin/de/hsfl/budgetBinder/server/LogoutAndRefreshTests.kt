@@ -45,6 +45,16 @@ class LogoutAndRefreshTests {
     }
 
     @Test
+    fun testRefreshTokenUnauthorized() = customTestApplication { client ->
+        client.get("refresh_token").let {
+            assertEquals(HttpStatusCode.Unauthorized, it.status)
+            val responseBody: APIResponse<AuthToken> = it.body()
+            val shouldResponse: APIResponse<AuthToken> = wrapFailure("Your refreshToken is absent.", 401)
+            assertEquals(shouldResponse, responseBody)
+        }
+    }
+
+    @Test
     fun testGetMeAfterLogout() = customTestApplicationWithLogin { client ->
         client.checkMeSuccess()
         client.logoutUser(false)

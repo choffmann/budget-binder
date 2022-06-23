@@ -10,26 +10,16 @@ import io.ktor.http.*
 import kotlin.test.*
 
 class UnauthorizedTests {
-    private suspend inline fun <reified T> HttpResponse.checkUnauthorized(errorMsg: String = "Your accessToken is absent or does not match.") {
+    private suspend inline fun <reified T> HttpResponse.checkUnauthorized() {
         assertEquals(HttpStatusCode.Unauthorized, this.status)
         val responseBody: APIResponse<T> = this.body()
-        val shouldResponse: APIResponse<T> = wrapFailure(errorMsg, 401)
+        val shouldResponse: APIResponse<T> = wrapFailure("Your accessToken is absent or does not match.", 401)
         assertEquals(shouldResponse, responseBody)
-    }
-
-    @Test
-    fun testLogin() = customTestApplication { client ->
-        client.post("/login").checkUnauthorized<AuthToken>("Your username and/or password do not match.")
     }
 
     @Test
     fun testLogout() = customTestApplication { client ->
         client.get("/logout").checkUnauthorized<AuthToken>()
-    }
-
-    @Test
-    fun testRefreshToken() = customTestApplication { client ->
-        client.get("refresh_token").checkUnauthorized<AuthToken>("Your refreshToken is absent.")
     }
 
     @Test
