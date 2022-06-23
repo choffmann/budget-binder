@@ -206,6 +206,7 @@ fun EntryCreateView(
             Button(
                 attrs = {
                     classes("mdc-button", "mdc-button--raised")
+                    type(ButtonType.Button)
                     onClick { viewModel.onEvent(EntryEvent.OnCancel) }
                 }
             ) {
