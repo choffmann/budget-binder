@@ -8,7 +8,6 @@ import de.hsfl.budgetBinder.presentation.CategoryImageToIcon
 import org.jetbrains.compose.web.ExperimentalComposeWebSvgApi
 import org.jetbrains.compose.web.attributes.ButtonType
 import org.jetbrains.compose.web.attributes.type
-import org.jetbrains.compose.web.attributes.value
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
 import org.jetbrains.compose.web.svg.Circle
@@ -33,7 +32,7 @@ fun MainFlexContainer(content: @Composable () -> Unit) {
                 content()
             }
         }
-        Div(attrs = { classes(AppStylesheet.pufferFlexContainer) })
+        Div (attrs = { classes(AppStylesheet.pufferFlexContainer)})
     }
 }
 
@@ -435,3 +434,5 @@ fun ChooseCategoryMenu(
         Text(chosenCategory.name)
     }
 }
+
+

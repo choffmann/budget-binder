@@ -3,6 +3,8 @@ package de.hsfl.budgetBinder.presentation
 
 import de.hsfl.budgetBinder.common.Category
 
+import de.hsfl.budgetBinder.common.Category
+
 sealed class Screen {
     sealed class Welcome: Screen() {
         object Screen1: Welcome()
