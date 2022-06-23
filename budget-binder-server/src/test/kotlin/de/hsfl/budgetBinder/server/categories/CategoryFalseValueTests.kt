@@ -62,6 +62,16 @@ class CategoryFalseValueTests {
     }
 
     @Test
+    fun testGetCategoryByIDNotFound() = customTestApplicationWithLogin { client ->
+        client.sendAuthenticatedRequest(HttpMethod.Get, "/categories/5000") { response ->
+            assertEquals(HttpStatusCode.OK, response.status)
+            val responseBody: APIResponse<Category> = response.body()
+            val shouldResponse: APIResponse<Category> = wrapFailure("Your category was not found.")
+            assertEquals(shouldResponse, responseBody)
+        }
+    }
+
+    @Test
     fun testPatchCategoryByIDString() = customTestApplicationWithLogin { client ->
         client.sendAuthenticatedRequest(HttpMethod.Patch, "/categories/test") { response ->
             assertEquals(HttpStatusCode.OK, response.status)
@@ -82,6 +92,16 @@ class CategoryFalseValueTests {
     }
 
     @Test
+    fun testPatchCategoryByIDNotFound() = customTestApplicationWithLogin { client ->
+        client.sendAuthenticatedRequest(HttpMethod.Patch, "/categories/5000") { response ->
+            assertEquals(HttpStatusCode.OK, response.status)
+            val responseBody: APIResponse<Category> = response.body()
+            val shouldResponse: APIResponse<Category> = wrapFailure("Your category was not found.")
+            assertEquals(shouldResponse, responseBody)
+        }
+    }
+
+    @Test
     fun testDeleteCategoryByIDString() = customTestApplicationWithLogin { client ->
         client.sendAuthenticatedRequest(HttpMethod.Delete, "/categories/test") { response ->
             assertEquals(HttpStatusCode.OK, response.status)
@@ -97,6 +117,16 @@ class CategoryFalseValueTests {
             assertEquals(HttpStatusCode.OK, response.status)
             val responseBody: APIResponse<Category> = response.body()
             val shouldResponse: APIResponse<Category> = wrapFailure("The ID you provided is not a number.")
+            assertEquals(shouldResponse, responseBody)
+        }
+    }
+
+    @Test
+    fun testDeleteCategoryByIDNotFound() = customTestApplicationWithLogin { client ->
+        client.sendAuthenticatedRequest(HttpMethod.Patch, "/categories/5000") { response ->
+            assertEquals(HttpStatusCode.OK, response.status)
+            val responseBody: APIResponse<Category> = response.body()
+            val shouldResponse: APIResponse<Category> = wrapFailure("Your category was not found.")
             assertEquals(shouldResponse, responseBody)
         }
     }

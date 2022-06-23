@@ -78,28 +78,6 @@ class PatchCategoryTests {
     }
 
     @Test
-    fun testPatchCategoryByIDTooHigh() = customTestApplicationWithLogin { client ->
-        client.sendAuthenticatedRequest(HttpMethod.Patch, "/categories/5000") { response ->
-            assertEquals(HttpStatusCode.OK, response.status)
-            val responseBody: APIResponse<Category> = response.body()
-            val shouldResponse: APIResponse<Category> = wrapFailure("Your category was not found.")
-            assertEquals(shouldResponse, responseBody)
-        }
-    }
-
-    @Test
-    fun testPatchCategoryByIDTooLow() = customTestApplicationWithLogin { client ->
-        val id = transaction { CategoryEntity.all().first().id.value }
-
-        client.sendAuthenticatedRequest(HttpMethod.Patch, "/categories/${id - 1}") { response ->
-            assertEquals(HttpStatusCode.OK, response.status)
-            val responseBody: APIResponse<Category> = response.body()
-            val shouldResponse: APIResponse<Category> = wrapFailure("Your category was not found.")
-            assertEquals(shouldResponse, responseBody)
-        }
-    }
-
-    @Test
     fun testPatchCategoryOld() = customTestApplicationWithLogin { client ->
         val id = transaction { CategoryEntity.all().first().id.value }
 
