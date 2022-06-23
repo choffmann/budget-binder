@@ -1,5 +1,6 @@
 package de.hsfl.budgetBinder.server
 
+import de.hsfl.budgetBinder.server.utils.customTestApplication
 import io.ktor.client.request.*
 import io.ktor.http.*
 import kotlin.test.*

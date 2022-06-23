@@ -1,4 +1,4 @@
-package de.hsfl.budgetBinder.server
+package de.hsfl.budgetBinder.server.utils
 
 import de.hsfl.budgetBinder.common.Category
 import de.hsfl.budgetBinder.common.User

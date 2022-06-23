@@ -1,9 +1,10 @@
-package de.hsfl.budgetBinder.server
+package de.hsfl.budgetBinder.server.utils
 
 import de.hsfl.budgetBinder.common.APIResponse
 import de.hsfl.budgetBinder.common.ErrorModel
 import de.hsfl.budgetBinder.server.config.Config
 import de.hsfl.budgetBinder.server.config.ConfigIntermediate
+import de.hsfl.budgetBinder.server.mainModule
 import io.ktor.client.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.client.plugins.contentnegotiation.*

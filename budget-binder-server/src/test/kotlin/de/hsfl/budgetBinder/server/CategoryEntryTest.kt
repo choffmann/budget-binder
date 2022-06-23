@@ -7,6 +7,7 @@ import de.hsfl.budgetBinder.server.models.CategoryEntity
 import de.hsfl.budgetBinder.server.models.Entries
 import de.hsfl.budgetBinder.server.models.EntryEntity
 import de.hsfl.budgetBinder.server.models.UserEntity
+import de.hsfl.budgetBinder.server.utils.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.http.*
