@@ -4,6 +4,7 @@ import androidx.compose.runtime.*
 import de.hsfl.budgetBinder.compose.FeedbackSnackbar
 import de.hsfl.budgetBinder.compose.MainFlexContainer
 import de.hsfl.budgetBinder.compose.theme.AppStylesheet
+import de.hsfl.budgetBinder.presentation.event.LifecycleEvent
 import de.hsfl.budgetBinder.presentation.event.UiEvent
 import de.hsfl.budgetBinder.presentation.viewmodel.auth.register.RegisterEvent
 import de.hsfl.budgetBinder.presentation.viewmodel.auth.register.RegisterViewModel
@@ -28,8 +29,9 @@ fun RegisterComponent() {
     val confirmedPasswordTextState = viewModel.confirmedPasswordText.collectAsState()
     val loadingState = remember { mutableStateOf(false) }
     var openSnackbar by remember { mutableStateOf(false) }
-
+    
     LaunchedEffect(key1 = true) {
+        viewModel.onEvent(RegisterEvent.LifeCycle(LifecycleEvent.OnLaunch))
         viewModel.eventFlow.collectLatest { event ->
             when (event) {
                 is UiEvent.ShowLoading -> {
@@ -38,6 +40,11 @@ fun RegisterComponent() {
                 }
                 else -> loadingState.value = false
             }
+        }
+    }
+    DisposableEffect(Unit) {
+        onDispose {
+            viewModel.onEvent(RegisterEvent.LifeCycle(LifecycleEvent.OnDispose))
         }
     }
     if (loadingState.value) {

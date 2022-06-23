@@ -8,7 +8,9 @@ import de.hsfl.budgetBinder.compose.NavBar
 import de.hsfl.budgetBinder.compose.category.BudgetBar
 import de.hsfl.budgetBinder.compose.theme.AppStylesheet
 import de.hsfl.budgetBinder.presentation.CategoryImageToIcon
+import de.hsfl.budgetBinder.presentation.event.LifecycleEvent
 import de.hsfl.budgetBinder.presentation.event.UiEvent
+import de.hsfl.budgetBinder.presentation.viewmodel.auth.register.RegisterEvent
 import de.hsfl.budgetBinder.presentation.viewmodel.dashboard.DashboardEntryState
 import de.hsfl.budgetBinder.presentation.viewmodel.dashboard.DashboardEvent
 import de.hsfl.budgetBinder.presentation.viewmodel.dashboard.DashboardState
@@ -28,9 +30,10 @@ fun DashboardComponent() {
     val totalSpendBudget = viewModel.spendBudgetOnCurrentCategory.collectAsState()
     val olderEntries = viewModel.oldEntriesMapState.collectAsState()
     val loadingState = remember { mutableStateOf(false) }
-    // val scaffoldState = rememberScaffoldState()
 
+    //LifeCycle
     LaunchedEffect(key1 = true) {
+        viewModel.onEvent(DashboardEvent.LifeCycle(LifecycleEvent.OnLaunch))
         viewModel.eventFlow.collectLatest { event ->
             when (event) {
                 is UiEvent.ShowLoading -> loadingState.value = true
@@ -39,6 +42,13 @@ fun DashboardComponent() {
             }
         }
     }
+    DisposableEffect(Unit) {
+        onDispose {
+            viewModel.onEvent(DashboardEvent.LifeCycle(LifecycleEvent.OnDispose))
+        }
+    }
+
+    //Webpage content
     NavBar {}
     MainFlexContainer {
         Div {

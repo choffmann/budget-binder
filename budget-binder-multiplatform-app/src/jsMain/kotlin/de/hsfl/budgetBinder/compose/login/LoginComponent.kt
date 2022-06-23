@@ -3,6 +3,7 @@ package de.hsfl.budgetBinder.compose.login
 import androidx.compose.runtime.*
 import de.hsfl.budgetBinder.compose.MainFlexContainer
 import de.hsfl.budgetBinder.compose.theme.AppStylesheet
+import de.hsfl.budgetBinder.presentation.event.LifecycleEvent
 import de.hsfl.budgetBinder.presentation.event.UiEvent
 import de.hsfl.budgetBinder.presentation.viewmodel.auth.login.LoginEvent
 import de.hsfl.budgetBinder.presentation.viewmodel.auth.login.LoginViewModel
@@ -24,11 +25,19 @@ fun LoginComponent() {
 
 
     LaunchedEffect(key1 = true) {
+        viewModel.onEvent(LoginEvent.LifeCycle(LifecycleEvent.OnLaunch))
         viewModel.eventFlow.collectLatest { event ->
             when (event) {
                 is UiEvent.ShowLoading -> loadingState.value = true
                 else -> loadingState.value = false
             }
+        }
+    }
+    DisposableEffect(Unit) {
+        onDispose {
+            viewModel.onEvent(
+                LoginEvent.LifeCycle(LifecycleEvent.OnDispose)
+            )
         }
     }
 

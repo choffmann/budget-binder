@@ -4,8 +4,10 @@ import androidx.compose.runtime.*
 import de.hsfl.budgetBinder.compose.MainFlexContainer
 import de.hsfl.budgetBinder.compose.NavBar
 import de.hsfl.budgetBinder.presentation.Screen
+import de.hsfl.budgetBinder.presentation.event.LifecycleEvent
 import de.hsfl.budgetBinder.presentation.event.UiEvent
 import de.hsfl.budgetBinder.presentation.flow.RouterFlow
+import de.hsfl.budgetBinder.presentation.viewmodel.category.edit.CategoryEditEvent
 import de.hsfl.budgetBinder.presentation.viewmodel.entry.EntryEvent
 import de.hsfl.budgetBinder.presentation.viewmodel.entry.EntryViewModel
 import di
@@ -20,13 +22,19 @@ fun EntryComponent() {
     val screenState = routerFlow.state.collectAsState()
     val loadingState = remember { mutableStateOf(false) }
 
-    LaunchedEffect(key1 = true) {
+    LaunchedEffect(Unit) {
+        viewModel.onEvent(EntryEvent.LifeCycle(LifecycleEvent.OnLaunch))
         viewModel.eventFlow.collectLatest { event ->
             when (event) {
                 is UiEvent.ShowLoading -> loadingState.value = true
                 is UiEvent.HideSuccess -> loadingState.value = false
                 else -> loadingState.value = false
             }
+        }
+    }
+    DisposableEffect(Unit) {
+        onDispose {
+            viewModel.onEvent(EntryEvent.LifeCycle(LifecycleEvent.OnDispose))
         }
     }
     NavBar {}
