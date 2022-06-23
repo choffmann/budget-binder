@@ -92,7 +92,7 @@ fun Icon(icon_name: String) {
 
 // Snackbar that shows msg
 @Composable
-fun FeedbackSnackbar(msg: String, hidden: Boolean = false) {
+fun FeedbackSnackbar(msg: String, hidden: Boolean = false, resetSnackbar: () -> Unit) {
     var hiddenValue by remember { mutableStateOf(hidden) }
     Aside(
         attrs = {
@@ -125,6 +125,7 @@ fun FeedbackSnackbar(msg: String, hidden: Boolean = false) {
             }) {
                 Button(attrs = {
                     classes("mdc-button", "mdc-snackbar__action")
+                    onClick { resetSnackbar() }
                 }) {
                     Div(attrs = {
                         classes("mdc-button__ripple")

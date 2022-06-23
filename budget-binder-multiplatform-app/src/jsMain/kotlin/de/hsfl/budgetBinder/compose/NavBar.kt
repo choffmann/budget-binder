@@ -51,7 +51,8 @@ fun NavBar(content: @Composable () -> Unit) {
                         classes(
                             "mdc-button",
                             "mdc-button--raised",
-                            "mdc-top-app-bar__navigation-icon"
+                            "mdc-top-app-bar__navigation-icon",
+                            AppStylesheet.marginRight
                         )
                         onClick { viewModel.onEvent(NavDrawerEvent.OnCreateEntry) }
                     }
@@ -69,7 +70,8 @@ fun NavBar(content: @Composable () -> Unit) {
                         classes(
                             "mdc-button",
                             "mdc-button--raised",
-                            "mdc-top-app-bar__navigation-icon"
+                            "mdc-top-app-bar__navigation-icon",
+                            AppStylesheet.marginRight
                         )
                         onClick { viewModel.onEvent(NavDrawerEvent.OnCategory) }
                     }
@@ -87,7 +89,8 @@ fun NavBar(content: @Composable () -> Unit) {
                         classes(
                             "mdc-button",
                             "mdc-button--raised",
-                            "mdc-top-app-bar__navigation-icon"
+                            "mdc-top-app-bar__navigation-icon",
+                            AppStylesheet.marginRight
                         )
                         onClick { viewModel.onEvent(NavDrawerEvent.OnSettings) }
                     }
