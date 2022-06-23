@@ -90,25 +90,21 @@ class EntryViewModel(
             is EntryEvent.OnDeleteDialogConfirm -> delete(selectedEntryState.value.id)
             is EntryEvent.OnDeleteDialogDismiss -> _dialogState.value = false
             is EntryEvent.OnBack -> routerFlow.navigateTo(Screen.Dashboard)
-            is EntryEvent.LifeCycle -> {
-                event.value.handleLifeCycle(
-                    onLaunch = {
-                        getCategoryList()
-                        when (routerFlow.state.value) {
-                            is Screen.Entry.Overview -> getById((routerFlow.state.value as Screen.Entry.Overview).id)
-                            is Screen.Entry.Edit -> getById((routerFlow.state.value as Screen.Entry.Edit).id)
-                            else -> {
-                            }
-                        }
-                    },
-                    onDispose = {
-                        when (routerFlow.state.value) {
-                            is Screen.Entry.Overview, is Screen.Entry.Edit -> resetFlows()
-                            else -> {
-                            }
-                        }
-                    })
-            }
+            is EntryEvent.LifeCycle -> event.value.handleLifeCycle(
+                onLaunch = {
+                    getCategoryList()
+                    when (routerFlow.state.value) {
+                        is Screen.Entry.Overview -> getById((routerFlow.state.value as Screen.Entry.Overview).id)
+                        is Screen.Entry.Edit -> getById((routerFlow.state.value as Screen.Entry.Edit).id)
+                        else -> {}
+                    }
+                },
+                onDispose = {
+                    when (routerFlow.state.value) {
+                        is Screen.Entry.Overview, is Screen.Entry.Edit -> resetFlows()
+                        else -> {}
+                    }
+                })
         }
     }
 
