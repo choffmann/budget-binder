@@ -1,4 +1,4 @@
-package de.hsfl.budgetBinder.server
+package de.hsfl.budgetBinder.server.utils
 
 import de.hsfl.budgetBinder.common.APIResponse
 import de.hsfl.budgetBinder.common.AuthToken
