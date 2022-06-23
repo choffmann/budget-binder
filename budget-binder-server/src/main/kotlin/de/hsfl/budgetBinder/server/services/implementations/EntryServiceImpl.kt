@@ -49,12 +49,41 @@ class EntryServiceImpl : EntryService {
         }.toDto()
     }
 
-    private fun createOrChangeEntry(oldEntry: EntryEntity, repeat: Boolean?, amount: Float?): EntryEntity {
+    private fun createOrChangeEntry(
+        oldEntry: EntryEntity,
+        repeat: Boolean?,
+        amount: Float?,
+        category: Entry.Category?,
+        categoryEntity: CategoryEntity?
+    ): EntryEntity? {
         val now = LocalDateTime.now()
         val period = LocalDateTime.of(now.year, now.month.value, 1, 0, 0)
 
         if (!oldEntry.repeat || (repeat != false && amount == null) || oldEntry.created > period) {
-            return oldEntry
+            if (category == null) {
+                return oldEntry
+            }
+            val entryPeriod = LocalDateTime.of(oldEntry.created.year, oldEntry.created.month.value, 1, 0, 0)
+
+            if (entryPeriod == period) {
+                return oldEntry
+            }
+
+            if (categoryEntity == null) {
+                if (!oldEntry.repeat) {
+                    return oldEntry
+                }
+            } else {
+                val categoryPeriod =
+                    LocalDateTime.of(categoryEntity.created.year, categoryEntity.created.month.value, 1, 0, 0)
+
+                if (!oldEntry.repeat && categoryPeriod > entryPeriod) {
+                    return null
+                }
+                if (!oldEntry.repeat) {
+                    return oldEntry
+                }
+            }
         }
 
         val newEntry = oldEntry.createChild()
@@ -64,9 +93,10 @@ class EntryServiceImpl : EntryService {
         return newEntry
     }
 
+
     override fun changeEntry(userId: Int, entryId: Int, entry: Entry.Patch): Entry? = transaction {
-        var entryEntity = EntryEntity[entryId]
-        if (entryEntity.ended != null) {
+        var entryEntity: EntryEntity? = EntryEntity[entryId]
+        if (entryEntity!!.ended != null) {
             return@transaction null
         }
 
@@ -75,7 +105,11 @@ class EntryServiceImpl : EntryService {
         if (categoryEntity?.ended != null) {
             return@transaction null
         }
-        entryEntity = createOrChangeEntry(entryEntity, entry.repeat, entry.amount)
+        entryEntity = createOrChangeEntry(entryEntity, entry.repeat, entry.amount, entry.category, categoryEntity)
+
+        if (entryEntity == null) {
+            return@transaction null
+        }
 
         entry.name?.let { entryEntity.name = it }
         entry.amount?.let { entryEntity.amount = it }
