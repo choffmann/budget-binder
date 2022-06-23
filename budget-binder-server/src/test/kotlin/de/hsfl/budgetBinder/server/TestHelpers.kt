@@ -42,7 +42,7 @@ fun customTestApplication(block: suspend ApplicationTestBuilder.(client: HttpCli
 
 fun customTestApplicationWithLogin(block: suspend ApplicationTestBuilder.(client: HttpClient) -> Unit) =
     customTestApplication { client ->
-        loginUser(client)
+        client.loginUser()
         block(client)
     }
 
