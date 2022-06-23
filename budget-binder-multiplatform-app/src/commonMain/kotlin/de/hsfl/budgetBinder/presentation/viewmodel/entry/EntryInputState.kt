@@ -1,4 +1,4 @@
-package de.hsfl.budgetBinder.presentation.viewmodel.entryViewModel
+package de.hsfl.budgetBinder.presentation.viewmodel.entry
 
 data class EntryInputState(
     val name: String = "",

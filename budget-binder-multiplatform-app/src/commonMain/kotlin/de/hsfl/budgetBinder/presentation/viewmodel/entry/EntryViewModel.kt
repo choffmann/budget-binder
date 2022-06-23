@@ -1,4 +1,4 @@
-package de.hsfl.budgetBinder.presentation.viewmodel.entryViewModel
+package de.hsfl.budgetBinder.presentation.viewmodel.entry
 
 import de.hsfl.budgetBinder.common.Category
 import de.hsfl.budgetBinder.common.DataResponse
@@ -6,19 +6,13 @@ import de.hsfl.budgetBinder.common.Entry
 import de.hsfl.budgetBinder.domain.usecase.*
 import de.hsfl.budgetBinder.presentation.Screen
 import de.hsfl.budgetBinder.presentation.UiEvent
-import de.hsfl.budgetBinder.presentation.UiState
 import de.hsfl.budgetBinder.presentation.flow.DataFlow
 import de.hsfl.budgetBinder.presentation.flow.RouterFlow
 import de.hsfl.budgetBinder.presentation.flow.UiEventSharedFlow
-import de.hsfl.budgetBinder.presentation.viewmodel.login.LoginTextFieldState
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
-import kotlin.math.sign
-import kotlin.math.withSign
 
 class EntryViewModel(
     private val entryUseCases: EntryUseCases,

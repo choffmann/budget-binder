@@ -1,15 +1,13 @@
 package de.hsfl.budgetBinder.compose.entry
 
 import androidx.compose.runtime.*
-import de.hsfl.budgetBinder.common.Category
-import de.hsfl.budgetBinder.common.Entry
 import de.hsfl.budgetBinder.compose.MainFlexContainer
 import de.hsfl.budgetBinder.compose.NavBar
 import de.hsfl.budgetBinder.presentation.Screen
 import de.hsfl.budgetBinder.presentation.UiEvent
 import de.hsfl.budgetBinder.presentation.flow.RouterFlow
-import de.hsfl.budgetBinder.presentation.viewmodel.entryViewModel.EntryEvent
-import de.hsfl.budgetBinder.presentation.viewmodel.entryViewModel.EntryViewModel
+import de.hsfl.budgetBinder.presentation.viewmodel.entry.EntryEvent
+import de.hsfl.budgetBinder.presentation.viewmodel.entry.EntryViewModel
 import di
 import kotlinx.coroutines.flow.collectLatest
 import org.kodein.di.instance
