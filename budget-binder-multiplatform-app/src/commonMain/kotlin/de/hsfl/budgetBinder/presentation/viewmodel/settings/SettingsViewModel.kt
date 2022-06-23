@@ -14,10 +14,7 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 open class SettingsViewModel(
-    _settingsUseCases: SettingsUseCases,
-    _dataFlow: DataFlow,
-    _routerFlow: RouterFlow,
-    _scope: CoroutineScope
+    _settingsUseCases: SettingsUseCases, _dataFlow: DataFlow, _routerFlow: RouterFlow, _scope: CoroutineScope
 ) {
     private val settingsUseCases: SettingsUseCases = _settingsUseCases
     private val dataFlow: DataFlow = _dataFlow
@@ -46,40 +43,21 @@ open class SettingsViewModel(
     }
 
 
-    fun logOutOnAllDevices(msg: String? = null) {
-        scope.launch {
-            settingsUseCases.logoutUseCase(onAllDevices = true).collect { response ->
-                when (response) {
-                    is DataResponse.Loading -> _eventFlow.emit(UiEvent.ShowLoading)
-                    is DataResponse.Error -> _eventFlow.emit(UiEvent.ShowError(response.error!!.message))
-                    is DataResponse.Success -> {
-                        msg?.let { _eventFlow.emit(UiEvent.ShowSuccess(it)) }
-                        routerFlow.navigateTo(Screen.Login)
-                    }
-                    is DataResponse.Unauthorized -> {
-                        _eventFlow.emit(UiEvent.ShowError(response.error!!.message))
-                        routerFlow.navigateTo(Screen.Login)
-                    }
-                }
-            }
+    fun logOutOnAllDevices(msg: String? = null) = scope.launch {
+        settingsUseCases.logoutUseCase(onAllDevices = true).collect { response ->
+            response.handleDataResponse<Nothing>(scope = scope, routerFlow = routerFlow, onSuccess = { _ ->
+                msg?.let { _eventFlow.emit(UiEvent.ShowSuccess(it)) }
+                routerFlow.navigateTo(Screen.Login)
+            })
         }
     }
 
-    private fun deleteUser() {
-        scope.launch {
-            settingsUseCases.deleteMyUserUseCase().collect { response ->
-                when (response) {
-                    is DataResponse.Loading -> _eventFlow.emit(UiEvent.ShowLoading)
-                    is DataResponse.Error -> _eventFlow.emit(UiEvent.ShowError(response.error!!.message))
-                    is DataResponse.Success -> {
-                        routerFlow.navigateTo(Screen.Login)
-                    }
-                    is DataResponse.Unauthorized -> {
-                        _eventFlow.emit(UiEvent.ShowError(response.error!!.message))
-                        routerFlow.navigateTo(Screen.Login)
-                    }
-                }
-            }
+
+    private fun deleteUser() = scope.launch {
+        settingsUseCases.deleteMyUserUseCase().collect { response ->
+            response.handleDataResponse<Nothing>(scope = scope, routerFlow = routerFlow, onSuccess = {
+                routerFlow.navigateTo(Screen.Login)
+            })
         }
     }
 
