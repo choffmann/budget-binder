@@ -1,13 +1,9 @@
 package de.hsfl.budgetBinder.common
 
-import de.hsfl.budgetBinder.domain.usecase.NavigateToScreenUseCase
 import de.hsfl.budgetBinder.presentation.Screen
 import de.hsfl.budgetBinder.presentation.event.UiEvent
 import de.hsfl.budgetBinder.presentation.flow.RouterFlow
 import de.hsfl.budgetBinder.presentation.flow.UiEventSharedFlow
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 
 sealed class DataResponse<T> {
     class Success<T>(val data: T) : DataResponse<T>()
@@ -16,8 +12,7 @@ sealed class DataResponse<T> {
     class Unauthorized<T>(val error: ErrorModel) : DataResponse<T>()
 
     suspend fun <out: T> handleDataResponse(
-        scope: CoroutineScope = CoroutineScope(Dispatchers.Unconfined + SupervisorJob()),
-        routerFlow: RouterFlow = RouterFlow(NavigateToScreenUseCase(), scope),
+        routerFlow: RouterFlow,
         onSuccess: suspend (T) -> Unit,
         onError: suspend (ErrorModel) -> Unit = {
             UiEventSharedFlow.mutableEventFlow.emit(UiEvent.ShowError(it.message))

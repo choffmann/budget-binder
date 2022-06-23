@@ -21,10 +21,7 @@ class LoginViewModel(
     private val dataFlow: DataFlow,
     private val scope: CoroutineScope
 ) : AuthViewModel(
-    _scope = scope,
-    _routerFlow = routerFlow,
-    _dataFlow = dataFlow,
-    _authUseCases = authUseCases
+    _scope = scope, _routerFlow = routerFlow, _dataFlow = dataFlow, _authUseCases = authUseCases
 ) {
     private val screenAfterSuccess = Screen.Dashboard
 
@@ -44,18 +41,15 @@ class LoginViewModel(
         when (event) {
             is LoginEvent.EnteredEmail -> _emailText.value =
                 emailText.value.copy(email = event.value, emailValid = true)
-            is LoginEvent.EnteredPassword -> _passwordText.value =
-                passwordText.value.copy(password = event.value)
+            is LoginEvent.EnteredPassword -> _passwordText.value = passwordText.value.copy(password = event.value)
             is LoginEvent.EnteredServerUrl -> _serverUrlText.value =
                 serverUrlText.value.copy(serverAddress = event.value)
             is LoginEvent.OnLogin -> validateInput()
             is LoginEvent.OnRegisterScreen -> routerFlow.navigateTo(Screen.Register)
             is LoginEvent.OnServerUrlDialogConfirm -> onServerUrlDialogConfirm()
             is LoginEvent.OnServerUrlDialogDismiss -> toggleDialog()
-            is LoginEvent.LifeCycle -> event.value.handleLifeCycle(
-                onLaunch = { tryToLoginUserOnStart() },
-                onDispose = { clearStateFlows() }
-            )
+            is LoginEvent.LifeCycle -> event.value.handleLifeCycle(onLaunch = { tryToLoginUserOnStart() },
+                onDispose = { clearStateFlows() })
         }
     }
 
@@ -74,15 +68,11 @@ class LoginViewModel(
     }
 
     private fun tryToLoginUserOnStart() = scope.launch {
-        authUseCases.getMyUserUseCase()
-            .collect {
-                it.handleDataResponse<User>(
-                    onSuccess = { user ->
-                        storeUser(user)
-                        routerFlow.navigateTo(screenAfterSuccess)
-                    },
-                    onUnauthorized = { /* Don't show an error message on unauthorized */ }
-                )
+        authUseCases.getMyUserUseCase().collect {
+                it.handleDataResponse<User>(routerFlow = routerFlow, onSuccess = { user ->
+                    storeUser(user)
+                    routerFlow.navigateTo(screenAfterSuccess)
+                }, onUnauthorized = { /* Don't show an error message on unauthorized */ })
             }
     }
 

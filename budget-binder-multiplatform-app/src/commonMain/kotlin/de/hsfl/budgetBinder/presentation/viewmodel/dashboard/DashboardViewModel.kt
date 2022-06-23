@@ -53,10 +53,8 @@ class DashboardViewModel(
             is DashboardEvent.OnRefresh -> refresh()
             is DashboardEvent.OnLoadMore -> loadMoreEntries()
             is DashboardEvent.OnEntryDelete -> deleteEntry(id = event.id)
-            is DashboardEvent.LifeCycle -> event.value.handleLifeCycle(
-                onLaunch = { initStateFlows() },
-                onDispose = { resetStateFlows() }
-            )
+            is DashboardEvent.LifeCycle -> event.value.handleLifeCycle(onLaunch = { initStateFlows() },
+                onDispose = { resetStateFlows() })
         }
     }
 
@@ -98,51 +96,35 @@ class DashboardViewModel(
     }
 
     private fun getAllEntries(onSuccess: (List<Entry>) -> Unit) = scope.launch {
-        dashboardUseCases.getAllEntriesUseCase()
-            .collect {
-                it.handleDataResponse<List<Entry>>(
-                    scope = scope,
-                    routerFlow = routerFlow,
-                    onSuccess = onSuccess
-                )
-            }
+        dashboardUseCases.getAllEntriesUseCase().collect {
+            it.handleDataResponse<List<Entry>>(routerFlow = routerFlow, onSuccess = onSuccess)
+        }
     }
 
 
     private fun getAllCategories(onSuccess: (List<Category>) -> Unit) = scope.launch {
-        dashboardUseCases.getAllCategoriesUseCase()
-            .collect {
-                it.handleDataResponse<List<Category>>(
-                    scope = scope,
-                    routerFlow = routerFlow,
-                    onSuccess = onSuccess
-                )
-            }
+        dashboardUseCases.getAllCategoriesUseCase().collect {
+            it.handleDataResponse<List<Category>>(
+                routerFlow = routerFlow, onSuccess = onSuccess
+            )
+        }
     }
 
 
     private fun getEntriesByCategory(id: Int? = null, period: String? = null, onSuccess: (List<Entry>) -> Unit) =
         scope.launch {
-            dashboardUseCases.getAllEntriesByCategoryUseCase(id, period)
-                .collect {
-                    it.handleDataResponse<List<Entry>>(
-                        scope = scope,
-                        routerFlow = routerFlow,
-                        onSuccess = onSuccess
-                    )
-                }
+            dashboardUseCases.getAllEntriesByCategoryUseCase(id, period).collect {
+                it.handleDataResponse<List<Entry>>(routerFlow = routerFlow, onSuccess = onSuccess)
+            }
         }
 
 
     private fun getAllEntriesFromMonth(period: String, onSuccess: (List<Entry>) -> Unit) = scope.launch {
-        dashboardUseCases.getAllEntriesUseCase(period)
-            .collect {
-                it.handleDataResponse<List<Entry>>(
-                    scope = scope,
-                    routerFlow = routerFlow,
-                    onSuccess = onSuccess
-                )
-            }
+        dashboardUseCases.getAllEntriesUseCase(period).collect {
+            it.handleDataResponse<List<Entry>>(
+                routerFlow = routerFlow, onSuccess = onSuccess
+            )
+        }
     }
 
     private fun deleteEntry(id: Int) = scope.launch {
@@ -174,8 +156,7 @@ class DashboardViewModel(
     private fun mapEntryListToDashboardEntryState(entryList: List<Entry>): List<DashboardEntryState> {
         return entryList.map { entry ->
             DashboardEntryState(
-                entry,
-                categoryImage = getCategoryByEntry(entry)?.image ?: Category.Image.DEFAULT
+                entry, categoryImage = getCategoryByEntry(entry)?.image ?: Category.Image.DEFAULT
             )
         }
     }
@@ -210,16 +191,13 @@ class DashboardViewModel(
      */
     private fun changeInternalCategoryId(increase: Boolean) {
         var newFocusedCategory = internalCategoryId
-        if (increase)
-            newFocusedCategory++
-        else
-            newFocusedCategory--
-        internalCategoryId =
-            when {
-                newFocusedCategory < -1 -> -1
-                newFocusedCategory > _categoryListState.value.size -> _categoryListState.value.size
-                else -> newFocusedCategory
-            }
+        if (increase) newFocusedCategory++
+        else newFocusedCategory--
+        internalCategoryId = when {
+            newFocusedCategory < -1 -> -1
+            newFocusedCategory > _categoryListState.value.size -> _categoryListState.value.size
+            else -> newFocusedCategory
+        }
     }
 
     /**
@@ -246,9 +224,7 @@ class DashboardViewModel(
         getEntriesByCategory(id = _categoryListState.value[internalCategoryId].id, onSuccess = {
             calcSpendBudgetOnCategory(it)
             _focusedCategoryState.value = focusedCategoryState.value.copy(
-                hasPrev = true,
-                hasNext = true,
-                category = _categoryListState.value[internalCategoryId]
+                hasPrev = true, hasNext = true, category = _categoryListState.value[internalCategoryId]
             )
             fillEntryListStateWithResult(it)
         })
@@ -302,14 +278,13 @@ class DashboardViewModel(
             -1 -> getAllEntriesFromMonth(period = periodString) {
                 fillOldEntriesMapState(periodString, it)
             }
-            in _categoryListState.value.indices -> getEntriesByCategory(
-                id = focusedCategoryState.value.category.id, period = periodString,
-                onSuccess = { fillOldEntriesMapState(periodString, it) }
-            )
+            in _categoryListState.value.indices -> getEntriesByCategory(id = focusedCategoryState.value.category.id,
+                period = periodString,
+                onSuccess = { fillOldEntriesMapState(periodString, it) })
             _categoryListState.value.size -> getEntriesByCategory(
-                id = null, period = periodString,
-                onSuccess = { fillOldEntriesMapState(periodString, it) }
-            )
+                id = null,
+                period = periodString,
+                onSuccess = { fillOldEntriesMapState(periodString, it) })
         }
         lastRequestedMonth = Month.from(nextMonth)
     }

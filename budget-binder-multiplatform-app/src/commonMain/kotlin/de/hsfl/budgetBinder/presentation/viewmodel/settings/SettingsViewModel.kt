@@ -45,7 +45,7 @@ open class SettingsViewModel(
 
     fun logOutOnAllDevices(msg: String? = null) = scope.launch {
         settingsUseCases.logoutUseCase(onAllDevices = true).collect { response ->
-            response.handleDataResponse<Nothing>(scope = scope, routerFlow = routerFlow, onSuccess = { _ ->
+            response.handleDataResponse<Nothing>(routerFlow = routerFlow, onSuccess = { _ ->
                 msg?.let { _eventFlow.emit(UiEvent.ShowSuccess(it)) }
                 routerFlow.navigateTo(Screen.Login)
             })
@@ -55,7 +55,7 @@ open class SettingsViewModel(
 
     private fun deleteUser() = scope.launch {
         settingsUseCases.deleteMyUserUseCase().collect { response ->
-            response.handleDataResponse<Nothing>(scope = scope, routerFlow = routerFlow, onSuccess = {
+            response.handleDataResponse<Nothing>(routerFlow = routerFlow, onSuccess = {
                 routerFlow.navigateTo(Screen.Login)
             })
         }

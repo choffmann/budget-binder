@@ -31,8 +31,10 @@ class NavDrawerViewModel(
     }
 
     private fun logout() = scope.launch {
-        logoutUseCase(onAllDevices = false)
-            .collect { it.handleDataResponse<Nothing>(onSuccess = { routerFlow.navigateTo(Screen.Login) }) }
+        logoutUseCase(onAllDevices = false).collect {
+                it.handleDataResponse<Nothing>(routerFlow = routerFlow,
+                    onSuccess = { routerFlow.navigateTo(Screen.Login) })
+            }
     }
 
     // Old

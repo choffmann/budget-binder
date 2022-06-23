@@ -27,17 +27,21 @@ open class AuthViewModel(
 
     protected fun register(user: User.In) = scope.launch {
         authUseCases.registerUseCase(user)
-            .collect { it.handleDataResponse<User>(onSuccess = { login(email = user.email, password = user.password) }) }
+            .collect {
+                it.handleDataResponse<User>(
+                    routerFlow = routerFlow,
+                    onSuccess = { login(email = user.email, password = user.password) })
+            }
     }
 
     protected fun login(email: String, password: String) = scope.launch {
         authUseCases.loginUseCase(email = email, password = password)
-            .collect { it.handleDataResponse<Nothing>(onSuccess = { getMyUser() }) }
+            .collect { it.handleDataResponse<Nothing>(routerFlow = routerFlow, onSuccess = { getMyUser() }) }
     }
 
     private fun getMyUser() = scope.launch {
         authUseCases.getMyUserUseCase().collect {
-            it.handleDataResponse<User>(onSuccess = { user ->
+            it.handleDataResponse<User>(routerFlow = routerFlow, onSuccess = { user ->
                 dataFlow.storeUserState(user)
                 routerFlow.navigateTo(Screen.Dashboard)
             })
