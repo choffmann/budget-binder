@@ -18,7 +18,7 @@ sealed class EntryEvent {
     object OnDeleteEntry : EntryEvent()
     object OnDeleteDialogConfirm : EntryEvent()
     object OnDeleteDialogDismiss : EntryEvent()
-    object OnBack: EntryEvent()
+    object OnCancel: EntryEvent()
 
 
     //LifeCycle

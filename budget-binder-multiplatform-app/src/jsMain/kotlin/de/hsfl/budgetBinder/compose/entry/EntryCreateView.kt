@@ -203,6 +203,15 @@ fun EntryCreateView(
                 classes(AppStylesheet.margin)
             }
         ) {
+            Button(
+                attrs = {
+                    classes("mdc-button", "mdc-button--raised")
+                    onClick { viewModel.onEvent(EntryEvent.OnCancel) }
+                }
+            ) {
+                Span(attrs = { classes("mdc-button__label") }
+                ) { Text("Cancel") }
+            }
             SubmitInput(
                 attrs = {
                     classes("mdc-button", "mdc-button--raised")

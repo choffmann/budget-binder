@@ -54,7 +54,8 @@ fun EntryComponent() {
                     onEditButton = { viewModel.onEvent(EntryEvent.OnEditEntry) },
                     onDeleteButton = { viewModel.onEvent(EntryEvent.OnDeleteEntry) },
                     onDeleteDialogConfirmButton = { viewModel.onEvent(EntryEvent.OnDeleteDialogConfirm) },
-                    onDeleteDialogDismissButton = { viewModel.onEvent(EntryEvent.OnDeleteDialogDismiss) }
+                    onDeleteDialogDismissButton = { viewModel.onEvent(EntryEvent.OnDeleteDialogDismiss) },
+                    onCancel = { viewModel.onEvent(EntryEvent.OnCancel) }
                 )
             }
             is Screen.Entry.Edit -> {

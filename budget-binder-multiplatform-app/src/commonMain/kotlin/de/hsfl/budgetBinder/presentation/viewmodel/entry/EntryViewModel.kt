@@ -89,7 +89,7 @@ class EntryViewModel(
             is EntryEvent.OnDeleteEntry -> _dialogState.value = true
             is EntryEvent.OnDeleteDialogConfirm -> delete(selectedEntryState.value.id)
             is EntryEvent.OnDeleteDialogDismiss -> _dialogState.value = false
-            is EntryEvent.OnBack -> routerFlow.navigateTo(Screen.Dashboard)
+            is EntryEvent.OnCancel -> routerFlow.navigateTo(Screen.Dashboard)
             is EntryEvent.LifeCycle -> event.value.handleLifeCycle(
                 onLaunch = {
                     getCategoryList()

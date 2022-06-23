@@ -4,6 +4,7 @@ import androidx.compose.runtime.*
 import de.hsfl.budgetBinder.common.Entry
 import de.hsfl.budgetBinder.compose.DeleteDialog
 import de.hsfl.budgetBinder.compose.theme.AppStylesheet
+import de.hsfl.budgetBinder.presentation.viewmodel.entry.EntryEvent
 import de.hsfl.budgetBinder.presentation.viewmodel.entry.EntryViewModel
 import di
 import org.jetbrains.compose.web.css.*
@@ -16,7 +17,8 @@ fun EntryOverviewView(
     onEditButton: () -> Unit,
     onDeleteButton: () -> Unit,
     onDeleteDialogConfirmButton: () -> Unit,
-    onDeleteDialogDismissButton: () -> Unit
+    onDeleteDialogDismissButton: () -> Unit,
+    onCancel: () -> Unit
 ) {
     val viewModel: EntryViewModel by di.instance()
     //Data
@@ -35,7 +37,8 @@ fun EntryOverviewView(
         onEditButton,
         onDeleteButton,
         onDeleteDialogConfirmButton,
-        onDeleteDialogDismissButton
+        onDeleteDialogDismissButton,
+        onCancel
     )
 }
 
@@ -46,7 +49,8 @@ fun EntryOverview(
     onEditButton: () -> Unit,
     onDeleteButton: () -> Unit,
     onDeleteDialogConfirmButton: () -> Unit,
-    onDeleteDialogDismissButton: () -> Unit
+    onDeleteDialogDismissButton: () -> Unit,
+    onCancel: () -> Unit
 ) {
     Div(
         attrs = {
@@ -75,10 +79,22 @@ fun EntryOverview(
         }
     ) {
         Button(attrs = {
-            classes("mdc-button", "mdc-button--raised", AppStylesheet.marginRight)
+            classes("mdc-button", "mdc-button--raised")
+            onClick { onCancel() }
+            style {
+                flex(33.percent)
+                margin(1.5.percent)
+            }
+        }
+        ) {
+            Span(attrs = { classes("mdc-button__label") }
+            ) { Text("Cancel") }
+        }
+        Button(attrs = {
+            classes("mdc-button", "mdc-button--raised")
             onClick { onEditButton() }
             style {
-                flex(50.percent)
+                flex(33.percent)
                 margin(1.5.percent)
             }
         }) {
@@ -88,7 +104,7 @@ fun EntryOverview(
             classes("mdc-button", "mdc-button--raised")
             onClick { onDeleteButton() }
             style {
-                flex(50.percent)
+                flex(33.percent)
                 margin(1.5.percent)
                 backgroundColor(Color("#b00020"))
             }
