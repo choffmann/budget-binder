@@ -1,16 +1,9 @@
 package de.hsfl.budgetBinder.screens.category
 
-import androidx.compose.foundation.layout.Column
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Send
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.*
 import de.hsfl.budgetBinder.compose.icon.SaveIcon
 import de.hsfl.budgetBinder.di
-import de.hsfl.budgetBinder.presentation.CategoryImageToIcon
 import de.hsfl.budgetBinder.presentation.event.LifecycleEvent
 import de.hsfl.budgetBinder.presentation.viewmodel.category.edit.CategoryEditEvent
 import de.hsfl.budgetBinder.presentation.viewmodel.category.edit.CategoryEditViewModel
@@ -34,34 +27,23 @@ fun CategoryEditView() {
         }
     }
 
-    Scaffold(scaffoldState = scaffoldState,
-        floatingActionButtonPosition = FabPosition.End,
-        floatingActionButton = {
-            FloatingActionButton(onClick = {viewModel.onEvent(CategoryEditEvent.OnSave)}) {
-                SaveIcon()
-            }
+    Scaffold(scaffoldState = scaffoldState, floatingActionButtonPosition = FabPosition.End, floatingActionButton = {
+        FloatingActionButton(onClick = { viewModel.onEvent(CategoryEditEvent.OnSave) }) {
+            SaveIcon()
         }
-    ) {
-        Column {
-            OutlinedTextField(
-                value = categoryNameState.value,
-                onValueChange = { viewModel.onEvent(CategoryEditEvent.EnteredCategoryName(it)) },
-                label = { Text("Category Name") }
-            )
-            OutlinedTextField(
-                value = categoryColorState.value,
-                onValueChange = { viewModel.onEvent(CategoryEditEvent.EnteredCategoryColor(it)) },
-                label = { Text("Category Color") }
-            )
-            OutlinedTextField(
-                value = categoryBudgetState.value.toString(),
-                onValueChange = { viewModel.onEvent(CategoryEditEvent.EnteredCategoryBudget(it.toFloat())) },
-                label = { Text("Category Budget") }
-            )
-            CategoryImageToIcon(categoryImageState.value)
-            Button(onClick = {viewModel.onEvent(CategoryEditEvent.OnCancel)}) {
-                Text("Cancel")
-            }
-        }
+    }) {
+        CategoryFormular(
+            categoryNameState = categoryNameState.value,
+            categoryColorState = categoryColorState.value.toColor("af"),
+            categoryImageState = categoryImageState.value,
+            categoryBudgetState = categoryBudgetState.value,
+            onEnteredCategoryName = { viewModel.onEvent(CategoryEditEvent.EnteredCategoryName(it)) },
+            onEnteredCategoryColor = { viewModel.onEvent(CategoryEditEvent.EnteredCategoryColor(it)) },
+            onEnteredCategoryImage = { viewModel.onEvent(CategoryEditEvent.EnteredCategoryImage(it)) },
+            onEnteredCategoryBudget = { viewModel.onEvent(CategoryEditEvent.EnteredCategoryBudget(it)) },
+            onCancel = { viewModel.onEvent(CategoryEditEvent.OnCancel) }
+        )
     }
 }
+
+

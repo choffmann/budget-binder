@@ -13,8 +13,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import de.hsfl.budgetBinder.common.Category
 import de.hsfl.budgetBinder.di
 import de.hsfl.budgetBinder.presentation.CategoryImageToIcon
 import de.hsfl.budgetBinder.presentation.event.LifecycleEvent
@@ -24,7 +26,6 @@ import de.hsfl.budgetBinder.presentation.viewmodel.category.summary.CategorySumm
 import kotlinx.coroutines.flow.collectLatest
 import org.kodein.di.instance
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun CategorySummary() {
     val viewModel: CategorySummaryViewModel by di.instance()
@@ -53,19 +54,41 @@ fun CategorySummary() {
         if (loadingState.value) LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
         LazyColumn {
             items(categoryList.value) { category ->
-                ListItem(
-                    modifier = Modifier.clickable(onClick = { viewModel.onEvent(CategorySummaryEvent.OnCategory(category.id)) }),
-                    text = { Text("Budget: ${category.name}") },
-                    secondaryText = { Text(category.budget.toString()) },
-                    icon = {
-                        Box(modifier = Modifier.clip(CircleShape).background(Color("af${category.color}".toLong(16)))) {
-                            Box(modifier = Modifier.align(Alignment.Center).padding(12.dp)) {
-                                CategoryImageToIcon(category.image)
-                            }
-                        }
-                    },
+                CategoryListItem(
+                    modifier = Modifier.clickable { viewModel.onEvent(CategorySummaryEvent.OnCategory(category.id)) },
+                    name = category.name,
+                    budget = category.budget.toString(),
+                    icon = category.image,
+                    color = category.color.toColor("af")
                 )
             }
         }
     }
+}
+
+fun String.toColor(alpha: String): Color {
+    return Color("$alpha$this".toLong(16))
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun CategoryListItem(
+    modifier: Modifier = Modifier,
+    name: String,
+    budget: String,
+    icon: Category.Image,
+    color: Color
+) {
+    ListItem(
+        modifier = modifier,
+        text = { Text(name) },
+        secondaryText = { Text("Budget: $budget") },
+        icon = {
+            Box(modifier = Modifier.shadow(15.dp, CircleShape).clip(CircleShape).background(color)) {
+                Box(modifier = Modifier.align(Alignment.Center).padding(12.dp)) {
+                    CategoryImageToIcon(icon)
+                }
+            }
+        }
+    )
 }
