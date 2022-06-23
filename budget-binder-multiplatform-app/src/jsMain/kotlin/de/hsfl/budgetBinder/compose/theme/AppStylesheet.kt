@@ -125,4 +125,12 @@ object AppStylesheet : StyleSheet() {
     val marginRight by style {
         marginRight(1.percent)
     }
+
+    val loadingImage by style{
+        property("z-index",1)
+        width(20.percent)
+        position(Position.Fixed)
+        top(40.percent)
+        left(40.percent)
+    }
 }

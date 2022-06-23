@@ -97,7 +97,7 @@ fun FeedbackSnackbar(msg: String, hidden: Boolean = false, onDismiss: () -> Unit
         attrs = {
             when (hidden) {
                 false -> classes("mdc-snackbar", "mdc-snackbar--open")
-                true -> classes("mdc-snackbar", "maria")
+                true -> classes("mdc-snackbar")
             }
             onClick {
                 onDismiss()

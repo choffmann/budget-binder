@@ -5,9 +5,11 @@ import de.hsfl.budgetBinder.compose.theme.AppStylesheet
 import de.hsfl.budgetBinder.di.kodein
 import de.hsfl.budgetBinder.presentation.event.UiEvent
 import de.hsfl.budgetBinder.presentation.flow.UiEventSharedFlow
+import de.hsfl.budgetBinder.presentation.viewmodel.navdrawer.NavDrawerEvent
 import io.ktor.client.engine.js.*
 import kotlinx.coroutines.flow.collectLatest
-import org.jetbrains.compose.web.css.Style
+import org.jetbrains.compose.web.css.*
+import org.jetbrains.compose.web.dom.Img
 import org.jetbrains.compose.web.renderComposable
 import org.kodein.di.compose.withDI
 import org.kodein.di.instance
@@ -45,14 +47,16 @@ fun App() = withDI(di) {
             }
         }
     }
-    if (loadingState.value && snackBarHidden.value) {
-        snackBarText.value = "Loading"
-        snackBarHidden.value = false
-        console.log("loading now! ${snackBarHidden.value}")
+    if (!loadingState.value) { // I don't understand why it needs to be inverted to work?
+        Img(
+            src = "images/Loading.gif", alt = "Logo", attrs = {
+                classes(AppStylesheet.loadingImage)
+            }
+        )
     }
-    FeedbackSnackbar(snackBarText.value,snackBarHidden.value) {
+
+    FeedbackSnackbar(snackBarText.value, snackBarHidden.value) {
         snackBarHidden.value = true
-        loadingState.value = false
     }
     Router()
 }
