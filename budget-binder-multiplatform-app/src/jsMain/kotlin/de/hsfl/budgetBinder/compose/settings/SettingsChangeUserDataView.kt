@@ -5,7 +5,7 @@ import de.hsfl.budgetBinder.compose.FeedbackSnackbar
 import de.hsfl.budgetBinder.compose.MainFlexContainer
 import de.hsfl.budgetBinder.compose.NavBar
 import de.hsfl.budgetBinder.compose.theme.AppStylesheet
-import de.hsfl.budgetBinder.presentation.UiEvent
+import de.hsfl.budgetBinder.presentation.event.UiEvent
 import de.hsfl.budgetBinder.presentation.viewmodel.settings.EditUserEvent
 import de.hsfl.budgetBinder.presentation.viewmodel.settings.SettingsEditUserViewModel
 import di

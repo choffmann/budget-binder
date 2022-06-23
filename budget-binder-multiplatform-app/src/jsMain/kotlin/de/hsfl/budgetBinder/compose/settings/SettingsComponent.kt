@@ -1,9 +1,8 @@
 package de.hsfl.budgetBinder.compose.settings
 
 import androidx.compose.runtime.*
-import de.hsfl.budgetBinder.common.User
 import de.hsfl.budgetBinder.presentation.Screen
-import de.hsfl.budgetBinder.presentation.UiEvent
+import de.hsfl.budgetBinder.presentation.event.UiEvent
 import de.hsfl.budgetBinder.presentation.flow.DataFlow
 import de.hsfl.budgetBinder.presentation.flow.RouterFlow
 import de.hsfl.budgetBinder.presentation.viewmodel.settings.SettingsViewModel

@@ -1,16 +1,12 @@
 package de.hsfl.budgetBinder.compose.register
 
 import androidx.compose.runtime.*
-import de.hsfl.budgetBinder.common.User
 import de.hsfl.budgetBinder.compose.FeedbackSnackbar
 import de.hsfl.budgetBinder.compose.MainFlexContainer
 import de.hsfl.budgetBinder.compose.theme.AppStylesheet
-
-import de.hsfl.budgetBinder.presentation.Screen
-import de.hsfl.budgetBinder.presentation.UiEvent
-import de.hsfl.budgetBinder.presentation.UiState
-import de.hsfl.budgetBinder.presentation.viewmodel.register.RegisterEvent
-import de.hsfl.budgetBinder.presentation.viewmodel.register.RegisterViewModel
+import de.hsfl.budgetBinder.presentation.event.UiEvent
+import de.hsfl.budgetBinder.presentation.viewmodel.auth.register.RegisterEvent
+import de.hsfl.budgetBinder.presentation.viewmodel.auth.register.RegisterViewModel
 import di
 import kotlinx.coroutines.flow.collectLatest
 import org.jetbrains.compose.web.attributes.InputType

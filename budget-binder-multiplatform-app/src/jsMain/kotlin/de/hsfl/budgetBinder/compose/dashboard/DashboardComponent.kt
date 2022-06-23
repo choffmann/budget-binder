@@ -8,12 +8,11 @@ import de.hsfl.budgetBinder.compose.NavBar
 import de.hsfl.budgetBinder.compose.category.BudgetBar
 import de.hsfl.budgetBinder.compose.theme.AppStylesheet
 import de.hsfl.budgetBinder.presentation.CategoryImageToIcon
-import de.hsfl.budgetBinder.presentation.UiEvent
+import de.hsfl.budgetBinder.presentation.event.UiEvent
 import de.hsfl.budgetBinder.presentation.viewmodel.dashboard.DashboardEntryState
 import de.hsfl.budgetBinder.presentation.viewmodel.dashboard.DashboardEvent
 import de.hsfl.budgetBinder.presentation.viewmodel.dashboard.DashboardState
 import de.hsfl.budgetBinder.presentation.viewmodel.dashboard.DashboardViewModel
-import de.hsfl.budgetBinder.presentation.viewmodel.login.LoginEvent
 import di
 import kotlinx.coroutines.flow.collectLatest
 import org.jetbrains.compose.web.css.*

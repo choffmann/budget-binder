@@ -3,7 +3,7 @@ import de.hsfl.budgetBinder.compose.FeedbackSnackbar
 import de.hsfl.budgetBinder.compose.Router
 import de.hsfl.budgetBinder.compose.theme.AppStylesheet
 import de.hsfl.budgetBinder.di.kodein
-import de.hsfl.budgetBinder.presentation.UiEvent
+import de.hsfl.budgetBinder.presentation.event.UiEvent
 import de.hsfl.budgetBinder.presentation.flow.UiEventSharedFlow
 import io.ktor.client.engine.js.*
 import kotlinx.coroutines.flow.collectLatest

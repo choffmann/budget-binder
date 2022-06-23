@@ -5,7 +5,7 @@ import de.hsfl.budgetBinder.common.DataResponse
 import de.hsfl.budgetBinder.common.Entry
 import de.hsfl.budgetBinder.domain.usecase.*
 import de.hsfl.budgetBinder.presentation.Screen
-import de.hsfl.budgetBinder.presentation.UiEvent
+import de.hsfl.budgetBinder.presentation.event.UiEvent
 import de.hsfl.budgetBinder.presentation.flow.DataFlow
 import de.hsfl.budgetBinder.presentation.flow.RouterFlow
 import de.hsfl.budgetBinder.presentation.flow.UiEventSharedFlow
@@ -118,9 +118,9 @@ class EntryViewModel(
         entryUseCases.getEntryByIdUseCase(id).collect {
             when (it) {
                 is DataResponse.Loading -> _eventFlow.emit(UiEvent.ShowLoading)
-                is DataResponse.Error -> _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
+                is DataResponse.Error -> _eventFlow.emit(UiEvent.ShowError(it.error.message))
                 is DataResponse.Success<*> -> {
-                    _selectedEntryState.value = it.data!!
+                    _selectedEntryState.value = (it.data as Entry?)!!
                     //Load data into variables for edit
                     _nameText.value = _selectedEntryState.value.name
                     _amountText.value = _selectedEntryState.value.amount.absoluteValue
@@ -128,18 +128,14 @@ class EntryViewModel(
                     _repeatState.value = _selectedEntryState.value.repeat
                     _categoryIDState.value = _selectedEntryState.value.category_id
                 }
-                is DataResponse.Unauthorized -> _eventFlow.emit(UiEvent.ShowError(it.error!!.message))
+                is DataResponse.Unauthorized -> _eventFlow.emit(UiEvent.ShowError(it.error.message))
             }
         }
     }
 
-    fun getCategoryList() = scope.launch {
-        entryUseCases.getCategoryListUseCase.categories()
-            .collect {
-                handleDataResponse(
-                    response = it,
-                    onSuccess = { cl -> _categoryListState.value = cl })
-            }
+    protected fun getCategoryList() = scope.launch {
+        entryUseCases.getCategoryListUseCase()
+            .collect { it.handleDataResponse<List<Category>>(routerFlow = routerFlow, onSuccess = { cl -> _categoryListState.value = cl }) }
     }
 
     fun createEntry(entry: Entry.In) {

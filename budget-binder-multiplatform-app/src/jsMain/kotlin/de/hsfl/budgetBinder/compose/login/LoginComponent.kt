@@ -3,9 +3,9 @@ package de.hsfl.budgetBinder.compose.login
 import androidx.compose.runtime.*
 import de.hsfl.budgetBinder.compose.MainFlexContainer
 import de.hsfl.budgetBinder.compose.theme.AppStylesheet
-import de.hsfl.budgetBinder.presentation.UiEvent
-import de.hsfl.budgetBinder.presentation.viewmodel.login.LoginEvent
-import de.hsfl.budgetBinder.presentation.viewmodel.login.LoginViewModel
+import de.hsfl.budgetBinder.presentation.event.UiEvent
+import de.hsfl.budgetBinder.presentation.viewmodel.auth.login.LoginEvent
+import de.hsfl.budgetBinder.presentation.viewmodel.auth.login.LoginViewModel
 import di
 import kotlinx.coroutines.flow.collectLatest
 import org.jetbrains.compose.web.css.percent
