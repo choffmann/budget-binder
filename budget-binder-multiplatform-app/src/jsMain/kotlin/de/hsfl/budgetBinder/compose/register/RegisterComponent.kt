@@ -2,6 +2,7 @@ package de.hsfl.budgetBinder.compose.register
 
 import androidx.compose.runtime.*
 import de.hsfl.budgetBinder.common.User
+import de.hsfl.budgetBinder.compose.FeedbackSnackbar
 import de.hsfl.budgetBinder.compose.MainFlexContainer
 import de.hsfl.budgetBinder.compose.theme.AppStylesheet
 
@@ -13,6 +14,8 @@ import de.hsfl.budgetBinder.presentation.viewmodel.register.RegisterViewModel
 import di
 import kotlinx.coroutines.flow.collectLatest
 import org.jetbrains.compose.web.attributes.InputType
+import org.jetbrains.compose.web.attributes.required
+import org.jetbrains.compose.web.css.marginLeft
 import org.jetbrains.compose.web.css.percent
 import org.jetbrains.compose.web.css.width
 import org.jetbrains.compose.web.dom.*
@@ -28,6 +31,7 @@ fun RegisterComponent() {
     val passwordTextState = viewModel.passwordText.collectAsState()
     val confirmedPasswordTextState = viewModel.confirmedPasswordText.collectAsState()
     val loadingState = remember { mutableStateOf(false) }
+    var openSnackbar by remember { mutableStateOf(false) }
 
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->
@@ -98,10 +102,17 @@ fun RegisterComponent() {
 
     MainFlexContainer {
         // -- Register Form --
-        H1 { Text(" Register") }
+        H1(
+            attrs = {
+                style { marginLeft(2.percent) }
+            }
+        )  { Text("Register") }
         Form(attrs = { //Probably possible with just a button OnClick instead of Form&Submit
             this.addEventListener("submit") {
                 console.log("$firstNameTextState, $lastNameTextState, $emailTextState, $passwordTextState")
+                if (!confirmedPasswordTextState.value.confirmedPasswordValid) {
+                    openSnackbar = true
+                }
                 viewModel.onEvent(RegisterEvent.OnRegister)
                 it.preventDefault()
             }
@@ -132,6 +143,7 @@ fun RegisterComponent() {
                         type = InputType.Text
                     ) {
                         classes("mdc-text-field__input")
+                        required()
                         value(firstNameTextState.value.firstName)
                         onInput {
                             viewModel.onEvent(RegisterEvent.EnteredFirstname(it.value))
@@ -169,7 +181,8 @@ fun RegisterComponent() {
                         type = InputType.Text
                     ) {
                         classes("mdc-text-field__input")
-                        value(lastNameTextState.value.firstName)
+                        required()
+                        value(lastNameTextState.value.lastName)
                         onInput {
                             viewModel.onEvent(RegisterEvent.EnteredLastname(it.value))
                         }
@@ -204,6 +217,7 @@ fun RegisterComponent() {
                     ) { Text("Email") }
                     EmailInput(value = emailTextState.value.email,
                         attrs = {
+                            required()
                             classes("mdc-text-field__input")
                             onInput {
                                 viewModel.onEvent(RegisterEvent.EnteredEmail(it.value))
@@ -240,9 +254,46 @@ fun RegisterComponent() {
                     ) { Text("Password") }
                     PasswordInput(value = passwordTextState.value.password,
                         attrs = {
+                            required()
                             classes("mdc-text-field__input")
                             onInput {
                                 viewModel.onEvent(RegisterEvent.EnteredPassword(it.value))
+                            }
+                        })
+                    Span(
+                        attrs = {
+                            classes("mdc-line-ripple")
+                        }
+                    ) { }
+                }
+            }
+            Div(
+                attrs = {
+                    classes(AppStylesheet.margin)
+                }
+            ) {
+                Label(
+                    attrs = {
+                        classes("mdc-text-field", "mdc-text-field--filled")
+                        style { width(100.percent) }
+                    }
+                ) {
+                    Span(
+                        attrs = {
+                            classes("mdc-text-field__ripple")
+                        }
+                    ) { }
+                    Span(
+                        attrs = {
+                            classes("mdc-floating-label", "mdc-floating-label--float-above")
+                        }
+                    ) { Text("Repeat Password") }
+                    PasswordInput(value = confirmedPasswordTextState.value.confirmedPassword,
+                        attrs = {
+                            required()
+                            classes("mdc-text-field__input")
+                            onInput {
+                                viewModel.onEvent(RegisterEvent.EnteredConfirmedPassword(it.value))
                             }
                         })
                     Span(
@@ -264,5 +315,8 @@ fun RegisterComponent() {
                     })
             }
         }
+    }
+    if (openSnackbar) {
+        FeedbackSnackbar("Passwords do not match") { openSnackbar = false }
     }
 }

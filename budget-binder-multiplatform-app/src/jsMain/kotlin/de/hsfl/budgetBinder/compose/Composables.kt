@@ -122,6 +122,7 @@ fun FeedbackSnackbar(msg: String, hidden: Boolean = false, onDismiss: () -> Unit
             }) {
                 Button(attrs = {
                     classes("mdc-button", "mdc-snackbar__action")
+                    onClick { onDismiss() }
                 }) {
                     Div(attrs = {
                         classes("mdc-button__ripple")
