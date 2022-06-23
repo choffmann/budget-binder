@@ -19,11 +19,6 @@ sealed class EntryEvent {
     object OnDeleteDialogConfirm : EntryEvent()
     object OnDeleteDialogDismiss : EntryEvent()
 
-    //Load Data for Screen (has some problems when done in init)
-    object LoadCreate : EntryEvent()
-    object LoadOverview : EntryEvent()
-    object LoadEdit : EntryEvent()
-
     //LifeCycle
     data class LifeCycle(val value: LifecycleEvent): EntryEvent()
 

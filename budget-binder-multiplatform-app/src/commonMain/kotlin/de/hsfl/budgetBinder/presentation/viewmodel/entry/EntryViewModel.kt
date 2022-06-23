@@ -6,6 +6,7 @@ import de.hsfl.budgetBinder.common.Entry
 import de.hsfl.budgetBinder.domain.usecase.*
 import de.hsfl.budgetBinder.presentation.Screen
 import de.hsfl.budgetBinder.presentation.event.UiEvent
+import de.hsfl.budgetBinder.presentation.event.handleLifeCycle
 import de.hsfl.budgetBinder.presentation.flow.DataFlow
 import de.hsfl.budgetBinder.presentation.flow.RouterFlow
 import de.hsfl.budgetBinder.presentation.flow.UiEventSharedFlow
@@ -84,26 +85,30 @@ class EntryViewModel(
                         ), selectedEntryState.value.id
                     )
                     else -> {
-                        resetFlows()
                         routerFlow.navigateTo(Screen.Entry.Edit(selectedEntryState.value.id))
                     } //using ID seems... unnecessary?}
                 }
             is EntryEvent.OnDeleteEntry -> _dialogState.value = true
             is EntryEvent.OnDeleteDialogConfirm -> delete(selectedEntryState.value.id)
             is EntryEvent.OnDeleteDialogDismiss -> _dialogState.value = false
-            //TODO: Replace Loads with LifeCycle
-            is EntryEvent.LoadCreate -> {
-                resetFlows()
-                getCategoryList()
-            }
-            is EntryEvent.LoadOverview -> {
-                resetFlows()
-                getById((routerFlow.state.value as Screen.Entry.Overview).id)
-            }
-            is EntryEvent.LoadEdit -> {
-                resetFlows()
-                getCategoryList()
-                getById((routerFlow.state.value as Screen.Entry.Edit).id)
+            is EntryEvent.LifeCycle -> {
+                event.value.handleLifeCycle(
+                    onLaunch = {
+                        getCategoryList()
+                        when (routerFlow.state.value) {
+                            is Screen.Entry.Overview -> getById((routerFlow.state.value as Screen.Entry.Overview).id)
+                            is Screen.Entry.Edit -> getById((routerFlow.state.value as Screen.Entry.Edit).id)
+                            else -> {
+                            }
+                        }
+                    },
+                    onDispose = {
+                        when (routerFlow.state.value) {
+                            is Screen.Entry.Overview, is Screen.Entry.Edit -> resetFlows()
+                            else -> {
+                            }
+                        }
+                    })
             }
         }
     }

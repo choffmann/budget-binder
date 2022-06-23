@@ -33,7 +33,8 @@ fun EntryEditView(
     //Data
     val categoryList by viewModel.categoryListState.collectAsState()
     val entry by viewModel.selectedEntryState.collectAsState()
-
+    console.log("unser Entry ist $entry")
+    console.log("$entryNameTextField und $entryAmountTextField und $entryCategoryIDTextField")
     H1(
         attrs = {
             style { margin(2.percent) }
