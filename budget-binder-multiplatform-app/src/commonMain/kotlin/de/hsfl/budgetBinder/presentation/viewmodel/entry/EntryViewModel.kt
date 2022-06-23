@@ -70,14 +70,9 @@ class EntryViewModel(
                             categoryIDState.value
                         )
                     )
-
-                    else -> {
-                        routerFlow.navigateTo(Screen.Entry.Create)
-
-                    }
+                    else -> routerFlow.navigateTo(Screen.Entry.Create)
                 }
             }
-
             is EntryEvent.OnEditEntry ->
                 when (routerFlow.state.value) {
                     is Screen.Entry.Edit -> updateEntry(
@@ -102,40 +97,38 @@ class EntryViewModel(
             }
             is EntryEvent.LoadOverview -> {
                 resetFlows()
-                getEntryById((routerFlow.state.value as Screen.Entry.Overview).id)
+                getById((routerFlow.state.value as Screen.Entry.Overview).id)
             }
             is EntryEvent.LoadEdit -> {
                 resetFlows()
                 getCategoryList()
-                getEntryById((routerFlow.state.value as Screen.Entry.Edit).id)
+                getById((routerFlow.state.value as Screen.Entry.Edit).id)
             }
         }
     }
 
 
     /* *** Use Case usages *** */
-    fun getEntryById(id: Int) = scope.launch {
-        entryUseCases.getEntryByIdUseCase(id).collect {
-            when (it) {
-                is DataResponse.Loading -> _eventFlow.emit(UiEvent.ShowLoading)
-                is DataResponse.Error -> _eventFlow.emit(UiEvent.ShowError(it.error.message))
-                is DataResponse.Success<*> -> {
-                    _selectedEntryState.value = (it.data as Entry?)!!
-                    //Load data into variables for edit
-                    _nameText.value = _selectedEntryState.value.name
-                    _amountText.value = _selectedEntryState.value.amount.absoluteValue
-                    _amountSignState.value = _selectedEntryState.value.amount >= 0
-                    _repeatState.value = _selectedEntryState.value.repeat
-                    _categoryIDState.value = _selectedEntryState.value.category_id
-                }
-                is DataResponse.Unauthorized -> _eventFlow.emit(UiEvent.ShowError(it.error.message))
-            }
+    protected fun getById(id: Int) = scope.launch {
+        entryUseCases.getEntryByIdUseCase(id).collect { it ->
+            it.handleDataResponse<Entry>(routerFlow = routerFlow, onSuccess = {
+                _selectedEntryState.value = it
+                _nameText.value = _selectedEntryState.value.name
+                _amountText.value = _selectedEntryState.value.amount.absoluteValue
+                _amountSignState.value = _selectedEntryState.value.amount >= 0
+                _repeatState.value = _selectedEntryState.value.repeat
+                _categoryIDState.value = _selectedEntryState.value.category_id
+            })
         }
     }
 
     protected fun getCategoryList() = scope.launch {
         entryUseCases.getCategoryListUseCase()
-            .collect { it.handleDataResponse<List<Category>>(routerFlow = routerFlow, onSuccess = { cl -> _categoryListState.value = cl }) }
+            .collect {
+                it.handleDataResponse<List<Category>>(
+                    routerFlow = routerFlow,
+                    onSuccess = { cl -> _categoryListState.value = cl })
+            }
     }
 
     fun createEntry(entry: Entry.In) {
