@@ -1,4 +1,4 @@
-package de.hsfl.budgetBinder.presentation.viewmodel.entryViewModel
+package de.hsfl.budgetBinder.presentation.viewmodel.entry
 
 // View is not allowed to declare what should be done, only notify what has happened, names are assigned as such
 

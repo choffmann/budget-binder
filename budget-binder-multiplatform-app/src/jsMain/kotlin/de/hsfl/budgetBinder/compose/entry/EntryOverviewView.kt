@@ -1,21 +1,13 @@
 package de.hsfl.budgetBinder.compose.entry
 
 import androidx.compose.runtime.*
-import de.hsfl.budgetBinder.common.Category
 import de.hsfl.budgetBinder.common.Entry
-import de.hsfl.budgetBinder.compose.CategoryList
 import de.hsfl.budgetBinder.compose.DeleteDialog
-import de.hsfl.budgetBinder.compose.MainFlexContainer
 import de.hsfl.budgetBinder.compose.theme.AppStylesheet
-import de.hsfl.budgetBinder.compose.topBarMain
-import de.hsfl.budgetBinder.presentation.CategoryImageToIcon
-import de.hsfl.budgetBinder.presentation.UiState
-import de.hsfl.budgetBinder.presentation.viewmodel.entryViewModel.EntryViewModel
+import de.hsfl.budgetBinder.presentation.viewmodel.entry.EntryViewModel
 import di
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
-import org.jetbrains.compose.web.svg.Circle
-import org.jetbrains.compose.web.svg.Svg
 import org.kodein.di.instance
 
 

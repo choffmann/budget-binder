@@ -3,8 +3,8 @@ package de.hsfl.budgetBinder.compose.entry
 import androidx.compose.runtime.*
 import de.hsfl.budgetBinder.compose.*
 import de.hsfl.budgetBinder.compose.theme.AppStylesheet
-import de.hsfl.budgetBinder.presentation.viewmodel.entryViewModel.EntryEvent
-import de.hsfl.budgetBinder.presentation.viewmodel.entryViewModel.EntryViewModel
+import de.hsfl.budgetBinder.presentation.viewmodel.entry.EntryEvent
+import de.hsfl.budgetBinder.presentation.viewmodel.entry.EntryViewModel
 import di
 import org.jetbrains.compose.web.ExperimentalComposeWebSvgApi
 import org.jetbrains.compose.web.attributes.*

@@ -1,4 +1,4 @@
-package de.hsfl.budgetBinder.presentation.viewmodel.entryViewModel
+package de.hsfl.budgetBinder.presentation.viewmodel.entry
 
 import de.hsfl.budgetBinder.common.Category
 import de.hsfl.budgetBinder.common.Entry
