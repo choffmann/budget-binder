@@ -24,6 +24,8 @@ fun CategorySummaryView(
     //LifeCycle
     LaunchedEffect(key1 = true) {
         viewModel.onEvent(CategorySummaryEvent.LifeCycle(LifecycleEvent.OnLaunch))
+        viewModel.eventFlow.collectLatest {}
+        console.log("CategorySummary Came to Life!")
     }
 
     //Webpage Content

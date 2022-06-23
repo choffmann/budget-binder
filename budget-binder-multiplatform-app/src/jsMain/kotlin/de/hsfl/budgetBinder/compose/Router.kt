@@ -20,6 +20,7 @@ fun Router() {
     val scope = rememberCoroutineScope()
     val routerFlow: RouterFlow by di.instance()
     val screenState = routerFlow.state.collectAsState(scope.coroutineContext)
+    console.log("Router Screen is:")
     console.log(screenState.value)
     when (screenState.value) {
         is Screen.Welcome -> {}
@@ -28,6 +29,7 @@ fun Router() {
         is Screen.Dashboard -> DashboardComponent()
         is Screen.Settings -> SettingsComponent()
         is Screen.Entry -> EntryComponent()
+        is Screen.Category.Detail -> CategoryComponent() //To avoid weird bug where it doesn't refresh itself? I don't understand either ...
         is Screen.Category -> CategoryComponent()
         is Screen.CategorySummary, is Screen.CategoryEdit, is Screen.CategoryCreate, is Screen.CategoryCreateOnRegister
         -> Text("Old Category") //CategoryComponent(screenState = screenState)

@@ -23,6 +23,7 @@ fun CategoryDetailView() {
     //LifeCycle
     LaunchedEffect(key1 = true) {
         viewModel.onEvent(CategoryDetailEvent.LifeCycle(LifecycleEvent.OnLaunch))
+        console.log("AAAAAAAAAAAAAAAAAAAAAA Category Detail")
     }
 
     //Webpage Content
@@ -32,7 +33,10 @@ fun CategoryDetailView() {
         }
     ) { Text(" Category Detailed") } //TODO: Put these in a "Title" Composable
     CategoryDetailed(
-        category, {viewModel.onEvent(CategoryDetailEvent.OnEdit) }, { viewModel.onEvent(CategoryDetailEvent.OnDelete) }
+        category,
+        { viewModel.onEvent(CategoryDetailEvent.OnEdit) },
+        { viewModel.onEvent(CategoryDetailEvent.OnDelete) },
+        { viewModel.onEvent(CategoryDetailEvent.OnBack) }
     )
 
 }

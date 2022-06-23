@@ -6,10 +6,7 @@ import de.hsfl.budgetBinder.compose.theme.AppStylesheet
 import de.hsfl.budgetBinder.presentation.CategoryImageToIcon
 import org.jetbrains.compose.web.ExperimentalComposeWebSvgApi
 import org.jetbrains.compose.web.css.*
-import org.jetbrains.compose.web.dom.Button
-import org.jetbrains.compose.web.dom.Div
-import org.jetbrains.compose.web.dom.H1
-import org.jetbrains.compose.web.dom.Text
+import org.jetbrains.compose.web.dom.*
 import org.jetbrains.compose.web.svg.Circle
 import org.jetbrains.compose.web.svg.Rect
 import org.jetbrains.compose.web.svg.Svg
@@ -44,11 +41,16 @@ fun BudgetBar(
                     attr("fill", Color.lightgray.toString())
                 })
                 if (0 < totalSpendBudget) // If there is used budget, draw it
-                    Rect(x = 0, y = 0, width = totalSpendBudget/ totalBudget * width, height = height, {
-                        attr("fill", "#" + focusedCategory.color)
-                    })
+                    Rect(
+                        x = 0,
+                        y = 0,
+                        width = totalSpendBudget / totalBudget * width,
+                        height = height,
+                        {
+                            attr("fill", "#" + focusedCategory.color)
+                        })
             }
-        } else if (totalSpendBudget> totalBudget && totalBudget > 0) { //Over Budget
+        } else if (totalSpendBudget > totalBudget && totalBudget > 0) { //Over Budget
             MoneyTextDiv {
                 Div(attrs = { classes("mdc-typography--headline5") }) { Text("Budget limit for " + focusedCategory.name + " reached! " + totalSpendBudget.toString() + "€ of " + totalBudget.toString() + "€ Budget spent") }
             }
@@ -96,7 +98,7 @@ fun CategoryList(
 
 @OptIn(ExperimentalComposeWebSvgApi::class)
 @Composable
-fun CategoryElement(category: Category, onClicked: (Int) -> Unit){
+fun CategoryElement(category: Category, onClicked: (Int) -> Unit) {
     Div(attrs = {
         classes("mdc-card", AppStylesheet.card)
         onClick { onClicked(category.id) }
@@ -141,9 +143,15 @@ fun CategoryElement(category: Category, onClicked: (Int) -> Unit){
         }
     }
 }
+
 @OptIn(ExperimentalComposeWebSvgApi::class)
 @Composable
-fun CategoryDetailed(category: Category, onEditButton: () -> Unit, onDeleteButton:() -> Unit){
+fun CategoryDetailed(
+    category: Category,
+    onEditButton: () -> Unit,
+    onDeleteButton: () -> Unit,
+    onBackButton: () -> Unit
+) {
     var deleteDialog by remember { mutableStateOf(false) }
     Div(attrs = {
         classes("mdc-card", AppStylesheet.card)
@@ -198,10 +206,22 @@ fun CategoryDetailed(category: Category, onEditButton: () -> Unit, onDeleteButto
             }
         ) {
             Button(attrs = {
-                classes("mdc-button", "mdc-button--raised", AppStylesheet.marginRight)
+                classes("mdc-button", "mdc-button--raised")
+                onClick { onBackButton() }
+                style {
+                    flex(33.percent)
+                    margin(1.5.percent)
+                }
+            }
+            ) {
+                Span(attrs = { classes("mdc-button__label") }
+                ) { Text("Cancel") }
+            }
+            Button(attrs = {
+                classes("mdc-button", "mdc-button--raised")
                 onClick { onEditButton() }
                 style {
-                    flex(50.percent)
+                    flex(33.percent)
                     margin(1.5.percent)
                 }
             }) {
@@ -211,7 +231,7 @@ fun CategoryDetailed(category: Category, onEditButton: () -> Unit, onDeleteButto
                 classes("mdc-button", "mdc-button--raised")
                 onClick { deleteDialog = !deleteDialog }
                 style {
-                    flex(50.percent)
+                    flex(33.percent)
                     margin(1.5.percent)
                     backgroundColor(Color("#b00020"))
                 }
