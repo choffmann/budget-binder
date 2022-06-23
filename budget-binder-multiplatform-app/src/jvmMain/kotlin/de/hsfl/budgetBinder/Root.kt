@@ -58,25 +58,8 @@ fun App() = withDI(di) {
         if (loadingState.value) {
             LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
         }
-        Scaffold(
-            scaffoldState = scaffoldState,
-            topBar = {
-                // TODO: Show NavDrawer not on Login und Register
-                TopAppBar(title = { Text("Budget Binder") }, navigationIcon = {
-                    IconButton(onClick = {
-                        scope.launch {
-                            if (drawerState.isOpen) drawerState.close()
-                            else drawerState.open()
-                        }
-                    }) {
-                        Icon(Icons.Filled.Menu, contentDescription = null)
-                    }
-                })
-            }
-        ) {
-            NavDrawer(drawerState = drawerState) {
-                Router()
-            }
+        Scaffold(scaffoldState = scaffoldState,) {
+            Router()
         }
     }
 }
