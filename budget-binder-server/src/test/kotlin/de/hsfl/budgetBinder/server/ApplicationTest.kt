@@ -17,7 +17,7 @@ import kotlin.test.*
 class ApplicationTest {
     @BeforeTest
     fun registerTestUser() = customTestApplication { client ->
-        registerUser(client)
+        client.registerUser()
     }
 
     @AfterTest
@@ -93,7 +93,7 @@ class ApplicationTest {
             assertEquals(shouldResponse, responseBody)
         }
 
-        loginUser(client) { response ->
+        client.loginUser() { response ->
             val setCookieHeader = response.headers[HttpHeaders.SetCookie]
             assertNotNull(setCookieHeader)
             val cookie = HttpCookie.parse(setCookieHeader)
@@ -121,7 +121,7 @@ class ApplicationTest {
             assertEquals(shouldResponse, responseBody)
         }
 
-        checkMeSuccess(client)
+        client.checkMeSuccess()
 
         client.get("/refresh_token").let { response ->
             assertEquals(HttpStatusCode.OK, response.status)
@@ -137,7 +137,7 @@ class ApplicationTest {
             assertEquals(shouldResponse, responseBody)
         }
 
-        sendAuthenticatedRequest(client, HttpMethod.Get, "/logout") { response ->
+        client.sendAuthenticatedRequest(HttpMethod.Get, "/logout") { response ->
             assertEquals(HttpStatusCode.OK, response.status)
             val logoutResponse: APIResponse<AuthToken> = response.body()
             val shouldResponse = wrapSuccess(AuthToken(""))
@@ -152,9 +152,9 @@ class ApplicationTest {
             assertEquals("", cookie[0].value)
         }
 
-        checkMeSuccess(client)
+        client.checkMeSuccess()
         TestUser.accessToken = null
-        checkMeFailure(client)
+        client.checkMeFailure()
     }
 
     @Test
@@ -174,8 +174,8 @@ class ApplicationTest {
             }
             install(HttpCookies)
         }
-        loginUser(client)
-        checkMeSuccess(client)
+        client.loginUser()
+        client.checkMeSuccess()
 
         val tokenVersion = transaction {
             val tokenVersion = UserEntity.all().first().tokenVersion
@@ -183,7 +183,7 @@ class ApplicationTest {
             tokenVersion
         }
 
-        sendAuthenticatedRequest(client, HttpMethod.Get, "/logout?all=true") { response ->
+        client.sendAuthenticatedRequest(HttpMethod.Get, "/logout?all=true") { response ->
             assertEquals(HttpStatusCode.OK, response.status)
             val responseBody: APIResponse<AuthToken> = response.body()
             val shouldResponse = wrapSuccess(AuthToken(""))
@@ -195,7 +195,7 @@ class ApplicationTest {
             assertNotEquals(tokenVersion, newTokenVersion)
         }
 
-        checkMeFailure(client)
+        client.checkMeFailure()
 
         client.get("/refresh_token").let { response ->
             assertEquals(HttpStatusCode.Unauthorized, response.status)
@@ -208,11 +208,11 @@ class ApplicationTest {
 
     @Test
     fun testUserEndpoints() = customTestApplicationWithLogin { client ->
-        checkMeSuccess(client)
+        client.checkMeSuccess()
 
         val userId = transaction { UserEntity.all().first().id.value }
 
-        sendAuthenticatedRequest(client, HttpMethod.Patch, "/me") { response ->
+        client.sendAuthenticatedRequest(HttpMethod.Patch, "/me") { response ->
             assertEquals(HttpStatusCode.OK, response.status)
 
             val user: APIResponse<User> = response.body()
@@ -232,7 +232,7 @@ class ApplicationTest {
             assertEquals(shouldResponse, responseBody)
         }
 
-        sendAuthenticatedRequestWithBody(client, HttpMethod.Patch, "/me", patchedUser) { response ->
+        client. sendAuthenticatedRequestWithBody(HttpMethod.Patch, "/me", patchedUser) { response ->
             assertEquals(HttpStatusCode.OK, response.status)
 
             val user: APIResponse<User> = response.body()
@@ -285,7 +285,7 @@ class ApplicationTest {
             assertEquals(shouldResponse, responseBody)
         }
 
-        sendAuthenticatedRequest(client, HttpMethod.Delete, "/me") { response ->
+        client.sendAuthenticatedRequest(HttpMethod.Delete, "/me") { response ->
             assertEquals(HttpStatusCode.OK, response.status)
             val user: APIResponse<User> = response.body()
 

@@ -16,7 +16,7 @@ class EntryTest {
     @BeforeTest
     fun before() = customTestApplication { client ->
 
-        registerUser(client)
+        client.registerUser()
 
         val userEntity = transaction { UserEntity.all().first() }
         val now = LocalDateTime.now()
@@ -131,15 +131,14 @@ class EntryTest {
             assertEquals(shouldResponse, responseBody)
         }
 
-        sendAuthenticatedRequest(client, HttpMethod.Post, "/entries") { response ->
+        client.sendAuthenticatedRequest(HttpMethod.Post, "/entries") { response ->
             assertEquals(HttpStatusCode.OK, response.status)
             val responseBody: APIResponse<Entry> = response.body()
             val shouldResponse: APIResponse<Entry> = wrapFailure("The object you provided it not in the right format.")
             assertEquals(shouldResponse, responseBody)
         }
 
-        sendAuthenticatedRequestWithBody(
-            client,
+        client.sendAuthenticatedRequestWithBody(
             HttpMethod.Post, "/entries",
             Entry.In("Bafög", 700f, true, null)
         ) { response ->
@@ -182,7 +181,7 @@ class EntryTest {
             Entry(id + 6, "new Phone", -50f, true, null),
         )
 
-        sendAuthenticatedRequest(client, HttpMethod.Get, "/entries") { response ->
+        client.sendAuthenticatedRequest(HttpMethod.Get, "/entries") { response ->
             assertEquals(HttpStatusCode.OK, response.status)
             val responseBody: APIResponse<List<Entry>> = response.body()
             assert(responseBody.success)
@@ -191,7 +190,7 @@ class EntryTest {
             assertEquals(shouldResponse, responseBody)
         }
 
-        sendAuthenticatedRequest(client, HttpMethod.Get, "/entries?current=true") { response ->
+        client.sendAuthenticatedRequest(HttpMethod.Get, "/entries?current=true") { response ->
             assertEquals(HttpStatusCode.OK, response.status)
             val responseBody: APIResponse<List<Entry>> = response.body()
             assert(responseBody.success)
@@ -202,7 +201,7 @@ class EntryTest {
             assertEquals(shouldResponse, responseBody)
         }
 
-        sendAuthenticatedRequest(client, HttpMethod.Get, "/entries?period=50-8346") { response ->
+        client.sendAuthenticatedRequest(HttpMethod.Get, "/entries?period=50-8346") { response ->
             assertEquals(HttpStatusCode.OK, response.status)
             val responseBody: APIResponse<List<Entry>> = response.body()
             val shouldResponse: APIResponse<List<Entry>> = wrapFailure("period has not the right pattern")
@@ -211,7 +210,7 @@ class EntryTest {
 
         val now = LocalDateTime.now()
 
-        sendAuthenticatedRequest(client, HttpMethod.Get, "/entries?period=${formatToPeriod(now)}") { response ->
+        client.sendAuthenticatedRequest(HttpMethod.Get, "/entries?period=${formatToPeriod(now)}") { response ->
             assertEquals(HttpStatusCode.OK, response.status)
             val responseBody: APIResponse<List<Entry>> = response.body()
             assert(responseBody.success)
@@ -222,8 +221,7 @@ class EntryTest {
             assertEquals(shouldResponse, responseBody)
         }
 
-        sendAuthenticatedRequest(
-            client,
+        client.sendAuthenticatedRequest(
             HttpMethod.Get,
             "/entries?period=${formatToPeriod(now.minusMonths(1))}"
         ) { response ->
@@ -237,8 +235,7 @@ class EntryTest {
             assertEquals(shouldResponse, responseBody)
         }
 
-        sendAuthenticatedRequest(
-            client,
+        client.sendAuthenticatedRequest(
             HttpMethod.Get,
             "/entries?period=${formatToPeriod(now.minusMonths(2))}"
         ) { response ->
@@ -252,8 +249,7 @@ class EntryTest {
             assertEquals(shouldResponse, responseBody)
         }
 
-        sendAuthenticatedRequest(
-            client,
+        client.sendAuthenticatedRequest(
             HttpMethod.Get,
             "/entries?period=${formatToPeriod(now.minusMonths(3))}"
         ) { response ->
@@ -267,8 +263,7 @@ class EntryTest {
             assertEquals(shouldResponse, responseBody)
         }
 
-        sendAuthenticatedRequest(
-            client,
+        client.sendAuthenticatedRequest(
             HttpMethod.Get,
             "/entries?period=${formatToPeriod(now.minusMonths(4))}"
         ) { response ->
@@ -292,14 +287,14 @@ class EntryTest {
             assertEquals(shouldResponse, responseBody)
         }
 
-        sendAuthenticatedRequest(client, HttpMethod.Get, "/entries/test") { response ->
+        client.sendAuthenticatedRequest(HttpMethod.Get, "/entries/test") { response ->
             assertEquals(HttpStatusCode.OK, response.status)
             val responseBody: APIResponse<Entry> = response.body()
             val shouldResponse: APIResponse<Entry> = wrapFailure("The ID you provided is not a number.")
             assertEquals(shouldResponse, responseBody)
         }
 
-        sendAuthenticatedRequest(client, HttpMethod.Get, "/entries/5000") { response ->
+        client.sendAuthenticatedRequest(HttpMethod.Get, "/entries/5000") { response ->
             assertEquals(HttpStatusCode.OK, response.status)
             val responseBody: APIResponse<Entry> = response.body()
             val shouldResponse: APIResponse<Entry> = wrapFailure("Your entry was not found.")
@@ -308,7 +303,7 @@ class EntryTest {
 
         val id = transaction { EntryEntity.all().first().id.value }
 
-        sendAuthenticatedRequest(client, HttpMethod.Get, "/entries/$id") { response ->
+        client.sendAuthenticatedRequest(HttpMethod.Get, "/entries/$id") { response ->
             assertEquals(HttpStatusCode.OK, response.status)
             val responseBody: APIResponse<Entry> = response.body()
             val shouldResponse = wrapSuccess(Entry(id, "Monthly Job Pay", 3000f, true, null))
@@ -326,14 +321,14 @@ class EntryTest {
             assertEquals(shouldResponse, responseBody)
         }
 
-        sendAuthenticatedRequest(client, HttpMethod.Patch, "/entries/test") { response ->
+        client.sendAuthenticatedRequest(HttpMethod.Patch, "/entries/test") { response ->
             assertEquals(HttpStatusCode.OK, response.status)
             val responseBody: APIResponse<Entry> = response.body()
             val shouldResponse: APIResponse<Entry> = wrapFailure("The ID you provided is not a number.")
             assertEquals(shouldResponse, responseBody)
         }
 
-        sendAuthenticatedRequest(client, HttpMethod.Patch, "/entries/5000") { response ->
+        client.sendAuthenticatedRequest(HttpMethod.Patch, "/entries/5000") { response ->
             assertEquals(HttpStatusCode.OK, response.status)
             val responseBody: APIResponse<Entry> = response.body()
             val shouldResponse: APIResponse<Entry> = wrapFailure("Your entry was not found.")
@@ -342,15 +337,14 @@ class EntryTest {
 
         val id = transaction { EntryEntity.all().first().id.value }
 
-        sendAuthenticatedRequest(client, HttpMethod.Patch, "/entries/$id") { response ->
+        client.sendAuthenticatedRequest(HttpMethod.Patch, "/entries/$id") { response ->
             assertEquals(HttpStatusCode.OK, response.status)
             val responseBody: APIResponse<Entry> = response.body()
             val shouldResponse: APIResponse<Entry> = wrapFailure("The object you provided it not in the right format.")
             assertEquals(shouldResponse, responseBody)
         }
 
-        sendAuthenticatedRequestWithBody(
-            client,
+        client.sendAuthenticatedRequestWithBody(
             HttpMethod.Patch, "/entries/$id",
             Entry.Patch(name = "Pay")
         ) { response ->
@@ -360,8 +354,7 @@ class EntryTest {
             assertEquals(shouldResponse, responseBody)
         }
 
-        sendAuthenticatedRequestWithBody(
-            client,
+        client.sendAuthenticatedRequestWithBody(
             HttpMethod.Patch, "/entries/${id + 5}",
             Entry.Patch(name = "Ikea Shopping")
         ) { response ->
@@ -371,8 +364,7 @@ class EntryTest {
             assertEquals(shouldResponse, responseBody)
         }
 
-        sendAuthenticatedRequestWithBody(
-            client,
+        client.sendAuthenticatedRequestWithBody(
             HttpMethod.Patch, "/entries/${id + 4}",
             Entry.Patch(amount = -1700f)
         ) { response ->
@@ -382,8 +374,7 @@ class EntryTest {
             assertEquals(shouldResponse, responseBody)
         }
 
-        sendAuthenticatedRequestWithBody(
-            client,
+        client.sendAuthenticatedRequestWithBody(
             HttpMethod.Patch, "/entries/${id + 5}",
             Entry.Patch(name = "Ikea", repeat = true)
         ) { response ->
@@ -393,8 +384,7 @@ class EntryTest {
             assertEquals(shouldResponse, responseBody)
         }
 
-        sendAuthenticatedRequestWithBody(
-            client,
+        client.sendAuthenticatedRequestWithBody(
             HttpMethod.Patch, "/entries/${id + 6}",
             Entry.Patch(repeat = false)
         ) { response ->
@@ -404,8 +394,7 @@ class EntryTest {
             assertEquals(shouldResponse, responseBody)
         }
 
-        sendAuthenticatedRequestWithBody(
-            client,
+        client.sendAuthenticatedRequestWithBody(
             HttpMethod.Patch, "/entries/${id + 3}",
             Entry.Patch(repeat = false)
         ) { response ->
@@ -424,8 +413,7 @@ class EntryTest {
             }
         }
 
-        sendAuthenticatedRequestWithBody(
-            client,
+        client.sendAuthenticatedRequestWithBody(
             HttpMethod.Patch, "/entries/${id + 1}",
             Entry.Patch(amount = 3700f)
         ) { response ->
@@ -455,14 +443,14 @@ class EntryTest {
             assertEquals(shouldResponse, responseBody)
         }
 
-        sendAuthenticatedRequest(client, HttpMethod.Delete, "/entries/test") { response ->
+        client.sendAuthenticatedRequest(HttpMethod.Delete, "/entries/test") { response ->
             assertEquals(HttpStatusCode.OK, response.status)
             val responseBody: APIResponse<Entry> = response.body()
             val shouldResponse: APIResponse<Entry> = wrapFailure("The ID you provided is not a number.")
             assertEquals(shouldResponse, responseBody)
         }
 
-        sendAuthenticatedRequest(client, HttpMethod.Delete, "/entries/5000") { response ->
+        client.sendAuthenticatedRequest(HttpMethod.Delete, "/entries/5000") { response ->
             assertEquals(HttpStatusCode.OK, response.status)
             val responseBody: APIResponse<Entry> = response.body()
             val shouldResponse: APIResponse<Entry> = wrapFailure("Your entry was not found.")
@@ -471,14 +459,14 @@ class EntryTest {
 
         val id = transaction { EntryEntity.all().first().id.value }
 
-        sendAuthenticatedRequest(client, HttpMethod.Delete, "/entries/$id") { response ->
+        client.sendAuthenticatedRequest(HttpMethod.Delete, "/entries/$id") { response ->
             assertEquals(HttpStatusCode.OK, response.status)
             val responseBody: APIResponse<Entry> = response.body()
             val shouldResponse: APIResponse<Entry> = wrapFailure("you can't delete this Entry")
             assertEquals(shouldResponse, responseBody)
         }
 
-        sendAuthenticatedRequest(client, HttpMethod.Delete, "/entries/${id + 1}") { response ->
+        client.sendAuthenticatedRequest(HttpMethod.Delete, "/entries/${id + 1}") { response ->
             assertEquals(HttpStatusCode.OK, response.status)
             val responseBody: APIResponse<Entry> = response.body()
             val shouldResponse = wrapSuccess(Entry(id + 1, "Monthly Job Pay", 3500f, true, null))
@@ -490,7 +478,7 @@ class EntryTest {
             }
         }
 
-        sendAuthenticatedRequest(client, HttpMethod.Delete, "/entries/${id + 6}") { response ->
+        client.sendAuthenticatedRequest(HttpMethod.Delete, "/entries/${id + 6}") { response ->
             assertEquals(HttpStatusCode.OK, response.status)
             val responseBody: APIResponse<Entry> = response.body()
             val shouldResponse = wrapSuccess(Entry(id + 6, "new Phone", -50f, true, null))
@@ -502,7 +490,7 @@ class EntryTest {
             }
         }
 
-        sendAuthenticatedRequest(client, HttpMethod.Delete, "/entries/${id + 4}") { response ->
+        client.sendAuthenticatedRequest(HttpMethod.Delete, "/entries/${id + 4}") { response ->
             assertEquals(HttpStatusCode.OK, response.status)
             val responseBody: APIResponse<Entry> = response.body()
             val shouldResponse = wrapSuccess(Entry(id + 4, "Bike", -1500f, false, null))
@@ -514,7 +502,7 @@ class EntryTest {
             }
         }
 
-        sendAuthenticatedRequest(client, HttpMethod.Delete, "/entries/${id + 5}") { response ->
+        client.sendAuthenticatedRequest(HttpMethod.Delete, "/entries/${id + 5}") { response ->
             assertEquals(HttpStatusCode.OK, response.status)
             val responseBody: APIResponse<Entry> = response.body()
             val shouldResponse = wrapSuccess(Entry(id + 5, "Ikea", -200f, false, null))

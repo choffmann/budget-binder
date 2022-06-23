@@ -19,7 +19,7 @@ class CategoryEntryTest {
 
     @BeforeTest
     fun before() = customTestApplication { client ->
-        registerUser(client)
+        client.registerUser()
 
         val userEntity = transaction { UserEntity.all().first() }
         val now = LocalDateTime.now()
@@ -127,14 +127,14 @@ class CategoryEntryTest {
             assertEquals(shouldResponse, responseBody)
         }
 
-        sendAuthenticatedRequest(client, HttpMethod.Get, "/categories/test/entries") { response ->
+        client.sendAuthenticatedRequest(HttpMethod.Get, "/categories/test/entries") { response ->
             assertEquals(HttpStatusCode.OK, response.status)
             val responseBody: APIResponse<List<Entry>> = response.body()
             val shouldResponse: APIResponse<List<Entry>> = wrapFailure("The ID you provided is not a number.")
             assertEquals(shouldResponse, responseBody)
         }
 
-        sendAuthenticatedRequest(client, HttpMethod.Get, "/categories/5000/entries") { response ->
+        client.sendAuthenticatedRequest(HttpMethod.Get, "/categories/5000/entries") { response ->
             assertEquals(HttpStatusCode.OK, response.status)
             val responseBody: APIResponse<List<Entry>> = response.body()
             val shouldResponse: APIResponse<List<Entry>> = wrapFailure("Your category was not found.")
@@ -152,35 +152,35 @@ class CategoryEntryTest {
             Entry(entryId + 4, "Monthly Pay", 3000f, true, null),
         )
 
-        sendAuthenticatedRequest(client, HttpMethod.Get, "/categories/${categoryId - 1}/entries") { response ->
+        client.sendAuthenticatedRequest(HttpMethod.Get, "/categories/${categoryId - 1}/entries") { response ->
             assertEquals(HttpStatusCode.OK, response.status)
             val responseBody: APIResponse<List<Entry>> = response.body()
             val shouldResponse: APIResponse<List<Entry>> = wrapFailure("Your category was not found.")
             assertEquals(shouldResponse, responseBody)
         }
 
-        sendAuthenticatedRequest(client, HttpMethod.Get, "/categories/$categoryId/entries") { response ->
+        client.sendAuthenticatedRequest(HttpMethod.Get, "/categories/$categoryId/entries") { response ->
             assertEquals(HttpStatusCode.OK, response.status)
             val responseBody: APIResponse<List<Entry>> = response.body()
             val shouldResponse = wrapSuccess(listOf(entryList[0]))
             assertEquals(shouldResponse, responseBody)
         }
 
-        sendAuthenticatedRequest(client, HttpMethod.Get, "/categories/${categoryId + 1}/entries") { response ->
+        client.sendAuthenticatedRequest(HttpMethod.Get, "/categories/${categoryId + 1}/entries") { response ->
             assertEquals(HttpStatusCode.OK, response.status)
             val responseBody: APIResponse<List<Entry>> = response.body()
             val shouldResponse = wrapSuccess(listOf(entryList[1], entryList[2], entryList[3]))
             assertEquals(shouldResponse, responseBody)
         }
 
-        sendAuthenticatedRequest(client, HttpMethod.Get, "/categories/null/entries") { response ->
+        client.sendAuthenticatedRequest(HttpMethod.Get, "/categories/null/entries") { response ->
             assertEquals(HttpStatusCode.OK, response.status)
             val responseBody: APIResponse<List<Entry>> = response.body()
             val shouldResponse = wrapSuccess(listOf(entryList[4]))
             assertEquals(shouldResponse, responseBody)
         }
 
-        sendAuthenticatedRequest(client, HttpMethod.Get, "/entries?current=true") { response ->
+        client.sendAuthenticatedRequest(HttpMethod.Get, "/entries?current=true") { response ->
             assertEquals(HttpStatusCode.OK, response.status)
             val responseBody: APIResponse<List<Entry>> = response.body()
             val shouldResponse = wrapSuccess(listOf(entryList[1], entryList[2], entryList[4]))
@@ -203,15 +203,14 @@ class CategoryEntryTest {
             Entry(entryId + 4, "Monthly Pay", 3000f, true, null),
         )
 
-        sendAuthenticatedRequest(client, HttpMethod.Get, "/categories/${categoryId}/entries?current=true") { response ->
+        client.sendAuthenticatedRequest(HttpMethod.Get, "/categories/${categoryId}/entries?current=true") { response ->
             assertEquals(HttpStatusCode.OK, response.status)
             val responseBody: APIResponse<List<Entry>> = response.body()
             val shouldResponse: APIResponse<List<Entry>> = wrapSuccess(emptyList())
             assertEquals(shouldResponse, responseBody)
         }
 
-        sendAuthenticatedRequest(
-            client,
+        client.sendAuthenticatedRequest(
             HttpMethod.Get,
             "/categories/${categoryId}/entries?period=${formatToPeriod(now.minusMonths(1))}"
         ) { response ->
@@ -221,8 +220,7 @@ class CategoryEntryTest {
             assertEquals(shouldResponse, responseBody)
         }
 
-        sendAuthenticatedRequest(
-            client,
+        client.sendAuthenticatedRequest(
             HttpMethod.Get,
             "/categories/${categoryId}/entries?period=${formatToPeriod(now.minusMonths(2))}"
         ) { response ->
@@ -232,8 +230,7 @@ class CategoryEntryTest {
             assertEquals(shouldResponse, responseBody)
         }
 
-        sendAuthenticatedRequest(
-            client,
+        client.sendAuthenticatedRequest(
             HttpMethod.Get,
             "/categories/${categoryId}/entries?period=${formatToPeriod(now.minusMonths(3))}"
         ) { response ->
@@ -243,8 +240,7 @@ class CategoryEntryTest {
             assertEquals(shouldResponse, responseBody)
         }
 
-        sendAuthenticatedRequest(
-            client,
+        client.sendAuthenticatedRequest(
             HttpMethod.Get,
             "/categories/${categoryId + 1}/entries?current=true"
         ) { response ->
@@ -254,8 +250,7 @@ class CategoryEntryTest {
             assertEquals(shouldResponse, responseBody)
         }
 
-        sendAuthenticatedRequest(
-            client,
+        client.sendAuthenticatedRequest(
             HttpMethod.Get,
             "/categories/${categoryId + 1}/entries?period=${formatToPeriod(now.minusMonths(1))}"
         ) { response ->
@@ -265,8 +260,7 @@ class CategoryEntryTest {
             assertEquals(shouldResponse, responseBody)
         }
 
-        sendAuthenticatedRequest(
-            client,
+        client.sendAuthenticatedRequest(
             HttpMethod.Get,
             "/categories/${categoryId + 1}/entries?period=${formatToPeriod(now.minusMonths(2))}"
         ) { response ->
@@ -276,8 +270,7 @@ class CategoryEntryTest {
             assertEquals(shouldResponse, responseBody)
         }
 
-        sendAuthenticatedRequest(
-            client,
+        client.sendAuthenticatedRequest(
             HttpMethod.Get,
             "/categories/${categoryId + 1}/entries?period=${formatToPeriod(now.minusMonths(3))}"
         ) { response ->
@@ -293,8 +286,7 @@ class CategoryEntryTest {
     fun createEntryWithCategory() = customTestApplicationWithLogin { client ->
         val categoryId = transaction { CategoryEntity.all().first().id.value + 1 }
 
-        sendAuthenticatedRequestWithBody(
-            client,
+        client.sendAuthenticatedRequestWithBody(
             HttpMethod.Post, "/entries",
             Entry.In("Second Phone", -50f, true, 5000)
         ) { response ->
@@ -314,8 +306,7 @@ class CategoryEntryTest {
             assertEquals(shouldResponse, responseBody)
         }
 
-        sendAuthenticatedRequestWithBody(
-            client,
+        client.sendAuthenticatedRequestWithBody(
             HttpMethod.Post, "/entries",
             Entry.In("Second Phone", -50f, true, categoryId)
         ) { response ->
@@ -342,8 +333,7 @@ class CategoryEntryTest {
         val categoryId = transaction { CategoryEntity.all().first().id.value + 1 }
         val entryId = transaction { EntryEntity.all().last().id.value }
 
-        sendAuthenticatedRequestWithBody(
-            client,
+        client.sendAuthenticatedRequestWithBody(
             HttpMethod.Patch, "/entries/$entryId",
             Entry.Patch(category = Entry.Category(categoryId - 1))
         ) { response ->
@@ -353,8 +343,7 @@ class CategoryEntryTest {
             assertEquals(shouldResponse, responseBody)
         }
 
-        sendAuthenticatedRequestWithBody(
-            client,
+        client.sendAuthenticatedRequestWithBody(
             HttpMethod.Patch, "/entries/$entryId",
             Entry.Patch(category = Entry.Category(categoryId))
         ) { response ->
@@ -368,8 +357,7 @@ class CategoryEntryTest {
             assertEquals(shouldResponse, responseBody)
         }
 
-        sendAuthenticatedRequestWithBody(
-            client,
+        client.sendAuthenticatedRequestWithBody(
             HttpMethod.Patch, "/entries/$entryId",
             Entry.Patch(category = Entry.Category(5000))
         ) { response ->
@@ -390,8 +378,7 @@ class CategoryEntryTest {
         val categoryId = transaction { CategoryEntity.all().first().id.value + 1 }
         val entryId = transaction { EntryEntity.all().first().id.value + 1 }
 
-        sendAuthenticatedRequestWithBody(
-            client,
+        client.sendAuthenticatedRequestWithBody(
             HttpMethod.Patch, "/categories/$categoryId",
             Category.Patch(budget = 200f)
         ) { response ->
@@ -479,8 +466,7 @@ class CategoryEntryTest {
 
         val entryId = transaction { EntryEntity.all().last().id.value - 1 }
 
-        sendAuthenticatedRequestWithBody(
-            client,
+        client.sendAuthenticatedRequestWithBody(
             HttpMethod.Patch, "/categories/$categoryId",
             Category.Patch(budget = 200f)
         ) { response ->
@@ -560,8 +546,7 @@ class CategoryEntryTest {
 
         val entryId = transaction { EntryEntity.all().last().id.value - 1 }
 
-        sendAuthenticatedRequestWithBody(
-            client,
+        client.sendAuthenticatedRequestWithBody(
             HttpMethod.Patch, "/categories/$categoryId",
             Category.Patch(budget = 200f)
         ) { response ->
@@ -649,8 +634,7 @@ class CategoryEntryTest {
         val categoryId = transaction { CategoryEntity.all().last().id.value }
         val entryId = transaction { EntryEntity.all().last().id.value - 1 }
 
-        sendAuthenticatedRequestWithBody(
-            client,
+        client.sendAuthenticatedRequestWithBody(
             HttpMethod.Patch, "/categories/$categoryId",
             Category.Patch(budget = 200f)
         ) { response ->
@@ -697,7 +681,7 @@ class CategoryEntryTest {
         val categoryId = transaction { CategoryEntity.all().first().id.value + 1 }
         val entryId = transaction { EntryEntity.all().first().id.value + 1 }
 
-        sendAuthenticatedRequest(client, HttpMethod.Delete, "/categories/$categoryId") { response ->
+        client.sendAuthenticatedRequest(HttpMethod.Delete, "/categories/$categoryId") { response ->
             assertEquals(HttpStatusCode.OK, response.status)
             val responseBody: APIResponse<Category> = response.body()
 
@@ -779,7 +763,7 @@ class CategoryEntryTest {
 
         val entryId = transaction { EntryEntity.all().last().id.value - 1 }
 
-        sendAuthenticatedRequest(client, HttpMethod.Delete, "/categories/$categoryId") { response ->
+        client.sendAuthenticatedRequest(HttpMethod.Delete, "/categories/$categoryId") { response ->
             assertEquals(HttpStatusCode.OK, response.status)
             val responseBody: APIResponse<Category> = response.body()
 
@@ -849,7 +833,7 @@ class CategoryEntryTest {
 
         val entryId = transaction { EntryEntity.all().last().id.value - 1 }
 
-        sendAuthenticatedRequest(client, HttpMethod.Delete, "/categories/$categoryId") { response ->
+        client.sendAuthenticatedRequest(HttpMethod.Delete, "/categories/$categoryId") { response ->
             assertEquals(HttpStatusCode.OK, response.status)
             val responseBody: APIResponse<Category> = response.body()
 
@@ -926,7 +910,7 @@ class CategoryEntryTest {
         val categoryId = transaction { CategoryEntity.all().last().id.value }
         val entryId = transaction { EntryEntity.all().last().id.value - 1 }
 
-        sendAuthenticatedRequest(client, HttpMethod.Delete, "/categories/$categoryId") { response ->
+        client.sendAuthenticatedRequest(HttpMethod.Delete, "/categories/$categoryId") { response ->
             assertEquals(HttpStatusCode.OK, response.status)
             val responseBody: APIResponse<Category> = response.body()
 
