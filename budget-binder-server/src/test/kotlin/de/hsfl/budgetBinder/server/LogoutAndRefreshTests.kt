@@ -46,11 +46,41 @@ class LogoutAndRefreshTests {
 
     @Test
     fun testRefreshTokenUnauthorized() = customTestApplication { client ->
-        client.get("refresh_token").let {
-            assertEquals(HttpStatusCode.Unauthorized, it.status)
-            val responseBody: APIResponse<AuthToken> = it.body()
+        client.get("refresh_token").let { response ->
+            assertEquals(HttpStatusCode.Unauthorized, response.status)
+            val responseBody: APIResponse<AuthToken> = response.body()
             val shouldResponse: APIResponse<AuthToken> = wrapFailure("Your refreshToken is absent.", 401)
             assertEquals(shouldResponse, responseBody)
+        }
+    }
+
+    @Test
+    fun testRefreshToken() = customTestApplication {
+        val client = createClient {
+            install(ContentNegotiation) {
+                json()
+            }
+            install(HttpCookies) {
+                storage = CustomCookieStorage()
+            }
+        }
+
+        client.loginUser()
+
+        client.get("refresh_token").let { response ->
+            assertEquals(HttpStatusCode.OK, response.status)
+            val responseBody: APIResponse<AuthToken> = response.body()
+            assert(responseBody.success)
+            assertNull(responseBody.error)
+            assertNotNull(responseBody.data)
+
+            val setCookieHeader = response.headers[HttpHeaders.SetCookie]
+            assertNotNull(setCookieHeader)
+            val cookie = HttpCookie.parse(setCookieHeader)
+            assertNotNull(cookie)
+            assertEquals(1, cookie.size)
+            assertEquals("jwt", cookie[0].name)
+            assertNotEquals("", cookie[0].value)
         }
     }
 
@@ -66,7 +96,20 @@ class LogoutAndRefreshTests {
     @Test
     fun testGetMeAfterLogoutAll() = customTestApplicationWithLogin { client ->
         client.checkMeSuccess()
+
+        val tokenVersion = transaction {
+            val tokenVersion = UserEntity.all().first().tokenVersion
+            assertEquals(1, tokenVersion)
+            tokenVersion
+        }
+
         client.logoutUser(true)
+
+        transaction {
+            val newTokenVersion = UserEntity.all().first().tokenVersion
+            assertNotEquals(tokenVersion, newTokenVersion)
+        }
+
         client.checkMeFailure()
     }
 
@@ -86,9 +129,9 @@ class LogoutAndRefreshTests {
         assertEquals(1, cookies.size)
         client.logoutUser(false)
 
-        client.get("refresh_token").let {
-            assertEquals(HttpStatusCode.Unauthorized, it.status)
-            val responseBody: APIResponse<AuthToken> = it.body()
+        client.get("refresh_token").let { response ->
+            assertEquals(HttpStatusCode.Unauthorized, response.status)
+            val responseBody: APIResponse<AuthToken> = response.body()
             val shouldResponse: APIResponse<AuthToken> = wrapFailure("Your refreshToken is absent.", 401)
             assertEquals(shouldResponse, responseBody)
         }
@@ -103,9 +146,9 @@ class LogoutAndRefreshTests {
                 storage = ConstantCookiesStorage(cookies[0])
             }
         }
-        client.get("refresh_token").let {
-            assertEquals(HttpStatusCode.OK, it.status)
-            val responseBody: APIResponse<AuthToken> = it.body()
+        client.get("refresh_token").let { response ->
+            assertEquals(HttpStatusCode.OK, response.status)
+            val responseBody: APIResponse<AuthToken> = response.body()
             assert(responseBody.success)
             assertNull(responseBody.error)
             assertNotNull(responseBody.data)
@@ -129,9 +172,9 @@ class LogoutAndRefreshTests {
         client.logoutUser(true)
         assertEquals(0, client.cookies("http://localhost/refresh_token").size)
 
-        client.get("refresh_token").let {
-            assertEquals(HttpStatusCode.Unauthorized, it.status)
-            val responseBody: APIResponse<AuthToken> = it.body()
+        client.get("refresh_token").let { response ->
+            assertEquals(HttpStatusCode.Unauthorized, response.status)
+            val responseBody: APIResponse<AuthToken> = response.body()
             val shouldResponse: APIResponse<AuthToken> = wrapFailure("Your refreshToken is absent.", 401)
             assertEquals(shouldResponse, responseBody)
         }
@@ -145,9 +188,9 @@ class LogoutAndRefreshTests {
             }
         }
 
-        client.get("refresh_token").let {
-            assertEquals(HttpStatusCode.Unauthorized, it.status)
-            val responseBody: APIResponse<AuthToken> = it.body()
+        client.get("refresh_token").let { response ->
+            assertEquals(HttpStatusCode.Unauthorized, response.status)
+            val responseBody: APIResponse<AuthToken> = response.body()
             val shouldResponse: APIResponse<AuthToken> = wrapFailure("Your refreshToken does not match.", 401)
             assertEquals(shouldResponse, responseBody)
         }

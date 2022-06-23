@@ -28,9 +28,9 @@ class LoginTests {
 
     @Test
     fun testLoginUnauthorized() = customTestApplication { client ->
-        client.post("/login").let {
-            assertEquals(HttpStatusCode.Unauthorized, it.status)
-            val responseBody: APIResponse<AuthToken> = it.body()
+        client.post("/login").let { response ->
+            assertEquals(HttpStatusCode.Unauthorized, response.status)
+            val responseBody: APIResponse<AuthToken> = response.body()
             val shouldResponse: APIResponse<AuthToken> = wrapFailure("Your username and/or password do not match.", 401)
             assertEquals(shouldResponse, responseBody)
         }
