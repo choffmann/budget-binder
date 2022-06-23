@@ -16,6 +16,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import de.hsfl.budgetBinder.BudgetBinderNavDrawer
+import de.hsfl.budgetBinder.BudgetBinderTopBar
+import de.hsfl.budgetBinder.TopBarMenuIcon
 import de.hsfl.budgetBinder.common.Category
 import de.hsfl.budgetBinder.di
 import de.hsfl.budgetBinder.presentation.CategoryImageToIcon
@@ -49,18 +52,27 @@ fun CategorySummary() {
             FloatingActionButton(onClick = { viewModel.onEvent(CategorySummaryEvent.OnCategoryCreate) }) {
                 Icon(Icons.Default.Add, contentDescription = null)
             }
+        },
+        topBar = {
+            BudgetBinderTopBar(
+                navigationIcon = { TopBarMenuIcon(scaffoldState = scaffoldState) }
+            )
         }
     ) {
-        if (loadingState.value) LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
-        LazyColumn {
-            items(categoryList.value) { category ->
-                CategoryListItem(
-                    modifier = Modifier.clickable { viewModel.onEvent(CategorySummaryEvent.OnCategory(category.id)) },
-                    name = category.name,
-                    budget = category.budget.toString(),
-                    icon = category.image,
-                    color = category.color.toColor("af")
-                )
+        BudgetBinderNavDrawer(
+            drawerState = scaffoldState.drawerState,
+            gesturesEnabled = true
+        ) {
+            LazyColumn {
+                items(categoryList.value) { category ->
+                    CategoryListItem(
+                        modifier = Modifier.clickable { viewModel.onEvent(CategorySummaryEvent.OnCategory(category.id)) },
+                        name = category.name,
+                        budget = category.budget.toString(),
+                        icon = category.image,
+                        color = category.color.toColor("af")
+                    )
+                }
             }
         }
     }
