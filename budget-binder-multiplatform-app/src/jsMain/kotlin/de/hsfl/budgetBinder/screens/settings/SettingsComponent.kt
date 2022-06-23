@@ -1,4 +1,4 @@
-package de.hsfl.budgetBinder.compose.settings
+package de.hsfl.budgetBinder.screens.settings
 
 import androidx.compose.runtime.*
 import de.hsfl.budgetBinder.presentation.Screen

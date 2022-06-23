@@ -1,4 +1,4 @@
-package de.hsfl.budgetBinder.compose.login
+package de.hsfl.budgetBinder.screens.login
 
 import androidx.compose.runtime.*
 import de.hsfl.budgetBinder.compose.MainFlexContainer

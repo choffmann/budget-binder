@@ -1,4 +1,4 @@
-package de.hsfl.budgetBinder.compose.category
+package de.hsfl.budgetBinder.screens.category
 
 import androidx.compose.runtime.*
 import de.hsfl.budgetBinder.common.Category

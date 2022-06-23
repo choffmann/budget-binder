@@ -1,13 +1,13 @@
-package de.hsfl.budgetBinder.compose.register
+package de.hsfl.budgetBinder.screens.settings
 
 import androidx.compose.runtime.*
 import de.hsfl.budgetBinder.compose.FeedbackSnackbar
 import de.hsfl.budgetBinder.compose.MainFlexContainer
+import de.hsfl.budgetBinder.compose.NavBar
 import de.hsfl.budgetBinder.compose.theme.AppStylesheet
-import de.hsfl.budgetBinder.presentation.event.LifecycleEvent
 import de.hsfl.budgetBinder.presentation.event.UiEvent
-import de.hsfl.budgetBinder.presentation.viewmodel.auth.register.RegisterEvent
-import de.hsfl.budgetBinder.presentation.viewmodel.auth.register.RegisterViewModel
+import de.hsfl.budgetBinder.presentation.viewmodel.settings.EditUserEvent
+import de.hsfl.budgetBinder.presentation.viewmodel.settings.SettingsEditUserViewModel
 import di
 import kotlinx.coroutines.flow.collectLatest
 import org.jetbrains.compose.web.attributes.InputType
@@ -20,106 +20,37 @@ import org.kodein.di.instance
 
 
 @Composable
-fun RegisterComponent() {
-    val viewModel: RegisterViewModel by di.instance()
-    val firstNameTextState = viewModel.firstNameText.collectAsState()
-    val lastNameTextState = viewModel.lastNameText.collectAsState()
-    val emailTextState = viewModel.emailText.collectAsState()
-    val passwordTextState = viewModel.passwordText.collectAsState()
-    val confirmedPasswordTextState = viewModel.confirmedPasswordText.collectAsState()
+fun SettingsChangeUserDataView() {
+    val viewModel: SettingsEditUserViewModel by di.instance()
     val loadingState = remember { mutableStateOf(false) }
+    val firstNameText = viewModel.firstNameText.collectAsState()
+    val lastNameText = viewModel.lastNameText.collectAsState()
+    val passwordText = viewModel.passwordText.collectAsState()
+    val confirmedPasswordText = viewModel.confirmedPassword.collectAsState()
     var openSnackbar by remember { mutableStateOf(false) }
 
-
-    //LifeCycle
     LaunchedEffect(key1 = true) {
-        viewModel.onEvent(RegisterEvent.LifeCycle(LifecycleEvent.OnLaunch))
         viewModel.eventFlow.collectLatest { event ->
             when (event) {
-                is UiEvent.ShowLoading -> {
-                    // TODO: Refactor this, it's working but ahh
-                    loadingState.value = true
-                }
+                is UiEvent.ShowLoading -> loadingState.value = true
+                is UiEvent.HideSuccess -> loadingState.value = false
                 else -> loadingState.value = false
             }
         }
     }
-    DisposableEffect(Unit) {
-        onDispose {
-            viewModel.onEvent(RegisterEvent.LifeCycle(LifecycleEvent.OnDispose))
-        }
-    }
-
-    //Webpage content
-    Header(
-        attrs = {
-            classes("mdc-top-app-bar")
-        }
-    ) {
-        Div(
-            attrs = {
-                classes("mdc-top-app-bar__row")
-            }
-        ) {
-            Section(
-                attrs = {
-                    classes("mdc-top-app-bar__section", "mdc-top-app-bar__section--align-start")
-                }
-            ) {
-                Img(
-                    src = "images/Logo.png", alt = "Logo", attrs = {
-                        classes("mdc-icon-button", AppStylesheet.image)
-                    }
-                )
-                Span(
-                    attrs = {
-                        classes("mdc-top-app-bar__title")
-                    }
-                ) {
-                    Text("Budget-Binder")
-                }
-            }
-            Section(
-                attrs = {
-                    classes("mdc-top-app-bar__section", "mdc-top-app-bar__section--align-end")
-                }
-            ) {
-                Button(
-                    attrs = {
-                        classes(
-                            "mdc-button",
-                            "mdc-button--raised",
-                            "mdc-top-app-bar__navigation-icon"
-                        )
-                        onClick { viewModel.onEvent(RegisterEvent.OnLoginScreen) }
-                    }
-                ) {
-                    Span(
-                        attrs = {
-                            classes("mdc-button__label")
-                        }
-                    ) {
-                        Text("Login Instead")
-                    }
-                }
-            }
-        }
-    }
-
+    NavBar {}
     MainFlexContainer {
-        // -- Register Form --
         H1(
             attrs = {
                 style { marginLeft(2.percent) }
             }
-        ) { Text("Register") }
-        Form(attrs = { //Probably possible with just a button OnClick instead of Form&Submit
+        )  { Text("Change User Data") }
+        Form(attrs = {
             this.addEventListener("submit") {
-                console.log("$firstNameTextState, $lastNameTextState, $emailTextState, $passwordTextState")
-                if (!confirmedPasswordTextState.value.confirmedPasswordValid) {
+                if (!confirmedPasswordText.value.confirmedPasswordIsValid) {
                     openSnackbar = true
                 }
-                viewModel.onEvent(RegisterEvent.OnRegister)
+                viewModel.onEvent(EditUserEvent.OnUpdate)
                 it.preventDefault()
             }
         }
@@ -148,11 +79,11 @@ fun RegisterComponent() {
                     Input(
                         type = InputType.Text
                     ) {
-                        classes("mdc-text-field__input")
                         required()
-                        value(firstNameTextState.value.firstName)
+                        classes("mdc-text-field__input")
+                        value(firstNameText.value.firstName)
                         onInput {
-                            viewModel.onEvent(RegisterEvent.EnteredFirstname(it.value))
+                            viewModel.onEvent(EditUserEvent.EnteredFirstName(it.value))
                         }
                     }
                     Span(
@@ -186,50 +117,13 @@ fun RegisterComponent() {
                     Input(
                         type = InputType.Text
                     ) {
-                        classes("mdc-text-field__input")
                         required()
-                        value(lastNameTextState.value.lastName)
+                        classes("mdc-text-field__input")
+                        value(lastNameText.value.lastName)
                         onInput {
-                            viewModel.onEvent(RegisterEvent.EnteredLastname(it.value))
+                            viewModel.onEvent(EditUserEvent.EnteredLastName(it.value))
                         }
                     }
-                    Span(
-                        attrs = {
-                            classes("mdc-line-ripple")
-                        }
-                    ) { }
-                }
-            }
-            Div(
-                attrs = {
-                    classes(AppStylesheet.margin)
-                }
-            ) {
-                Label(
-                    attrs = {
-                        classes("mdc-text-field", "mdc-text-field--filled")
-                        style { width(100.percent) }
-                    }
-                ) {
-                    Span(
-                        attrs = {
-                            classes("mdc-text-field__ripple")
-                        }
-                    ) { }
-                    Span(
-                        attrs = {
-                            classes("mdc-floating-label", "mdc-floating-label--float-above")
-                        }
-                    ) { Text("Email") }
-                    EmailInput(value = emailTextState.value.email,
-                        attrs = {
-                            required()
-                            classes("mdc-text-field__input")
-                            onInput {
-                                viewModel.onEvent(RegisterEvent.EnteredEmail(it.value))
-
-                            }
-                        })
                     Span(
                         attrs = {
                             classes("mdc-line-ripple")
@@ -258,12 +152,12 @@ fun RegisterComponent() {
                             classes("mdc-floating-label", "mdc-floating-label--float-above")
                         }
                     ) { Text("Password") }
-                    PasswordInput(value = passwordTextState.value.password,
+                    PasswordInput(value = passwordText.value.password,
                         attrs = {
                             required()
                             classes("mdc-text-field__input")
                             onInput {
-                                viewModel.onEvent(RegisterEvent.EnteredPassword(it.value))
+                                viewModel.onEvent(EditUserEvent.EnteredPassword(it.value))
                             }
                         })
                     Span(
@@ -294,12 +188,12 @@ fun RegisterComponent() {
                             classes("mdc-floating-label", "mdc-floating-label--float-above")
                         }
                     ) { Text("Repeat Password") }
-                    PasswordInput(value = confirmedPasswordTextState.value.confirmedPassword,
+                    PasswordInput(value = confirmedPasswordText.value.confirmedPassword,
                         attrs = {
                             required()
                             classes("mdc-text-field__input")
                             onInput {
-                                viewModel.onEvent(RegisterEvent.EnteredConfirmedPassword(it.value))
+                                viewModel.onEvent(EditUserEvent.EnteredConfirmedPassword(it.value))
                             }
                         })
                     Span(

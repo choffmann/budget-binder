@@ -1,16 +1,13 @@
-package de.hsfl.budgetBinder.compose.entry
+package de.hsfl.budgetBinder.screens.entry
 
 import androidx.compose.runtime.*
-import de.hsfl.budgetBinder.compose.ChooseCategoryMenu
+import de.hsfl.budgetBinder.compose.*
 import de.hsfl.budgetBinder.compose.theme.AppStylesheet
 import de.hsfl.budgetBinder.presentation.viewmodel.entry.EntryEvent
 import de.hsfl.budgetBinder.presentation.viewmodel.entry.EntryViewModel
 import di
 import org.jetbrains.compose.web.ExperimentalComposeWebSvgApi
-import org.jetbrains.compose.web.attributes.ButtonType
-import org.jetbrains.compose.web.attributes.InputType
-import org.jetbrains.compose.web.attributes.required
-import org.jetbrains.compose.web.attributes.type
+import org.jetbrains.compose.web.attributes.*
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
 import org.jetbrains.compose.web.svg.Path
@@ -20,29 +17,26 @@ import org.kodein.di.instance
 
 @OptIn(ExperimentalComposeWebSvgApi::class)
 @Composable
-fun EntryEditView(
-    onEditButton: () -> Unit,
+fun EntryCreateView(
+    onCreateButton: () -> Unit,
 ) {
     val viewModel: EntryViewModel by di.instance()
     //Input
     val entryNameTextField by viewModel.nameText.collectAsState()
     val entryAmountTextField by viewModel.amountText.collectAsState()
-    val entryRepeat by viewModel.repeatState.collectAsState()
     val entryCategoryIDTextField by viewModel.categoryIDState.collectAsState()
     val amountSign by viewModel.amountSignState.collectAsState()
     //Data
     val categoryList by viewModel.categoryListState.collectAsState()
-    val entry by viewModel.selectedEntryState.collectAsState()
-    console.log("unser Entry ist $entry")
-    console.log("$entryNameTextField und $entryAmountTextField und $entryCategoryIDTextField")
+
     H1(
         attrs = {
             style { margin(2.percent) }
         }
-    ) { Text("Edit Entry") }
+    ) { Text("Create new Entry") }
     Form(attrs = {
         this.addEventListener("submit") {
-            onEditButton()
+            onCreateButton()
             it.preventDefault()
         }
     }
@@ -153,10 +147,10 @@ fun EntryEditView(
                     type = InputType.Number
                 ) {
                     attr("step", "0.01")
-                    classes("mdc-text-field__input")
                     value(entryAmountTextField)
+                    classes("mdc-text-field__input")
                     onInput {
-                        viewModel.onEvent(EntryEvent.EnteredAmount(it.value as Float))
+                        viewModel.onEvent(EntryEvent.EnteredAmount(it.value!!.toFloat()))
                     }
                 }
                 Span(
@@ -174,15 +168,14 @@ fun EntryEditView(
             Div(attrs = { style { flex(50.percent) } }) {
                 Div(attrs = { classes("mdc-form-field") }) {
                     Div(attrs = { classes("mdc-checkbox") }) {
-                        CheckboxInput (attrs =
+                        Input(type = InputType.Checkbox)
                         {
-                            checked(entryRepeat)
                             classes("mdc-checkbox__native-control")
                             id("checkbox-1")
                             onInput {
                                 viewModel.onEvent(EntryEvent.EnteredRepeat)
                             }
-                        })
+                        }
                         Div(attrs = { classes("mdc-checkbox__background") }) {
                             Svg(
                                 attrs = { classes("mdc-checkbox__checkmark") },
@@ -199,10 +192,7 @@ fun EntryEditView(
                     Label(forId = "checkbox-1") { Text("repeat") }
                 }
             }
-            Div(attrs = { style {
-                flex(50.percent)
-                alignItems(AlignItems.Stretch)
-            } }) {
+            Div(attrs = { style { flex(50.percent) } }) {
                 ChooseCategoryMenu(categoryList, entryCategoryIDTextField) { id ->
                     viewModel.onEvent(EntryEvent.EnteredCategoryID(id))
                 }
@@ -213,6 +203,16 @@ fun EntryEditView(
                 classes(AppStylesheet.margin)
             }
         ) {
+            Button(
+                attrs = {
+                    classes("mdc-button", "mdc-button--raised")
+                    type(ButtonType.Button)
+                    onClick { viewModel.onEvent(EntryEvent.OnCancel) }
+                }
+            ) {
+                Span(attrs = { classes("mdc-button__label") }
+                ) { Text("Cancel") }
+            }
             SubmitInput(
                 attrs = {
                     classes("mdc-button", "mdc-button--raised")
@@ -221,3 +221,4 @@ fun EntryEditView(
         }
     }
 }
+

@@ -1,4 +1,4 @@
-package de.hsfl.budgetBinder.compose.entry
+package de.hsfl.budgetBinder.screens.entry
 
 import androidx.compose.runtime.*
 import de.hsfl.budgetBinder.compose.MainFlexContainer

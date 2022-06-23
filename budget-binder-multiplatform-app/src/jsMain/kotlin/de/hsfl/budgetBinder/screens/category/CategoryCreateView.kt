@@ -1,4 +1,4 @@
-package de.hsfl.budgetBinder.compose.category
+package de.hsfl.budgetBinder.screens.category
 
 import androidx.compose.runtime.*
 import de.hsfl.budgetBinder.common.Category
@@ -15,14 +15,13 @@ import org.jetbrains.compose.web.dom.*
 
 
 @Composable
-fun CategoryEditView(
+fun CategoryCreateView(
     state: State<Any>,
-    onEditCategoryButtonPressed: (name: String, color: String, image: Category.Image, budget: Float) -> Unit,
+    onCreateCategoryButtonPressed: (name: String, color: String, image: Category.Image, budget: Float) -> Unit,
     onChangeToDashboard: () -> Unit,
+    onChangeToSettings: () -> Unit,
     onChangeToCategory: () -> Unit,
-    onChangeToSettings: () -> Unit
 ) {
-    var category by remember { mutableStateOf(Category(0, "", "", Category.Image.DEFAULT, 0f)) }
     var categoryNameTextFieldState by remember { mutableStateOf("") }
     var categoryColorTextFieldState by remember { mutableStateOf("") }
     var categoryImageState = remember { mutableStateOf(Category.Image.DEFAULT) }
@@ -69,12 +68,15 @@ fun CategoryEditView(
         })
 
     MainFlexContainer {
-        H1(attrs = { style { margin(2.percent) } }) { Text("Edit Category") }
-
+        H1(
+            attrs = {
+                style { margin(2.percent) }
+            }
+        ) { Text("Create a new Category") }
         Form(attrs = {
             this.addEventListener("submit") {
                 console.log("$categoryNameTextFieldState, $categoryColorTextFieldState, $categoryImageState, $categoryBudgetTextFieldState")
-                onEditCategoryButtonPressed(
+                onCreateCategoryButtonPressed(
                     categoryNameTextFieldState,
                     categoryColorTextFieldState,
                     categoryImageState.value,
@@ -234,19 +236,10 @@ fun CategoryEditView(
                         value("Submit")
                     })
             }
-
             Div {
                 when (viewState) {
                     is UiState.Success<*> -> {
-                        when (val element = (viewState as UiState.Success<*>).element) {
-                            is Category -> {
-                                category = element
-                                categoryNameTextFieldState = category.name
-                                categoryColorTextFieldState = "#" + category.color
-                                categoryImageState.value = category.image
-                                categoryBudgetTextFieldState = category.budget.toString()
-                            }
-                        }
+                        //Text((viewState as UiState.Success<*>).element.toString())
                     }
                     is UiState.Error -> {
                         Text((viewState as UiState.Error).error)
