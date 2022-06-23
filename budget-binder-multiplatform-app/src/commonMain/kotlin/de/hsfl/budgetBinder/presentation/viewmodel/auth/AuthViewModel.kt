@@ -1,7 +1,6 @@
 package de.hsfl.budgetBinder.presentation.viewmodel.auth
 
 import de.hsfl.budgetBinder.common.User
-import de.hsfl.budgetBinder.common.handleDataResponse
 import de.hsfl.budgetBinder.domain.usecase.AuthUseCases
 import de.hsfl.budgetBinder.domain.usecase.NavigateToScreenUseCase
 import de.hsfl.budgetBinder.presentation.Screen
@@ -28,17 +27,17 @@ open class AuthViewModel(
 
     protected fun register(user: User.In) = scope.launch {
         authUseCases.registerUseCase(user)
-            .collect { it.handleDataResponse(onSuccess = { login(email = user.email, password = user.password) }) }
+            .collect { it.handleDataResponse<User>(onSuccess = { login(email = user.email, password = user.password) }) }
     }
 
     protected fun login(email: String, password: String) = scope.launch {
         authUseCases.loginUseCase(email = email, password = password)
-            .collect { it.handleDataResponse(onSuccess = { getMyUser() }) }
+            .collect { it.handleDataResponse<Nothing>(onSuccess = { getMyUser() }) }
     }
 
     private fun getMyUser() = scope.launch {
         authUseCases.getMyUserUseCase().collect {
-            it.handleDataResponse(onSuccess = { user ->
+            it.handleDataResponse<User>(onSuccess = { user ->
                 dataFlow.storeUserState(user)
                 routerFlow.navigateTo(Screen.Dashboard)
             })

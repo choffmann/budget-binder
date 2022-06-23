@@ -2,7 +2,6 @@ package de.hsfl.budgetBinder.presentation.viewmodel.auth.login
 
 import de.hsfl.budgetBinder.common.DataResponse
 import de.hsfl.budgetBinder.common.User
-import de.hsfl.budgetBinder.common.handleDataResponse
 import de.hsfl.budgetBinder.common.utils.validateEmail
 import de.hsfl.budgetBinder.domain.usecase.AuthUseCases
 import de.hsfl.budgetBinder.presentation.flow.RouterFlow
@@ -77,7 +76,7 @@ class LoginViewModel(
     private fun tryToLoginUserOnStart() = scope.launch {
         authUseCases.getMyUserUseCase()
             .collect {
-                it.handleDataResponse(
+                it.handleDataResponse<User>(
                     onSuccess = { user ->
                         storeUser(user)
                         routerFlow.navigateTo(screenAfterSuccess)
