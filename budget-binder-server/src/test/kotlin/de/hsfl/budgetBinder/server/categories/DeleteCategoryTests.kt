@@ -12,7 +12,6 @@ import java.time.LocalDateTime
 import kotlin.test.*
 
 class DeleteCategoryTests {
-
     @BeforeTest
     fun before() = customTestApplication { client ->
         client.registerUser()

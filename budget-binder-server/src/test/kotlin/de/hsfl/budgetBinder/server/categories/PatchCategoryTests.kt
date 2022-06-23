@@ -12,7 +12,6 @@ import java.time.LocalDateTime
 import kotlin.test.*
 
 class PatchCategoryTests {
-
     @BeforeTest
     fun before() = customTestApplication { client ->
         client.registerUser()
@@ -94,7 +93,7 @@ class PatchCategoryTests {
     }
 
     @Test
-    fun testChangeCategory() = customTestApplicationWithLogin { client ->
+    fun testPatchCategory() = customTestApplicationWithLogin { client ->
         val id = transaction { CategoryEntity.all().first().id.value + 2 }
 
         client.sendAuthenticatedRequestWithBody(
@@ -118,7 +117,7 @@ class PatchCategoryTests {
     }
 
     @Test
-    fun testChangeCategoryBudget() = customTestApplicationWithLogin { client ->
+    fun testPatchCategoryBudget() = customTestApplicationWithLogin { client ->
         val id = transaction { CategoryEntity.all().first().id.value + 2 }
 
         client.sendAuthenticatedRequestWithBody(

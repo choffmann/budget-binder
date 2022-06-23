@@ -12,7 +12,6 @@ import java.time.LocalDateTime
 import kotlin.test.*
 
 class GetEntriesTests {
-
     private fun getEntryListFromID(id: Int): List<Entry> {
         return listOf(
             Entry(id, "Monthly Job Pay", 3000f, true, null),

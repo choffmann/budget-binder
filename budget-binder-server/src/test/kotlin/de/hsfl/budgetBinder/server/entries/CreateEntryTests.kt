@@ -11,7 +11,6 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import kotlin.test.*
 
 class CreateEntryTests {
-
     @BeforeTest
     fun before() = customTestApplication { client ->
         client.registerUser()
@@ -19,6 +18,7 @@ class CreateEntryTests {
 
     @AfterTest
     fun after() = transaction {
+        EntryEntity.all().forEach { it.delete() }
         UserEntity.all().forEach { it.delete() }
     }
 
