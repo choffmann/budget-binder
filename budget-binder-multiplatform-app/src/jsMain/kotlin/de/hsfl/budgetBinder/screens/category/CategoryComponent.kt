@@ -22,14 +22,14 @@ import org.kodein.di.instance
 
 @Composable
 fun CategoryComponent() {
-    val viewModel: CategoryViewModel by di.instance()
     val routerFlow: RouterFlow by di.instance()
-    /*when (routerFlow.state.value) {
+    when (routerFlow.state.value) {
         is Screen.Category.Summary -> CategorySummaryView()
-        is Screen.Category.Detail -> CategoryDetailView()
+        //is Screen.Category.Detail -> CategoryDetailView()
         is Screen.Category.Edit -> CategoryEditView()
         is Screen.Category.Create -> CategoryCreateView()
-    }*/
+        else -> {}
+    }
 }
 
 fun categoryIdToCategory(category_id: Int?, categoryList: List<Category>): Category {

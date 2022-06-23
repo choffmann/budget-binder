@@ -1,14 +1,16 @@
 package de.hsfl.budgetBinder.compose
 
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import de.hsfl.budgetBinder.common.Category
 import de.hsfl.budgetBinder.compose.theme.AppStylesheet
 import de.hsfl.budgetBinder.presentation.CategoryImageToIcon
 import org.jetbrains.compose.web.ExperimentalComposeWebSvgApi
 import org.jetbrains.compose.web.css.*
+import org.jetbrains.compose.web.dom.Button
 import org.jetbrains.compose.web.dom.Div
 import org.jetbrains.compose.web.dom.H1
 import org.jetbrains.compose.web.dom.Text
+import org.jetbrains.compose.web.svg.Circle
 import org.jetbrains.compose.web.svg.Rect
 import org.jetbrains.compose.web.svg.Svg
 
@@ -77,5 +79,146 @@ fun MoneyTextDiv(content: @Composable () -> Unit) {
         }
     }) {
         content()
+    }
+}
+
+@OptIn(ExperimentalComposeWebSvgApi::class)
+@Composable
+fun CategoryList(
+    categoryList: List<Category>,
+    onClicked: (Int) -> Unit,
+) {
+    Div {
+        for (category in categoryList)
+            categoryElement(category, onClicked = onClicked(category.id))
+    }
+}
+
+@OptIn(ExperimentalComposeWebSvgApi::class)
+@Composable
+fun categoryElement(category: Category, onClicked: Unit){
+    Div(attrs = {
+        classes("mdc-card", AppStylesheet.card)
+        onClick { onClicked }
+    }
+    ) {
+        Div(
+            attrs = {
+                classes(AppStylesheet.categoryListElement, AppStylesheet.flexContainer)
+            }
+        ) {
+            Div(
+                attrs = {
+                    classes(AppStylesheet.imageFlexContainer)
+                }
+            ) {
+                CategoryImageToIcon(category.image)
+            }
+            Div(
+                attrs = {
+                    classes(AppStylesheet.categoryListElementText)
+                }
+            ) {
+                Div {
+                    Div(attrs = {
+                        classes("mdc-typography--headline4", AppStylesheet.text)
+                    }) { Text(category.name) }
+                    Div(attrs = {
+                        classes("mdc-typography--headline6", AppStylesheet.text)
+                    }) { Text("Budget: ${category.budget}€") }
+                }
+            }
+            Div(attrs = {
+                classes(AppStylesheet.imageFlexContainer)
+            }
+            ) {
+                Svg(viewBox = "0 0 1 1") {//For aspect ratio - tries to fill out wherever it is in
+                    Circle(cx = 0.5, cy = 0.5, r = 0.5, {
+                        attr("fill", "#${category.color}")
+                    })
+                }
+            }
+        }
+    }
+}
+@OptIn(ExperimentalComposeWebSvgApi::class)
+@Composable
+fun categoryDetailed(category: Category, onEditButton: (id:Int) -> Unit, onDeleteButton:(id:Int) -> Unit){
+    var deleteDialog by remember { mutableStateOf(false) }
+    var id by remember { mutableStateOf(0) }
+    Div(attrs = {
+        classes("mdc-card", AppStylesheet.card)
+    }
+    ) {
+        if (deleteDialog) {
+            DeleteDialog(
+                false,
+                { onDeleteButton(id) },
+                { deleteDialog = false }) { Text("Delete Category?") }
+        }
+        Div(
+            attrs = {
+                classes(AppStylesheet.categoryListElement, AppStylesheet.flexContainer)
+            }
+        ) {
+            Div(
+                attrs = {
+                    classes(AppStylesheet.imageFlexContainer)
+                }
+            ) {
+                CategoryImageToIcon(category.image)
+            }
+            Div(
+                attrs = {
+                    classes(AppStylesheet.categoryListElementText)
+                }
+            ) {
+                Div {
+                    Div(attrs = {
+                        classes("mdc-typography--headline4", AppStylesheet.text)
+                    }) { Text(category.name) }
+                    Div(attrs = {
+                        classes("mdc-typography--headline6", AppStylesheet.text)
+                    }) { Text("Budget: ${category.budget}€") }
+                }
+            }
+            Div(attrs = {
+                classes(AppStylesheet.imageFlexContainer)
+            }
+            ) {
+                Svg(viewBox = "0 0 1 1") {//For aspect ratio - tries to fill out wherever it is in
+                    Circle(cx = 0.5, cy = 0.5, r = 0.5, {
+                        attr("fill", "#${category.color}")
+                    })
+                }
+            }
+        }
+        Div(
+            attrs = {
+                classes(AppStylesheet.flexContainer)
+            }
+        ) {
+            Button(attrs = {
+                classes("mdc-button", "mdc-button--raised", AppStylesheet.marginRight)
+                onClick { onEditButton?.let { it1 -> it1(category.id) } }
+                style {
+                    flex(50.percent)
+                    margin(1.5.percent)
+                }
+            }) {
+                Text("Edit Category")
+            }
+            Button(attrs = {
+                classes("mdc-button", "mdc-button--raised")
+                onClick { deleteDialog = !deleteDialog; id = category.id }
+                style {
+                    flex(50.percent)
+                    margin(1.5.percent)
+                    backgroundColor(Color("#b00020"))
+                }
+            }) {
+                Text("Delete Category")
+            }
+        }
     }
 }
