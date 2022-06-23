@@ -1,7 +1,6 @@
 package de.hsfl.budgetBinder.presentation.viewmodel.navdrawer
 
 import de.hsfl.budgetBinder.common.DataResponse
-import de.hsfl.budgetBinder.common.handleDataResponse
 import de.hsfl.budgetBinder.domain.usecase.LogoutUseCase
 import de.hsfl.budgetBinder.presentation.Screen
 import de.hsfl.budgetBinder.presentation.UiState
@@ -33,7 +32,7 @@ class NavDrawerViewModel(
 
     private fun logout() = scope.launch {
         logoutUseCase(onAllDevices = false)
-            .collect { it.handleDataResponse(onSuccess = { routerFlow.navigateTo(Screen.Login) }) }
+            .collect { it.handleDataResponse<Nothing>(onSuccess = { routerFlow.navigateTo(Screen.Login) }) }
     }
 
     // Old
