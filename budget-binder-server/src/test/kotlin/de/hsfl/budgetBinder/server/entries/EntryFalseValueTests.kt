@@ -10,7 +10,6 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import kotlin.test.*
 
 class EntryFalseValueTests {
-
     @BeforeTest
     fun before() = customTestApplication { client ->
         client.registerUser()
@@ -37,6 +36,66 @@ class EntryFalseValueTests {
             assertEquals(HttpStatusCode.OK, response.status)
             val responseBody: APIResponse<List<Entry>> = response.body()
             val shouldResponse: APIResponse<List<Entry>> = wrapFailure("period has not the right pattern")
+            assertEquals(shouldResponse, responseBody)
+        }
+    }
+
+    @Test
+    fun testGetEntryByIDString() = customTestApplicationWithLogin { client ->
+        client.sendAuthenticatedRequest(HttpMethod.Get, "/entries/test") { response ->
+            assertEquals(HttpStatusCode.OK, response.status)
+            val responseBody: APIResponse<Entry> = response.body()
+            val shouldResponse: APIResponse<Entry> = wrapFailure("The ID you provided is not a number.")
+            assertEquals(shouldResponse, responseBody)
+        }
+    }
+
+    @Test
+    fun testGetEntryByIDNotFound() = customTestApplicationWithLogin { client ->
+        client.sendAuthenticatedRequest(HttpMethod.Get, "/entries/5000") { response ->
+            assertEquals(HttpStatusCode.OK, response.status)
+            val responseBody: APIResponse<Entry> = response.body()
+            val shouldResponse: APIResponse<Entry> = wrapFailure("Your entry was not found.")
+            assertEquals(shouldResponse, responseBody)
+        }
+    }
+
+    @Test
+    fun testPatchEntryByIDString() = customTestApplicationWithLogin { client ->
+        client.sendAuthenticatedRequest(HttpMethod.Patch, "/entries/test") { response ->
+            assertEquals(HttpStatusCode.OK, response.status)
+            val responseBody: APIResponse<Entry> = response.body()
+            val shouldResponse: APIResponse<Entry> = wrapFailure("The ID you provided is not a number.")
+            assertEquals(shouldResponse, responseBody)
+        }
+    }
+
+    @Test
+    fun testPatchEntryByIDNotFound() = customTestApplicationWithLogin { client ->
+        client.sendAuthenticatedRequest(HttpMethod.Patch, "/entries/5000") { response ->
+            assertEquals(HttpStatusCode.OK, response.status)
+            val responseBody: APIResponse<Entry> = response.body()
+            val shouldResponse: APIResponse<Entry> = wrapFailure("Your entry was not found.")
+            assertEquals(shouldResponse, responseBody)
+        }
+    }
+
+    @Test
+    fun testDeleteEntryByIDString() = customTestApplicationWithLogin { client ->
+        client.sendAuthenticatedRequest(HttpMethod.Delete, "/entries/test") { response ->
+            assertEquals(HttpStatusCode.OK, response.status)
+            val responseBody: APIResponse<Entry> = response.body()
+            val shouldResponse: APIResponse<Entry> = wrapFailure("The ID you provided is not a number.")
+            assertEquals(shouldResponse, responseBody)
+        }
+    }
+
+    @Test
+    fun testDeleteEntryByIDNotFound() = customTestApplicationWithLogin { client ->
+        client.sendAuthenticatedRequest(HttpMethod.Delete, "/entries/5000") { response ->
+            assertEquals(HttpStatusCode.OK, response.status)
+            val responseBody: APIResponse<Entry> = response.body()
+            val shouldResponse: APIResponse<Entry> = wrapFailure("Your entry was not found.")
             assertEquals(shouldResponse, responseBody)
         }
     }
