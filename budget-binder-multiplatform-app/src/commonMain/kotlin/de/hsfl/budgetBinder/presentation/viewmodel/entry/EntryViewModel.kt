@@ -62,7 +62,7 @@ class EntryViewModel(
             is EntryEvent.EnteredAmountSign -> _amountSignState.value = !amountSignState.value
             is EntryEvent.OnCreateEntry -> {
                 when (routerFlow.state.value) {
-                    is Screen.Entry.Create -> createEntry(
+                    is Screen.Entry.Create -> create(
                         Entry.In(
                             nameText.value,
                             buildAmount(),
@@ -75,7 +75,7 @@ class EntryViewModel(
             }
             is EntryEvent.OnEditEntry ->
                 when (routerFlow.state.value) {
-                    is Screen.Entry.Edit -> updateEntry(
+                    is Screen.Entry.Edit -> update(
                         Entry.Patch(
                             nameText.value,
                             amountText.value,
@@ -110,9 +110,9 @@ class EntryViewModel(
 
     /* *** Use Case usages *** */
     protected fun getById(id: Int) = scope.launch {
-        entryUseCases.getEntryByIdUseCase(id).collect { it ->
-            it.handleDataResponse<Entry>(routerFlow = routerFlow, onSuccess = {
-                _selectedEntryState.value = it
+        entryUseCases.getEntryByIdUseCase(id).collect {
+            it.handleDataResponse<Entry>(routerFlow = routerFlow, onSuccess = { entry ->
+                _selectedEntryState.value = entry
                 _nameText.value = _selectedEntryState.value.name
                 _amountText.value = _selectedEntryState.value.amount.absoluteValue
                 _amountSignState.value = _selectedEntryState.value.amount >= 0
@@ -123,31 +123,20 @@ class EntryViewModel(
     }
 
     protected fun getCategoryList() = scope.launch {
-        entryUseCases.getCategoryListUseCase()
-            .collect {
-                it.handleDataResponse<List<Category>>(
-                    routerFlow = routerFlow,
-                    onSuccess = { cl -> _categoryListState.value = cl })
-            }
-    }
-
-    fun createEntry(entry: Entry.In) {
-        scope.launch {
-            entryUseCases.createNewEntryUseCase(entry).collect { response ->
-                when (response) {
-                    is DataResponse.Loading -> _eventFlow.emit(UiEvent.ShowLoading)
-                    is DataResponse.Error -> _eventFlow.emit(UiEvent.ShowError(response.error!!.message))
-                    is DataResponse.Success<*> -> {
-                        _eventFlow.emit(UiEvent.ShowSuccess("Entry successfully created")) //TODO?: Change the msg
-                        routerFlow.navigateTo(Screen.Dashboard)
-                    }
-                    is DataResponse.Unauthorized -> _eventFlow.emit(UiEvent.ShowError(response.error!!.message))
-                }
-            }
+        entryUseCases.getCategoryListUseCase().collect {
+            it.handleDataResponse<List<Category>>(
+                routerFlow = routerFlow, onSuccess = { cl -> _categoryListState.value = cl })
         }
     }
 
-    fun updateEntry(entry: Entry.Patch, id: Int) {
+    fun create(entry: Entry.In) = scope.launch {
+        entryUseCases.createNewEntryUseCase(entry).collect {
+            it.handleDataResponse<Entry>(
+                routerFlow = routerFlow, onSuccess = { routerFlow.navigateTo(Screen.Dashboard) })
+        }
+    }
+
+    fun update(entry: Entry.Patch, id: Int) {
         scope.launch {
             entryUseCases.changeEntryByIdUseCase(entry, id).collect { response ->
                 when (response) {
