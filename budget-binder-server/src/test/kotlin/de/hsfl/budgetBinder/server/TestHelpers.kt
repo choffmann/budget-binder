@@ -8,6 +8,7 @@ import io.ktor.client.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.server.testing.*
+import kotlinx.serialization.json.Json
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -29,7 +30,10 @@ fun customTestApplication(block: suspend ApplicationTestBuilder.(client: HttpCli
         }
         val client = createClient {
             install(ContentNegotiation) {
-                json()
+                json(Json {
+                    encodeDefaults = true
+                    prettyPrint = true
+                })
             }
         }
         block(client)
