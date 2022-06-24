@@ -3,6 +3,7 @@ package de.hsfl.budgetBinder.screens.entry
 import androidx.compose.runtime.*
 import de.hsfl.budgetBinder.compose.ChooseCategoryMenu
 import de.hsfl.budgetBinder.compose.theme.AppStylesheet
+import de.hsfl.budgetBinder.presentation.event.LifecycleEvent
 import de.hsfl.budgetBinder.presentation.viewmodel.entry.EntryEvent
 import de.hsfl.budgetBinder.presentation.viewmodel.entry.EntryViewModel
 import di
@@ -32,10 +33,18 @@ fun EntryEditView(
     val amountSign by viewModel.amountSignState.collectAsState()
     //Data
     val categoryList by viewModel.categoryListState.collectAsState()
-    val entry by viewModel.selectedEntryState.collectAsState()
-    console.log("unser Entry ist $entry")
-    console.log("$entryNameTextField und $entryAmountTextField und $entryCategoryIDTextField")
 
+    //LifeCycle
+    LaunchedEffect(Unit) {
+        viewModel.onEvent(EntryEvent.LifeCycle(LifecycleEvent.OnLaunch))
+    }
+    DisposableEffect(Unit) {
+        onDispose {
+            viewModel.onEvent(EntryEvent.LifeCycle(LifecycleEvent.OnDispose))
+        }
+    }
+
+    //Webpage Content
     H1(attrs = { classes(AppStylesheet.h1) }) { Text("Edit Entry") }
     Form(attrs = {
         this.addEventListener("submit") {
