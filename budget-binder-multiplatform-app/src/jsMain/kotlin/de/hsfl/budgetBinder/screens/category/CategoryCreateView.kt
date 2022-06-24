@@ -190,22 +190,22 @@ fun CategoryCreateView() {
                 ) { }
             }
         }
-        Button(
-            attrs = {
-                classes("mdc-button", "mdc-button--raised")
-                type(ButtonType.Button)
-                onClick { viewModel.onEvent(CategoryCreateEvent.OnCancel) }
-            }
-        ) {
-            Span(attrs = { classes("mdc-button__label") }
-            ) { Text("Cancel") }
-        }
         //Submit button
         Div(
             attrs = {
                 classes(AppStylesheet.margin)
             }
         ) {
+            Button(
+                attrs = {
+                    classes("mdc-button", "mdc-button--raised", AppStylesheet.marginRight)
+                    type(ButtonType.Button)
+                    onClick { viewModel.onEvent(CategoryCreateEvent.OnCancel) }
+                }
+            ) {
+                Span(attrs = { classes("mdc-button__label") }
+                ) { Text("Cancel") }
+            }
             SubmitInput(
                 attrs = {
                     classes("mdc-button", "mdc-button--raised")
