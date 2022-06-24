@@ -95,35 +95,4 @@ class LoginViewModel(
         _emailText.value = emailText.value.copy(email = "")
         _passwordText.value = passwordText.value.copy(password = "")
     }
-
-
-    // Old
-    private val _state = MutableStateFlow<UiState>(UiState.Empty)
-
-    @Deprecated(message = "Old ViewModel, use the new State")
-    val state: StateFlow<UiState> = _state
-
-    @Deprecated(message = "Use ViewModel function onEvent()")
-    fun _login(email: String, password: String) {
-        authUseCases.loginUseCase(email, password).onEach {
-            when (it) {
-                is DataResponse.Loading -> _state.value = UiState.Loading
-                is DataResponse.Success<*> -> getMyUserDeprecated()
-                is DataResponse.Error -> _state.value = UiState.Error(it.error!!.message)
-                is DataResponse.Unauthorized -> _state.value = UiState.Unauthorized
-            }
-        }.launchIn(scope)
-    }
-
-    @Deprecated(message = "Use new getMyUser function and SharedFlow UiEvents")
-    private fun getMyUserDeprecated() {
-        authUseCases.getMyUserUseCase().onEach {
-            when (it) {
-                is DataResponse.Loading -> _state.value = UiState.Loading
-                is DataResponse.Success<*> -> _state.value = UiState.Success(it.data)
-                is DataResponse.Error -> _state.value = UiState.Error(it.error!!.message)
-                is DataResponse.Unauthorized -> _state.value = UiState.Unauthorized
-            }
-        }.launchIn(scope)
-    }
 }
