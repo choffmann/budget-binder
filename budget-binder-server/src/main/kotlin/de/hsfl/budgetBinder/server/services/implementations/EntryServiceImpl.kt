@@ -49,74 +49,69 @@ class EntryServiceImpl : EntryService {
         }.toDto()
     }
 
-    private fun createOrChangeEntry(
-        oldEntry: EntryEntity,
-        repeat: Boolean?,
-        amount: Float?,
-        category: Entry.Category?,
-        categoryEntity: CategoryEntity?
-    ): EntryEntity? {
-        val now = LocalDateTime.now()
-        val period = LocalDateTime.of(now.year, now.month.value, 1, 0, 0)
-
-        if (!oldEntry.repeat || (repeat != false && amount == null) || oldEntry.created > period) {
-            if (category == null) {
-                return oldEntry
-            }
-            val entryPeriod = LocalDateTime.of(oldEntry.created.year, oldEntry.created.month.value, 1, 0, 0)
-
-            if (entryPeriod == period) {
-                return oldEntry
-            }
-
-            if (categoryEntity == null) {
-                if (!oldEntry.repeat) {
-                    return oldEntry
-                }
-            } else {
-                val categoryPeriod =
-                    LocalDateTime.of(categoryEntity.created.year, categoryEntity.created.month.value, 1, 0, 0)
-
-                if (!oldEntry.repeat && categoryPeriod > entryPeriod) {
-                    return null
-                }
-                if (!oldEntry.repeat) {
-                    return oldEntry
-                }
-            }
-        }
-
-        val newEntry = oldEntry.createChild()
-        oldEntry.child = newEntry.id
-        oldEntry.ended = now
-
-        return newEntry
-    }
-
-
     override fun changeEntry(userId: Int, entryId: Int, entry: Entry.Patch): Entry? = transaction {
-        var entryEntity: EntryEntity? = EntryEntity[entryId]
-        if (entryEntity!!.ended != null) {
+        var entryEntity = EntryEntity[entryId]
+        if (entryEntity.ended != null) {
             return@transaction null
         }
 
-        val categoryEntity = entry.category?.let { getCategoryByID(userId, it.id) }
-
-        if (categoryEntity?.ended != null) {
-            return@transaction null
-        }
-        entryEntity = createOrChangeEntry(entryEntity, entry.repeat, entry.amount, entry.category, categoryEntity)
-
-        if (entryEntity == null) {
-            return@transaction null
+        if (entry.category == null) {
+            if (!canEntryBeChanged(entryEntity, entry.repeat, entry.amount))
+                entryEntity = entryEntity.createChild()
+        } else {
+            val categoryEntity = entry.category?.let { getCategoryByID(userId, it.id) }
+            val maybeEntity = changeEntryWithCategoryChange(entryEntity, entry.repeat, entry.amount, categoryEntity)
+            maybeEntity?.let {
+                entryEntity = it
+                it.category = categoryEntity?.id
+            } ?: return@transaction null
         }
 
         entry.name?.let { entryEntity.name = it }
         entry.amount?.let { entryEntity.amount = it }
         entry.repeat?.let { entryEntity.repeat = it }
-        entry.category?.let { entryEntity.category = categoryEntity?.id }
-
         entryEntity.toDto()
+    }
+
+    private fun changeEntryWithCategoryChange(
+        oldEntry: EntryEntity,
+        repeat: Boolean?,
+        amount: Float?,
+        categoryEntity: CategoryEntity?
+    ): EntryEntity? {
+        if (!canEntryBeChanged(oldEntry, repeat, amount)) {
+            return oldEntry.createChild()
+        }
+        val now = LocalDateTime.now()
+        val period = LocalDateTime.of(now.year, now.month.value, 1, 0, 0)
+        val entryPeriod = LocalDateTime.of(oldEntry.created.year, oldEntry.created.month.value, 1, 0, 0)
+
+        if (entryPeriod == period) {
+            return oldEntry
+        }
+
+        if (oldEntry.repeat) {
+            return oldEntry.createChild()
+        }
+
+        if (categoryEntity == null) {
+            return oldEntry
+        }
+
+        val categoryPeriod = LocalDateTime.of(categoryEntity.created.year, categoryEntity.created.month.value, 1, 0, 0)
+
+        if (categoryPeriod > entryPeriod) {
+            return null
+        }
+
+        return oldEntry
+    }
+
+    private fun canEntryBeChanged(oldEntry: EntryEntity, repeat: Boolean?, amount: Float?): Boolean {
+        val now = LocalDateTime.now()
+        val period = LocalDateTime.of(now.year, now.month.value, 1, 0, 0)
+
+        return !oldEntry.repeat || (repeat != false && amount == null) || oldEntry.created > period
     }
 
     override fun deleteEntry(entryId: Int): Entry? = transaction {
