@@ -76,6 +76,10 @@ object AppStylesheet : StyleSheet() {
         textAlign("center")
         padding(10.px)
     }
+    val leftText by style {
+        textAlign("left")
+        padding(10.px)
+    }
 
     //EntryList
     val entryListElement by style {
@@ -109,10 +113,13 @@ object AppStylesheet : StyleSheet() {
     }
 
     val imageFlexContainer by style {
+        flex("0.1 0.1 0%")
+        height(auto)
+    }
+    val colorFlexContainer by style {
         flex("0.1 0.1 5%")
         height(auto)
     }
-
 
     val card by style {
         margin(10.px)
@@ -121,6 +128,10 @@ object AppStylesheet : StyleSheet() {
 
     val image by style {
         padding(0.px)
+    }
+    val extraImagePadding by style {
+        paddingLeft(8.px)
+        paddingRight(8.px)
     }
 
     val margin by style {

@@ -75,6 +75,25 @@ fun NavBar(content: @Composable () -> Unit) {
                             "mdc-top-app-bar__navigation-icon",
                             AppStylesheet.marginRight
                         )
+                        onClick { viewModel.onEvent(NavDrawerEvent.OnDashboard) }
+                    }
+                ) {
+                    Span(
+                        attrs = {
+                            classes("mdc-button__label")
+                        }
+                    ) {
+                        Text("Dashboard")
+                    }
+                }
+                Button(
+                    attrs = {
+                        classes(
+                            "mdc-button",
+                            "mdc-button--raised",
+                            "mdc-top-app-bar__navigation-icon",
+                            AppStylesheet.marginRight
+                        )
                         onClick { viewModel.onEvent(NavDrawerEvent.OnCategory) }
                     }
                 ) {

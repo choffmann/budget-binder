@@ -2,10 +2,7 @@ package de.hsfl.budgetBinder.screens.dashboard
 
 import androidx.compose.runtime.*
 import de.hsfl.budgetBinder.common.Category
-import de.hsfl.budgetBinder.compose.BudgetBar
-import de.hsfl.budgetBinder.compose.Icon
-import de.hsfl.budgetBinder.compose.MainFlexContainer
-import de.hsfl.budgetBinder.compose.NavBar
+import de.hsfl.budgetBinder.compose.*
 import de.hsfl.budgetBinder.compose.theme.AppStylesheet
 import de.hsfl.budgetBinder.presentation.CategoryImageToIcon
 import de.hsfl.budgetBinder.presentation.event.LifecycleEvent
@@ -207,12 +204,14 @@ fun EntryListElement(
         classes("mdc-card", "mdc-card--outlined", AppStylesheet.entryListElement)
         onClick { onItemClicked(entry.entry.id) }
     }) {
-        CategoryImageToIcon(entry.categoryImage)
+        Div(attrs = { classes(AppStylesheet.entryListElementText, AppStylesheet.extraImagePadding, AppStylesheet.imageFlexContainer) }) {
+            CategoryImageToIcon(entry.categoryImage)
+            }
         Div(attrs = { classes(AppStylesheet.entryListElementText) }) {
             Div(attrs = {
                 classes(
                     "mdc-typography--headline5",
-                    AppStylesheet.text
+                    AppStylesheet.leftText
                 )
             }) { Text(entry.entry.name) }
         }

@@ -210,7 +210,7 @@ class DashboardViewModel(
             _focusedCategoryState.value = focusedCategoryState.value.copy(
                 hasPrev = false,
                 hasNext = true,
-                category = Category(0, "Overall", "111111", Category.Image.DEFAULT, totalBudget)
+                category = Category(0, "Overall", "1675d1", Category.Image.DEFAULT, totalBudget)
             )
             calcSpendBudgetOnCategory(entryList)
             fillEntryListStateWithResult(entryList)
