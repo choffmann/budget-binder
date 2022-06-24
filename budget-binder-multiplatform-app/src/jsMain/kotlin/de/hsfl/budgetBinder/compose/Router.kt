@@ -33,10 +33,6 @@ fun Router() {
         is Screen.Category.Edit -> CategoryComponent() //Okay this seems to be necessary or CategoryComponent won't refresh, so no 'is Screen.Category -> ...'
         is Screen.Category.Create -> CategoryComponent()
         is Screen.Category.Summary -> CategoryComponent()
-        is Screen.CategorySummary, is Screen.CategoryEdit, is Screen.CategoryCreate, is Screen.CategoryCreateOnRegister
-        -> Text("Old Category") //CategoryComponent(screenState = screenState)
-        is Screen.EntryCreate, is Screen.EntryEdit, is Screen.EntryOverview
-        -> Text("Old Entry")//EntryComponent(screenState = screenState)
         else -> {
             Text("No known Screen! Check if the screen you're trying to reach is in the ScreenRouter")
         }
