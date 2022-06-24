@@ -44,11 +44,9 @@ fun EntryEditView() {
                 onAmountChanged = { viewModel.onEvent(EntryEvent.EnteredAmount(it)) },
                 onRepeatChanged = { viewModel.onEvent(EntryEvent.EnteredRepeat) },
                 onAmountSignChanged = { viewModel.onEvent(EntryEvent.EnteredAmountSign) },
-                onCategoryIdChanged = {})
-
-            Button(onClick = {}) {
-                Text("Cancel")
-            }
+                onCategoryIdChanged = {},
+                onCancel = { viewModel.onEvent(EntryEvent.OnCancel) }
+            )
         }
     }
 
