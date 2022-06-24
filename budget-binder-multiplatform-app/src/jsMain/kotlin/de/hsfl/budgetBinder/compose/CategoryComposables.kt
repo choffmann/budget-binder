@@ -215,7 +215,7 @@ fun CategoryDetailed(
             }
             ) {
                 Span(attrs = { classes("mdc-button__label") }
-                ) { Text("Cancel") }
+                ) { Text("Go back") }
             }
             Button(attrs = {
                 classes("mdc-button", "mdc-button--raised")

@@ -30,7 +30,9 @@ fun Router() {
         is Screen.Settings -> SettingsComponent()
         is Screen.Entry -> EntryComponent()
         is Screen.Category.Detail -> CategoryComponent() //To avoid weird bug where it doesn't refresh itself? I don't understand either ...
-        is Screen.Category -> CategoryComponent()
+        is Screen.Category.Edit -> CategoryComponent() //Okay this seems to be necessary or CategoryComponent won't refresh, so no 'is Screen.Category -> ...'
+        is Screen.Category.Create -> CategoryComponent()
+        is Screen.Category.Summary -> CategoryComponent()
         is Screen.CategorySummary, is Screen.CategoryEdit, is Screen.CategoryCreate, is Screen.CategoryCreateOnRegister
         -> Text("Old Category") //CategoryComponent(screenState = screenState)
         is Screen.EntryCreate, is Screen.EntryEdit, is Screen.EntryOverview
