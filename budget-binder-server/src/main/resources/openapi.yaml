@@ -308,7 +308,7 @@ paths:
           description: ID of your Category
           required: true
           schema:
-            type: integer
+            type: string
         - name: current
           in: query
           description: only get current entries

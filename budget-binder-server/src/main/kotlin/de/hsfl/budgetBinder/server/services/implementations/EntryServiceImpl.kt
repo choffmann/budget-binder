@@ -143,8 +143,13 @@ class EntryServiceImpl : EntryService {
         val userEntity = UserEntity[userId]
 
         if (categoryId == "null") {
-            val entries = EntryEntity.find { Entries.category eq null and (Entries.user eq userEntity.id) }
-            APIResponse(data = entries.map { it.toDto() }, success = true)
+            EntryEntity.find { Entries.category eq null and (Entries.user eq userEntity.id) }.let { entryEntities ->
+                period?.let {
+                    entryEntities.filter { filterEntriesByPeriod(it, period) }
+                } ?: entryEntities
+            }.let { entries ->
+                APIResponse(data = entries.map { it.toDto() }, success = true)
+            }
         } else {
             categoryId?.toIntOrNull()?.let { id ->
                 userEntity.categories.firstOrNull { it.id.value == id }?.let { categoryEntity ->
