@@ -15,7 +15,6 @@ import kotlin.test.*
 import kotlin.test.assertEquals
 
 class RegisterTests {
-
     @AfterTest
     fun deleteTestUser() = transaction {
         UserEntity.all().forEach { it.delete() }

@@ -12,7 +12,6 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import kotlin.test.*
 
 class UserTests {
-
     @BeforeTest
     fun registerTestUser() = customTestApplication { client ->
         client.registerUser()

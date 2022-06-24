@@ -17,7 +17,6 @@ import io.ktor.server.routing.*
 import org.kodein.di.instance
 import org.kodein.di.ktor.closestDI
 
-
 fun Route.login() {
     authenticate("auth-form") {
         post("/login") {

@@ -6,7 +6,6 @@ import io.ktor.http.*
 import kotlin.test.*
 
 class BaseRoutesTests {
-
     @Test
     fun testGetOpenApi() = customTestApplication { client ->
         client.get("/openapi.json").let { response ->

@@ -133,6 +133,5 @@ class CustomCookieStorage : CookiesStorage {
         oldestCookie = newOldest
     }
 
-    override fun close() {
-    }
+    override fun close() {}
 }

@@ -2,7 +2,6 @@ package de.hsfl.budgetBinder.server.config
 
 import java.io.File
 
-
 data class Config(val server: Server, val database: Database, val jwt: JWT) {
     data class Server(
         val dev: Boolean,
