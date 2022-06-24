@@ -29,6 +29,7 @@ import de.hsfl.budgetBinder.presentation.viewmodel.navdrawer.NavDrawerViewModel
 import de.hsfl.budgetBinder.presentation.viewmodel.settings.SettingsEditServerUrlViewModel
 import de.hsfl.budgetBinder.presentation.viewmodel.settings.SettingsEditUserViewModel
 import de.hsfl.budgetBinder.presentation.viewmodel.settings.SettingsViewModel
+import de.hsfl.budgetBinder.presentation.viewmodel.welcome.WelcomeViewModel
 import io.ktor.client.engine.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -92,6 +93,7 @@ fun kodein(ktorEngine: HttpClientEngine) = DI {
     bindSingleton { UiEventSharedFlow }
 
     // ViewModels
+    bindSingleton { WelcomeViewModel(instance()) }
     bindSingleton { LoginViewModel(instance(), instance(), instance(), instance()) }
     bindSingleton { RegisterViewModel(instance(), instance(), instance(), instance()) }
     bindSingleton { SettingsViewModel(instance(), instance(), instance(), instance()) }
