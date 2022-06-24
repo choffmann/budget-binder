@@ -32,7 +32,7 @@ fun MainFlexContainer(content: @Composable () -> Unit) {
                 content()
             }
         }
-        Div (attrs = { classes(AppStylesheet.pufferFlexContainer)})
+        Div(attrs = { classes(AppStylesheet.pufferFlexContainer) })
     }
 }
 
@@ -180,7 +180,6 @@ fun CategoryImagesToImageList(
 }
 
 
-
 @Composable
 fun DeleteDialog(
     hidden: Boolean,
@@ -294,10 +293,14 @@ fun ChooseCategoryMenu(
     selectedCategory: Int?,
     getCategoryId: (Int?) -> Unit
 ) {
-    console.log(categoryList)
-    var choseCat = categoryList[0]
-
+    var categoryListWN = listOf(Category.Nullable(null, "No Category", "ffffff", Category.Image.DEFAULT, 0f))
     for (category in categoryList) {
+        categoryListWN = categoryListWN + (Category.Nullable(category.id, category.name, category.color, category.image, category.budget))
+    }
+    console.log(categoryList)
+    var choseCat = categoryListWN[0]
+
+    for (category in categoryListWN) {
         if (category.id == selectedCategory) {
             choseCat = category
             break
@@ -330,14 +333,14 @@ fun ChooseCategoryMenu(
                 attr("aria-orientation", "vertical")
                 attr("tabindex", "-1")
             }) {
-                for (category in categoryList) {
+                for (category in categoryListWN) {
                     Li(attrs = {
                         classes("mdc-list-item")
                         attr("role", "menuitem")
                         onClick { chosenCategory = category; getCategoryId(category.id) }
                     }) {
                         Span(attrs = { classes("mdc-list-item__ripple") }) { }
-                        Span(attrs = { classes(AppStylesheet.moneyText)}) { Text(category.name) }
+                        Span(attrs = { classes(AppStylesheet.moneyText) }) { Text(category.name) }
                     }
                 }
             }
