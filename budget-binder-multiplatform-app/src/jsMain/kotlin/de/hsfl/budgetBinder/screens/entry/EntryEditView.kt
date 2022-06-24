@@ -35,11 +35,8 @@ fun EntryEditView(
     val entry by viewModel.selectedEntryState.collectAsState()
     console.log("unser Entry ist $entry")
     console.log("$entryNameTextField und $entryAmountTextField und $entryCategoryIDTextField")
-    H1(
-        attrs = {
-            style { margin(2.percent) }
-        }
-    ) { Text("Edit Entry") }
+
+    H1(attrs = { classes(AppStylesheet.h1) }) { Text("Edit Entry") }
     Form(attrs = {
         this.addEventListener("submit") {
             onEditButton()
@@ -174,7 +171,7 @@ fun EntryEditView(
             Div(attrs = { style { flex(50.percent) } }) {
                 Div(attrs = { classes("mdc-form-field") }) {
                     Div(attrs = { classes("mdc-checkbox") }) {
-                        CheckboxInput (attrs =
+                        CheckboxInput(attrs =
                         {
                             checked(entryRepeat)
                             classes("mdc-checkbox__native-control")
@@ -199,10 +196,12 @@ fun EntryEditView(
                     Label(forId = "checkbox-1") { Text("repeat") }
                 }
             }
-            Div(attrs = { style {
-                flex(50.percent)
-                alignItems(AlignItems.Stretch)
-            } }) {
+            Div(attrs = {
+                style {
+                    flex(50.percent)
+                    alignItems(AlignItems.Stretch)
+                }
+            }) {
                 ChooseCategoryMenu(categoryList, entryCategoryIDTextField) { id ->
                     viewModel.onEvent(EntryEvent.EnteredCategoryID(id))
                 }

@@ -1,6 +1,7 @@
 package de.hsfl.budgetBinder.screens.category
 
 import androidx.compose.runtime.*
+import de.hsfl.budgetBinder.compose.theme.AppStylesheet
 import de.hsfl.budgetBinder.presentation.UiState
 import org.jetbrains.compose.web.dom.Button
 import org.jetbrains.compose.web.dom.Div
@@ -14,7 +15,7 @@ fun CategoryCreateOnRegisterView(
     onFinishedButton: () -> Unit
 ) {
     val viewState by remember { state }
-    H1{Text("CategoryCreateOnRegisterView")}
+    H1(attrs = { classes(AppStylesheet.h1) }) {Text("CategoryCreateOnRegisterView")}
     Div {
         when (viewState) {
             is UiState.Success<*> -> {

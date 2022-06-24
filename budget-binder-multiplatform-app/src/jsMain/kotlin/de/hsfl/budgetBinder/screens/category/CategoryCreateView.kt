@@ -32,11 +32,7 @@ fun CategoryCreateView() {
     }
 
     //Webpage Content
-    H1(
-        attrs = {
-            style { margin(2.percent) }
-        }
-    ) { Text("Create a new Category") }
+    H1(attrs = { classes(AppStylesheet.h1) }) { Text("Create a new Category") }
     Form(attrs = {
         this.addEventListener("submit") {
             viewModel.onEvent(CategoryCreateEvent.OnSave)
@@ -169,6 +165,7 @@ fun CategoryCreateView() {
                 Input(
                     type = InputType.Number
                 ) {
+                    attr("step", "0.01")
                     classes("mdc-text-field__input")
                     value(categoryBudgetState)
                     required(true)

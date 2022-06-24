@@ -39,6 +39,7 @@ object AppStylesheet : StyleSheet() {
         display(DisplayStyle.Flex)
         justifyContent(JustifyContent.Center)
     }
+
     //Container for empty sides, used in MainFlexContainer
     val pufferFlexContainer by style {
         media(mediaMaxWidth(1000.px)) {
@@ -48,15 +49,18 @@ object AppStylesheet : StyleSheet() {
         }
         flex("25%")
     }
+
     //Container for main content, used in MainFlexContainer
     val contentFlexContainer by style {
         flex("50%")
         position(Position.Relative)
     }
+
     //Container for main content in BudgetBar
     val budgetBarContainer by style {
         flex("90%")
     }
+
     //Container for arrow in BudgetBar
     val arrowFlexContainer by style {
         flex("0.1 0.1 5%")
@@ -64,7 +68,7 @@ object AppStylesheet : StyleSheet() {
     }
 
 
-    val categoryImageList by style{
+    val categoryImageList by style {
         justifyContent(JustifyContent.Center)
     }
 
@@ -72,34 +76,35 @@ object AppStylesheet : StyleSheet() {
         textAlign("center")
         padding(10.px)
     }
+
     //EntryList
-    val entryListElement by style{
+    val entryListElement by style {
         flexDirection(FlexDirection("row"))
         alignItems(AlignItems.Center)
         margin(10.px)
         marginTop(0.px)
     }
-    val entryListElementText by style{
+    val entryListElementText by style {
         flex("2 2 90%")
     }
-    val moneyText by style{
+    val moneyText by style {
         textAlign("center")
         padding(10.px)
         whiteSpace("nowrap")
     }
-    val newEntryButton by style{
+    val newEntryButton by style {
         position(Position.Fixed)
         bottom(16.px)
         marginRight(20.px)
     }
-    val categoryListElement by style{
+    val categoryListElement by style {
         flexDirection(FlexDirection("row"))
         alignItems(AlignItems.Center)
         margin(10.px)
         marginTop(0.px)
     }
 
-    val categoryListElementText by style{
+    val categoryListElementText by style {
         flex("2 2 90%")
     }
 
@@ -126,11 +131,15 @@ object AppStylesheet : StyleSheet() {
         marginRight(1.percent)
     }
 
-    val loadingImage by style{
-        property("z-index",1)
+    val loadingImage by style {
+        property("z-index", 1)
         width(20.percent)
         position(Position.Fixed)
         top(40.percent)
         left(40.percent)
+    }
+
+    val h1 by style {
+        margin(2.percent)
     }
 }

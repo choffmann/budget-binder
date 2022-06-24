@@ -29,11 +29,7 @@ fun EntryCreateView(
     //Data
     val categoryList by viewModel.categoryListState.collectAsState()
 
-    H1(
-        attrs = {
-            style { margin(2.percent) }
-        }
-    ) { Text("Create new Entry") }
+    H1(attrs = { classes(AppStylesheet.h1) }) { Text("Create new Entry") }
     Form(attrs = {
         this.addEventListener("submit") {
             onCreateButton()

@@ -100,7 +100,7 @@ fun LoginComponent() {
 
     MainFlexContainer {
         // -- Login Form --
-        H1 { Text(" Login") }
+        H1(attrs = { classes(AppStylesheet.h1) }) { Text("Login") }
         Form(
             attrs = {
                 this.addEventListener("submit") {

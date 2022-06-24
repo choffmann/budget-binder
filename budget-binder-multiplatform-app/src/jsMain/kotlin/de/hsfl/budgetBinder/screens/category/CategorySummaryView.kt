@@ -2,11 +2,10 @@ package de.hsfl.budgetBinder.screens.category
 
 import androidx.compose.runtime.*
 import de.hsfl.budgetBinder.compose.CategoryList
+import de.hsfl.budgetBinder.compose.theme.AppStylesheet
 import de.hsfl.budgetBinder.presentation.event.LifecycleEvent
-import de.hsfl.budgetBinder.presentation.event.UiEvent
 import de.hsfl.budgetBinder.presentation.viewmodel.category.summary.CategorySummaryEvent
 import de.hsfl.budgetBinder.presentation.viewmodel.category.summary.CategorySummaryViewModel
-import de.hsfl.budgetBinder.presentation.viewmodel.dashboard.DashboardEvent
 import di
 import kotlinx.coroutines.flow.collectLatest
 import org.jetbrains.compose.web.css.margin
@@ -29,11 +28,7 @@ fun CategorySummaryView(
     }
 
     //Webpage Content
-    H1(
-        attrs = {
-            style { margin(2.percent) }
-        }
-    ) { Text(" Category Summary") }
+    H1(attrs = { classes(AppStylesheet.h1) }) { Text(" Category Summary") }
     Button(attrs = {
         classes("mdc-button", "mdc-button--raised")
         onClick { viewModel.onEvent(CategorySummaryEvent.OnCategoryCreate) }

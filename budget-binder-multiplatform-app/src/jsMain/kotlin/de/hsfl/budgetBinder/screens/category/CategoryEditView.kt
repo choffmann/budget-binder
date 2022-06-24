@@ -1,16 +1,11 @@
 package de.hsfl.budgetBinder.screens.category
 
 import androidx.compose.runtime.*
-import de.hsfl.budgetBinder.common.Category
 import de.hsfl.budgetBinder.compose.CategoryImagesToImageList
-import de.hsfl.budgetBinder.compose.MainFlexContainer
 import de.hsfl.budgetBinder.compose.theme.AppStylesheet
-import de.hsfl.budgetBinder.compose.topBarMain
-import de.hsfl.budgetBinder.presentation.UiState
 import de.hsfl.budgetBinder.presentation.event.LifecycleEvent
 import de.hsfl.budgetBinder.presentation.viewmodel.category.edit.CategoryEditEvent
 import de.hsfl.budgetBinder.presentation.viewmodel.category.edit.CategoryEditViewModel
-import de.hsfl.budgetBinder.presentation.viewmodel.entry.EntryEvent
 import di
 import org.jetbrains.compose.web.attributes.*
 import org.jetbrains.compose.web.css.*
@@ -37,7 +32,7 @@ fun CategoryEditView() {
     }
 
     //Webpage Content
-    H1(attrs = { style { margin(2.percent) } }) { Text("Edit Category") }
+    H1(attrs = { classes(AppStylesheet.h1) }) { Text("Edit Category") }
 
     Form(attrs = {
         this.addEventListener("submit") {

@@ -12,7 +12,6 @@ import di
 import kotlinx.coroutines.flow.collectLatest
 import org.jetbrains.compose.web.attributes.InputType
 import org.jetbrains.compose.web.attributes.required
-import org.jetbrains.compose.web.css.marginLeft
 import org.jetbrains.compose.web.css.percent
 import org.jetbrains.compose.web.css.width
 import org.jetbrains.compose.web.dom.*
@@ -40,11 +39,7 @@ fun SettingsChangeUserDataView() {
     }
     NavBar {}
     MainFlexContainer {
-        H1(
-            attrs = {
-                style { marginLeft(2.percent) }
-            }
-        )  { Text("Change User Data") }
+        H1(attrs = { classes(AppStylesheet.h1) }) { Text("Change User Data") }
         Form(attrs = {
             this.addEventListener("submit") {
                 if (!confirmedPasswordText.value.confirmedPasswordIsValid) {

@@ -108,11 +108,7 @@ fun RegisterComponent() {
 
     MainFlexContainer {
         // -- Register Form --
-        H1(
-            attrs = {
-                style { marginLeft(2.percent) }
-            }
-        ) { Text("Register") }
+        H1(attrs = { classes(AppStylesheet.h1) }) { Text("Register") }
         Form(attrs = { //Probably possible with just a button OnClick instead of Form&Submit
             this.addEventListener("submit") {
                 console.log("$firstNameTextState, $lastNameTextState, $emailTextState, $passwordTextState")

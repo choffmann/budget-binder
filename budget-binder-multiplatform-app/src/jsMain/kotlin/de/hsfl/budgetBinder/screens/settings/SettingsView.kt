@@ -20,11 +20,7 @@ fun SettingsView() {
 
     NavBar { }
     MainFlexContainer {
-        H1(
-            attrs = {
-                style { marginLeft(2.percent) }
-            }
-        ) { Text("Settings") }
+        H1(attrs = { classes(AppStylesheet.h1) }) { Text("Settings") }
         Div(
             attrs = {
                 classes(AppStylesheet.margin, AppStylesheet.flexContainer)
@@ -64,8 +60,10 @@ fun SettingsView() {
                 attrs = {
                     classes("mdc-button", "mdc-button--raised")
                     onClick { deleteDialog = true }
-                    style { flex(100.percent)
-                            backgroundColor(Color("#b00020"))}
+                    style {
+                        flex(100.percent)
+                        backgroundColor(Color("#b00020"))
+                    }
                 }
             ) {
                 Text("Delete User")
