@@ -146,4 +146,21 @@ object AppStylesheet : StyleSheet() {
     val width by style {
         width(100.percent)
     }
+
+    val flex50 by style {
+        flex(50.percent)
+    }
+
+    val flex100 by style {
+        flex(100.percent)
+    }
+
+    val deleteButton by style {
+        backgroundColor(Color("#b00020"))
+    }
+
+    val buttonOverview by style {
+        flex(33.percent)
+        margin(1.5.percent)
+    }
 }

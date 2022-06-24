@@ -127,8 +127,7 @@ fun RegisterComponent() {
             ) {
                 Label(
                     attrs = {
-                        classes("mdc-text-field", "mdc-text-field--filled")
-                        style { width(100.percent) }
+                        classes("mdc-text-field", "mdc-text-field--filled", AppStylesheet.width)
                     }
                 ) {
                     Span(
@@ -165,8 +164,7 @@ fun RegisterComponent() {
             ) {
                 Label(
                     attrs = {
-                        classes("mdc-text-field", "mdc-text-field--filled")
-                        style { width(100.percent) }
+                        classes("mdc-text-field", "mdc-text-field--filled", AppStylesheet.width)
                     }
                 ) {
                     Span(
@@ -203,8 +201,7 @@ fun RegisterComponent() {
             ) {
                 Label(
                     attrs = {
-                        classes("mdc-text-field", "mdc-text-field--filled")
-                        style { width(100.percent) }
+                        classes("mdc-text-field", "mdc-text-field--filled", AppStylesheet.width)
                     }
                 ) {
                     Span(
@@ -240,8 +237,7 @@ fun RegisterComponent() {
             ) {
                 Label(
                     attrs = {
-                        classes("mdc-text-field", "mdc-text-field--filled")
-                        style { width(100.percent) }
+                        classes("mdc-text-field", "mdc-text-field--filled", AppStylesheet.width)
                     }
                 ) {
                     Span(
@@ -276,8 +272,7 @@ fun RegisterComponent() {
             ) {
                 Label(
                     attrs = {
-                        classes("mdc-text-field", "mdc-text-field--filled")
-                        style { width(100.percent) }
+                        classes("mdc-text-field", "mdc-text-field--filled", AppStylesheet.width)
                     }
                 ) {
                     Span(

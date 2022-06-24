@@ -51,8 +51,7 @@ fun EntryEditView(
         ) {
             Label(
                 attrs = {
-                    classes("mdc-text-field", "mdc-text-field--filled")
-                    style { width(100.percent) }
+                    classes("mdc-text-field", "mdc-text-field--filled", AppStylesheet.width)
                 }
             ) {
                 Span(
@@ -89,8 +88,7 @@ fun EntryEditView(
         ) {
             Label(
                 attrs = {
-                    classes("mdc-text-field", "mdc-text-field--outlined")
-                    style { width(100.percent) }
+                    classes("mdc-text-field", "mdc-text-field--outlined", AppStylesheet.width)
                 }
             ) {
                 Span(
@@ -168,7 +166,7 @@ fun EntryEditView(
                 classes(AppStylesheet.margin, AppStylesheet.flexContainer)
             }
         ) {
-            Div(attrs = { style { flex(50.percent) } }) {
+            Div(attrs = { classes(AppStylesheet.flex50) }) {
                 Div(attrs = { classes("mdc-form-field") }) {
                     Div(attrs = { classes("mdc-checkbox") }) {
                         CheckboxInput(attrs =
@@ -197,10 +195,8 @@ fun EntryEditView(
                 }
             }
             Div(attrs = {
-                style {
-                    flex(50.percent)
-                    alignItems(AlignItems.Stretch)
-                }
+                classes(AppStylesheet.flex50)
+                style { alignItems(AlignItems.Stretch) }
             }) {
                 ChooseCategoryMenu(categoryList, entryCategoryIDTextField) { id ->
                     viewModel.onEvent(EntryEvent.EnteredCategoryID(id))

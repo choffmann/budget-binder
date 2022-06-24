@@ -44,8 +44,7 @@ fun EntryCreateView(
         ) {
             Label(
                 attrs = {
-                    classes("mdc-text-field", "mdc-text-field--filled")
-                    style { width(100.percent) }
+                    classes("mdc-text-field", "mdc-text-field--filled", AppStylesheet.width)
                 }
             ) {
                 Span(
@@ -82,8 +81,7 @@ fun EntryCreateView(
         ) {
             Label(
                 attrs = {
-                    classes("mdc-text-field", "mdc-text-field--outlined")
-                    style { width(100.percent) }
+                    classes("mdc-text-field", "mdc-text-field--outlined", AppStylesheet.width)
                 }
             ) {
                 Span(
@@ -161,7 +159,7 @@ fun EntryCreateView(
                 classes(AppStylesheet.margin, AppStylesheet.flexContainer)
             }
         ) {
-            Div(attrs = { style { flex(50.percent) } }) {
+            Div(attrs = { classes(AppStylesheet.flex50) }) {
                 Div(attrs = { classes("mdc-form-field") }) {
                     Div(attrs = { classes("mdc-checkbox") }) {
                         Input(type = InputType.Checkbox)
@@ -188,7 +186,7 @@ fun EntryCreateView(
                     Label(forId = "checkbox-1") { Text("repeat") }
                 }
             }
-            Div(attrs = { style { flex(50.percent) } }) {
+            Div(attrs = { classes(AppStylesheet.flex50) }) {
                 ChooseCategoryMenu(categoryList, entryCategoryIDTextField) { id ->
                     viewModel.onEvent(EntryEvent.EnteredCategoryID(id))
                 }

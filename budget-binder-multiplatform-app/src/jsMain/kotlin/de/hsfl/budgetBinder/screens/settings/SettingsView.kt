@@ -28,9 +28,8 @@ fun SettingsView() {
         ) {
             Button(
                 attrs = {
-                    classes("mdc-button", "mdc-button--raised")
+                    classes("mdc-button", "mdc-button--raised", AppStylesheet.flex100)
                     onClick { viewModel.onEvent(SettingsEvent.OnChangeToSettingsUserEdit) }
-                    style { flex(100.percent) }
                 }
             ) {
                 Text("Change Userdata")
@@ -43,9 +42,8 @@ fun SettingsView() {
         ) {
             Button(
                 attrs = {
-                    classes("mdc-button", "mdc-button--raised")
+                    classes("mdc-button", "mdc-button--raised", AppStylesheet.flex100)
                     onClick { viewModel.onEvent(SettingsEvent.OnLogoutAllDevices) }
-                    style { flex(100.percent) }
                 }
             ) {
                 Text("Logout on all device")
@@ -58,12 +56,8 @@ fun SettingsView() {
         ) {
             Button(
                 attrs = {
-                    classes("mdc-button", "mdc-button--raised")
+                    classes("mdc-button", "mdc-button--raised", AppStylesheet.flex100, AppStylesheet.deleteButton)
                     onClick { deleteDialog = true }
-                    style {
-                        flex(100.percent)
-                        backgroundColor(Color("#b00020"))
-                    }
                 }
             ) {
                 Text("Delete User")

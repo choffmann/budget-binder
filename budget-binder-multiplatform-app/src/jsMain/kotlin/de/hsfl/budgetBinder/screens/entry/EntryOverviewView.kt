@@ -74,35 +74,22 @@ fun EntryOverview(
         }
     ) {
         Button(attrs = {
-            classes("mdc-button", "mdc-button--raised")
+            classes("mdc-button", "mdc-button--raised", AppStylesheet.buttonOverview)
             onClick { onCancel() }
-            style {
-                flex(33.percent)
-                margin(1.5.percent)
-            }
         }
         ) {
             Span(attrs = { classes("mdc-button__label") }
             ) { Text("Cancel") }
         }
         Button(attrs = {
-            classes("mdc-button", "mdc-button--raised")
+            classes("mdc-button", "mdc-button--raised", AppStylesheet.buttonOverview)
             onClick { onEditButton() }
-            style {
-                flex(33.percent)
-                margin(1.5.percent)
-            }
         }) {
             Text("Edit Entry")
         }
         Button(attrs = {
-            classes("mdc-button", "mdc-button--raised")
+            classes("mdc-button", "mdc-button--raised", AppStylesheet.deleteButton, AppStylesheet.buttonOverview)
             onClick { onDeleteButton() }
-            style {
-                flex(33.percent)
-                margin(1.5.percent)
-                backgroundColor(Color("#b00020"))
-            }
         }) {
             Text("Delete Entry")
         }
