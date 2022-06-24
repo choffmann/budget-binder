@@ -42,11 +42,14 @@ fun App() = withDI(di) {
                     snackBarText.value = event.msg
                     snackBarHidden.value = false
                 }
+                is UiEvent.HideSuccess -> {
+                    loadingState.value = false
+                }
                 else -> {}
             }
         }
     }
-    if (!loadingState.value) { // I don't understand why it needs to be inverted to work?
+    if (loadingState.value) {
         Img(
             src = "images/Loading.gif", alt = "Loading", attrs = {
                 classes(AppStylesheet.loadingImage)
