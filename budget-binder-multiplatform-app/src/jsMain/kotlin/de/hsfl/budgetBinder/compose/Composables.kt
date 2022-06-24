@@ -5,13 +5,10 @@ import de.hsfl.budgetBinder.common.Category
 import androidx.compose.runtime.Composable
 import de.hsfl.budgetBinder.compose.theme.AppStylesheet
 import de.hsfl.budgetBinder.presentation.CategoryImageToIcon
-import org.jetbrains.compose.web.ExperimentalComposeWebSvgApi
 import org.jetbrains.compose.web.attributes.ButtonType
 import org.jetbrains.compose.web.attributes.type
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
-import org.jetbrains.compose.web.svg.Circle
-import org.jetbrains.compose.web.svg.Svg
 
 
 /*Main Container for every mayor layout*/

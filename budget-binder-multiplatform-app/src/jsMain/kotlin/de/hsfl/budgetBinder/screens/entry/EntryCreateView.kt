@@ -202,8 +202,15 @@ fun EntryCreateView(
                 }
             }
             Div(attrs = { classes(AppStylesheet.flex50) }) {
-                ChooseCategoryMenu(categoryList, entryCategoryIDTextField) { id ->
-                    viewModel.onEvent(EntryEvent.EnteredCategoryID(id))
+                Div(
+                    attrs = {
+                        classes(AppStylesheet.margin)
+                    }
+                ) {
+                    Text("Category: ")
+                    ChooseCategoryMenu(categoryList, entryCategoryIDTextField) { id ->
+                        viewModel.onEvent(EntryEvent.EnteredCategoryID(id))
+                    }
                 }
             }
         }

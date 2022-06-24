@@ -203,12 +203,16 @@ fun EntryEditView(
                     Label(forId = "checkbox-1") { Text("repeat") }
                 }
             }
-            Div(attrs = {
-                classes(AppStylesheet.flex50)
-                style { alignItems(AlignItems.Stretch) }
-            }) {
-                ChooseCategoryMenu(categoryList, entryCategoryIDTextField) { id ->
-                    viewModel.onEvent(EntryEvent.EnteredCategoryID(id))
+            Div(attrs = { classes(AppStylesheet.flex50) }) {
+                Div(
+                    attrs = {
+                        classes(AppStylesheet.margin)
+                    }
+                ) {
+                    Text("Category: ")
+                    ChooseCategoryMenu(categoryList, entryCategoryIDTextField) { id ->
+                        viewModel.onEvent(EntryEvent.EnteredCategoryID(id))
+                    }
                 }
             }
         }
