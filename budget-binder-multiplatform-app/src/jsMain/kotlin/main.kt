@@ -54,7 +54,6 @@ fun App() = withDI(di) {
             }
         )
     }
-
     FeedbackSnackbar(snackBarText.value, snackBarHidden.value) {
         snackBarHidden.value = true
     }

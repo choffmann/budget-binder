@@ -1,9 +1,11 @@
 package de.hsfl.budgetBinder.screens.entry
 
 import androidx.compose.runtime.*
+import de.hsfl.budgetBinder.common.Category
 import de.hsfl.budgetBinder.common.Entry
 import de.hsfl.budgetBinder.compose.DeleteDialog
 import de.hsfl.budgetBinder.compose.theme.AppStylesheet
+import de.hsfl.budgetBinder.presentation.CategoryImageToIcon
 import de.hsfl.budgetBinder.presentation.event.LifecycleEvent
 import de.hsfl.budgetBinder.presentation.viewmodel.entry.EntryEvent
 import de.hsfl.budgetBinder.presentation.viewmodel.entry.EntryViewModel
@@ -25,6 +27,7 @@ fun EntryOverviewView(
     //Data
     val entry by viewModel.selectedEntryState.collectAsState()
     val deleteDialog by viewModel.dialogState.collectAsState()
+    val categoryList by viewModel.categoryListState.collectAsState()
 
     //LifeCycle
     LaunchedEffect(Unit) {
@@ -40,6 +43,7 @@ fun EntryOverviewView(
     H1(attrs = { classes(AppStylesheet.h1) }) { Text(" Entry") }
     EntryOverview(
         entry,
+        categoryList,
         deleteDialog,
         onEditButton,
         onDeleteButton,
@@ -52,6 +56,7 @@ fun EntryOverviewView(
 @Composable
 fun EntryOverview(
     entry: Entry,
+    categoryList: List<Category>,
     deleteDialog: Boolean,
     onEditButton: () -> Unit,
     onDeleteButton: () -> Unit,
@@ -74,9 +79,28 @@ fun EntryOverview(
                 Div(attrs = {
                     classes("mdc-typography--headline4", AppStylesheet.text)
                 }) { Text(entry.name) }
-                Div(attrs = {
-                    classes("mdc-typography--headline6", AppStylesheet.text)
-                }) { Text("Amount: ${entry.amount}€") }
+                Div(attrs = { classes(AppStylesheet.flexContainer) }) {
+                    Div(attrs = {
+                        classes("mdc-typography--headline6", AppStylesheet.text, AppStylesheet.buttonOverview)
+                    }) {
+                        var categoryName = "No Category"
+                        var categoryIcon = Category.Image.DEFAULT
+                        for (category in categoryList) {
+                            if (entry.category_id == category.id) {
+                                categoryName = category.name
+                                categoryIcon = category.image
+                            }
+                        }
+                        Text("Category: $categoryName")
+                        CategoryImageToIcon(categoryIcon)
+                    }
+                    Div(attrs = {
+                        classes("mdc-typography--headline6", AppStylesheet.text, AppStylesheet.buttonOverview)
+                    }) { Text("Amount: ${entry.amount}€") }
+                    Div(attrs = {
+                        classes("mdc-typography--headline6", AppStylesheet.text, AppStylesheet.buttonOverview)
+                    }) { Text("Repeat: " + if (entry.repeat) "Yes" else "No") }
+                }
             }
         }
     }
