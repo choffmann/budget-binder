@@ -9,7 +9,6 @@ import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.util.*
 
-
 class AuthPlugin private constructor(
     val loginPath: String,
     val logoutPath: String,

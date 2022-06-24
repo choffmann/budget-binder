@@ -11,7 +11,7 @@ actual fun getCookieFileStorage(): File {
     path += "/.bb-client"
     File(path).toPath().createDirectories()
 
-    path += "/cookies.txt"
+    path += "/cookies.bin"
     val file = File(path)
     file.createNewFile()
     return file

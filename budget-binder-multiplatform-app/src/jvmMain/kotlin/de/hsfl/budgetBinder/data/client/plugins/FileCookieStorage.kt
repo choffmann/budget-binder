@@ -138,6 +138,5 @@ class FileCookieStorage : CookiesStorage {
         writeCookiesToFile(container)
     }
 
-    override fun close() {
-    }
+    override fun close() {}
 }

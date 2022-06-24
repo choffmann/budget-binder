@@ -13,7 +13,7 @@ class JWTService(private val config: Config) {
     private val accessTokenValidationTime = 1000 * 60 * config.jwt.accessMinutes
     private val refreshTokenValidationTime = 1000 * 60 * 60 * 24 * config.jwt.refreshDays
 
-    private val accessTokenVerifier = JWT
+    val accessTokenVerifier: JWTVerifier = JWT
         .require(Algorithm.HMAC256(config.jwt.accessSecret))
         .withAudience(config.jwt.audience)
         .withIssuer(config.jwt.issuer)
@@ -21,21 +21,13 @@ class JWTService(private val config: Config) {
         .withClaimPresence("token_version")
         .build()
 
-    private val refreshTokenVerifier = JWT
+    val refreshTokenVerifier: JWTVerifier = JWT
         .require(Algorithm.HMAC256(config.jwt.refreshSecret))
         .withAudience(config.jwt.audience)
         .withIssuer(config.jwt.issuer)
         .withClaimPresence("userid")
         .withClaimPresence("token_version")
         .build()
-
-    fun getAccessTokenVerifier(): JWTVerifier {
-        return accessTokenVerifier
-    }
-
-    fun getRefreshTokenVerifier(): JWTVerifier {
-        return refreshTokenVerifier
-    }
 
     fun getRealm(): String {
         return config.jwt.realm

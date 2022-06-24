@@ -17,7 +17,6 @@ import io.ktor.server.routing.*
 import org.kodein.di.instance
 import org.kodein.di.ktor.closestDI
 
-
 fun Route.login() {
     authenticate("auth-form") {
         post("/login") {
@@ -60,7 +59,7 @@ fun Route.refreshCookie() {
         val userService: UserService by closestDI().instance()
 
         val response = call.request.cookies["jwt"]?.let { tokenToCheck ->
-            val token = jwtService.getRefreshTokenVerifier().verify(tokenToCheck)
+            val token = jwtService.refreshTokenVerifier.verify(tokenToCheck)
             val id = token.getClaim("userid").asInt()
             val tokenVersion = token.getClaim("token_version").asInt()
             userService.getUserPrincipalByIDAndTokenVersion(id, tokenVersion)?.let { userPrincipal ->

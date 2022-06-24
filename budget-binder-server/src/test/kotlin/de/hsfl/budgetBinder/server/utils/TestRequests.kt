@@ -1,4 +1,4 @@
-package de.hsfl.budgetBinder.server
+package de.hsfl.budgetBinder.server.utils
 
 import de.hsfl.budgetBinder.common.APIResponse
 import de.hsfl.budgetBinder.common.AuthToken
@@ -13,8 +13,8 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
-suspend fun registerUser(client: HttpClient) {
-    val response = client.post("/register") {
+suspend fun HttpClient.registerUser() {
+    val response = this.post("/register") {
         contentType(ContentType.Application.Json)
         setBody(TestUser.userIn)
     }
@@ -36,8 +36,8 @@ suspend fun registerUser(client: HttpClient) {
     assertEquals(shouldResponse, responseBody)
 }
 
-suspend fun loginUser(client: HttpClient, block: (response: HttpResponse) -> Unit = {}) {
-    val response = client.post("/login") {
+suspend fun HttpClient.loginUser(block: (response: HttpResponse) -> Unit = {}) {
+    val response = this.post("/login") {
         contentType(ContentType.Application.FormUrlEncoded)
         setBody(
             listOf(
@@ -54,29 +54,27 @@ suspend fun loginUser(client: HttpClient, block: (response: HttpResponse) -> Uni
     block(response)
 }
 
-suspend inline fun sendAuthenticatedRequest(
-    client: HttpClient,
+suspend inline fun HttpClient.sendAuthenticatedRequest(
     sendMethod: HttpMethod,
     path: String,
     block: (response: HttpResponse) -> Unit
 ) {
     block(
-        client.request(path) {
+        this.request(path) {
             method = sendMethod
             header(HttpHeaders.Authorization, "Bearer ${TestUser.accessToken ?: ""}")
         }
     )
 }
 
-suspend inline fun <reified T> sendAuthenticatedRequestWithBody(
-    client: HttpClient,
+suspend inline fun <reified T> HttpClient.sendAuthenticatedRequestWithBody(
     sendMethod: HttpMethod,
     path: String,
     body: T,
     block: (response: HttpResponse) -> Unit
 ) {
     block(
-        client.request(path) {
+        this.request(path) {
             method = sendMethod
             header(HttpHeaders.Authorization, "Bearer ${TestUser.accessToken ?: ""}")
             header(HttpHeaders.ContentType, ContentType.Application.Json)
@@ -85,8 +83,8 @@ suspend inline fun <reified T> sendAuthenticatedRequestWithBody(
     )
 }
 
-suspend fun checkMeSuccess(client: HttpClient) {
-    sendAuthenticatedRequest(client, HttpMethod.Get, "/me") { response ->
+suspend fun HttpClient.checkMeSuccess() {
+    this.sendAuthenticatedRequest(HttpMethod.Get, "/me") { response ->
         assertEquals(HttpStatusCode.OK, response.status)
         val responseBody: APIResponse<User> = response.body()
 
@@ -97,8 +95,8 @@ suspend fun checkMeSuccess(client: HttpClient) {
     }
 }
 
-suspend fun checkMeFailure(client: HttpClient) {
-    sendAuthenticatedRequest(client, HttpMethod.Get, "/me") { response ->
+suspend fun HttpClient.checkMeFailure() {
+    this.sendAuthenticatedRequest(HttpMethod.Get, "/me") { response ->
         assertEquals(HttpStatusCode.Unauthorized, response.status)
         val responseBody: APIResponse<User> = response.body()
         val shouldResponse: APIResponse<User> = wrapFailure("Your accessToken is absent or does not match.", 401)
