@@ -169,27 +169,28 @@ fun EntryList(
                 "mdc-typography--headline5",
                 AppStylesheet.text
             )
-        }) { Text("This category has no entries. You can create an new entry.") }
+        }) { Text("This category has no current entries. You can create an new entry.") }
     } else {
         for (entry in entryList) {
             EntryListElement(entry, onItemClicked, onEntryDelete)
         }
-        Text("Older entries...")
-        for ((date, dashboardState) in oldEntries) {
-            Text(date) //TODO-WEB: Sticky?
-            for (entry in dashboardState.entryList) {
-                EntryListElement(entry, onItemClicked, onEntryDelete)
-            }
+    }
+    Text("Older entries...")
+    console.log("Old Entries: "+oldEntries)
+    for ((date, dashboardState) in oldEntries) {
+        Text(date) //TODO-WEB: Sticky?
+        for (entry in dashboardState.entryList) {
+            EntryListElement(entry, onItemClicked, onEntryDelete)
         }
-        Button(
-            attrs = {
-                classes("mdc-button", "mdc-button--raised", "mdc-top-app-bar__navigation-icon")
-                onClick { onLoadMore() }
-            }
-        ) {
-            Span(attrs = { classes("mdc-button__label") }
-            ) { Text("Load more Entries") }
+    }
+    Button(
+        attrs = {
+            classes("mdc-button", "mdc-button--raised", "mdc-top-app-bar__navigation-icon")
+            onClick { onLoadMore() }
         }
+    ) {
+        Span(attrs = { classes("mdc-button__label") }
+        ) { Text("Load more Entries") }
     }
 }
 
@@ -204,9 +205,15 @@ fun EntryListElement(
         classes("mdc-card", "mdc-card--outlined", AppStylesheet.entryListElement)
         onClick { onItemClicked(entry.entry.id) }
     }) {
-        Div(attrs = { classes(AppStylesheet.entryListElementText, AppStylesheet.extraImagePadding, AppStylesheet.imageFlexContainer) }) {
+        Div(attrs = {
+            classes(
+                AppStylesheet.entryListElementText,
+                AppStylesheet.extraImagePadding,
+                AppStylesheet.imageFlexContainer
+            )
+        }) {
             CategoryImageToIcon(entry.categoryImage)
-            }
+        }
         Div(attrs = { classes(AppStylesheet.entryListElementText) }) {
             Div(attrs = {
                 classes(
