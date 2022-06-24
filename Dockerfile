@@ -8,7 +8,7 @@ RUN mkdir -p /app/data && mkdir -p /app/public
 WORKDIR /app
 
 VOLUME /app/data
-COPY --from=build /home/gradle/src/budget-binder-server/files /app/public/
+COPY --from=build /home/gradle/src/budget-binder-server/public /app/public/
 COPY --from=build /home/gradle/src/budget-binder-multiplatform-app/build/distributions/ /app/public/
 COPY --from=build /home/gradle/src/budget-binder-server/build/libs/*.jar /app/ktor-docker-server.jar
 

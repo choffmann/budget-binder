@@ -109,9 +109,6 @@ class DeleteEntryTests {
 
     @Test
     fun testDeleteEntryRepeatNew() = customTestApplicationWithLogin { client ->
-        println(transaction { EntryEntity.all().toList().map { it.toDto() } })
-
-
         val id = transaction { EntryEntity.all().first().id.value + 3 }
 
         client.sendAuthenticatedRequest(HttpMethod.Delete, "/entries/$id") { response ->
