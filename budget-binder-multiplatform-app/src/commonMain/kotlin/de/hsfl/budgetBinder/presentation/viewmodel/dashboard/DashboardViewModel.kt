@@ -32,7 +32,7 @@ class DashboardViewModel(
     private val _entryListState = MutableStateFlow(DashboardState())
     val entryListState: StateFlow<DashboardState> = _entryListState
 
-    private val _oldEntriesMapState = MutableStateFlow<MutableMap<String, DashboardState>>(mutableMapOf())
+    private val _oldEntriesMapState = MutableStateFlow<Map<String, DashboardState>>(mapOf())
     val oldEntriesMapState: StateFlow<Map<String, DashboardState>> = _oldEntriesMapState
 
     private val _focusedCategoryState = MutableStateFlow(DashboardState())
@@ -78,9 +78,11 @@ class DashboardViewModel(
     }
 
     private fun fillOldEntriesMapState(period: String, entryList: List<Entry>) {
-        _oldEntriesMapState.value.putAll(
-            mapOf(Pair(period, DashboardState(entryList = mapEntryListToDashboardEntryState(entryList))))
-        )
+        _oldEntriesMapState.value = oldEntriesMapState.value.toMutableMap().apply {
+            putAll(
+                mapOf(Pair(period, DashboardState(entryList = mapEntryListToDashboardEntryState(entryList))))
+            )
+        }
     }
 
     private fun refresh() {
