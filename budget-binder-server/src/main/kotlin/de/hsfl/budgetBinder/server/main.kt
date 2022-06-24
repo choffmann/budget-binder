@@ -22,7 +22,7 @@ class ServerMain : CliktCommand() {
     )
 
     override fun run(): Unit = runBlocking {
-        val config = Config.create(configFile = configFile)
+        val config = Config.create(configFile)
 
         val keyStore = when {
             config.server.dev && config.server.ssl -> {
