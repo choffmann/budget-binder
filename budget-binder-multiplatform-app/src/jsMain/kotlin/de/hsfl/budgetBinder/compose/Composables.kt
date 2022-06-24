@@ -140,7 +140,6 @@ fun CategoryImagesToImageList(
     inputImage: Category.Image,
     onClick: (Category.Image) -> Unit
 ) {
-    var highlightImage by remember { mutableStateOf(inputImage) }
     Div(
         attrs = {
             classes("mdc-card", AppStylesheet.card)
@@ -159,7 +158,7 @@ fun CategoryImagesToImageList(
                 ) {
                     Div(
                         attrs = {
-                            if (highlightImage == image)
+                            if (inputImage == image)
                                 classes(
                                     "mdc-image-list__image-aspect-container",
                                     "mdc-icon-button",
@@ -169,7 +168,7 @@ fun CategoryImagesToImageList(
                                 "mdc-image-list__image-aspect-container",
                                 "mdc-icon-button"
                             )
-                            onClick { onClick(image); highlightImage = image }
+                            onClick { onClick(image) }
                         }
                     ) {
                         CategoryImageToIcon(image)
