@@ -5,6 +5,8 @@ import de.hsfl.budgetBinder.compose.theme.AppStylesheet
 import de.hsfl.budgetBinder.presentation.viewmodel.navdrawer.NavDrawerEvent
 import de.hsfl.budgetBinder.presentation.viewmodel.navdrawer.NavDrawerViewModel
 import di
+import org.jetbrains.compose.web.css.Color
+import org.jetbrains.compose.web.css.backgroundColor
 import org.jetbrains.compose.web.dom.*
 import org.kodein.di.instance
 
@@ -111,6 +113,7 @@ fun NavBar(content: @Composable () -> Unit) {
                             "mdc-top-app-bar__navigation-icon"
                         )
                         onClick { viewModel.onEvent(NavDrawerEvent.OnLogout) }
+                        style { backgroundColor(Color("#b00020")) }
                     }
                 ) {
                     Span(
