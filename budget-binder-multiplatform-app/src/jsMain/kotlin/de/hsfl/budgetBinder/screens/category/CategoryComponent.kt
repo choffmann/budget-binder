@@ -19,7 +19,7 @@ fun CategoryComponent() {
         when (routerFlow.state.value) {
             is Screen.Category.Summary -> CategorySummaryView()
             is Screen.Category.Detail -> CategoryDetailView()
-            //is Screen.Category.Edit -> CategoryEditView()
+            is Screen.Category.Edit -> CategoryEditView()
             //is Screen.Category.Create -> CategoryCreateView()
             else -> {}
         }

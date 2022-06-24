@@ -137,10 +137,10 @@ fun FeedbackSnackbar(msg: String, hidden: Boolean = false, onDismiss: () -> Unit
 
 @Composable
 fun CategoryImagesToImageList(
-    inputImage: MutableState<Category.Image>,
+    inputImage: Category.Image,
     onClick: (Category.Image) -> Unit
 ) {
-    val highlightImage by remember { mutableStateOf(inputImage) }
+    var highlightImage by remember { mutableStateOf(inputImage) }
     Div(
         attrs = {
             classes("mdc-card", AppStylesheet.card)
@@ -159,7 +159,7 @@ fun CategoryImagesToImageList(
                 ) {
                     Div(
                         attrs = {
-                            if (highlightImage.value == image)
+                            if (highlightImage == image)
                                 classes(
                                     "mdc-image-list__image-aspect-container",
                                     "mdc-icon-button",
@@ -169,7 +169,7 @@ fun CategoryImagesToImageList(
                                 "mdc-image-list__image-aspect-container",
                                 "mdc-icon-button"
                             )
-                            onClick { onClick(image); highlightImage.value = image }
+                            onClick { onClick(image); highlightImage = image }
                         }
                     ) {
                         CategoryImageToIcon(image)

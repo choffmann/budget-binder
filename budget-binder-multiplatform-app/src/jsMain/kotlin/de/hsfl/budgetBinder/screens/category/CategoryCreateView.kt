@@ -181,7 +181,7 @@ fun CategoryCreateView(
                             style { marginBottom(1.percent); marginLeft(2.percent) }
                         }
                     ) { Text("Image") }
-                    CategoryImagesToImageList(categoryImageState, onClick = { categoryImageState.value = it })
+                    CategoryImagesToImageList(categoryImageState.value, onClick = { categoryImageState.value = it })
                 }
             }
             //Category Budget Input
