@@ -131,21 +131,30 @@ class EntryViewModel(
     private fun create(entry: Entry.In) = scope.launch {
         entryUseCases.createNewEntryUseCase(entry).collect {
             it.handleDataResponse<Entry>(
-                routerFlow = routerFlow, onSuccess = { routerFlow.navigateTo(Screen.Dashboard) })
+                routerFlow = routerFlow, onSuccess = {
+                    routerFlow.navigateTo(Screen.Dashboard)
+                    eventFlow.emit(UiEvent.ShowSuccess("Entry successfully created"))
+                })
         }
     }
 
     private fun update(entry: Entry.Patch, id: Int) = scope.launch {
         entryUseCases.changeEntryByIdUseCase(entry, id).collect {
             it.handleDataResponse<Entry>(
-                routerFlow = routerFlow, onSuccess = { routerFlow.navigateTo(Screen.Dashboard) })
+                routerFlow = routerFlow, onSuccess = {
+                    routerFlow.navigateTo(Screen.Dashboard)
+                    eventFlow.emit(UiEvent.ShowSuccess("Entry successfully updated"))
+                })
         }
     }
 
     private fun delete(id: Int) = scope.launch {
         entryUseCases.deleteEntryByIdUseCase(id).collect {
             it.handleDataResponse<Entry>(
-                routerFlow = routerFlow, onSuccess = { routerFlow.navigateTo(Screen.Dashboard) })
+                routerFlow = routerFlow, onSuccess = {
+                    routerFlow.navigateTo(Screen.Dashboard)
+                    eventFlow.emit(UiEvent.ShowSuccess("Entry successfully deleted"))
+                })
         }
     }
 
