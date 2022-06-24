@@ -17,7 +17,7 @@ fun parseParameterToLocalDateTimeOrErrorMessage(current: Boolean, param: String?
     if (param == null)
         return null to null
 
-    if (!param.matches("^(0?[1-9]|1[012])-([2-9]\\d[1-9]\\d|[1-9]\\d)\$".toRegex())) {
+    if (!param.matches("^(0?[1-9]|1[012])-([2-9]\\d\\d\\d)\$".toRegex())) {
         return "period has not the right pattern" to null
     }
 
