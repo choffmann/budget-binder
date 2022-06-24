@@ -17,6 +17,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import de.hsfl.budgetBinder.common.Category
+import de.hsfl.budgetBinder.di
 import de.hsfl.budgetBinder.presentation.CategoryImageToIcon
 import de.hsfl.budgetBinder.presentation.event.LifecycleEvent
 import de.hsfl.budgetBinder.presentation.event.UiEvent
