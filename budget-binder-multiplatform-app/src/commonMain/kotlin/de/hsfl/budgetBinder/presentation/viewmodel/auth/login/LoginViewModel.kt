@@ -44,21 +44,21 @@ class LoginViewModel(
             is LoginEvent.EnteredPassword -> _passwordText.value = passwordText.value.copy(password = event.value)
             is LoginEvent.EnteredServerUrl -> _serverUrlText.value =
                 serverUrlText.value.copy(serverAddress = event.value)
-            is LoginEvent.OnLogin -> validateInput(toggleDialog())
+            is LoginEvent.OnLogin -> validateInput { toggleDialog() }
             is LoginEvent.OnRegisterScreen -> routerFlow.navigateTo(Screen.Register)
-            is LoginEvent.OnServerUrlDialogConfirm -> validateInput(onServerUrlDialogConfirm())
+            is LoginEvent.OnServerUrlDialogConfirm -> validateInput { onServerUrlDialogConfirm() }
             is LoginEvent.OnServerUrlDialogDismiss -> toggleDialog()
             is LoginEvent.LifeCycle -> event.value.handleLifeCycle(onLaunch = { tryToLoginUserOnStart() },
                 onDispose = { clearStateFlows() })
         }
     }
 
-    private fun validateInput(actionOnSuccess: Unit) {
+    private fun validateInput(actionOnSuccess: () -> Unit) {
         if (validateEmail(email = emailText.value.email)) {
             //TODO: Check what frontend this is opened from.
             // Web -> super.login(...),
             // everyone else -> toggleDialog()
-            actionOnSuccess
+            actionOnSuccess()
         } else {
             _emailText.value = emailText.value.copy(emailValid = false)
         }
