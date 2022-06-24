@@ -9,8 +9,7 @@ import de.hsfl.budgetBinder.presentation.viewmodel.auth.login.LoginEvent
 import de.hsfl.budgetBinder.presentation.viewmodel.auth.login.LoginViewModel
 import di
 import kotlinx.coroutines.flow.collectLatest
-import org.jetbrains.compose.web.css.percent
-import org.jetbrains.compose.web.css.width
+import org.jetbrains.compose.web.attributes.required
 import org.jetbrains.compose.web.dom.*
 import org.kodein.di.instance
 
@@ -132,6 +131,7 @@ fun LoginComponent() {
                     ) { Text("Email") }
                     EmailInput(value = emailTextState.value.email,
                         attrs = {
+                            required()
                             classes("mdc-text-field__input")
                             onInput {
                                 viewModel.onEvent(LoginEvent.EnteredEmail(it.value))
@@ -167,6 +167,7 @@ fun LoginComponent() {
                     ) { Text("Password") }
                     PasswordInput(value = passwordTextState.value.password,
                         attrs = {
+                            required()
                             classes("mdc-text-field__input")
                             onInput {
                                 viewModel.onEvent(LoginEvent.EnteredPassword(it.value))
