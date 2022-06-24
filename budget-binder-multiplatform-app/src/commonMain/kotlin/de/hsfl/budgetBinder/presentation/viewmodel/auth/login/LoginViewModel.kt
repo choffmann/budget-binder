@@ -7,8 +7,10 @@ import de.hsfl.budgetBinder.domain.usecase.AuthUseCases
 import de.hsfl.budgetBinder.presentation.flow.RouterFlow
 import de.hsfl.budgetBinder.presentation.Screen
 import de.hsfl.budgetBinder.presentation.UiState
+import de.hsfl.budgetBinder.presentation.event.UiEvent
 import de.hsfl.budgetBinder.presentation.event.handleLifeCycle
 import de.hsfl.budgetBinder.presentation.flow.DataFlow
+import de.hsfl.budgetBinder.presentation.flow.UiEventSharedFlow
 import de.hsfl.budgetBinder.presentation.viewmodel.auth.AuthViewModel
 import io.ktor.http.*
 import kotlinx.coroutines.CoroutineScope
@@ -41,7 +43,8 @@ class LoginViewModel(
         when (event) {
             is LoginEvent.EnteredEmail -> _emailText.value =
                 emailText.value.copy(email = event.value, emailValid = true)
-            is LoginEvent.EnteredPassword -> _passwordText.value = passwordText.value.copy(password = event.value)
+            is LoginEvent.EnteredPassword -> _passwordText.value =
+                passwordText.value.copy(password = event.value)
             is LoginEvent.EnteredServerUrl -> _serverUrlText.value =
                 serverUrlText.value.copy(serverAddress = event.value)
             is LoginEvent.OnLogin -> validateInput { toggleDialog() }
@@ -72,11 +75,12 @@ class LoginViewModel(
 
     private fun tryToLoginUserOnStart() = scope.launch {
         authUseCases.getMyUserUseCase().collect {
-                it.handleDataResponse<User>(routerFlow = routerFlow, onSuccess = { user ->
-                    storeUser(user)
-                    routerFlow.navigateTo(screenAfterSuccess)
-                }, onUnauthorized = { /* Don't show an error message on unauthorized */ })
-            }
+            it.handleDataResponse<User>(routerFlow = routerFlow, onSuccess = { user ->
+                storeUser(user)
+                routerFlow.navigateTo(screenAfterSuccess)
+            },
+                onUnauthorized = { UiEventSharedFlow.mutableEventFlow.emit(UiEvent.HideSuccess) })
+        }
     }
 
     private fun storeUser(user: User) {
