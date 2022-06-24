@@ -3,6 +3,7 @@ package de.hsfl.budgetBinder.screens.entry
 import androidx.compose.runtime.*
 import de.hsfl.budgetBinder.common.Category
 import de.hsfl.budgetBinder.common.Entry
+import de.hsfl.budgetBinder.compose.ColorCircle
 import de.hsfl.budgetBinder.compose.DeleteDialog
 import de.hsfl.budgetBinder.compose.theme.AppStylesheet
 import de.hsfl.budgetBinder.presentation.CategoryImageToIcon
@@ -11,6 +12,7 @@ import de.hsfl.budgetBinder.presentation.viewmodel.entry.EntryEvent
 import de.hsfl.budgetBinder.presentation.viewmodel.entry.EntryViewModel
 import di
 import org.jetbrains.compose.web.css.*
+import org.jetbrains.compose.web.css.keywords.auto
 import org.jetbrains.compose.web.dom.*
 import org.kodein.di.instance
 
@@ -81,24 +83,41 @@ fun EntryOverview(
                 }) { Text(entry.name) }
                 Div(attrs = { classes(AppStylesheet.flexContainer) }) {
                     Div(attrs = {
-                        classes("mdc-typography--headline6", AppStylesheet.text, AppStylesheet.buttonOverview)
+                        classes(
+                            "mdc-typography--headline6",
+                            AppStylesheet.text,
+                            AppStylesheet.buttonOverview
+                        )
                     }) {
                         var categoryName = "No Category"
                         var categoryIcon = Category.Image.DEFAULT
+                        var categoryColor = "111111"
                         for (category in categoryList) {
                             if (entry.category_id == category.id) {
                                 categoryName = category.name
                                 categoryIcon = category.image
+                                categoryColor = category.color
                             }
                         }
                         Text("Category: $categoryName")
-                        CategoryImageToIcon(categoryIcon)
+                        Div (attrs={classes(AppStylesheet.flexContainer)}){
+                            CategoryImageToIcon(categoryIcon)
+                            ColorCircle(categoryColor)
+                        }
                     }
                     Div(attrs = {
-                        classes("mdc-typography--headline6", AppStylesheet.text, AppStylesheet.buttonOverview)
+                        classes(
+                            "mdc-typography--headline6",
+                            AppStylesheet.text,
+                            AppStylesheet.buttonOverview
+                        )
                     }) { Text("Amount: ${entry.amount}€") }
                     Div(attrs = {
-                        classes("mdc-typography--headline6", AppStylesheet.text, AppStylesheet.buttonOverview)
+                        classes(
+                            "mdc-typography--headline6",
+                            AppStylesheet.text,
+                            AppStylesheet.buttonOverview
+                        )
                     }) { Text("Repeat: " + if (entry.repeat) "Yes" else "No") }
                 }
             }

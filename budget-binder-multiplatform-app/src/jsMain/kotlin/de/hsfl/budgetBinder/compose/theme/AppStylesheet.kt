@@ -118,6 +118,7 @@ object AppStylesheet : StyleSheet() {
     }
     val colorFlexContainer by style {
         flex("0.1 0.1 5%")
+        width(40.px)
         height(auto)
     }
 
