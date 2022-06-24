@@ -56,8 +56,9 @@ fun SettingsView() {
         ) {
             Button(
                 attrs = {
-                    classes("mdc-button", "mdc-button--raised", AppStylesheet.flex100, AppStylesheet.deleteButton)
+                    classes("mdc-button", "mdc-button--raised", AppStylesheet.flex100)
                     onClick { deleteDialog = true }
+                    style { backgroundColor(Color("#b00020")) }
                 }
             ) {
                 Text("Delete User")

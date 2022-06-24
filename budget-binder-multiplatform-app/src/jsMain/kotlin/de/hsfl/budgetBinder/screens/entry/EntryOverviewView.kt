@@ -88,8 +88,9 @@ fun EntryOverview(
             Text("Edit Entry")
         }
         Button(attrs = {
-            classes("mdc-button", "mdc-button--raised", AppStylesheet.deleteButton, AppStylesheet.buttonOverview)
+            classes("mdc-button", "mdc-button--raised", AppStylesheet.buttonOverview)
             onClick { onDeleteButton() }
+            style { backgroundColor(Color("#b00020")) }
         }) {
             Text("Delete Entry")
         }
