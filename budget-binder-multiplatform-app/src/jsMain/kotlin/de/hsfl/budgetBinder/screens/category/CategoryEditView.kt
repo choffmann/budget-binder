@@ -168,6 +168,7 @@ fun CategoryEditView() {
                 ) {
                     classes("mdc-text-field__input")
                     value(categoryBudgetState)
+                    attr("step", "0.01")
                     required(true)
                     min("1")
                     onInput {
