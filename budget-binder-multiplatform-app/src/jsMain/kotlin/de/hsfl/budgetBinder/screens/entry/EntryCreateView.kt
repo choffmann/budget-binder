@@ -201,7 +201,7 @@ fun EntryCreateView(
         ) {
             Button(
                 attrs = {
-                    classes("mdc-button", "mdc-button--raised")
+                    classes("mdc-button", "mdc-button--raised", AppStylesheet.marginRight)
                     type(ButtonType.Button)
                     onClick { viewModel.onEvent(EntryEvent.OnCancel) }
                 }
