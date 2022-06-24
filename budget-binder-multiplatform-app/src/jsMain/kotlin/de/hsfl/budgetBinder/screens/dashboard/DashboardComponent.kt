@@ -207,12 +207,14 @@ fun EntryListElement(
         classes("mdc-card", "mdc-card--outlined", AppStylesheet.entryListElement)
         onClick { onItemClicked(entry.entry.id) }
     }) {
-        CategoryImageToIcon(entry.categoryImage)
+        Div(attrs = { classes(AppStylesheet.entryListElementText, AppStylesheet.extraImagePadding, AppStylesheet.imageFlexContainer) }) {
+            CategoryImageToIcon(entry.categoryImage)
+            }
         Div(attrs = { classes(AppStylesheet.entryListElementText) }) {
             Div(attrs = {
                 classes(
                     "mdc-typography--headline5",
-                    AppStylesheet.text
+                    AppStylesheet.leftText
                 )
             }) { Text(entry.entry.name) }
         }
