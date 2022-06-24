@@ -5,7 +5,6 @@ import de.hsfl.budgetBinder.compose.theme.AppStylesheet
 import de.hsfl.budgetBinder.di.kodein
 import de.hsfl.budgetBinder.presentation.event.UiEvent
 import de.hsfl.budgetBinder.presentation.flow.UiEventSharedFlow
-import de.hsfl.budgetBinder.presentation.viewmodel.navdrawer.NavDrawerEvent
 import io.ktor.client.engine.js.*
 import kotlinx.coroutines.flow.collectLatest
 import org.jetbrains.compose.web.css.*
@@ -49,7 +48,7 @@ fun App() = withDI(di) {
     }
     if (!loadingState.value) { // I don't understand why it needs to be inverted to work?
         Img(
-            src = "images/Loading.gif", alt = "Logo", attrs = {
+            src = "images/Loading.gif", alt = "Loading", attrs = {
                 classes(AppStylesheet.loadingImage)
             }
         )
