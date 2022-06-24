@@ -130,16 +130,22 @@ fun CategoryElement(category: Category, onClicked: (Int) -> Unit) {
                     }) { Text("Budget: ${category.budget}€") }
                 }
             }
-            Div(attrs = {
-                classes(AppStylesheet.imageFlexContainer)
-            }
-            ) {
-                Svg(viewBox = "0 0 1 1") {//For aspect ratio - tries to fill out wherever it is in
-                    Circle(cx = 0.5, cy = 0.5, r = 0.5, {
-                        attr("fill", "#${category.color}")
-                    })
-                }
-            }
+            ColorCircle(category.color)
+        }
+    }
+}
+
+@OptIn(ExperimentalComposeWebSvgApi::class)
+@Composable
+fun ColorCircle(color:String){
+    Div(attrs = {
+        classes(AppStylesheet.colorFlexContainer)
+    }
+    ) {
+        Svg(viewBox = "0 0 1 1") {//For aspect ratio - tries to fill out wherever it is in
+            Circle(cx = 0.5, cy = 0.5, r = 0.5, {
+                attr("fill", "#$color")
+            })
         }
     }
 }

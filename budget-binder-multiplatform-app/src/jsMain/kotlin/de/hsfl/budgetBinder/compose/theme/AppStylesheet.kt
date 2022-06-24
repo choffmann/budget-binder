@@ -116,7 +116,10 @@ object AppStylesheet : StyleSheet() {
         flex("0.1 0.1 0%")
         height(auto)
     }
-
+    val colorFlexContainer by style {
+        flex("0.1 0.1 5%")
+        height(auto)
+    }
 
     val card by style {
         margin(10.px)
