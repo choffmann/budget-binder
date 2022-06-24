@@ -142,4 +142,8 @@ object AppStylesheet : StyleSheet() {
     val h1 by style {
         margin(2.percent)
     }
+
+    val width by style {
+        width(100.percent)
+    }
 }
