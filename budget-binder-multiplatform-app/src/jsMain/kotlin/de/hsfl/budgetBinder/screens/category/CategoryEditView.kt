@@ -10,10 +10,9 @@ import de.hsfl.budgetBinder.presentation.UiState
 import de.hsfl.budgetBinder.presentation.event.LifecycleEvent
 import de.hsfl.budgetBinder.presentation.viewmodel.category.edit.CategoryEditEvent
 import de.hsfl.budgetBinder.presentation.viewmodel.category.edit.CategoryEditViewModel
+import de.hsfl.budgetBinder.presentation.viewmodel.entry.EntryEvent
 import di
-import org.jetbrains.compose.web.attributes.InputType
-import org.jetbrains.compose.web.attributes.min
-import org.jetbrains.compose.web.attributes.required
+import org.jetbrains.compose.web.attributes.*
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
 import org.kodein.di.instance
@@ -186,6 +185,16 @@ fun CategoryEditView() {
                     }
                 ) { }
             }
+        }
+        Button(
+            attrs = {
+                classes("mdc-button", "mdc-button--raised")
+                type(ButtonType.Button)
+                onClick { viewModel.onEvent(CategoryEditEvent.OnCancel) }
+            }
+        ) {
+            Span(attrs = { classes("mdc-button__label") }
+            ) { Text("Cancel") }
         }
         //Submit button
         Div(

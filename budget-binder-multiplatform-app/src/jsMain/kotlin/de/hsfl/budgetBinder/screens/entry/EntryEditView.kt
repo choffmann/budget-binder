@@ -208,6 +208,16 @@ fun EntryEditView(
                 }
             }
         }
+        Button(
+            attrs = {
+                classes("mdc-button", "mdc-button--raised")
+                type(ButtonType.Button)
+                onClick { viewModel.onEvent(EntryEvent.OnCancel) }
+            }
+        ) {
+            Span(attrs = { classes("mdc-button__label") }
+            ) { Text("Cancel") }
+        }
         Div(
             attrs = {
                 classes(AppStylesheet.margin)

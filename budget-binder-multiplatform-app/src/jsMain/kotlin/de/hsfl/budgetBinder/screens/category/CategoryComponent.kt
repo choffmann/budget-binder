@@ -20,7 +20,7 @@ fun CategoryComponent() {
             is Screen.Category.Summary -> CategorySummaryView()
             is Screen.Category.Detail -> CategoryDetailView()
             is Screen.Category.Edit -> CategoryEditView()
-            //is Screen.Category.Create -> CategoryCreateView()
+            is Screen.Category.Create -> CategoryCreateView()
             else -> {}
         }
     }
