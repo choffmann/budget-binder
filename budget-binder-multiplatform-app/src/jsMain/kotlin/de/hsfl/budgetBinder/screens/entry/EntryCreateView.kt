@@ -3,9 +3,12 @@ package de.hsfl.budgetBinder.screens.entry
 import androidx.compose.runtime.*
 import de.hsfl.budgetBinder.compose.*
 import de.hsfl.budgetBinder.compose.theme.AppStylesheet
+import de.hsfl.budgetBinder.presentation.event.LifecycleEvent
+import de.hsfl.budgetBinder.presentation.event.UiEvent
 import de.hsfl.budgetBinder.presentation.viewmodel.entry.EntryEvent
 import de.hsfl.budgetBinder.presentation.viewmodel.entry.EntryViewModel
 import di
+import kotlinx.coroutines.flow.collectLatest
 import org.jetbrains.compose.web.ExperimentalComposeWebSvgApi
 import org.jetbrains.compose.web.attributes.*
 import org.jetbrains.compose.web.css.*
@@ -28,6 +31,18 @@ fun EntryCreateView(
     val amountSign by viewModel.amountSignState.collectAsState()
     //Data
     val categoryList by viewModel.categoryListState.collectAsState()
+
+    //LifeCycle
+    LaunchedEffect(Unit) {
+        viewModel.onEvent(EntryEvent.LifeCycle(LifecycleEvent.OnLaunch))
+    }
+    DisposableEffect(Unit) {
+        onDispose {
+            viewModel.onEvent(EntryEvent.LifeCycle(LifecycleEvent.OnDispose))
+        }
+    }
+
+    //Webpage Content
 
     H1(attrs = { classes(AppStylesheet.h1) }) { Text("Create new Entry") }
     Form(attrs = {

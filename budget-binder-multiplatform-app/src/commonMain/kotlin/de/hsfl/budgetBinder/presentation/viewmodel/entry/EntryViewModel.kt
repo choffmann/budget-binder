@@ -96,14 +96,12 @@ class EntryViewModel(
                     when (routerFlow.state.value) {
                         is Screen.Entry.Overview -> getById((routerFlow.state.value as Screen.Entry.Overview).id)
                         is Screen.Entry.Edit -> getById((routerFlow.state.value as Screen.Entry.Edit).id)
-                        else -> {}
+                        else -> {
+                        }
                     }
                 },
                 onDispose = {
-                    when (routerFlow.state.value) {
-                        is Screen.Entry.Overview, is Screen.Entry.Edit -> resetFlows()
-                        else -> {}
-                    }
+                    resetFlows()
                 })
         }
     }

@@ -20,25 +20,7 @@ fun EntryComponent() {
     val viewModel: EntryViewModel by di.instance()
     val routerFlow: RouterFlow by di.instance()
     val screenState = routerFlow.state.collectAsState()
-    val loadingState = remember { mutableStateOf(false) }
 
-
-    //LifeCycle
-    LaunchedEffect(Unit) {
-        viewModel.onEvent(EntryEvent.LifeCycle(LifecycleEvent.OnLaunch))
-        viewModel.eventFlow.collectLatest { event ->
-            when (event) {
-                is UiEvent.ShowLoading -> loadingState.value = true
-                is UiEvent.HideSuccess -> loadingState.value = false
-                else -> loadingState.value = false
-            }
-        }
-    }
-    DisposableEffect(Unit) {
-        onDispose {
-            viewModel.onEvent(EntryEvent.LifeCycle(LifecycleEvent.OnDispose))
-        }
-    }
 
     //Webpage content
     NavBar {}
@@ -60,10 +42,11 @@ fun EntryComponent() {
             }
             is Screen.Entry.Edit -> {
                 EntryEditView(
-                    onEditButton = { viewModel.onEvent(EntryEvent.OnEditEntry)}
+                    onEditButton = { viewModel.onEvent(EntryEvent.OnEditEntry) }
                 )
             }
-            else -> {}
+            else -> {
+            }
         }
     }
 }

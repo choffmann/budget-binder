@@ -4,6 +4,8 @@ import androidx.compose.runtime.*
 import de.hsfl.budgetBinder.common.Entry
 import de.hsfl.budgetBinder.compose.DeleteDialog
 import de.hsfl.budgetBinder.compose.theme.AppStylesheet
+import de.hsfl.budgetBinder.presentation.event.LifecycleEvent
+import de.hsfl.budgetBinder.presentation.viewmodel.entry.EntryEvent
 import de.hsfl.budgetBinder.presentation.viewmodel.entry.EntryViewModel
 import di
 import org.jetbrains.compose.web.css.*
@@ -22,10 +24,20 @@ fun EntryOverviewView(
     val viewModel: EntryViewModel by di.instance()
     //Data
     val entry by viewModel.selectedEntryState.collectAsState()
-    console.log("Our Entry is $entry")
     val deleteDialog by viewModel.dialogState.collectAsState()
-    H1(attrs = { classes(AppStylesheet.h1) }) { Text(" Entry") }
 
+    //LifeCycle
+    LaunchedEffect(Unit) {
+        viewModel.onEvent(EntryEvent.LifeCycle(LifecycleEvent.OnLaunch))
+    }
+    DisposableEffect(Unit) {
+        onDispose {
+            viewModel.onEvent(EntryEvent.LifeCycle(LifecycleEvent.OnDispose))
+        }
+    }
+
+    //Webpage Content
+    H1(attrs = { classes(AppStylesheet.h1) }) { Text(" Entry") }
     EntryOverview(
         entry,
         deleteDialog,
