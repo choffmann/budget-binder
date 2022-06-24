@@ -26,7 +26,7 @@ val di = kodein(ktorEngine = Js.create())
 @Composable
 fun App() = withDI(di) {
     val uiEventFlow: UiEventSharedFlow by di.instance()
-    val loadingState = remember { mutableStateOf(false) }
+    val loadingState = remember { mutableStateOf(true) }
     val snackBarText = remember { mutableStateOf("") }
     val snackBarHidden = remember { mutableStateOf(true) }
     LaunchedEffect(key1 = true) {
