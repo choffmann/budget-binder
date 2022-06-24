@@ -50,13 +50,13 @@ class CategoryEditViewModel(
                 onSuccess = { routerFlow.navigateTo(Screen.Category.Summary) }
             )
             is CategoryEditEvent.LifeCycle -> event.value.handleLifeCycle(
-                onLaunch = { initSateFlows() },
+                onLaunch = { initStateFlows() },
                 onDispose = { resetStateFlows() }
             )
         }
     }
 
-    private fun initSateFlows() {
+    private fun initStateFlows() {
         super.updateCurrentCategoryId()
         super.getById(id = currentCategoryId, onSuccess = { category ->
             _categoryState.value = category
