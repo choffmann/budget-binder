@@ -50,7 +50,7 @@ fun CategoryEditView() {
             Label(
                 attrs = {
                     classes("mdc-text-field", "mdc-text-field--filled")
-                    style { width(100.percent) }
+                    classes(AppStylesheet.width)
                 }
             ) {
                 Span(
@@ -89,7 +89,7 @@ fun CategoryEditView() {
             Label(
                 attrs = {
                     classes("mdc-text-field", "mdc-text-field--outlined")
-                    style { width(100.percent) }
+                    classes(AppStylesheet.width)
                 }
             ) {
                 Span(
@@ -127,7 +127,7 @@ fun CategoryEditView() {
         ) {
             Label(
                 attrs = {
-                    style { width(100.percent) }
+                    classes(AppStylesheet.width)
                 }
             ) {
                 Span(
@@ -150,7 +150,7 @@ fun CategoryEditView() {
             Label(
                 attrs = {
                     classes("mdc-text-field", "mdc-text-field--filled")
-                    style { width(100.percent) }
+                    classes(AppStylesheet.width)
                 }
             ) {
                 Span(
@@ -181,22 +181,23 @@ fun CategoryEditView() {
                 ) { }
             }
         }
-        Button(
-            attrs = {
-                classes("mdc-button", "mdc-button--raised")
-                type(ButtonType.Button)
-                onClick { viewModel.onEvent(CategoryEditEvent.OnCancel) }
-            }
-        ) {
-            Span(attrs = { classes("mdc-button__label") }
-            ) { Text("Cancel") }
-        }
+
         //Submit button
         Div(
             attrs = {
                 classes(AppStylesheet.margin)
             }
         ) {
+            Button(
+                attrs = {
+                    classes("mdc-button", "mdc-button--raised", AppStylesheet.marginRight)
+                    type(ButtonType.Button)
+                    onClick { viewModel.onEvent(CategoryEditEvent.OnCancel) }
+                }
+            ) {
+                Span(attrs = { classes("mdc-button__label") }
+                ) { Text("Cancel") }
+            }
             SubmitInput(
                 attrs = {
                     classes("mdc-button", "mdc-button--raised")
