@@ -10,6 +10,8 @@ import de.hsfl.budgetBinder.presentation.viewmodel.auth.login.LoginViewModel
 import di
 import kotlinx.coroutines.flow.collectLatest
 import org.jetbrains.compose.web.attributes.required
+import org.jetbrains.compose.web.css.Color
+import org.jetbrains.compose.web.css.color
 import org.jetbrains.compose.web.dom.*
 import org.kodein.di.instance
 
@@ -143,6 +145,11 @@ fun LoginComponent() {
                             classes("mdc-line-ripple")
                         }
                     ) { }
+                }
+                if (!emailTextState.value.emailValid) {
+                    Div(attrs = {style { color(Color.red) }}) {
+                        Text("Email is not valid")
+                    }
                 }
             }
             Div(

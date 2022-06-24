@@ -1,7 +1,6 @@
 package de.hsfl.budgetBinder.screens.register
 
 import androidx.compose.runtime.*
-import de.hsfl.budgetBinder.compose.FeedbackSnackbar
 import de.hsfl.budgetBinder.compose.MainFlexContainer
 import de.hsfl.budgetBinder.compose.theme.AppStylesheet
 import de.hsfl.budgetBinder.presentation.event.LifecycleEvent
@@ -12,9 +11,7 @@ import di
 import kotlinx.coroutines.flow.collectLatest
 import org.jetbrains.compose.web.attributes.InputType
 import org.jetbrains.compose.web.attributes.required
-import org.jetbrains.compose.web.css.marginLeft
-import org.jetbrains.compose.web.css.percent
-import org.jetbrains.compose.web.css.width
+import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
 import org.kodein.di.instance
 
@@ -28,7 +25,6 @@ fun RegisterComponent() {
     val passwordTextState = viewModel.passwordText.collectAsState()
     val confirmedPasswordTextState = viewModel.confirmedPasswordText.collectAsState()
     val loadingState = remember { mutableStateOf(false) }
-    var openSnackbar by remember { mutableStateOf(false) }
 
 
     //LifeCycle
@@ -112,9 +108,6 @@ fun RegisterComponent() {
         Form(attrs = { //Probably possible with just a button OnClick instead of Form&Submit
             this.addEventListener("submit") {
                 console.log("$firstNameTextState, $lastNameTextState, $emailTextState, $passwordTextState")
-                if (!confirmedPasswordTextState.value.confirmedPasswordValid) {
-                    openSnackbar = true
-                }
                 viewModel.onEvent(RegisterEvent.OnRegister)
                 it.preventDefault()
             }
@@ -229,6 +222,11 @@ fun RegisterComponent() {
                         }
                     ) { }
                 }
+                if (!emailTextState.value.emailValid) {
+                    Div(attrs = {style { color(Color.red) }}) {
+                        Text("Email is not valid")
+                    }
+                }
             }
             Div(
                 attrs = {
@@ -299,6 +297,11 @@ fun RegisterComponent() {
                         }
                     ) { }
                 }
+                if (!confirmedPasswordTextState.value.confirmedPasswordValid) {
+                    Div(attrs = {style { color(Color.red) }}) {
+                        Text("Passwords do not match")
+                    }
+                }
             }
             Div(
                 attrs = {
@@ -312,8 +315,5 @@ fun RegisterComponent() {
                     })
             }
         }
-    }
-    if (openSnackbar) {
-        FeedbackSnackbar("Passwords do not match") { openSnackbar = false }
     }
 }

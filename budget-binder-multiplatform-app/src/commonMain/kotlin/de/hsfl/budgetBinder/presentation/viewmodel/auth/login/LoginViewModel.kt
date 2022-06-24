@@ -7,8 +7,10 @@ import de.hsfl.budgetBinder.domain.usecase.AuthUseCases
 import de.hsfl.budgetBinder.presentation.flow.RouterFlow
 import de.hsfl.budgetBinder.presentation.Screen
 import de.hsfl.budgetBinder.presentation.UiState
+import de.hsfl.budgetBinder.presentation.event.UiEvent
 import de.hsfl.budgetBinder.presentation.event.handleLifeCycle
 import de.hsfl.budgetBinder.presentation.flow.DataFlow
+import de.hsfl.budgetBinder.presentation.flow.UiEventSharedFlow
 import de.hsfl.budgetBinder.presentation.viewmodel.auth.AuthViewModel
 import io.ktor.http.*
 import kotlinx.coroutines.CoroutineScope
@@ -41,24 +43,25 @@ class LoginViewModel(
         when (event) {
             is LoginEvent.EnteredEmail -> _emailText.value =
                 emailText.value.copy(email = event.value, emailValid = true)
-            is LoginEvent.EnteredPassword -> _passwordText.value = passwordText.value.copy(password = event.value)
+            is LoginEvent.EnteredPassword -> _passwordText.value =
+                passwordText.value.copy(password = event.value)
             is LoginEvent.EnteredServerUrl -> _serverUrlText.value =
                 serverUrlText.value.copy(serverAddress = event.value)
-            is LoginEvent.OnLogin -> validateInput()
+            is LoginEvent.OnLogin -> validateInput { toggleDialog() }
             is LoginEvent.OnRegisterScreen -> routerFlow.navigateTo(Screen.Register)
-            is LoginEvent.OnServerUrlDialogConfirm -> onServerUrlDialogConfirm()
+            is LoginEvent.OnServerUrlDialogConfirm -> validateInput { onServerUrlDialogConfirm() }
             is LoginEvent.OnServerUrlDialogDismiss -> toggleDialog()
             is LoginEvent.LifeCycle -> event.value.handleLifeCycle(onLaunch = { tryToLoginUserOnStart() },
                 onDispose = { clearStateFlows() })
         }
     }
 
-    private fun validateInput() {
+    private fun validateInput(actionOnSuccess: () -> Unit) {
         if (validateEmail(email = emailText.value.email)) {
             //TODO: Check what frontend this is opened from.
             // Web -> super.login(...),
             // everyone else -> toggleDialog()
-            toggleDialog()
+            actionOnSuccess()
         } else {
             _emailText.value = emailText.value.copy(emailValid = false)
         }
@@ -72,11 +75,12 @@ class LoginViewModel(
 
     private fun tryToLoginUserOnStart() = scope.launch {
         authUseCases.getMyUserUseCase().collect {
-                it.handleDataResponse<User>(routerFlow = routerFlow, onSuccess = { user ->
-                    storeUser(user)
-                    routerFlow.navigateTo(screenAfterSuccess)
-                }, onUnauthorized = { /* Don't show an error message on unauthorized */ })
-            }
+            it.handleDataResponse<User>(routerFlow = routerFlow, onSuccess = { user ->
+                storeUser(user)
+                routerFlow.navigateTo(screenAfterSuccess)
+            },
+                onUnauthorized = { UiEventSharedFlow.mutableEventFlow.emit(UiEvent.HideSuccess) })
+        }
     }
 
     private fun storeUser(user: User) {
@@ -90,36 +94,5 @@ class LoginViewModel(
     private fun clearStateFlows() {
         _emailText.value = emailText.value.copy(email = "")
         _passwordText.value = passwordText.value.copy(password = "")
-    }
-
-
-    // Old
-    private val _state = MutableStateFlow<UiState>(UiState.Empty)
-
-    @Deprecated(message = "Old ViewModel, use the new State")
-    val state: StateFlow<UiState> = _state
-
-    @Deprecated(message = "Use ViewModel function onEvent()")
-    fun _login(email: String, password: String) {
-        authUseCases.loginUseCase(email, password).onEach {
-            when (it) {
-                is DataResponse.Loading -> _state.value = UiState.Loading
-                is DataResponse.Success<*> -> getMyUserDeprecated()
-                is DataResponse.Error -> _state.value = UiState.Error(it.error!!.message)
-                is DataResponse.Unauthorized -> _state.value = UiState.Unauthorized
-            }
-        }.launchIn(scope)
-    }
-
-    @Deprecated(message = "Use new getMyUser function and SharedFlow UiEvents")
-    private fun getMyUserDeprecated() {
-        authUseCases.getMyUserUseCase().onEach {
-            when (it) {
-                is DataResponse.Loading -> _state.value = UiState.Loading
-                is DataResponse.Success<*> -> _state.value = UiState.Success(it.data)
-                is DataResponse.Error -> _state.value = UiState.Error(it.error!!.message)
-                is DataResponse.Unauthorized -> _state.value = UiState.Unauthorized
-            }
-        }.launchIn(scope)
     }
 }
