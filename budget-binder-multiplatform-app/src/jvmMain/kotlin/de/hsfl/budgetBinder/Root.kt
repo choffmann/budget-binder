@@ -7,7 +7,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import de.hsfl.budgetBinder.common.User
 import de.hsfl.budgetBinder.di.kodein
 import de.hsfl.budgetBinder.presentation.event.UiEvent
 import de.hsfl.budgetBinder.presentation.flow.DataFlow
@@ -36,12 +35,19 @@ fun App() = withDI(di) {
                 is UiEvent.ShowLoading -> loadingState.value = true
                 is UiEvent.ShowError -> {
                     loadingState.value = false
-                    scaffoldState.snackbarHostState.showSnackbar(message = event.msg, actionLabel = "Dismiss")
+                    scaffoldState.snackbarHostState.showSnackbar(
+                        message = event.msg,
+                        actionLabel = "Dismiss"
+                    )
                 }
                 is UiEvent.ShowSuccess -> {
                     loadingState.value = false
-                    scaffoldState.snackbarHostState.showSnackbar(message = event.msg, actionLabel = "Dismiss")
+                    scaffoldState.snackbarHostState.showSnackbar(
+                        message = event.msg,
+                        actionLabel = "Dismiss"
+                    )
                 }
+                else -> {}
             }
         }
     }

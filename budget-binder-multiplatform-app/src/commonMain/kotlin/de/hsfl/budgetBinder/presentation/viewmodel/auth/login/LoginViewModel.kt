@@ -55,6 +55,9 @@ class LoginViewModel(
 
     private fun validateInput() {
         if (validateEmail(email = emailText.value.email)) {
+            //TODO: Check what frontend this is opened from.
+            // Web -> super.login(...),
+            // everyone else -> toggleDialog()
             toggleDialog()
         } else {
             _emailText.value = emailText.value.copy(emailValid = false)

@@ -1,0 +1,241 @@
+package de.hsfl.budgetBinder.screens.entry
+
+import androidx.compose.runtime.*
+import de.hsfl.budgetBinder.compose.ChooseCategoryMenu
+import de.hsfl.budgetBinder.compose.theme.AppStylesheet
+import de.hsfl.budgetBinder.presentation.event.LifecycleEvent
+import de.hsfl.budgetBinder.presentation.viewmodel.entry.EntryEvent
+import de.hsfl.budgetBinder.presentation.viewmodel.entry.EntryViewModel
+import di
+import org.jetbrains.compose.web.ExperimentalComposeWebSvgApi
+import org.jetbrains.compose.web.attributes.ButtonType
+import org.jetbrains.compose.web.attributes.InputType
+import org.jetbrains.compose.web.attributes.required
+import org.jetbrains.compose.web.attributes.type
+import org.jetbrains.compose.web.css.*
+import org.jetbrains.compose.web.dom.*
+import org.jetbrains.compose.web.svg.Path
+import org.jetbrains.compose.web.svg.Svg
+import org.kodein.di.instance
+
+
+@OptIn(ExperimentalComposeWebSvgApi::class)
+@Composable
+fun EntryEditView(
+    onEditButton: () -> Unit,
+) {
+    val viewModel: EntryViewModel by di.instance()
+    //Input
+    val entryNameTextField by viewModel.nameText.collectAsState()
+    val entryAmountTextField by viewModel.amountText.collectAsState()
+    val entryRepeat by viewModel.repeatState.collectAsState()
+    val entryCategoryIDTextField by viewModel.categoryIDState.collectAsState()
+    val amountSign by viewModel.amountSignState.collectAsState()
+    //Data
+    val categoryList by viewModel.categoryListState.collectAsState()
+
+    //LifeCycle
+    LaunchedEffect(Unit) {
+        viewModel.onEvent(EntryEvent.LifeCycle(LifecycleEvent.OnLaunch))
+    }
+    DisposableEffect(Unit) {
+        onDispose {
+            viewModel.onEvent(EntryEvent.LifeCycle(LifecycleEvent.OnDispose))
+        }
+    }
+
+    //Webpage Content
+    H1(attrs = { classes(AppStylesheet.h1) }) { Text("Edit Entry") }
+    Form(attrs = {
+        this.addEventListener("submit") {
+            onEditButton()
+            it.preventDefault()
+        }
+    }
+    ) {
+        Div(
+            attrs = {
+                classes(AppStylesheet.margin)
+            }
+        ) {
+            Label(
+                attrs = {
+                    classes("mdc-text-field", "mdc-text-field--filled", AppStylesheet.width)
+                }
+            ) {
+                Span(
+                    attrs = {
+                        classes("mdc-text-field__ripple")
+                    }
+                ) { }
+                Span(
+                    attrs = {
+                        classes("mdc-floating-label", "mdc-floating-label--float-above")
+                    }
+                ) { Text("Entry Name") }
+                Input(
+                    type = InputType.Text
+                ) {
+                    classes("mdc-text-field__input")
+                    value(entryNameTextField)
+                    required(true)
+                    onInput {
+                        viewModel.onEvent(EntryEvent.EnteredName(it.value))
+                    }
+                }
+                Span(
+                    attrs = {
+                        classes("mdc-line-ripple")
+                    }
+                ) { }
+            }
+        }
+        Div(
+            attrs = {
+                classes(AppStylesheet.margin)
+            }
+        ) {
+            Label(
+                attrs = {
+                    classes("mdc-text-field", "mdc-text-field--outlined", AppStylesheet.width)
+                }
+            ) {
+                Span(
+                    attrs = {
+                        classes("mdc-text-field__ripple")
+                    }
+                ) { }
+                Span(
+                    attrs = {
+                        classes("mdc-floating-label", "mdc-floating-label--float-above")
+                        style { marginBottom(1.percent) }
+                    }
+                ) { Text("Amount") }
+                Div {
+                    Button(
+                        attrs = {
+                            if (!amountSign) classes("mdc-switch", "mdc-switch--unselected")
+                            else classes("mdc-switch", "mdc-switch--selected")
+                            id("basic-switch")
+                            attr("role", "switch")
+                            attr("aria-checked", "false")
+                            type(ButtonType.Button)
+                            onClick { viewModel.onEvent(EntryEvent.EnteredAmountSign) }
+                        }
+                    ) {
+                        Div(attrs = { classes("mdc-switch__track") }) { }
+                        Div(attrs = { classes("mdc-switch__handle-track") }) {
+                            Div(attrs = { classes("mdc-switch__handle") }) {
+                                Div(attrs = { classes("mdc-switch__shadow") }) {
+                                    Div(attrs = { classes("mdc-elevation-overlay") }) { }
+                                }
+                                Div(attrs = { classes("mdc-switch__ripple") }) { }
+                                Div(attrs = { classes("mdc-switch__icons") }) {
+                                    Svg(
+                                        attrs = { classes("mdc-switch__icon", "mdc-switch__icon") },
+                                        viewBox = "0 0 24 24"
+                                    ) {
+                                        Path("M19.69,5.23L8.96,15.96l-4.23-4.23L2.96,13.5l6,6L21.46,7L19.69,5.23z")
+                                    }
+                                    Svg(
+                                        attrs = { classes("mdc-switch__icon", "mdc-switch__icon") },
+                                        viewBox = "0 0 24 24"
+                                    ) {
+                                        Path("M20 13H4v-2h16v2z")
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                Div(attrs = {
+                    classes("mdc-typography--headline6", AppStylesheet.text)
+                }) {
+                    Text(if (amountSign) "+" else "-")
+                }
+                Input(
+                    type = InputType.Number
+                ) {
+                    attr("step", "0.01")
+                    classes("mdc-text-field__input")
+                    value(entryAmountTextField)
+                    onInput {
+                        viewModel.onEvent(EntryEvent.EnteredAmount(it.value as Float))
+                    }
+                }
+                Span(
+                    attrs = {
+                        classes("mdc-line-ripple")
+                    }
+                ) { }
+            }
+        }
+        Div(
+            attrs = {
+                classes(AppStylesheet.margin, AppStylesheet.flexContainer)
+            }
+        ) {
+            Div(attrs = { classes(AppStylesheet.flex50) }) {
+                Div(attrs = { classes("mdc-form-field") }) {
+                    Div(attrs = { classes("mdc-checkbox") }) {
+                        CheckboxInput(attrs =
+                        {
+                            checked(entryRepeat)
+                            classes("mdc-checkbox__native-control")
+                            id("checkbox-1")
+                            onInput {
+                                viewModel.onEvent(EntryEvent.EnteredRepeat)
+                            }
+                        })
+                        Div(attrs = { classes("mdc-checkbox__background") }) {
+                            Svg(
+                                attrs = { classes("mdc-checkbox__checkmark") },
+                                viewBox = "0 0 24 24"
+                            ) {
+                                Path(
+                                    "M1.73,12.91 8.1,19.28 22.79,4.59",
+                                    attrs = { classes("mdc-checkbox__checkmark") })
+                            }
+                            Div(attrs = { classes("mdc-checkbox__mixedmark") }) { }
+                        }
+                        Div(attrs = { classes("mdc-checkbox__ripple") }) { }
+                    }
+                    Label(forId = "checkbox-1") { Text("repeat") }
+                }
+            }
+            Div(attrs = { classes(AppStylesheet.flex50) }) {
+                Div(
+                    attrs = {
+                        classes(AppStylesheet.margin)
+                    }
+                ) {
+                    Text("Category: ")
+                    ChooseCategoryMenu(categoryList, entryCategoryIDTextField) { id ->
+                        viewModel.onEvent(EntryEvent.EnteredCategoryID(id))
+                    }
+                }
+            }
+        }
+        Div(
+            attrs = {
+                classes(AppStylesheet.margin)
+            }
+        ) {
+            Button(
+                attrs = {
+                    classes("mdc-button", "mdc-button--raised", AppStylesheet.marginRight)
+                    type(ButtonType.Button)
+                    onClick { viewModel.onEvent(EntryEvent.OnCancel) }
+                }
+            ) {
+                Span(attrs = { classes("mdc-button__label") }
+                ) { Text("Cancel") }
+            }
+            SubmitInput(
+                attrs = {
+                    classes("mdc-button", "mdc-button--raised")
+                    value("Submit")
+                })
+        }
+    }
+}

@@ -1,6 +1,4 @@
 package de.hsfl.budgetBinder.presentation
-
-
 sealed class Screen {
     sealed class Welcome: Screen() {
         object Screen1: Welcome()
@@ -21,29 +19,10 @@ sealed class Screen {
     }
     sealed class Entry: Screen() {
         data class Overview(val id: Int): Entry()
-        object Edit: Entry()
+        data class Edit(val id: Int): Entry()
         object Create: Entry()
     }
     object Login : Screen()
     object Register : Screen()
     object Dashboard : Screen()
-
-    @Deprecated(message = "use sealed class Welcome")
-    object _Welcome : Screen()
-    @Deprecated(message = "use sealed class Settings")
-    object _Settings : Screen()
-    @Deprecated(message = "use sealed class Settings")
-    object SettingsChangeUserData : Screen()
-    @Deprecated(message = "use sealed class Category")
-    object CategorySummary : Screen()
-    @Deprecated(message = "use sealed class Category")
-    object CategoryEdit : Screen()
-    @Deprecated(message = "use sealed class Category")
-    object CategoryCreate : Screen()
-    @Deprecated(message = "use sealed class Category")
-    object CategoryCreateOnRegister : Screen()
-    @Deprecated(message = "use sealed class Entry")
-    object EntryEdit : Screen()
-    @Deprecated(message = "use sealed class Entry")
-    object EntryCreate : Screen()
 }

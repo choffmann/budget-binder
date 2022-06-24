@@ -10,14 +10,14 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.*
 
 class EntryViewModel(
-    private val entriesUseCases: EntriesUseCases,
+    private val entryUseCases: EntryUseCases,
     private val scope: CoroutineScope = CoroutineScope(Dispatchers.Unconfined + SupervisorJob())
 ) {
     private val _state = MutableStateFlow<UiState>(UiState.Empty)
     val state: StateFlow<UiState> = _state
 
     fun getAllEntries() {
-        entriesUseCases.getAllEntriesUseCase().onEach {
+        entryUseCases.getAllEntriesUseCase().onEach {
             when (it) {
                 is DataResponse.Success -> _state.value = UiState.Success(it.data)
                 is DataResponse.Error -> _state.value = UiState.Error(it.error!!.message)
@@ -28,7 +28,7 @@ class EntryViewModel(
     }
 
     fun getEntryById(id: Int) {
-        entriesUseCases.getEntryByIdUseCase(id).onEach {
+        entryUseCases.getEntryByIdUseCase(id).onEach {
             when (it) {
                 is DataResponse.Success -> _state.value = UiState.Success(it.data)
                 is DataResponse.Error -> _state.value = UiState.Error(it.error!!.message)
@@ -39,7 +39,7 @@ class EntryViewModel(
     }
 
     fun createEntry(entry: Entry.In) {
-        entriesUseCases.createNewEntryUseCase(entry).onEach {
+        entryUseCases.createNewEntryUseCase(entry).onEach {
             when (it) {
                 is DataResponse.Success -> _state.value = UiState.Success(it.data)
                 is DataResponse.Error -> _state.value = UiState.Error(it.error!!.message)
@@ -50,7 +50,7 @@ class EntryViewModel(
     }
 
     fun changeEntry(entry: Entry.Patch, id: Int) {
-        entriesUseCases.changeEntryByIdUseCase(entry, id).onEach {
+        entryUseCases.changeEntryByIdUseCase(entry, id).onEach {
             when (it) {
                 is DataResponse.Success -> _state.value = UiState.Success(it.data)
                 is DataResponse.Error -> _state.value = UiState.Error(it.error!!.message)
@@ -61,7 +61,7 @@ class EntryViewModel(
     }
 
     fun removeEntry(id: Int) {
-        entriesUseCases.deleteEntryByIdUseCase(id).onEach {
+        entryUseCases.deleteEntryByIdUseCase(id).onEach {
             when (it) {
                 is DataResponse.Success -> _state.value = UiState.Success(it.data)
                 is DataResponse.Error -> _state.value = UiState.Error(it.error!!.message)

@@ -23,4 +23,5 @@
     --mdc-theme-text-hint-on-dark: rgba(255, 255, 255, 0.5);
     --mdc-theme-text-disabled-on-dark: rgba(255, 255, 255, 0.5);
     --mdc-theme-text-icon-on-dark: rgba(255, 255, 255, 0.5);
+    --mdc-switch-selected-track-color: #64b5f6
 }

@@ -72,4 +72,12 @@ data class Category(
         val image: Image? = null,
         val budget: Float? = null
     )
+    @Serializable
+    data class Nullable(
+        val id: Int?,
+        val name: String,
+        val color: String,
+        val image: Image,
+        val budget: Float
+    )
 }

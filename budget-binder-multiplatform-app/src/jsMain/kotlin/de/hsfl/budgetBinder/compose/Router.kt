@@ -1,24 +1,40 @@
 package de.hsfl.budgetBinder.compose
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import de.hsfl.budgetBinder.compose.category.CategoryComponent
-import de.hsfl.budgetBinder.compose.dashboard.DashboardComponent
-import de.hsfl.budgetBinder.compose.entry.EntryComponent
-import de.hsfl.budgetBinder.compose.login.LoginComponent
-import de.hsfl.budgetBinder.compose.register.RegisterComponent
-import de.hsfl.budgetBinder.compose.settings.SettingsComponent
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import de.hsfl.budgetBinder.presentation.Screen
+import de.hsfl.budgetBinder.presentation.flow.RouterFlow
+import de.hsfl.budgetBinder.screens.category.CategoryComponent
+import de.hsfl.budgetBinder.screens.dashboard.DashboardComponent
+import de.hsfl.budgetBinder.screens.entry.EntryComponent
+import de.hsfl.budgetBinder.screens.login.LoginComponent
+import de.hsfl.budgetBinder.screens.register.RegisterComponent
+import de.hsfl.budgetBinder.screens.settings.SettingsComponent
+import di
+import org.jetbrains.compose.web.dom.Text
+import org.kodein.di.instance
 
 @Composable
-fun Router(screenState: MutableState<Screen>) {
+fun Router() {
+    val scope = rememberCoroutineScope()
+    val routerFlow: RouterFlow by di.instance()
+    val screenState = routerFlow.state.collectAsState(scope.coroutineContext)
+    console.log("Router Screen is:")
+    console.log(screenState.value)
     when (screenState.value) {
-        Screen._Welcome -> {}
-        Screen.Register -> RegisterComponent(screenState = screenState)
-        Screen.Login -> LoginComponent(screenState = screenState)
-        Screen.Dashboard -> DashboardComponent(screenState = screenState)
-        Screen._Settings, Screen.SettingsChangeUserData -> SettingsComponent(screenState = screenState)
-        Screen.CategorySummary,Screen.CategoryEdit,Screen.CategoryCreate, Screen.CategoryCreateOnRegister -> CategoryComponent(screenState = screenState)
-        Screen.EntryCreate, Screen.EntryEdit -> EntryComponent(screenState = screenState)
+        is Screen.Welcome -> {}
+        is Screen.Register -> RegisterComponent()
+        is Screen.Login -> LoginComponent()
+        is Screen.Dashboard -> DashboardComponent()
+        is Screen.Settings -> SettingsComponent()
+        is Screen.Entry -> EntryComponent()
+        is Screen.Category.Detail -> CategoryComponent() //To avoid weird bug where it doesn't refresh itself? I don't understand either ...
+        is Screen.Category.Edit -> CategoryComponent() //Okay this seems to be necessary or CategoryComponent won't refresh, so no 'is Screen.Category -> ...'
+        is Screen.Category.Create -> CategoryComponent()
+        is Screen.Category.Summary -> CategoryComponent()
+        else -> {
+            Text("No known Screen! Check if the screen you're trying to reach is in the ScreenRouter")
+        }
     }
 }
