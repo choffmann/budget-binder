@@ -74,13 +74,19 @@ class DashboardViewModel(
     }
 
     private fun fillEntryListStateWithResult(entryList: List<Entry>) {
-        _entryListState.value = entryListState.value.copy(entryList = mapEntryListToDashboardEntryState(entryList))
+        _entryListState.value =
+            entryListState.value.copy(entryList = mapEntryListToDashboardEntryState(entryList))
     }
 
     private fun fillOldEntriesMapState(period: String, entryList: List<Entry>) {
         _oldEntriesMapState.value = oldEntriesMapState.value.toMutableMap().apply {
             putAll(
-                mapOf(Pair(period, DashboardState(entryList = mapEntryListToDashboardEntryState(entryList))))
+                mapOf(
+                    Pair(
+                        period,
+                        DashboardState(entryList = mapEntryListToDashboardEntryState(entryList))
+                    )
+                )
             )
         }
     }
@@ -113,7 +119,11 @@ class DashboardViewModel(
     }
 
 
-    private fun getEntriesByCategory(id: Int? = null, period: String? = null, onSuccess: (List<Entry>) -> Unit) =
+    private fun getEntriesByCategory(
+        id: Int? = null,
+        period: String? = null,
+        onSuccess: (List<Entry>) -> Unit
+    ) =
         scope.launch {
             dashboardUseCases.getAllEntriesByCategoryUseCase(id, period).collect {
                 it.handleDataResponse<List<Entry>>(routerFlow = routerFlow, onSuccess = onSuccess)
@@ -121,13 +131,14 @@ class DashboardViewModel(
         }
 
 
-    private fun getAllEntriesFromMonth(period: String, onSuccess: (List<Entry>) -> Unit) = scope.launch {
-        dashboardUseCases.getAllEntriesUseCase(period).collect {
-            it.handleDataResponse<List<Entry>>(
-                routerFlow = routerFlow, onSuccess = onSuccess
-            )
+    private fun getAllEntriesFromMonth(period: String, onSuccess: (List<Entry>) -> Unit) =
+        scope.launch {
+            dashboardUseCases.getAllEntriesUseCase(period).collect {
+                it.handleDataResponse<List<Entry>>(
+                    routerFlow = routerFlow, onSuccess = onSuccess
+                )
+            }
         }
-    }
 
     private fun deleteEntry(id: Int) = scope.launch {
         dashboardUseCases.deleteEntryByIdUseCase(id).collect {
@@ -157,8 +168,11 @@ class DashboardViewModel(
 
     private fun mapEntryListToDashboardEntryState(entryList: List<Entry>): List<DashboardEntryState> {
         return entryList.map { entry ->
+            val category = getCategoryByEntry(entry)
             DashboardEntryState(
-                entry, categoryImage = getCategoryByEntry(entry)?.image ?: Category.Image.DEFAULT
+                entry,
+                categoryImage = category?.image ?: DashboardEntryState(entry).categoryImage,
+                categoryColor = category?.color ?: DashboardEntryState(entry).categoryColor
             )
         }
     }
@@ -226,7 +240,9 @@ class DashboardViewModel(
         getEntriesByCategory(id = _categoryListState.value[internalCategoryId].id, onSuccess = {
             calcSpendBudgetOnCategory(it)
             _focusedCategoryState.value = focusedCategoryState.value.copy(
-                hasPrev = true, hasNext = true, category = _categoryListState.value[internalCategoryId]
+                hasPrev = true,
+                hasNext = true,
+                category = _categoryListState.value[internalCategoryId]
             )
             fillEntryListStateWithResult(it)
         })
