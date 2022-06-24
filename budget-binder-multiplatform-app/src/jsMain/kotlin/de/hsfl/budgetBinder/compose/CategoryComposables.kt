@@ -206,35 +206,23 @@ fun CategoryDetailed(
             }
         ) {
             Button(attrs = {
-                classes("mdc-button", "mdc-button--raised")
+                classes("mdc-button", "mdc-button--raised", AppStylesheet.buttonOverview)
                 onClick { onBackButton() }
-                style {
-                    flex(33.percent)
-                    margin(1.5.percent)
-                }
             }
             ) {
                 Span(attrs = { classes("mdc-button__label") }
                 ) { Text("Go back") }
             }
             Button(attrs = {
-                classes("mdc-button", "mdc-button--raised")
+                classes("mdc-button", "mdc-button--raised", AppStylesheet.buttonOverview)
                 onClick { onEditButton() }
-                style {
-                    flex(33.percent)
-                    margin(1.5.percent)
-                }
             }) {
                 Text("Edit Category")
             }
             Button(attrs = {
-                classes("mdc-button", "mdc-button--raised")
+                classes("mdc-button", "mdc-button--raised", AppStylesheet.buttonOverview)
                 onClick { deleteDialog = !deleteDialog }
-                style {
-                    flex(33.percent)
-                    margin(1.5.percent)
-                    backgroundColor(Color("#b00020"))
-                }
+                style { backgroundColor(Color("#b00020")) }
             }) {
                 Text("Delete Category")
             }
