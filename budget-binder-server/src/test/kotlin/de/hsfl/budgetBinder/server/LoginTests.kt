@@ -15,7 +15,6 @@ import java.net.HttpCookie
 import kotlin.test.*
 
 class LoginTests {
-
     @BeforeTest
     fun registerTestUser() = customTestApplication { client ->
         client.registerUser()
