@@ -214,6 +214,7 @@ fun EntryListElement(
         }) {
             CategoryImageToIcon(entry.categoryImage)
         }
+        ColorCircle(entry.categoryColor)
         Div(attrs = { classes(AppStylesheet.entryListElementText) }) {
             Div(attrs = {
                 classes(
