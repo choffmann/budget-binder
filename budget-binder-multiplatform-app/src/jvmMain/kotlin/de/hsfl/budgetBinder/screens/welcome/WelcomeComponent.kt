@@ -1,5 +1,6 @@
 package de.hsfl.budgetBinder.screens.welcome
 
+import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -22,33 +23,32 @@ import de.hsfl.budgetBinder.presentation.viewmodel.welcome.WelcomeEvent
 import de.hsfl.budgetBinder.presentation.viewmodel.welcome.WelcomeViewModel
 import org.kodein.di.instance
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun WelcomeComponent() {
     val viewModel: WelcomeViewModel by di.instance()
     val routerFlow: RouterFlow by di.instance()
+    val screenState = routerFlow.state.collectAsState()
     val totalScreens = viewModel.totalWelcomeScreen.collectAsState()
     val currentScreen = viewModel.currentScreen.collectAsState()
     Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
-        when (routerFlow.state.value) {
-            is Screen.Welcome.Screen1 -> WelcomeScreen1View()
-            is Screen.Welcome.Screen2 -> WelcomeScreen2View()
-            is Screen.Welcome.GetStarted -> WelcomeGetStartedView()
-        }
-        when (routerFlow.state.value) {
-            is Screen.Welcome.Screen1, is Screen.Welcome.Screen2 -> {
-                BottomButtons(totalScreens = totalScreens.value,
-                    currentScreen = currentScreen.value,
-                    onNext = { viewModel.onEvent(WelcomeEvent.OnNextScreen) },
-                    onSkip = { viewModel.onEvent(WelcomeEvent.OnSkip) })
-            }
-            else -> {
-                GetStartedButton(
-                    onLogin = { viewModel.onEvent(WelcomeEvent.OnLogin) },
-                    onRegister = { viewModel.onEvent(WelcomeEvent.OnRegister) }
-                )
+        AnimatedContent(targetState = screenState.value, transitionSpec = {
+            slideInHorizontally { fullWidth -> fullWidth } + fadeIn() with slideOutHorizontally { fullWidth -> -fullWidth }
+        }) { state ->
+            when (state) {
+                is Screen.Welcome.Screen1 -> WelcomeScreen1View()
+                is Screen.Welcome.Screen2 -> WelcomeScreen2View()
+                is Screen.Welcome.GetStarted -> WelcomeGetStartedView()
             }
         }
-
+        when (screenState.value) {
+            is Screen.Welcome.Screen1, is Screen.Welcome.Screen2 -> BottomButtons(totalScreens = totalScreens.value,
+                currentScreen = currentScreen.value,
+                onNext = { viewModel.onEvent(WelcomeEvent.OnNextScreen) },
+                onSkip = { viewModel.onEvent(WelcomeEvent.OnSkip) })
+            is Screen.Welcome.GetStarted -> GetStartedButton(onLogin = { viewModel.onEvent(WelcomeEvent.OnLogin) },
+                onRegister = { viewModel.onEvent(WelcomeEvent.OnRegister) })
+        }
     }
 }
 
@@ -132,7 +132,11 @@ private fun BottomButtons(totalScreens: Int, currentScreen: Int, onNext: () -> U
 
 @Composable
 private fun GetStartedButton(onLogin: () -> Unit, onRegister: () -> Unit) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
         OutlinedButton(onClick = onRegister) {
             Text(modifier = Modifier.padding(start = 16.dp, end = 16.dp), text = "Register")
         }
