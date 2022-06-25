@@ -47,6 +47,7 @@ kotlin {
 
                 implementation("org.kodein.di:kodein-di:7.11.0")
                 implementation("ch.qos.logback:logback-classic:1.2.11")
+                implementation("com.russhwolf:multiplatform-settings-no-arg:0.9")
             }
         }
 
