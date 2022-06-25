@@ -13,14 +13,15 @@ import de.hsfl.budgetBinder.screens.category.CategoryComponent
 import de.hsfl.budgetBinder.screens.category.CategoryDetailView
 import de.hsfl.budgetBinder.screens.entry.EntryComponent
 import de.hsfl.budgetBinder.screens.settings.SettingsView
+import de.hsfl.budgetBinder.screens.welcome.WelcomeComponent
 import org.kodein.di.instance
 
 @Composable
 fun Router() {
-    val scope = rememberCoroutineScope()
     val routerFlow: RouterFlow by di.instance()
-    val screenState = routerFlow.state.collectAsState(scope.coroutineContext)
+    val screenState = routerFlow.state.collectAsState()
     when (screenState.value) {
+        is Screen.Welcome -> WelcomeComponent()
         is Screen.Register -> RegisterComponent()
         is Screen.Login -> LoginComponent()
         is Screen.Dashboard -> DashboardComponent()

@@ -77,3 +77,15 @@ actual fun ForwardIcon() {
 actual fun EuroIcon() {
     Icon(imageVector = Icons.Default.Euro, contentDescription = null)
 }
+
+@Composable
+actual fun WelcomeImage(modifier: Modifier) {
+}
+
+@Composable
+actual fun SavingsImage(modifier: Modifier) {
+}
+
+@Composable
+actual fun GetStartedImage(modifier: Modifier) {
+}

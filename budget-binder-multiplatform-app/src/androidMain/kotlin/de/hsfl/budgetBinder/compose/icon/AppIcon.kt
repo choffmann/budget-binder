@@ -12,13 +12,49 @@ import de.hsfl.budgetBinder.android.R
 
 @Composable
 actual fun AppIcon(modifier: Modifier) {
-    Image(modifier = modifier, imageVector = ImageVector.vectorResource(id = R.drawable.ic_budgetbinder), contentDescription = null)
+    Image(
+        modifier = modifier,
+        imageVector = ImageVector.vectorResource(id = R.drawable.ic_budgetbinder),
+        contentDescription = null
+    )
 }
 
 @Composable
 actual fun AvatarImage(modifier: Modifier) {
-    Image(modifier = modifier, imageVector = ImageVector.vectorResource(id = R.drawable.ic_avataricon), contentDescription = null)
+    Image(
+        modifier = modifier,
+        imageVector = ImageVector.vectorResource(id = R.drawable.ic_avataricon),
+        contentDescription = null
+    )
 }
+
+@Composable
+actual fun WelcomeImage(modifier: Modifier) {
+    Image(
+        modifier = modifier,
+        imageVector = ImageVector.vectorResource(id = R.drawable.ic_undraw_welcome),
+        contentDescription = null
+    )
+}
+
+@Composable
+actual fun SavingsImage(modifier: Modifier) {
+    Image(
+        modifier = modifier,
+        imageVector = ImageVector.vectorResource(id = R.drawable.ic_undraw_savings),
+        contentDescription = null
+    )
+}
+
+@Composable
+actual fun GetStartedImage(modifier: Modifier) {
+    Image(
+        modifier = modifier,
+        imageVector = ImageVector.vectorResource(id = R.drawable.ic_undraw_awesome),
+        contentDescription = null
+    )
+}
+
 
 @Composable
 actual fun DashboardIcon() {

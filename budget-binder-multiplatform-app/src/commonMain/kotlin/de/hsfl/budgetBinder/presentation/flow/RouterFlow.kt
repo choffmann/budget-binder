@@ -11,7 +11,7 @@ class RouterFlow(
     private val navigateToScreenUseCase: NavigateToScreenUseCase,
     private val scope: CoroutineScope
 ) {
-    private val _state = MutableStateFlow<Screen>(Screen.Login)
+    private val _state = MutableStateFlow<Screen>(Screen.Welcome.Screen1)
     val state: StateFlow<Screen> = _state
 
     fun navigateTo(screen: Screen) {
