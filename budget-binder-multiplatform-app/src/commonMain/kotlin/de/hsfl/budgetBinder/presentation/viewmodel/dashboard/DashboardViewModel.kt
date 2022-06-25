@@ -38,10 +38,6 @@ class DashboardViewModel(
     private val _focusedCategoryState = MutableStateFlow(DashboardState().focusedCategory)
     val focusedCategoryState: StateFlow<DashboardFocusedCategoryState> = _focusedCategoryState
 
-    private val _spendBudgetOnCurrentCategory =
-        MutableStateFlow(DashboardState().spendBudgetOnCurrentCategory)
-    val spendBudgetOnCurrentCategory: StateFlow<Float> = _spendBudgetOnCurrentCategory
-
     private val _eventFlow = UiEventSharedFlow.mutableEventFlow
     val eventFlow = _eventFlow.asSharedFlow()
 
@@ -71,7 +67,6 @@ class DashboardViewModel(
         _categoryListState.value = emptyList()
         _entryListState.value = DashboardState().entryList
         _focusedCategoryState.value = DashboardState().focusedCategory
-        _spendBudgetOnCurrentCategory.value = DashboardState().spendBudgetOnCurrentCategory
     }
 
     private fun fillEntryListStateWithResult(entryList: List<Entry>) {
@@ -223,10 +218,10 @@ class DashboardViewModel(
             _categoryListState.value.forEach { totalBudget += it.budget }
             _focusedCategoryState.value = focusedCategoryState.value.copy(
                 category = Category(0, "Overall", "1675d1", Category.Image.DEFAULT, totalBudget),
+                spendBudget = calcSpendBudgetOnCategory(entryList),
                 hasPrev = false,
                 hasNext = true
             )
-            calcSpendBudgetOnCategory(entryList)
             fillEntryListStateWithResult(entryList)
         })
     }
@@ -236,9 +231,9 @@ class DashboardViewModel(
      */
     private fun setCategoryState() {
         getEntriesByCategory(id = _categoryListState.value[internalCategoryId].id) {
-            calcSpendBudgetOnCategory(it)
             _focusedCategoryState.value = focusedCategoryState.value.copy(
                 category = _categoryListState.value[internalCategoryId],
+                spendBudget = calcSpendBudgetOnCategory(it),
                 hasPrev = true,
                 hasNext = true
             )
@@ -253,6 +248,7 @@ class DashboardViewModel(
         getEntriesByCategory(id = null, onSuccess = {
             _focusedCategoryState.value = focusedCategoryState.value.copy(
                 category = Category(0, "No Category", "111111", Category.Image.DEFAULT, 0f),
+                spendBudget = calcSpendBudgetOnCategory(it),
                 hasPrev = true,
                 hasNext = false
             )
@@ -263,7 +259,7 @@ class DashboardViewModel(
     /**
      * Calculate the spend money for a category
      */
-    private fun calcSpendBudgetOnCategory(entryList: List<Entry>) {
+    private fun calcSpendBudgetOnCategory(entryList: List<Entry>): Float {
         var spendMoney = 0F
         entryList.onEach {
             if (it.amount > 0) {
@@ -272,7 +268,7 @@ class DashboardViewModel(
                 spendMoney += (it.amount * -1)
             }
         }
-        _spendBudgetOnCurrentCategory.value = spendMoney
+        return spendMoney
     }
 
     /**

@@ -23,7 +23,6 @@ fun DashboardComponent() {
     val viewModel: DashboardViewModel by di.instance()
     val entryList = viewModel.entryListState.collectAsState()
     val focusedCategory = viewModel.focusedCategoryState.collectAsState()
-    val totalSpendBudget = viewModel.spendBudgetOnCurrentCategory.collectAsState()
     val olderEntries = viewModel.oldEntriesMapState.collectAsState()
     val loadingState = remember { mutableStateOf(false) }
 
@@ -51,7 +50,7 @@ fun DashboardComponent() {
         Div {
             DashboardData(
                 focusedCategory = focusedCategory.value.category,
-                totalSpendBudget = totalSpendBudget.value,
+                totalSpendBudget = focusedCategory.value.spendBudget,
                 totalBudget = focusedCategory.value.category.budget,
                 hasPrev = focusedCategory.value.hasPrev,
                 hasNext = focusedCategory.value.hasNext,
