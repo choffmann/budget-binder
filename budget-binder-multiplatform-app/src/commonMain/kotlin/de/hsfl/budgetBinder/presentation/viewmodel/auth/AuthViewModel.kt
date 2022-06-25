@@ -2,7 +2,6 @@ package de.hsfl.budgetBinder.presentation.viewmodel.auth
 
 import de.hsfl.budgetBinder.common.User
 import de.hsfl.budgetBinder.domain.usecase.AuthUseCases
-import de.hsfl.budgetBinder.domain.usecase.NavigateToScreenUseCase
 import de.hsfl.budgetBinder.presentation.Screen
 import de.hsfl.budgetBinder.presentation.flow.DataFlow
 import de.hsfl.budgetBinder.presentation.flow.RouterFlow
@@ -16,7 +15,7 @@ open class AuthViewModel(
     _scope: CoroutineScope = CoroutineScope(Dispatchers.Unconfined + SupervisorJob()),
     _routerFlow: RouterFlow,
     _dataFlow: DataFlow,
-    _authUseCases: AuthUseCases
+    _authUseCases: AuthUseCases,
 ) {
     private val scope = _scope
     private val routerFlow = _routerFlow
@@ -25,18 +24,25 @@ open class AuthViewModel(
 
     val eventFlow = UiEventSharedFlow.eventFlow
 
-    protected fun register(user: User.In) = scope.launch {
+    protected fun register(user: User.In, serverUrl: String) = scope.launch {
         authUseCases.registerUseCase(user)
             .collect {
                 it.handleDataResponse<User>(
                     routerFlow = routerFlow,
-                    onSuccess = { login(email = user.email, password = user.password) })
+                    onSuccess = { login(email = user.email, password = user.password, serverUrl = serverUrl) })
             }
     }
 
-    protected fun login(email: String, password: String) = scope.launch {
+    protected fun login(email: String, password: String, serverUrl: String) = scope.launch {
+        if (!authUseCases.isServerUrlStoredUseCase()) {
+            authUseCases.storeServerUrlUseCase(serverUrl)
+        }
         authUseCases.loginUseCase(email = email, password = password)
-            .collect { it.handleDataResponse<Nothing>(routerFlow = routerFlow, onSuccess = { getMyUser() }) }
+            .collect {
+                it.handleDataResponse<Nothing>(routerFlow = routerFlow, onSuccess = {
+                    getMyUser()
+                })
+            }
     }
 
     private fun getMyUser() = scope.launch {
