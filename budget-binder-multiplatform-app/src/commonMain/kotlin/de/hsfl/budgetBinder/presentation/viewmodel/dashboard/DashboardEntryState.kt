@@ -5,5 +5,6 @@ import de.hsfl.budgetBinder.common.Entry
 
 data class DashboardEntryState(
     val entry: Entry,
-    val categoryImage: Category.Image = Category.Image.DEFAULT
+    val categoryImage: Category.Image = Category.Image.DEFAULT,
+    val categoryColor: String = "111111"
 )

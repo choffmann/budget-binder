@@ -17,7 +17,6 @@ import kotlinx.coroutines.launch
 
 class DashboardViewModel(
     private val dashboardUseCases: DashboardUseCases,
-    private val logoutUseCase: LogoutUseCase,
     private val routerFlow: RouterFlow,
     private val scope: CoroutineScope
 ) {
@@ -28,21 +27,17 @@ class DashboardViewModel(
     private var lastRequestedMonth = currentMonth
     private var lastRequestedYear = currentYear
 
-    private val _categoryListState = MutableStateFlow<List<Category>>(emptyList())
-    private val _entryListState = MutableStateFlow(DashboardState())
-    val entryListState: StateFlow<DashboardState> = _entryListState
+    private val _categoryListState = MutableStateFlow(DashboardState().categoryList)
+    private val _entryListState = MutableStateFlow(DashboardState().entryList)
+    val entryListState: StateFlow<List<DashboardEntryState>> = _entryListState
 
-    private val _oldEntriesMapState = MutableStateFlow<Map<String, DashboardState>>(mapOf())
+    private val _oldEntriesMapState = MutableStateFlow(DashboardState().oldEntriesList)
     val oldEntriesMapState: StateFlow<Map<String, DashboardState>> = _oldEntriesMapState
 
-    private val _focusedCategoryState = MutableStateFlow(DashboardState())
-    val focusedCategoryState: StateFlow<DashboardState> = _focusedCategoryState
+    private val _focusedCategoryState = MutableStateFlow(DashboardState().focusedCategory)
+    val focusedCategoryState: StateFlow<DashboardFocusedCategoryState> = _focusedCategoryState
 
-    private val _spendBudgetOnCurrentCategory = MutableStateFlow(DashboardState())
-    val spendBudgetOnCurrentCategory: StateFlow<DashboardState> = _spendBudgetOnCurrentCategory
-
-    private val _eventFlow = UiEventSharedFlow.mutableEventFlow
-    val eventFlow = _eventFlow.asSharedFlow()
+    val eventFlow = UiEventSharedFlow.mutableEventFlow
 
     fun onEvent(event: DashboardEvent) {
         when (event) {
@@ -68,19 +63,23 @@ class DashboardViewModel(
     private fun resetStateFlows() {
         resetOldEntries()
         _categoryListState.value = emptyList()
-        _entryListState.value = DashboardState()
-        _focusedCategoryState.value = DashboardState()
-        _spendBudgetOnCurrentCategory.value = DashboardState()
+        _entryListState.value = DashboardState().entryList
+        _focusedCategoryState.value = DashboardState().focusedCategory
     }
 
     private fun fillEntryListStateWithResult(entryList: List<Entry>) {
-        _entryListState.value = entryListState.value.copy(entryList = mapEntryListToDashboardEntryState(entryList))
+        _entryListState.value = mapEntryListToDashboardEntryState(entryList)
     }
 
     private fun fillOldEntriesMapState(period: String, entryList: List<Entry>) {
         _oldEntriesMapState.value = oldEntriesMapState.value.toMutableMap().apply {
             putAll(
-                mapOf(Pair(period, DashboardState(entryList = mapEntryListToDashboardEntryState(entryList))))
+                mapOf(
+                    Pair(
+                        period,
+                        DashboardState(entryList = mapEntryListToDashboardEntryState(entryList))
+                    )
+                )
             )
         }
     }
@@ -106,60 +105,49 @@ class DashboardViewModel(
 
     private fun getAllCategories(onSuccess: (List<Category>) -> Unit) = scope.launch {
         dashboardUseCases.getAllCategoriesUseCase().collect {
-            it.handleDataResponse<List<Category>>(
-                routerFlow = routerFlow, onSuccess = onSuccess
-            )
+            it.handleDataResponse<List<Category>>(routerFlow = routerFlow, onSuccess = onSuccess)
         }
     }
 
 
-    private fun getEntriesByCategory(id: Int? = null, period: String? = null, onSuccess: (List<Entry>) -> Unit) =
+    private fun getEntriesByCategory(
+        id: Int? = null,
+        period: String? = null,
+        onSuccess: (List<Entry>) -> Unit
+    ) = scope.launch {
+        dashboardUseCases.getAllEntriesByCategoryUseCase(id, period).collect {
+            it.handleDataResponse<List<Entry>>(routerFlow = routerFlow, onSuccess = onSuccess)
+        }
+    }
+
+
+    private fun getAllEntriesFromMonth(period: String, onSuccess: (List<Entry>) -> Unit) =
         scope.launch {
-            dashboardUseCases.getAllEntriesByCategoryUseCase(id, period).collect {
-                it.handleDataResponse<List<Entry>>(routerFlow = routerFlow, onSuccess = onSuccess)
+            dashboardUseCases.getAllEntriesUseCase(period).collect {
+                it.handleDataResponse<List<Entry>>(
+                    routerFlow = routerFlow, onSuccess = onSuccess
+                )
             }
         }
 
-
-    private fun getAllEntriesFromMonth(period: String, onSuccess: (List<Entry>) -> Unit) = scope.launch {
-        dashboardUseCases.getAllEntriesUseCase(period).collect {
-            it.handleDataResponse<List<Entry>>(
-                routerFlow = routerFlow, onSuccess = onSuccess
-            )
-        }
-    }
-
     private fun deleteEntry(id: Int) = scope.launch {
         dashboardUseCases.deleteEntryByIdUseCase(id).collect {
-            handleDataResponse(response = it, onSuccess = {
-                scope.launch {
-                    _eventFlow.emit(UiEvent.ShowSuccess("Removed Category"))
-                }
+            it.handleDataResponse<Entry>(routerFlow = routerFlow, onSuccess = {
+                eventFlow.emit(UiEvent.ShowSuccess("Entry deleted"))
                 onEvent(DashboardEvent.OnRefresh)
             })
         }
     }
 
-    private suspend fun <T> handleDataResponse(response: DataResponse<T>, onSuccess: (T) -> Unit) {
-        when (response) {
-            is DataResponse.Loading -> _eventFlow.emit(UiEvent.ShowLoading)
-            is DataResponse.Error -> _eventFlow.emit(UiEvent.ShowError(response.error!!.message))
-            is DataResponse.Success -> {
-                _eventFlow.emit(UiEvent.HideSuccess)
-                onSuccess(response.data!!)
-            }
-            is DataResponse.Unauthorized -> {
-                _eventFlow.emit(UiEvent.ShowError(response.error!!.message))
-                routerFlow.navigateTo(Screen.Login)
-            }
-        }
-    }
-
     private fun mapEntryListToDashboardEntryState(entryList: List<Entry>): List<DashboardEntryState> {
         return entryList.map { entry ->
-            DashboardEntryState(
-                entry, categoryImage = getCategoryByEntry(entry)?.image ?: Category.Image.DEFAULT
-            )
+            getCategoryByEntry(entry).let {
+                DashboardEntryState(
+                    entry,
+                    categoryImage = it?.image ?: DashboardEntryState(entry).categoryImage,
+                    categoryColor = it?.color ?: DashboardEntryState(entry).categoryColor
+                )
+            }
         }
     }
 
@@ -210,11 +198,11 @@ class DashboardViewModel(
             var totalBudget = 0f
             _categoryListState.value.forEach { totalBudget += it.budget }
             _focusedCategoryState.value = focusedCategoryState.value.copy(
+                category = Category(0, "Overall", "1675d1", Category.Image.DEFAULT, totalBudget),
+                spendBudget = calcSpendBudgetOnCategory(entryList),
                 hasPrev = false,
-                hasNext = true,
-                category = Category(0, "Overall", "1675d1", Category.Image.DEFAULT, totalBudget)
+                hasNext = true
             )
-            calcSpendBudgetOnCategory(entryList)
             fillEntryListStateWithResult(entryList)
         })
     }
@@ -223,13 +211,15 @@ class DashboardViewModel(
      * Set the category state for the current category, which the user moved to
      */
     private fun setCategoryState() {
-        getEntriesByCategory(id = _categoryListState.value[internalCategoryId].id, onSuccess = {
-            calcSpendBudgetOnCategory(it)
+        getEntriesByCategory(id = _categoryListState.value[internalCategoryId].id) {
             _focusedCategoryState.value = focusedCategoryState.value.copy(
-                hasPrev = true, hasNext = true, category = _categoryListState.value[internalCategoryId]
+                category = _categoryListState.value[internalCategoryId],
+                spendBudget = calcSpendBudgetOnCategory(it),
+                hasPrev = true,
+                hasNext = true
             )
             fillEntryListStateWithResult(it)
-        })
+        }
     }
 
     /**
@@ -238,9 +228,10 @@ class DashboardViewModel(
     private fun setCategoryWithNoCategory() {
         getEntriesByCategory(id = null, onSuccess = {
             _focusedCategoryState.value = focusedCategoryState.value.copy(
+                category = Category(0, "No Category", "111111", Category.Image.DEFAULT, 0f),
+                spendBudget = calcSpendBudgetOnCategory(it),
                 hasPrev = true,
-                hasNext = false,
-                category = Category(0, "No Category", "111111", Category.Image.DEFAULT, 0f)
+                hasNext = false
             )
             fillEntryListStateWithResult(it)
         })
@@ -249,7 +240,7 @@ class DashboardViewModel(
     /**
      * Calculate the spend money for a category
      */
-    private fun calcSpendBudgetOnCategory(entryList: List<Entry>) {
+    private fun calcSpendBudgetOnCategory(entryList: List<Entry>): Float {
         var spendMoney = 0F
         entryList.onEach {
             if (it.amount > 0) {
@@ -258,8 +249,7 @@ class DashboardViewModel(
                 spendMoney += (it.amount * -1)
             }
         }
-        _spendBudgetOnCurrentCategory.value =
-            spendBudgetOnCurrentCategory.value.copy(spendBudgetOnCurrentCategory = spendMoney)
+        return spendMoney
     }
 
     /**
@@ -303,56 +293,5 @@ class DashboardViewModel(
             this.ordinal + 1 < 10 -> "0${this.ordinal + 1}"
             else -> "${this.ordinal + 1}"
         }
-    }
-
-    // Old
-    private val _categoriesState = MutableStateFlow<UiState>(UiState.Empty)
-
-    @Deprecated(message = "Use new StateFlow")
-    val categoriesState: StateFlow<UiState> = _categoriesState
-
-    private val _entriesState = MutableStateFlow<UiState>(UiState.Empty)
-
-    @Deprecated(message = "Use new StateFlow")
-    val entriesState: StateFlow<UiState> = _entriesState
-
-    private val _state = MutableStateFlow<UiState>(UiState.Empty)
-
-    @Deprecated(message = "Use new StateFlow")
-    val state: StateFlow<UiState> = _state
-
-    fun logOut(onAllDevices: Boolean) {
-        logoutUseCase(onAllDevices).onEach {
-            when (it) {
-                is DataResponse.Success -> _state.value = UiState.Success(it.data)
-                is DataResponse.Error -> _state.value = UiState.Error(error = it.error!!.message)
-                is DataResponse.Loading -> _state.value = UiState.Loading
-                is DataResponse.Unauthorized -> routerFlow.navigateTo(Screen.Login)
-            }
-        }.launchIn(scope)
-    }
-
-    @Deprecated(message = "Use new StateFlow")
-    private fun _getAllCategories() {
-        dashboardUseCases.getAllCategoriesUseCase().onEach {
-            when (it) {
-                is DataResponse.Success -> _categoriesState.value = UiState.Success(it.data)
-                is DataResponse.Error -> _categoriesState.value = UiState.Error(it.error!!.message)
-                is DataResponse.Loading -> _categoriesState.value = UiState.Loading
-                is DataResponse.Unauthorized -> _categoriesState.value = UiState.Unauthorized
-            }
-        }.launchIn(scope)
-    }
-
-    @Deprecated(message = "Use new StateFlow")
-    private fun _getAllEntries() {
-        dashboardUseCases.getAllEntriesUseCase().onEach {
-            when (it) {
-                is DataResponse.Success -> _entriesState.value = UiState.Success(it.data)
-                is DataResponse.Error -> _entriesState.value = UiState.Error(it.error!!.message)
-                is DataResponse.Loading -> _entriesState.value = UiState.Loading
-                is DataResponse.Unauthorized -> _entriesState.value = UiState.Unauthorized
-            }
-        }.launchIn(scope)
     }
 }

@@ -23,7 +23,6 @@ fun DashboardComponent() {
     val viewModel: DashboardViewModel by di.instance()
     val entryList = viewModel.entryListState.collectAsState()
     val focusedCategory = viewModel.focusedCategoryState.collectAsState()
-    val totalSpendBudget = viewModel.spendBudgetOnCurrentCategory.collectAsState()
     val olderEntries = viewModel.oldEntriesMapState.collectAsState()
     val loadingState = remember { mutableStateOf(false) }
 
@@ -51,14 +50,14 @@ fun DashboardComponent() {
         Div {
             DashboardData(
                 focusedCategory = focusedCategory.value.category,
-                totalSpendBudget = totalSpendBudget.value.spendBudgetOnCurrentCategory,
+                totalSpendBudget = focusedCategory.value.spendBudget,
                 totalBudget = focusedCategory.value.category.budget,
                 hasPrev = focusedCategory.value.hasPrev,
                 hasNext = focusedCategory.value.hasNext,
                 onPrevClicked = { viewModel.onEvent(DashboardEvent.OnPrevCategory) },
                 onNextClicked = { viewModel.onEvent(DashboardEvent.OnNextCategory) }
             )
-            EntryList(entryList = entryList.value.entryList,
+            EntryList(entryList = entryList.value,
                 oldEntries = olderEntries.value,
                 onItemClicked = { viewModel.onEvent(DashboardEvent.OnEntry(it)) },
                 onLoadMore = { viewModel.onEvent(DashboardEvent.OnLoadMore) },
@@ -214,6 +213,7 @@ fun EntryListElement(
         }) {
             CategoryImageToIcon(entry.categoryImage)
         }
+        ColorCircle(entry.categoryColor)
         Div(attrs = { classes(AppStylesheet.entryListElementText) }) {
             Div(attrs = {
                 classes(
