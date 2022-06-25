@@ -10,6 +10,15 @@ expect fun AppIcon(modifier: Modifier = Modifier)
 expect fun AvatarImage(modifier: Modifier = Modifier)
 
 @Composable
+expect fun WelcomeImage(modifier: Modifier = Modifier)
+
+@Composable
+expect fun SavingsImage(modifier: Modifier = Modifier)
+
+@Composable
+expect fun GetStartedImage(modifier: Modifier = Modifier)
+
+@Composable
 expect fun DashboardIcon()
 
 @Composable
