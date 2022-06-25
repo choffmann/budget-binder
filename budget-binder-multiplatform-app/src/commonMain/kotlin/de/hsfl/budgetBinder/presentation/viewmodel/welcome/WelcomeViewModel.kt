@@ -1,6 +1,6 @@
 package de.hsfl.budgetBinder.presentation.viewmodel.welcome
 
-import de.hsfl.budgetBinder.common.SettingsModul
+import de.hsfl.budgetBinder.domain.usecase.StoreIsFirstTimeUseCase
 import de.hsfl.budgetBinder.presentation.Screen
 import de.hsfl.budgetBinder.presentation.flow.RouterFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.StateFlow
 
 class WelcomeViewModel(
     private val routerFlow: RouterFlow,
-    private val settingsModul: SettingsModul
+    private val storeIsFirstTimeUseCase: StoreIsFirstTimeUseCase
 ) {
 
     private val _totalWelcomeScreen = MutableStateFlow(3)
@@ -27,17 +27,13 @@ class WelcomeViewModel(
         }
     }
 
-    private fun storeFirstTimeUse() {
-        settingsModul.storeFirstTimeUse()
-    }
-
     private fun onLogin() {
-        storeFirstTimeUse()
+        storeIsFirstTimeUseCase()
         routerFlow.navigateTo(Screen.Login)
     }
 
     private fun onRegister() {
-        storeFirstTimeUse()
+        storeIsFirstTimeUseCase()
         routerFlow.navigateTo(Screen.Register)
     }
 

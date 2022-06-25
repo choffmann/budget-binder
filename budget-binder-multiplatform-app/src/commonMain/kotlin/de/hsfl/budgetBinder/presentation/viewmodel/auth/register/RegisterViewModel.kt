@@ -16,13 +16,13 @@ import kotlinx.coroutines.flow.*
 class RegisterViewModel(
     private val authUseCases: AuthUseCases,
     private val routerFlow: RouterFlow,
+    private val scope: CoroutineScope,
     dataFlow: DataFlow,
-    private val scope: CoroutineScope
 ) : AuthViewModel(
     _scope = scope,
     _authUseCases = authUseCases,
     _dataFlow = dataFlow,
-    _routerFlow = routerFlow
+    _routerFlow = routerFlow,
 ) {
     private val _firstNameText = MutableStateFlow(RegisterTextFieldState())
     val firstNameText: StateFlow<RegisterTextFieldState> = _firstNameText
@@ -58,7 +58,8 @@ class RegisterViewModel(
                             name = lastNameText.value.lastName,
                             email = emailText.value.email,
                             password = passwordText.value.password
-                        )
+                        ),
+                        serverUrl = "TODO:"
                     )
                 }
             }

@@ -22,17 +22,6 @@ class DataFlow(
         }
     }
 
-    // Server Url
-    private val _serverUrlState = MutableStateFlow(Url("http://localhost:8080"))
-    val serverUrlState: StateFlow<Url> = _serverUrlState
-
-    fun storeServerUrl(serverUrl: Url) = scope.launch {
-        dataFlowUseCases.storeServerUrlUseCase(serverUrl).collect {
-            _serverUrlState.value = it
-        }
-    }
-
-
     // Dark Mode
     private val _darkModeState = MutableStateFlow(false)
     val darkModeState: StateFlow<Boolean> = _darkModeState
