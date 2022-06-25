@@ -1,14 +1,8 @@
 package de.hsfl.budgetBinder.di
 
 import de.hsfl.budgetBinder.data.client.Client
-import de.hsfl.budgetBinder.data.repository.AuthRepositoryImpl
-import de.hsfl.budgetBinder.data.repository.CategoryRepositoryImpl
-import de.hsfl.budgetBinder.data.repository.EntryRepositoryImpl
-import de.hsfl.budgetBinder.data.repository.UserRepositoryImpl
-import de.hsfl.budgetBinder.domain.repository.AuthRepository
-import de.hsfl.budgetBinder.domain.repository.CategoryRepository
-import de.hsfl.budgetBinder.domain.repository.EntryRepository
-import de.hsfl.budgetBinder.domain.repository.UserRepository
+import de.hsfl.budgetBinder.data.repository.*
+import de.hsfl.budgetBinder.domain.repository.*
 import de.hsfl.budgetBinder.domain.usecase.*
 import de.hsfl.budgetBinder.domain.usecase.storage.StoreDarkModeUseCase
 import de.hsfl.budgetBinder.domain.usecase.storage.StoreServerUrlUseCase
@@ -29,6 +23,7 @@ import de.hsfl.budgetBinder.presentation.viewmodel.navdrawer.NavDrawerViewModel
 import de.hsfl.budgetBinder.presentation.viewmodel.settings.SettingsEditServerUrlViewModel
 import de.hsfl.budgetBinder.presentation.viewmodel.settings.SettingsEditUserViewModel
 import de.hsfl.budgetBinder.presentation.viewmodel.settings.SettingsViewModel
+import de.hsfl.budgetBinder.presentation.viewmodel.welcome.WelcomeViewModel
 import io.ktor.client.engine.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -42,13 +37,23 @@ fun kodein(ktorEngine: HttpClientEngine) = DI {
     bindSingleton { CoroutineScope(Dispatchers.Unconfined + SupervisorJob()) }
 
     // Client
-    bindSingleton { Client(engine = ktorEngine) }
+    bindSingleton { Client(engine = ktorEngine, instance()) }
 
     // Repositories
     bindSingleton<AuthRepository> { AuthRepositoryImpl(instance()) }
     bindSingleton<UserRepository> { UserRepositoryImpl(instance()) }
     bindSingleton<CategoryRepository> { CategoryRepositoryImpl(instance()) }
     bindSingleton<EntryRepository> { EntryRepositoryImpl(instance()) }
+    bindSingleton<SettingsRepository> { SettingsRepositoryImpl }
+
+    // SettingsUseCase
+    bindSingleton { StoreIsFirstTimeUseCase(instance()) }
+    bindSingleton { IsFirstTimeUseCase(instance()) }
+    bindSingleton { StoreDarkThemeUseCase(instance()) }
+    bindSingleton { IsDarkThemeUseCase(instance()) }
+    bindSingleton { IsServerUrlStoredUseCase(instance()) }
+    bindSingleton { GetServerUrlUseCase(instance()) }
+    bindSingleton { StoreServerUrlUseCase(instance()) }
 
     // AuthUseCase
     bindSingleton { RegisterUseCase(instance()) }
@@ -82,16 +87,17 @@ fun kodein(ktorEngine: HttpClientEngine) = DI {
     bindSingleton { EntryUseCases(instance(), instance(), instance(), instance(), instance(), instance()) }
     bindSingleton { CategoriesUseCases(instance(), instance(), instance(), instance(), instance(), instance()) }
     bindSingleton { SettingsUseCases(instance(), instance(), instance()) }
-    bindSingleton { AuthUseCases(instance(), instance(), instance()) }
+    bindSingleton { AuthUseCases(instance(), instance(), instance(), instance(), instance(), instance()) }
     bindSingleton { DashboardUseCases(instance(), instance(), instance(), instance()) }
     bindSingleton { DataFlowUseCases(instance(), instance(), instance()) }
 
     // Flows
     bindSingleton { DataFlow(instance(), instance()) }
-    bindSingleton { RouterFlow(instance(), instance()) }
+    bindSingleton { RouterFlow(instance(), instance(), instance()) }
     bindSingleton { UiEventSharedFlow }
 
     // ViewModels
+    bindSingleton { WelcomeViewModel(instance(), instance()) }
     bindSingleton { LoginViewModel(instance(), instance(), instance(), instance()) }
     bindSingleton { RegisterViewModel(instance(), instance(), instance(), instance()) }
     bindSingleton { SettingsViewModel(instance(), instance(), instance(), instance()) }

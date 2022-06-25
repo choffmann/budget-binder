@@ -1,18 +1,15 @@
 package de.hsfl.budgetBinder.presentation.viewmodel.auth.login
 
-import de.hsfl.budgetBinder.common.DataResponse
 import de.hsfl.budgetBinder.common.User
 import de.hsfl.budgetBinder.common.utils.validateEmail
 import de.hsfl.budgetBinder.domain.usecase.AuthUseCases
 import de.hsfl.budgetBinder.presentation.flow.RouterFlow
 import de.hsfl.budgetBinder.presentation.Screen
-import de.hsfl.budgetBinder.presentation.UiState
 import de.hsfl.budgetBinder.presentation.event.UiEvent
 import de.hsfl.budgetBinder.presentation.event.handleLifeCycle
 import de.hsfl.budgetBinder.presentation.flow.DataFlow
 import de.hsfl.budgetBinder.presentation.flow.UiEventSharedFlow
 import de.hsfl.budgetBinder.presentation.viewmodel.auth.AuthViewModel
-import io.ktor.http.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -20,10 +17,13 @@ import kotlinx.coroutines.launch
 class LoginViewModel(
     private val authUseCases: AuthUseCases,
     private val routerFlow: RouterFlow,
-    private val dataFlow: DataFlow,
-    private val scope: CoroutineScope
+    private val scope: CoroutineScope,
+    private val dataFlow: DataFlow
 ) : AuthViewModel(
-    _scope = scope, _routerFlow = routerFlow, _dataFlow = dataFlow, _authUseCases = authUseCases
+    _scope = scope,
+    _routerFlow = routerFlow,
+    _authUseCases = authUseCases,
+    _dataFlow = dataFlow
 ) {
     private val screenAfterSuccess = Screen.Dashboard
 
@@ -43,24 +43,33 @@ class LoginViewModel(
         when (event) {
             is LoginEvent.EnteredEmail -> _emailText.value =
                 emailText.value.copy(email = event.value, emailValid = true)
-            is LoginEvent.EnteredPassword -> _passwordText.value =
-                passwordText.value.copy(password = event.value)
+            is LoginEvent.EnteredPassword -> _passwordText.value = passwordText.value.copy(password = event.value)
             is LoginEvent.EnteredServerUrl -> _serverUrlText.value =
                 serverUrlText.value.copy(serverAddress = event.value)
-            is LoginEvent.OnLogin -> validateInput { toggleDialog() }
+            is LoginEvent.OnLogin -> validateInput {
+                if(!authUseCases.isServerUrlStoredUseCase()) {
+                    toggleDialog()
+                } else {
+                    super.login(
+                        email = emailText.value.email,
+                        password = passwordText.value.password,
+                        serverUrl = authUseCases.getServerUrlUseCase()
+                    )
+                }
+            }
             is LoginEvent.OnRegisterScreen -> routerFlow.navigateTo(Screen.Register)
             is LoginEvent.OnServerUrlDialogConfirm -> validateInput { onServerUrlDialogConfirm() }
             is LoginEvent.OnServerUrlDialogDismiss -> toggleDialog()
-            is LoginEvent.LifeCycle -> event.value.handleLifeCycle(onLaunch = { tryToLoginUserOnStart() },
-                onDispose = { clearStateFlows() })
+            is LoginEvent.LifeCycle -> event.value.handleLifeCycle(onLaunch = {
+                if (authUseCases.isServerUrlStoredUseCase()) {
+                    tryToLoginUserOnStart()
+                }
+            }, onDispose = { clearStateFlows() })
         }
     }
 
     private fun validateInput(actionOnSuccess: () -> Unit) {
         if (validateEmail(email = emailText.value.email)) {
-            //TODO: Check what frontend this is opened from.
-            // Web -> super.login(...),
-            // everyone else -> toggleDialog()
             actionOnSuccess()
         } else {
             _emailText.value = emailText.value.copy(emailValid = false)
@@ -69,8 +78,12 @@ class LoginViewModel(
 
     private fun onServerUrlDialogConfirm() {
         toggleDialog()
-        dataFlow.storeServerUrl(Url(urlString = serverUrlText.value.serverAddress))
-        super.login(email = emailText.value.email, password = passwordText.value.password)
+        authUseCases.storeServerUrlUseCase(serverUrlText.value.serverAddress)
+        super.login(
+            email = emailText.value.email,
+            password = passwordText.value.password,
+            serverUrl = serverUrlText.value.serverAddress
+        )
     }
 
     private fun tryToLoginUserOnStart() = scope.launch {
@@ -78,8 +91,7 @@ class LoginViewModel(
             it.handleDataResponse<User>(routerFlow = routerFlow, onSuccess = { user ->
                 storeUser(user)
                 routerFlow.navigateTo(screenAfterSuccess)
-            },
-                onUnauthorized = { UiEventSharedFlow.mutableEventFlow.emit(UiEvent.HideSuccess) })
+            }, onUnauthorized = { UiEventSharedFlow.mutableEventFlow.emit(UiEvent.HideSuccess) })
         }
     }
 

@@ -2,7 +2,6 @@ package de.hsfl.budgetBinder.common
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import de.hsfl.budgetBinder.common.Constants.BASE_URL
 import de.hsfl.budgetBinder.presentation.Screen
 
 object StateManager {
@@ -17,6 +16,4 @@ object StateManager {
     // Settings
     val darkMode = mutableStateOf(false)
     val userState = mutableStateOf(User(0, "", "", ""))
-    val serverState = mutableStateOf(BASE_URL)
-
 }

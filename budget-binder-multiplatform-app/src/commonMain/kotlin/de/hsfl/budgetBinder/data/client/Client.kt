@@ -1,12 +1,11 @@
 package de.hsfl.budgetBinder.data.client
 
 import de.hsfl.budgetBinder.common.*
-import de.hsfl.budgetBinder.common.Constants.BASE_URL
 import de.hsfl.budgetBinder.data.client.plugins.AuthPlugin
+import de.hsfl.budgetBinder.domain.usecase.GetServerUrlUseCase
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.engine.*
-import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.logging.*
 import io.ktor.client.request.*
@@ -167,7 +166,10 @@ expect fun HttpClientConfig<*>.specificClientConfig()
  * @author Cedrik Hoffmann
  * @see de.hsfl.budgetBinder.data.client.ApiClient
  */
-class Client(engine: HttpClientEngine) : ApiClient {
+class Client(
+    private val engine: HttpClientEngine, private val getServerUrlUseCase: GetServerUrlUseCase
+) : ApiClient {
+
     private val client = HttpClient(engine) {
         install(ContentNegotiation) {
             json()
@@ -177,23 +179,19 @@ class Client(engine: HttpClientEngine) : ApiClient {
             loginPath = "/login"
             logoutPath = "/logout"
             refreshPath = "/refresh_token"
+            buildUrlFunction = { buildUrl(it) }
         }
 
-        /*install(Logging) {
+        install(Logging) {
             logger = Logger.DEFAULT
             level = LogLevel.HEADERS
-        }*/
-
-        defaultRequest {
-            url(BASE_URL)
         }
-
         specificClientConfig()
     }
 
     override suspend fun login(email: String, password: String): APIResponse<AuthToken> {
         return client.submitForm(
-            url = "/login", formParameters = Parameters.build {
+            url = buildUrl("/login"), formParameters = Parameters.build {
                 append("username", email)
                 append("password", password)
             }, encodeInQuery = false
@@ -201,7 +199,7 @@ class Client(engine: HttpClientEngine) : ApiClient {
     }
 
     override suspend fun register(user: User.In): APIResponse<User> {
-        return client.post("/register") {
+        return client.post(urlString = buildUrl("/register")) {
             contentType(ContentType.Application.Json)
             setBody(user)
         }.body()
@@ -209,110 +207,116 @@ class Client(engine: HttpClientEngine) : ApiClient {
 
     override suspend fun logout(onAllDevice: Boolean): APIResponse<AuthToken> {
         return client.submitForm(
-            url = "/logout", formParameters = Parameters.build {
+            url = buildUrl("/logout"), formParameters = Parameters.build {
                 append("all", onAllDevice.toString())
             }, encodeInQuery = true
         ).body()
     }
 
     override suspend fun getMyUser(): APIResponse<User> {
-        return client.get("/me").body()
+        return client.get(buildUrl("/me")).body()
     }
 
     override suspend fun changeMyUser(user: User.Patch): APIResponse<User> {
-        return client.patch(urlString = "/me") {
+        return client.patch(urlString = buildUrl("/me")) {
             contentType(ContentType.Application.Json)
             setBody(user)
         }.body()
     }
 
     override suspend fun deleteMyUser(): APIResponse<User> {
-        return client.delete(urlString = "/me") {
+        return client.delete(urlString = buildUrl("/me")) {
             contentType(ContentType.Application.Json)
         }.body()
     }
 
     override suspend fun getAllCategories(): APIResponse<List<Category>> {
-        return client.submitForm(url = "/categories", formParameters = Parameters.build {
+        return client.submitForm(url = buildUrl("/categories"), formParameters = Parameters.build {
             append("current", "true")
         }, encodeInQuery = true).body()
     }
 
     override suspend fun getAllCategories(period: String): APIResponse<List<Category>> {
-        return client.submitForm(url = "/categories", formParameters = Parameters.build {
+        return client.submitForm(url = buildUrl("/categories"), formParameters = Parameters.build {
             append("period", period)
         }, encodeInQuery = true).body()
     }
 
     override suspend fun createNewCategory(category: Category.In): APIResponse<Category> {
-        return client.post(urlString = "/categories") {
+        return client.post(urlString = buildUrl("/categories")) {
             contentType(ContentType.Application.Json)
             setBody(category)
         }.body()
     }
 
     override suspend fun getCategoryById(id: Int): APIResponse<Category> {
-        return client.get(urlString = "/categories/$id").body()
+        return client.get(urlString = buildUrl("/categories/$id")).body()
     }
 
     override suspend fun changeCategoryById(category: Category.Patch, id: Int): APIResponse<Category> {
-        return client.patch(urlString = "/categories/$id") {
+        return client.patch(urlString = buildUrl("/categories/$id")) {
             contentType(ContentType.Application.Json)
             setBody(category)
         }.body()
     }
 
     override suspend fun deleteCategoryById(id: Int): APIResponse<Category> {
-        return client.delete(urlString = "/categories/$id") {
+        return client.delete(urlString = buildUrl("/categories/$id")) {
             contentType(ContentType.Application.Json)
         }.body()
     }
 
     override suspend fun getEntriesFromCategory(id: Int?): APIResponse<List<Entry>> {
-        return client.submitForm(url = "/categories/$id/entries", formParameters = Parameters.build {
+        return client.submitForm(url = buildUrl("/categories/$id/entries"), formParameters = Parameters.build {
             append("current", "true")
         }, encodeInQuery = true).body()
     }
 
     override suspend fun getEntriesFromCategory(id: Int?, period: String): APIResponse<List<Entry>> {
-        return client.submitForm(url = "/categories/$id/entries", formParameters = Parameters.build {
+        return client.submitForm(url = buildUrl("/categories/$id/entries"), formParameters = Parameters.build {
             append("period", period)
         }, encodeInQuery = true).body()
     }
 
     override suspend fun getAllEntries(): APIResponse<List<Entry>> {
-        return client.submitForm(url = "/entries", formParameters = Parameters.build {
+        return client.submitForm(url = buildUrl("/entries"), formParameters = Parameters.build {
             append("current", "true")
         }, encodeInQuery = true).body()
     }
 
     override suspend fun getAllEntries(period: String): APIResponse<List<Entry>> {
-        return client.submitForm(url = "/entries", formParameters = Parameters.build {
+        return client.submitForm(url = buildUrl("/entries"), formParameters = Parameters.build {
             append("period", period)
         }, encodeInQuery = true).body()
     }
 
     override suspend fun createNewEntry(entry: Entry.In): APIResponse<Entry> {
-        return client.post(urlString = "/entries") {
+        return client.post(urlString = buildUrl("/entries")) {
             contentType(ContentType.Application.Json)
             setBody(entry)
         }.body()
     }
 
     override suspend fun getEntryById(id: Int): APIResponse<Entry> {
-        return client.get(urlString = "/entries/$id").body()
+        return client.get(urlString = buildUrl("/entries/$id")).body()
     }
 
     override suspend fun changeEntryById(entry: Entry.Patch, id: Int): APIResponse<Entry> {
-        return client.patch(urlString = "/entries/$id") {
+        return client.patch(urlString = buildUrl("/entries/$id")) {
             contentType(ContentType.Application.Json)
             setBody(entry)
         }.body()
     }
 
     override suspend fun deleteEntryById(id: Int): APIResponse<Entry> {
-        return client.delete(urlString = "/entries/$id") {
+        return client.delete(urlString = buildUrl("/entries/$id")) {
             contentType(ContentType.Application.Json)
         }.body()
+    }
+
+    private fun buildUrl(path: String): String {
+        val serverUrl = getServerUrlUseCase()
+        println("Server URL: $serverUrl")
+        return serverUrl + path
     }
 }
