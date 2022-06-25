@@ -1,5 +1,6 @@
 package de.hsfl.budgetBinder.di
 
+import de.hsfl.budgetBinder.common.SettingsModul
 import de.hsfl.budgetBinder.data.client.Client
 import de.hsfl.budgetBinder.data.repository.AuthRepositoryImpl
 import de.hsfl.budgetBinder.data.repository.CategoryRepositoryImpl
@@ -89,11 +90,12 @@ fun kodein(ktorEngine: HttpClientEngine) = DI {
 
     // Flows
     bindSingleton { DataFlow(instance(), instance()) }
-    bindSingleton { RouterFlow(instance(), instance()) }
+    bindSingleton { RouterFlow(instance(), instance(), instance()) }
     bindSingleton { UiEventSharedFlow }
+    bindSingleton { SettingsModul() }
 
     // ViewModels
-    bindSingleton { WelcomeViewModel(instance()) }
+    bindSingleton { WelcomeViewModel(instance(), instance()) }
     bindSingleton { LoginViewModel(instance(), instance(), instance(), instance()) }
     bindSingleton { RegisterViewModel(instance(), instance(), instance(), instance()) }
     bindSingleton { SettingsViewModel(instance(), instance(), instance(), instance()) }

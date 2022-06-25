@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 
 open class AuthViewModel(
     _scope: CoroutineScope = CoroutineScope(Dispatchers.Unconfined + SupervisorJob()),
-    _routerFlow: RouterFlow = RouterFlow(NavigateToScreenUseCase(), _scope),
+    _routerFlow: RouterFlow,
     _dataFlow: DataFlow,
     _authUseCases: AuthUseCases
 ) {
