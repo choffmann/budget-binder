@@ -28,18 +28,19 @@ class DashboardViewModel(
     private var lastRequestedMonth = currentMonth
     private var lastRequestedYear = currentYear
 
-    private val _categoryListState = MutableStateFlow<List<Category>>(emptyList())
-    private val _entryListState = MutableStateFlow(DashboardState())
-    val entryListState: StateFlow<DashboardState> = _entryListState
+    private val _categoryListState = MutableStateFlow(DashboardState().categoryList)
+    private val _entryListState = MutableStateFlow(DashboardState().entryList)
+    val entryListState: StateFlow<List<DashboardEntryState>> = _entryListState
 
-    private val _oldEntriesMapState = MutableStateFlow<Map<String, DashboardState>>(mapOf())
+    private val _oldEntriesMapState = MutableStateFlow(DashboardState().oldEntriesList)
     val oldEntriesMapState: StateFlow<Map<String, DashboardState>> = _oldEntriesMapState
 
-    private val _focusedCategoryState = MutableStateFlow(DashboardState())
-    val focusedCategoryState: StateFlow<DashboardState> = _focusedCategoryState
+    private val _focusedCategoryState = MutableStateFlow(DashboardState().focusedCategory)
+    val focusedCategoryState: StateFlow<Category> = _focusedCategoryState
 
-    private val _spendBudgetOnCurrentCategory = MutableStateFlow(DashboardState())
-    val spendBudgetOnCurrentCategory: StateFlow<DashboardState> = _spendBudgetOnCurrentCategory
+    private val _spendBudgetOnCurrentCategory =
+        MutableStateFlow(DashboardState().spendBudgetOnCurrentCategory)
+    val spendBudgetOnCurrentCategory: StateFlow<Float> = _spendBudgetOnCurrentCategory
 
     private val _eventFlow = UiEventSharedFlow.mutableEventFlow
     val eventFlow = _eventFlow.asSharedFlow()
@@ -68,14 +69,13 @@ class DashboardViewModel(
     private fun resetStateFlows() {
         resetOldEntries()
         _categoryListState.value = emptyList()
-        _entryListState.value = DashboardState()
-        _focusedCategoryState.value = DashboardState()
-        _spendBudgetOnCurrentCategory.value = DashboardState()
+        _entryListState.value = DashboardState().entryList
+        _focusedCategoryState.value = DashboardState().focusedCategory
+        _spendBudgetOnCurrentCategory.value = DashboardState().spendBudgetOnCurrentCategory
     }
 
     private fun fillEntryListStateWithResult(entryList: List<Entry>) {
-        _entryListState.value =
-            entryListState.value.copy(entryList = mapEntryListToDashboardEntryState(entryList))
+        _entryListState.value = mapEntryListToDashboardEntryState(entryList)
     }
 
     private fun fillOldEntriesMapState(period: String, entryList: List<Entry>) {
@@ -95,7 +95,7 @@ class DashboardViewModel(
         when (internalCategoryId) {
             -1 -> getAllEntries(onSuccess = { fillEntryListStateWithResult(it) })
             in _categoryListState.value.indices -> getEntriesByCategory(
-                id = focusedCategoryState.value.category.id,
+                id = focusedCategoryState.value.id,
                 onSuccess = { fillEntryListStateWithResult(it) })
             _categoryListState.value.size -> getEntriesByCategory(
                 id = null,
@@ -112,9 +112,7 @@ class DashboardViewModel(
 
     private fun getAllCategories(onSuccess: (List<Category>) -> Unit) = scope.launch {
         dashboardUseCases.getAllCategoriesUseCase().collect {
-            it.handleDataResponse<List<Category>>(
-                routerFlow = routerFlow, onSuccess = onSuccess
-            )
+            it.handleDataResponse<List<Category>>(routerFlow = routerFlow, onSuccess = onSuccess)
         }
     }
 
@@ -275,7 +273,7 @@ class DashboardViewModel(
             }
         }
         _spendBudgetOnCurrentCategory.value =
-            spendBudgetOnCurrentCategory.value.copy(spendBudgetOnCurrentCategory = spendMoney)
+            spendBudgetOnCurrentCategory.value
     }
 
     /**
@@ -296,7 +294,7 @@ class DashboardViewModel(
             -1 -> getAllEntriesFromMonth(period = periodString) {
                 fillOldEntriesMapState(periodString, it)
             }
-            in _categoryListState.value.indices -> getEntriesByCategory(id = focusedCategoryState.value.category.id,
+            in _categoryListState.value.indices -> getEntriesByCategory(id = focusedCategoryState.value.id,
                 period = periodString,
                 onSuccess = { fillOldEntriesMapState(periodString, it) })
             _categoryListState.value.size -> getEntriesByCategory(
