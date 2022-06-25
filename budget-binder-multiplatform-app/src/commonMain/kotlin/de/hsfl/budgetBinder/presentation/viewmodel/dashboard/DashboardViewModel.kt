@@ -17,7 +17,6 @@ import kotlinx.coroutines.launch
 
 class DashboardViewModel(
     private val dashboardUseCases: DashboardUseCases,
-    private val logoutUseCase: LogoutUseCase,
     private val routerFlow: RouterFlow,
     private val scope: CoroutineScope
 ) {
@@ -38,8 +37,7 @@ class DashboardViewModel(
     private val _focusedCategoryState = MutableStateFlow(DashboardState().focusedCategory)
     val focusedCategoryState: StateFlow<DashboardFocusedCategoryState> = _focusedCategoryState
 
-    private val _eventFlow = UiEventSharedFlow.mutableEventFlow
-    val eventFlow = _eventFlow.asSharedFlow()
+    val eventFlow = UiEventSharedFlow.mutableEventFlow
 
     fun onEvent(event: DashboardEvent) {
         when (event) {
@@ -116,12 +114,11 @@ class DashboardViewModel(
         id: Int? = null,
         period: String? = null,
         onSuccess: (List<Entry>) -> Unit
-    ) =
-        scope.launch {
-            dashboardUseCases.getAllEntriesByCategoryUseCase(id, period).collect {
-                it.handleDataResponse<List<Entry>>(routerFlow = routerFlow, onSuccess = onSuccess)
-            }
+    ) = scope.launch {
+        dashboardUseCases.getAllEntriesByCategoryUseCase(id, period).collect {
+            it.handleDataResponse<List<Entry>>(routerFlow = routerFlow, onSuccess = onSuccess)
         }
+    }
 
 
     private fun getAllEntriesFromMonth(period: String, onSuccess: (List<Entry>) -> Unit) =
@@ -135,38 +132,22 @@ class DashboardViewModel(
 
     private fun deleteEntry(id: Int) = scope.launch {
         dashboardUseCases.deleteEntryByIdUseCase(id).collect {
-            handleDataResponse(response = it, onSuccess = {
-                scope.launch {
-                    _eventFlow.emit(UiEvent.ShowSuccess("Removed Category"))
-                }
+            it.handleDataResponse<Entry>(routerFlow = routerFlow, onSuccess = {
+                eventFlow.emit(UiEvent.ShowSuccess("Entry deleted"))
                 onEvent(DashboardEvent.OnRefresh)
             })
         }
     }
 
-    private suspend fun <T> handleDataResponse(response: DataResponse<T>, onSuccess: (T) -> Unit) {
-        when (response) {
-            is DataResponse.Loading -> _eventFlow.emit(UiEvent.ShowLoading)
-            is DataResponse.Error -> _eventFlow.emit(UiEvent.ShowError(response.error!!.message))
-            is DataResponse.Success -> {
-                _eventFlow.emit(UiEvent.HideSuccess)
-                onSuccess(response.data!!)
-            }
-            is DataResponse.Unauthorized -> {
-                _eventFlow.emit(UiEvent.ShowError(response.error!!.message))
-                routerFlow.navigateTo(Screen.Login)
-            }
-        }
-    }
-
     private fun mapEntryListToDashboardEntryState(entryList: List<Entry>): List<DashboardEntryState> {
         return entryList.map { entry ->
-            val category = getCategoryByEntry(entry)
-            DashboardEntryState(
-                entry,
-                categoryImage = category?.image ?: DashboardEntryState(entry).categoryImage,
-                categoryColor = category?.color ?: DashboardEntryState(entry).categoryColor
-            )
+            getCategoryByEntry(entry).let {
+                DashboardEntryState(
+                    entry,
+                    categoryImage = it?.image ?: DashboardEntryState(entry).categoryImage,
+                    categoryColor = it?.color ?: DashboardEntryState(entry).categoryColor
+                )
+            }
         }
     }
 
