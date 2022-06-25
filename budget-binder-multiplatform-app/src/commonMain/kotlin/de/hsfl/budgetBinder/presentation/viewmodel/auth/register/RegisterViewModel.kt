@@ -39,6 +39,12 @@ class RegisterViewModel(
     private val _confirmedPasswordText = MutableStateFlow(RegisterTextFieldState())
     val confirmedPasswordText: StateFlow<RegisterTextFieldState> = _confirmedPasswordText
 
+    private val _serverUrlText = MutableStateFlow(RegisterTextFieldState())
+    val serverUrlText: StateFlow<RegisterTextFieldState> = _serverUrlText
+
+    private val _dialogState = MutableStateFlow(false)
+    val dialogState: StateFlow<Boolean> = _dialogState
+
     fun onEvent(event: RegisterEvent) {
         when (event) {
             is RegisterEvent.EnteredFirstname -> _firstNameText.value =
@@ -49,28 +55,50 @@ class RegisterViewModel(
             is RegisterEvent.EnteredPassword -> _passwordText.value = passwordText.value.copy(password = event.value)
             is RegisterEvent.EnteredConfirmedPassword -> _confirmedPasswordText.value =
                 confirmedPasswordText.value.copy(confirmedPassword = event.value, confirmedPasswordValid = true)
+            is RegisterEvent.EnteredServerUrl -> _serverUrlText.value =
+                serverUrlText.value.copy(serverAddress = event.value)
             is RegisterEvent.OnLoginScreen -> routerFlow.navigateTo(Screen.Login)
             is RegisterEvent.OnRegister -> {
-                if (validateInput()) {
-                    super.register(
-                        User.In(
-                            firstName = firstNameText.value.firstName,
-                            name = lastNameText.value.lastName,
-                            email = emailText.value.email,
-                            password = passwordText.value.password
-                        ),
-                        serverUrl = "TODO:"
-                    )
+                validateInput {
+                    if (!authUseCases.isServerUrlStoredUseCase()) {
+                        toggleDialog()
+                    } else {
+                        super.register(
+                            User.In(
+                                firstName = firstNameText.value.firstName,
+                                name = lastNameText.value.lastName,
+                                email = emailText.value.email,
+                                password = passwordText.value.password
+                            ),
+                            serverUrl = serverUrlText.value.serverAddress
+                        )
+                    }
                 }
             }
             is RegisterEvent.LifeCycle -> event.value.handleLifeCycle(
                 onLaunch = {},
                 onDispose = { resetStateFlows() }
             )
+            is RegisterEvent.OnServerUrlDialogConfirm -> validateInput { onServerDialogConfirm() }
+            is RegisterEvent.OnServerUrlDialogDismiss -> toggleDialog()
         }
     }
 
-    private fun validateInput(): Boolean {
+    private fun onServerDialogConfirm() {
+        toggleDialog()
+        authUseCases.storeServerUrlUseCase(serverUrlText.value.serverAddress)
+        super.register(
+            User.In(
+                firstName = firstNameText.value.firstName,
+                name = lastNameText.value.lastName,
+                email = emailText.value.email,
+                password = passwordText.value.password
+            ),
+            serverUrl = serverUrlText.value.serverAddress
+        )
+    }
+
+    private fun validateInput(actionOnSuccess: () -> Unit) {
         val checkEmail =
             if (validateEmail(emailText.value.email)) {
                 true
@@ -87,7 +115,8 @@ class RegisterViewModel(
                 false
             }
 
-        return checkEmail && checkConfirmedPassword
+        if (checkEmail && checkConfirmedPassword)
+            actionOnSuccess()
     }
 
     private fun resetStateFlows() {
@@ -96,6 +125,10 @@ class RegisterViewModel(
         _emailText.value = emailText.value.copy(email = "")
         _passwordText.value = passwordText.value.copy(password = "")
         _confirmedPasswordText.value = _confirmedPasswordText.value.copy(confirmedPassword = "")
+    }
+
+    private fun toggleDialog() {
+        _dialogState.value = !dialogState.value
     }
 
     // OLD!!!
