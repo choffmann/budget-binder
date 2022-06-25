@@ -46,7 +46,17 @@ class LoginViewModel(
             is LoginEvent.EnteredPassword -> _passwordText.value = passwordText.value.copy(password = event.value)
             is LoginEvent.EnteredServerUrl -> _serverUrlText.value =
                 serverUrlText.value.copy(serverAddress = event.value)
-            is LoginEvent.OnLogin -> validateInput { toggleDialog() }
+            is LoginEvent.OnLogin -> validateInput {
+                if(!authUseCases.isServerUrlStoredUseCase()) {
+                    toggleDialog()
+                } else {
+                    super.login(
+                        email = emailText.value.email,
+                        password = passwordText.value.password,
+                        serverUrl = authUseCases.getServerUrlUseCase()
+                    )
+                }
+            }
             is LoginEvent.OnRegisterScreen -> routerFlow.navigateTo(Screen.Register)
             is LoginEvent.OnServerUrlDialogConfirm -> validateInput { onServerUrlDialogConfirm() }
             is LoginEvent.OnServerUrlDialogDismiss -> toggleDialog()

@@ -5,6 +5,4 @@ data class LoginTextFieldState(
     val password: String = "budget-binder",
     val serverAddress: String = "",
     val emailValid: Boolean = true
-    //val email: String = "",
-    //val password: String = ""
 )
