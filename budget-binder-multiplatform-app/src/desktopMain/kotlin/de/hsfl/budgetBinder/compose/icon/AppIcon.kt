@@ -80,12 +80,15 @@ actual fun EuroIcon() {
 
 @Composable
 actual fun WelcomeImage(modifier: Modifier) {
+    Image(modifier = modifier, painter = painterResource("undraw_welcome_re_h3d9.svg"), contentDescription = null)
 }
 
 @Composable
 actual fun SavingsImage(modifier: Modifier) {
+    Image(modifier = modifier, painter = painterResource("undraw_savings_re_eq4w.svg"), contentDescription = null)
 }
 
 @Composable
 actual fun GetStartedImage(modifier: Modifier) {
+    Image(modifier = modifier, painter = painterResource("undraw_awesome_rlvy.svg"), contentDescription = null)
 }
