@@ -1,22 +1,17 @@
 package de.hsfl.budgetBinder.data.client
 
 import de.hsfl.budgetBinder.common.*
-import de.hsfl.budgetBinder.common.Constants.BASE_URL
 import de.hsfl.budgetBinder.data.client.plugins.AuthPlugin
-import de.hsfl.budgetBinder.data.repository.SettingsRepositoryImpl
-import de.hsfl.budgetBinder.domain.repository.SettingsRepository
 import de.hsfl.budgetBinder.domain.usecase.GetServerUrlUseCase
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.engine.*
-import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.logging.*
 import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
-import kotlinx.coroutines.flow.MutableStateFlow
 
 // Define API Interfaces
 interface ApiClient {
@@ -181,9 +176,10 @@ class Client(
         }
 
         install(AuthPlugin) {
-            loginPath = buildUrl("/login")
-            logoutPath = buildUrl("/logout")
-            refreshPath = buildUrl("/refresh_token")
+            loginPath = "/login"
+            logoutPath = "/logout"
+            refreshPath = "/refresh_token"
+            buildUrlFunction = { buildUrl(it) }
         }
 
         install(Logging) {
