@@ -34,19 +34,31 @@ fun WelcomeComponent() {
             is Screen.Welcome.Screen2 -> WelcomeScreen2View()
             is Screen.Welcome.GetStarted -> WelcomeGetStartedView()
         }
-        BottomButtons(totalScreens = totalScreens.value,
-            currentScreen = currentScreen.value,
-            onNext = { viewModel.onEvent(WelcomeEvent.OnNextScreen) },
-            onSkip = { viewModel.onEvent(WelcomeEvent.OnSkip) })
+        when (routerFlow.state.value) {
+            is Screen.Welcome.Screen1, is Screen.Welcome.Screen2 -> {
+                BottomButtons(totalScreens = totalScreens.value,
+                    currentScreen = currentScreen.value,
+                    onNext = { viewModel.onEvent(WelcomeEvent.OnNextScreen) },
+                    onSkip = { viewModel.onEvent(WelcomeEvent.OnSkip) })
+            }
+            else -> {
+                GetStartedButton(
+                    onLogin = { viewModel.onEvent(WelcomeEvent.OnLogin) },
+                    onRegister = { viewModel.onEvent(WelcomeEvent.OnRegister) }
+                )
+            }
+        }
+
     }
 }
 
 @Composable
 fun WelcomeScreen1View(modifier: Modifier = Modifier) {
-    Column(modifier = modifier) {
-        WelcomeImage(modifier = Modifier.size(254.dp))
+    Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
+        WelcomeImage(modifier = Modifier.size(254.dp).padding(top = 8.dp, start = 16.dp, end = 16.dp))
+        Spacer(modifier = Modifier.height(8.dp))
         WelcomeText(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.padding(start = 16.dp, end = 16.dp),
             title = "Welcome to Budget Binder",
             subtitle = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At"
         )
@@ -55,10 +67,11 @@ fun WelcomeScreen1View(modifier: Modifier = Modifier) {
 
 @Composable
 fun WelcomeScreen2View(modifier: Modifier = Modifier) {
-    Column(modifier = modifier) {
-        SavingsImage(modifier = Modifier.size(254.dp))
+    Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
+        SavingsImage(modifier = Modifier.size(254.dp).padding(top = 8.dp, start = 16.dp, end = 16.dp))
+        Spacer(modifier = Modifier.height(16.dp))
         WelcomeText(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.padding(start = 16.dp, end = 16.dp),
             title = "How you can save your money",
             subtitle = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At"
         )
@@ -67,10 +80,11 @@ fun WelcomeScreen2View(modifier: Modifier = Modifier) {
 
 @Composable
 fun WelcomeGetStartedView(modifier: Modifier = Modifier) {
-    Column(modifier = modifier) {
-        GetStartedImage(modifier = Modifier.size(254.dp))
+    Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
+        GetStartedImage(modifier = Modifier.size(254.dp).padding(top = 8.dp, start = 16.dp, end = 16.dp))
+        Spacer(modifier = Modifier.height(16.dp))
         WelcomeText(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.padding(start = 16.dp, end = 16.dp),
             title = "So, let's get started",
             subtitle = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At"
         )
@@ -95,21 +109,36 @@ private fun WelcomeText(modifier: Modifier = Modifier, title: String, subtitle: 
 private fun BottomButtons(totalScreens: Int, currentScreen: Int, onNext: () -> Unit, onSkip: () -> Unit) {
     Box(modifier = Modifier.fillMaxSize()) {
         Row(
-            modifier = Modifier.fillMaxWidth().align(Alignment.BottomCenter).padding(16.dp), verticalAlignment = Alignment.CenterVertically
+            modifier = Modifier.fillMaxWidth().align(Alignment.BottomCenter).padding(16.dp),
+            //verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            TextButton(modifier = Modifier.weight(1F), onClick = { onSkip() }) {
-                Text("SKIP")
+            TextButton(modifier = Modifier, onClick = { onSkip() }) {
+                Text("Skip")
             }
 
             Stepper(
-                modifier = Modifier.weight(1F),
+                modifier = Modifier,
                 total = totalScreens,
                 current = currentScreen,
             )
 
-            Button(modifier = Modifier.weight(1F), onClick = { onNext() }) {
-                Text("NEXT")
+            Button(modifier = Modifier, onClick = { onNext() }) {
+                Text("Next")
             }
+        }
+    }
+}
+
+@Composable
+private fun GetStartedButton(onLogin: () -> Unit, onRegister: () -> Unit) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        OutlinedButton(onClick = onRegister) {
+            Text(modifier = Modifier.padding(start = 16.dp, end = 16.dp), text = "Register")
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+        Button(onClick = onLogin) {
+            Text(modifier = Modifier.padding(start = 16.dp, end = 16.dp), text = "Login")
         }
     }
 }
