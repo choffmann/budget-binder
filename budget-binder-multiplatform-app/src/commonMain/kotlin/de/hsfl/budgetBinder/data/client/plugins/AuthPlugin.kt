@@ -13,7 +13,8 @@ class AuthPlugin private constructor(
     val loginPath: String,
     val logoutPath: String,
     val refreshPath: String,
-    val pathsWithoutAuthorization: List<String>
+    val pathsWithoutAuthorization: List<String>,
+    val buildUrl: (path: String) -> String
 ) {
     var accessToken: String? = null
 
@@ -21,6 +22,7 @@ class AuthPlugin private constructor(
         var loginPath: String = "/login"
         var logoutPath: String = "/logout"
         var refreshPath: String = "/refresh_token"
+        var buildUrlFunction: (path: String) -> String = { "http://localhost$it" }
         var pathsWithoutAuthorization: List<String> = listOf()
 
         fun addPathsWithoutAuthorization(vararg paths: String) {
@@ -40,7 +42,8 @@ class AuthPlugin private constructor(
                 loginPath = config.loginPath,
                 logoutPath = config.logoutPath,
                 refreshPath = config.refreshPath,
-                pathsWithoutAuthorization = config.pathsWithoutAuthorization
+                pathsWithoutAuthorization = config.pathsWithoutAuthorization,
+                buildUrl = config.buildUrlFunction
             )
         }
 
@@ -73,7 +76,7 @@ class AuthPlugin private constructor(
                 if (url.encodedPath == plugin.loginPath) {
                     val origin = execute(firstRequest)
                     if (origin.response.status == HttpStatusCode.OK) {
-                        plugin.accessToken = scope.get(plugin.refreshPath) {
+                        plugin.accessToken = scope.get(plugin.buildUrl(plugin.refreshPath)) {
                             attributes.put(AuthPluginCircuitBreaker, Unit)
                         }.body<APIResponse<AuthToken>>().data?.token
                     }
@@ -95,7 +98,7 @@ class AuthPlugin private constructor(
                 }
 
                 // Unauthorized
-                val refreshResponse = scope.get(plugin.refreshPath) {
+                val refreshResponse = scope.get(plugin.buildUrl(plugin.refreshPath)) {
                     attributes.put(AuthPluginCircuitBreaker, Unit)
                 }
                 if (refreshResponse.status != HttpStatusCode.OK) {
