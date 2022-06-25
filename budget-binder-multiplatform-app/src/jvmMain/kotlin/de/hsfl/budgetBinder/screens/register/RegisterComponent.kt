@@ -11,11 +11,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import de.hsfl.budgetBinder.compose.dialog.ServerUrlDialog
 import de.hsfl.budgetBinder.compose.icon.AppIcon
 import de.hsfl.budgetBinder.di
 import de.hsfl.budgetBinder.compose.textfield.EmailTextField
 import de.hsfl.budgetBinder.presentation.event.LifecycleEvent
 import de.hsfl.budgetBinder.presentation.event.UiEvent
+import de.hsfl.budgetBinder.presentation.viewmodel.auth.login.LoginEvent
 import de.hsfl.budgetBinder.presentation.viewmodel.auth.register.RegisterEvent
 import de.hsfl.budgetBinder.presentation.viewmodel.auth.register.RegisterViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -29,6 +31,8 @@ fun RegisterComponent() {
     val emailTextState = viewModel.emailText.collectAsState()
     val passwordTextState = viewModel.passwordText.collectAsState()
     val confirmedPasswordTextState = viewModel.confirmedPasswordText.collectAsState()
+    val serverUrlText = viewModel.serverUrlText.collectAsState()
+    val dialogState = viewModel.dialogState.collectAsState()
     val loadingState = remember { mutableStateOf(false) }
 
     LaunchedEffect(key1 = true) {
@@ -36,7 +40,6 @@ fun RegisterComponent() {
         viewModel.eventFlow.collectLatest { event ->
             when (event) {
                 is UiEvent.ShowLoading -> {
-                    // TODO: Refactor this, it's working but ahh
                     loadingState.value = true
                 }
                 else -> loadingState.value = false
@@ -52,6 +55,13 @@ fun RegisterComponent() {
     if (loadingState.value) {
         LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
     }
+    ServerUrlDialog(
+        value = serverUrlText.value.serverAddress,
+        onValueChange = { viewModel.onEvent(RegisterEvent.EnteredServerUrl(it)) },
+        openDialog = dialogState.value,
+        onConfirm = { viewModel.onEvent(RegisterEvent.OnServerUrlDialogConfirm) },
+        onDismiss = { viewModel.onEvent(RegisterEvent.OnServerUrlDialogDismiss) }
+    )
     Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
         AppIcon(modifier = Modifier.size(128.dp).padding(8.dp))
         Text(text = "Hello there 👋", style = MaterialTheme.typography.h5)
