@@ -7,6 +7,5 @@ data class DashboardState(
     val categoryList: List<Category> = listOf(),
     val focusedCategory: DashboardFocusedCategoryState = DashboardFocusedCategoryState(),
     val entryList: List<DashboardEntryState> = emptyList(),
-    val oldEntriesList: Map<String, DashboardState> = mapOf(),
-    val spendBudgetOnCurrentCategory: Float = 0f
+    val oldEntriesList: Map<String, DashboardState> = mapOf()
 )
