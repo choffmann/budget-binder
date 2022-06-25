@@ -36,7 +36,7 @@ class DashboardViewModel(
     val oldEntriesMapState: StateFlow<Map<String, DashboardState>> = _oldEntriesMapState
 
     private val _focusedCategoryState = MutableStateFlow(DashboardState().focusedCategory)
-    val focusedCategoryState: StateFlow<Category> = _focusedCategoryState
+    val focusedCategoryState: StateFlow<DashboardFocusedCategoryState> = _focusedCategoryState
 
     private val _spendBudgetOnCurrentCategory =
         MutableStateFlow(DashboardState().spendBudgetOnCurrentCategory)
@@ -95,7 +95,7 @@ class DashboardViewModel(
         when (internalCategoryId) {
             -1 -> getAllEntries(onSuccess = { fillEntryListStateWithResult(it) })
             in _categoryListState.value.indices -> getEntriesByCategory(
-                id = focusedCategoryState.value.id,
+                id = focusedCategoryState.value.category.id,
                 onSuccess = { fillEntryListStateWithResult(it) })
             _categoryListState.value.size -> getEntriesByCategory(
                 id = null,
@@ -222,9 +222,9 @@ class DashboardViewModel(
             var totalBudget = 0f
             _categoryListState.value.forEach { totalBudget += it.budget }
             _focusedCategoryState.value = focusedCategoryState.value.copy(
+                category = Category(0, "Overall", "1675d1", Category.Image.DEFAULT, totalBudget),
                 hasPrev = false,
-                hasNext = true,
-                category = Category(0, "Overall", "1675d1", Category.Image.DEFAULT, totalBudget)
+                hasNext = true
             )
             calcSpendBudgetOnCategory(entryList)
             fillEntryListStateWithResult(entryList)
@@ -235,15 +235,15 @@ class DashboardViewModel(
      * Set the category state for the current category, which the user moved to
      */
     private fun setCategoryState() {
-        getEntriesByCategory(id = _categoryListState.value[internalCategoryId].id, onSuccess = {
+        getEntriesByCategory(id = _categoryListState.value[internalCategoryId].id) {
             calcSpendBudgetOnCategory(it)
             _focusedCategoryState.value = focusedCategoryState.value.copy(
+                category = _categoryListState.value[internalCategoryId],
                 hasPrev = true,
-                hasNext = true,
-                category = _categoryListState.value[internalCategoryId]
+                hasNext = true
             )
             fillEntryListStateWithResult(it)
-        })
+        }
     }
 
     /**
@@ -252,9 +252,9 @@ class DashboardViewModel(
     private fun setCategoryWithNoCategory() {
         getEntriesByCategory(id = null, onSuccess = {
             _focusedCategoryState.value = focusedCategoryState.value.copy(
+                category = Category(0, "No Category", "111111", Category.Image.DEFAULT, 0f),
                 hasPrev = true,
-                hasNext = false,
-                category = Category(0, "No Category", "111111", Category.Image.DEFAULT, 0f)
+                hasNext = false
             )
             fillEntryListStateWithResult(it)
         })
@@ -272,8 +272,7 @@ class DashboardViewModel(
                 spendMoney += (it.amount * -1)
             }
         }
-        _spendBudgetOnCurrentCategory.value =
-            spendBudgetOnCurrentCategory.value
+        _spendBudgetOnCurrentCategory.value = spendMoney
     }
 
     /**
@@ -294,7 +293,7 @@ class DashboardViewModel(
             -1 -> getAllEntriesFromMonth(period = periodString) {
                 fillOldEntriesMapState(periodString, it)
             }
-            in _categoryListState.value.indices -> getEntriesByCategory(id = focusedCategoryState.value.id,
+            in _categoryListState.value.indices -> getEntriesByCategory(id = focusedCategoryState.value.category.id,
                 period = periodString,
                 onSuccess = { fillOldEntriesMapState(periodString, it) })
             _categoryListState.value.size -> getEntriesByCategory(
