@@ -51,14 +51,14 @@ fun DashboardComponent() {
         Div {
             DashboardData(
                 focusedCategory = focusedCategory.value.category,
-                totalSpendBudget = totalSpendBudget.value.spendBudgetOnCurrentCategory,
+                totalSpendBudget = totalSpendBudget.value,
                 totalBudget = focusedCategory.value.category.budget,
                 hasPrev = focusedCategory.value.hasPrev,
                 hasNext = focusedCategory.value.hasNext,
                 onPrevClicked = { viewModel.onEvent(DashboardEvent.OnPrevCategory) },
                 onNextClicked = { viewModel.onEvent(DashboardEvent.OnNextCategory) }
             )
-            EntryList(entryList = entryList.value.entryList,
+            EntryList(entryList = entryList.value,
                 oldEntries = olderEntries.value,
                 onItemClicked = { viewModel.onEvent(DashboardEvent.OnEntry(it)) },
                 onLoadMore = { viewModel.onEvent(DashboardEvent.OnLoadMore) },
