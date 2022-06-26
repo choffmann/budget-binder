@@ -22,19 +22,13 @@ fun LoginComponent() {
     val viewModel: LoginViewModel by di.instance()
     val emailTextState = viewModel.emailText.collectAsState(scope.coroutineContext)
     val passwordTextState = viewModel.passwordText.collectAsState(scope.coroutineContext)
-    val loadingState = remember { mutableStateOf(false) }
 
 
     //LifeCycle
     LaunchedEffect(key1 = true) {
         viewModel.onEvent(LoginEvent.LifeCycle(LifecycleEvent.OnLaunch))
-        viewModel.eventFlow.collectLatest { event ->
-            when (event) {
-                is UiEvent.ShowLoading -> loadingState.value = true
-                else -> loadingState.value = false
-            }
-        }
     }
+
     DisposableEffect(Unit) {
         onDispose {
             viewModel.onEvent(
@@ -105,8 +99,7 @@ fun LoginComponent() {
         Form(
             attrs = {
                 this.addEventListener("submit") {
-                    console.log("$emailTextState, $passwordTextState")
-                    viewModel.onEvent(LoginEvent.OnServerUrlDialogConfirm) //TODO: Change to OnLogin as soon as LoginViewModel has corresponding logic
+                    viewModel.onEvent(LoginEvent.OnServerUrlDialogConfirm)
                     it.preventDefault()
                 }
             }

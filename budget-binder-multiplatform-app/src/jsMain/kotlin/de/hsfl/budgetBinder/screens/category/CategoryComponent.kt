@@ -10,7 +10,6 @@ import org.kodein.di.instance
 
 @Composable
 fun CategoryComponent() {
-
     val routerFlow: RouterFlow by di.instance()
 
     //Webpage content
