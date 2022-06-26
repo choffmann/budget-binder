@@ -1,6 +1,6 @@
 package de.hsfl.budgetBinder.compose
 
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import de.hsfl.budgetBinder.compose.theme.AppStylesheet
 import de.hsfl.budgetBinder.presentation.CategoryImageToIcon
 import de.hsfl.budgetBinder.presentation.viewmodel.dashboard.DashboardEntryState
@@ -25,6 +25,8 @@ fun EntryList(
     onEntryDelete: (Int) -> Unit
 
 ) {
+    //extraText Does not need to be a mutableState, it will refresh whenever oldEntries refreshes
+    var extraText = ""
     if (entryList.isEmpty()) {
         Div(attrs = {
             classes(
@@ -40,11 +42,16 @@ fun EntryList(
 
     DefaultText("Older entries...") { flex(100.percent) }
     for ((date, dashboardState) in oldEntries) {
-        DefaultText(date) { flex(100.percent) }
-        for (entry in dashboardState.entryList) {
-            EntryListElement(entry, onItemClicked, onEntryDelete)
+        if (dashboardState.entryList.isEmpty()) {
+            extraText = "$date has no entries"
+        } else {
+            DefaultText(date) { flex(100.percent) }
+            for (entry in dashboardState.entryList) {
+                EntryListElement(entry, onItemClicked, onEntryDelete)
+            }
         }
     }
+    DefaultText(extraText)
     Button(
         attrs = {
             classes("mdc-button", "mdc-button--raised", "mdc-top-app-bar__navigation-icon")
