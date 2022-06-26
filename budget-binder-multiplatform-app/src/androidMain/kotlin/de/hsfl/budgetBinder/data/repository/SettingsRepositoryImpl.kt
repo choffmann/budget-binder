@@ -37,4 +37,8 @@ actual object SettingsRepositoryImpl: SettingsRepository {
     actual override fun getServerUrl(): String {
         return settings.getString("server_url", defaultValue = "http://localhost")
     }
+
+    override fun reset() {
+        settings.clear()
+    }
 }

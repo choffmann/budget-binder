@@ -28,4 +28,6 @@ actual object SettingsRepositoryImpl : SettingsRepository {
     actual override fun getServerUrl(): String {
         return ""
     }
+
+    override fun reset() {}
 }
