@@ -7,6 +7,7 @@ import de.hsfl.budgetBinder.domain.usecase.ToggleDarkModeUseCase
 import de.hsfl.budgetBinder.domain.usecase.ToggleServerUrlDialogUseCase
 import de.hsfl.budgetBinder.presentation.Screen
 import de.hsfl.budgetBinder.presentation.UiState
+import de.hsfl.budgetBinder.presentation.flow.DarkModeFlow
 import de.hsfl.budgetBinder.presentation.flow.RouterFlow
 import de.hsfl.budgetBinder.presentation.flow.UiEventSharedFlow
 import kotlinx.coroutines.CoroutineScope
@@ -17,9 +18,10 @@ class NavDrawerViewModel(
     private val logoutUseCase: LogoutUseCase,
     private val toggleServerUrlDialogUseCase: ToggleServerUrlDialogUseCase,
     private val toggleDarkModeUseCase: ToggleDarkModeUseCase,
-    private val isDarkThemeUseCase: IsDarkThemeUseCase,
+    private val darkModeFlow: DarkModeFlow,
     private val routerFlow: RouterFlow,
     private val scope: CoroutineScope,
+    isDarkThemeUseCase: IsDarkThemeUseCase,
 ) {
     val eventFlow = UiEventSharedFlow.eventFlow
 
@@ -28,7 +30,7 @@ class NavDrawerViewModel(
 
     init {
         scope.launch {
-            toggleDarkModeUseCase.darkThemeState.collect { _darkModeState.value = it }
+            darkModeFlow.mutableDarkThemeState.collect { _darkModeState.value = it }
         }
     }
 
