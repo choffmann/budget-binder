@@ -1,28 +1,28 @@
 package de.hsfl.budgetBinder.presentation
-sealed class Screen {
-    sealed class Welcome: Screen() {
-        object Screen1: Welcome()
-        object Screen2: Welcome()
-        object GetStarted: Welcome()
+sealed class Screen(open val screenWeight: Int = 0) {
+    sealed class Welcome(override val screenWeight: Int = 0): Screen(screenWeight = screenWeight) {
+        object Screen1: Welcome(screenWeight = 0)
+        object Screen2: Welcome(screenWeight = 1)
+        object GetStarted: Welcome(screenWeight = 2)
     }
-    sealed class Settings: Screen() {
-        object Menu: Settings()
-        object User: Settings()
-        object Server: Settings()
+    sealed class Settings(override val screenWeight: Int = 0): Screen(screenWeight = screenWeight) {
+        object Menu: Settings(screenWeight = 0)
+        object User: Settings(screenWeight = 1)
+        object Server: Settings(screenWeight = 1)
     }
-    sealed class Category: Screen() {
-        data class Detail(val id: Int): Category()
-        object Summary: Category()
-        data class Edit(val id: Int): Category()
-        object Create: Category()
-        object CreateOnRegister: Category()
+    sealed class Category(override val screenWeight: Int = 0): Screen(screenWeight = screenWeight) {
+        data class Detail(val id: Int): Category(screenWeight = 1)
+        object Summary: Category(screenWeight = 0)
+        data class Edit(val id: Int): Category(screenWeight = 2)
+        object Create: Category(screenWeight = 2)
+        object CreateOnRegister: Category(screenWeight = 0)
     }
-    sealed class Entry: Screen() {
-        data class Overview(val id: Int): Entry()
-        data class Edit(val id: Int): Entry()
-        object Create: Entry()
+    sealed class Entry(override val screenWeight: Int = 0): Screen(screenWeight = screenWeight) {
+        data class Overview(val id: Int): Entry(screenWeight = 0)
+        data class Edit(val id: Int): Entry(screenWeight = 1)
+        object Create: Entry(screenWeight = 1)
     }
-    object Login : Screen()
-    object Register : Screen()
-    object Dashboard : Screen()
+    object Login : Screen(screenWeight = 0)
+    object Register : Screen(screenWeight = 0)
+    object Dashboard : Screen(screenWeight = 1)
 }
