@@ -20,11 +20,10 @@ open class AuthViewModel(
 ) {
     private val scope = _scope
     private val routerFlow = _routerFlow
-    private val dataFlow = _userFlow
+    private val userFlow = _userFlow
     private val authUseCases = _authUseCases
 
     private val _dialogState = MutableStateFlow(false)
-    val dialogState: StateFlow<Boolean> = _dialogState
 
     val eventFlow = UiEventSharedFlow.eventFlow
 
@@ -60,7 +59,7 @@ open class AuthViewModel(
     private fun getMyUser() = scope.launch {
         authUseCases.getMyUserUseCase().collect {
             it.handleDataResponse<User>(routerFlow = routerFlow, onSuccess = { user ->
-                dataFlow.storeUserState(user)
+                userFlow.storeUserState(user)
                 routerFlow.navigateTo(Screen.Dashboard)
             })
         }
