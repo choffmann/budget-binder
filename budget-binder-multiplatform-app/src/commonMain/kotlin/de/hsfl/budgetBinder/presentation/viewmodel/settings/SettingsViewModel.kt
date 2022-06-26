@@ -50,6 +50,19 @@ open class SettingsViewModel(
             is SettingsEvent.OnToggleDarkMode -> {
                 scope.launch { settingsUseCases.toggleDarkModeUseCase() }
             }
+            is SettingsEvent.OnResetSettings -> resetApp()
+        }
+    }
+
+    private fun resetApp() {
+        scope.launch {
+            settingsUseCases.logoutUseCase(onAllDevices = false).collect { response ->
+                response.handleDataResponse<Nothing>(routerFlow = routerFlow, onSuccess = { _ ->
+                    settingsUseCases.resetAllSettings()
+                    _eventFlow.emit(UiEvent.ShowSuccess("Reset the App successfully"))
+                    routerFlow.navigateTo(Screen.Welcome.Screen1)
+                })
+            }
         }
     }
 

@@ -55,6 +55,7 @@ fun kodein(ktorEngine: HttpClientEngine) = DI {
     bindSingleton { IsServerUrlStoredUseCase(instance()) }
     bindSingleton { GetServerUrlUseCase(instance()) }
     bindSingleton { StoreServerUrlUseCase(instance()) }
+    bindSingleton { ResetAllSettings(instance()) }
 
     // AuthUseCase
     bindSingleton { RegisterUseCase(instance()) }
@@ -87,7 +88,7 @@ fun kodein(ktorEngine: HttpClientEngine) = DI {
     bindSingleton { ToggleDarkModeUseCase(instance(), instance(), instance()) }
     bindSingleton { EntryUseCases(instance(), instance(), instance(), instance(), instance(), instance()) }
     bindSingleton { CategoriesUseCases(instance(), instance(), instance(), instance(), instance(), instance()) }
-    bindSingleton { SettingsUseCases(instance(), instance(), instance(), instance(), instance()) }
+    bindSingleton { SettingsUseCases(instance(), instance(), instance(), instance(), instance(), instance()) }
     bindSingleton { AuthUseCases(instance(), instance(), instance(), instance(), instance(), instance(), instance()) }
     bindSingleton { DashboardUseCases(instance(), instance(), instance(), instance()) }
 

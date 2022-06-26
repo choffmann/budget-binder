@@ -33,3 +33,7 @@ class IsServerUrlStoredUseCase(private val repository: SettingsRepository) {
 class GetServerUrlUseCase(private val repository: SettingsRepository) {
     operator fun invoke(): String = repository.getServerUrl()
 }
+
+class ResetAllSettings(private val repository: SettingsRepository) {
+    operator fun invoke() = repository.reset()
+}
