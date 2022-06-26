@@ -11,6 +11,10 @@ actual object SettingsRepositoryImpl : SettingsRepository {
 
     actual override fun storeDarkTheme(isDarkMode: Boolean) {}
 
+    override fun checkHasDarkModeKey(): Boolean {
+        return true
+    }
+
     actual override fun getDarkMode(): Boolean {
         return false
     }
