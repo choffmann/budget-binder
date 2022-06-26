@@ -10,8 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import de.hsfl.budgetBinder.compose.icon.*
-import de.hsfl.budgetBinder.domain.usecase.ToggleDarkModeUseCase
-import de.hsfl.budgetBinder.presentation.flow.DataFlow
+import de.hsfl.budgetBinder.presentation.flow.UserFlow
 import de.hsfl.budgetBinder.presentation.viewmodel.navdrawer.NavDrawerEvent
 import de.hsfl.budgetBinder.presentation.viewmodel.navdrawer.NavDrawerViewModel
 import kotlinx.coroutines.launch
@@ -105,8 +104,8 @@ fun BudgetBinderNavDrawer(
 
 @Composable
 fun UserData() {
-    val dataFlow: DataFlow by di.instance()
-    val userData = dataFlow.userState.collectAsState()
+    val userFlow: UserFlow by di.instance()
+    val userData = userFlow.userState.collectAsState()
 
     Column {
         Row(modifier = Modifier.padding(8.dp), verticalAlignment = Alignment.CenterVertically) {

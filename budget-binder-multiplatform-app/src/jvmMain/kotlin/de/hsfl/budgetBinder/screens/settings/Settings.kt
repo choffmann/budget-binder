@@ -10,7 +10,7 @@ import de.hsfl.budgetBinder.compose.icon.AvatarImage
 import de.hsfl.budgetBinder.di
 import de.hsfl.budgetBinder.presentation.Screen
 import de.hsfl.budgetBinder.presentation.event.UiEvent
-import de.hsfl.budgetBinder.presentation.flow.DataFlow
+import de.hsfl.budgetBinder.presentation.flow.UserFlow
 import de.hsfl.budgetBinder.presentation.flow.RouterFlow
 import de.hsfl.budgetBinder.presentation.viewmodel.settings.SettingsViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -19,9 +19,9 @@ import org.kodein.di.instance
 @Composable
 fun SettingsView() {
     val viewModel: SettingsViewModel by di.instance()
-    val dataFlow: DataFlow by di.instance()
+    val userFlow: UserFlow by di.instance()
     val routerFlow: RouterFlow by di.instance()
-    val userState = dataFlow.userState.collectAsState()
+    val userState = userFlow.userState.collectAsState()
     val screenState = routerFlow.state.collectAsState()
     val loadingState = remember { mutableStateOf(false) }
 

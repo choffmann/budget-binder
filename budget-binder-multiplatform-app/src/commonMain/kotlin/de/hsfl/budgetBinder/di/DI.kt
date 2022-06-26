@@ -4,11 +4,9 @@ import de.hsfl.budgetBinder.data.client.Client
 import de.hsfl.budgetBinder.data.repository.*
 import de.hsfl.budgetBinder.domain.repository.*
 import de.hsfl.budgetBinder.domain.usecase.*
-import de.hsfl.budgetBinder.domain.usecase.storage.StoreDarkModeUseCase
-import de.hsfl.budgetBinder.domain.usecase.storage.StoreServerUrlUseCase
-import de.hsfl.budgetBinder.domain.usecase.storage.StoreUserStateUseCase
+import de.hsfl.budgetBinder.domain.usecase.StoreUserStateUseCase
 import de.hsfl.budgetBinder.presentation.flow.DarkModeFlow
-import de.hsfl.budgetBinder.presentation.flow.DataFlow
+import de.hsfl.budgetBinder.presentation.flow.UserFlow
 import de.hsfl.budgetBinder.presentation.flow.RouterFlow
 import de.hsfl.budgetBinder.presentation.flow.UiEventSharedFlow
 import de.hsfl.budgetBinder.presentation.viewmodel.RootViewModel
@@ -85,8 +83,6 @@ fun kodein(ktorEngine: HttpClientEngine) = DI {
 
     bindSingleton { NavigateToScreenUseCase() }
     bindSingleton { StoreUserStateUseCase() }
-    bindSingleton { StoreServerUrlUseCase() }
-    bindSingleton { StoreDarkModeUseCase() }
     bindSingleton { ToggleServerUrlDialogUseCase() }
     bindSingleton { ToggleDarkModeUseCase(instance(), instance(), instance()) }
     bindSingleton { EntryUseCases(instance(), instance(), instance(), instance(), instance(), instance()) }
@@ -94,10 +90,9 @@ fun kodein(ktorEngine: HttpClientEngine) = DI {
     bindSingleton { SettingsUseCases(instance(), instance(), instance(), instance(), instance()) }
     bindSingleton { AuthUseCases(instance(), instance(), instance(), instance(), instance(), instance(), instance()) }
     bindSingleton { DashboardUseCases(instance(), instance(), instance(), instance()) }
-    bindSingleton { DataFlowUseCases(instance(), instance(), instance()) }
 
     // Flows
-    bindSingleton { DataFlow(instance(), instance()) }
+    bindSingleton { UserFlow(instance(), instance()) }
     bindSingleton { DarkModeFlow(instance()) }
     bindSingleton { RouterFlow(instance(), instance(), instance()) }
     bindSingleton { UiEventSharedFlow }
