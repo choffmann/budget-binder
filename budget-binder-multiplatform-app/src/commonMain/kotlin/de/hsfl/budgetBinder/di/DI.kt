@@ -13,7 +13,6 @@ import de.hsfl.budgetBinder.presentation.viewmodel.RootViewModel
 import de.hsfl.budgetBinder.presentation.viewmodel.auth.login.LoginViewModel
 import de.hsfl.budgetBinder.presentation.viewmodel.auth.register.RegisterViewModel
 import de.hsfl.budgetBinder.presentation.viewmodel.category.summary.CategorySummaryViewModel
-import de.hsfl.budgetBinder.presentation.viewmodel.category._CategoryViewModel
 import de.hsfl.budgetBinder.presentation.viewmodel.category.create.CategoryCreateViewModel
 import de.hsfl.budgetBinder.presentation.viewmodel.category.detail.CategoryDetailViewModel
 import de.hsfl.budgetBinder.presentation.viewmodel.category.edit.CategoryEditViewModel
@@ -105,7 +104,6 @@ fun kodein(ktorEngine: HttpClientEngine) = DI {
     bindSingleton { SettingsViewModel(instance(), instance(), instance(), instance()) }
     bindSingleton { SettingsEditUserViewModel(instance(), instance(), instance(), instance(), instance()) }
     bindSingleton { SettingsEditServerUrlViewModel(instance(), instance(), instance()) }
-    bindSingleton { _CategoryViewModel(instance(), instance()) }
     bindSingleton { CategorySummaryViewModel(instance(), instance(), instance()) }
     bindSingleton { CategoryDetailViewModel(instance(), instance(), instance()) }
     bindSingleton { CategoryEditViewModel(instance(), instance(), instance()) }
