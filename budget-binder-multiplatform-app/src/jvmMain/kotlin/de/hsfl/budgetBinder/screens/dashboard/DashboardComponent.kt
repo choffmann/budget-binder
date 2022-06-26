@@ -39,7 +39,6 @@ fun DashboardComponent() {
     val viewModel: DashboardViewModel by di.instance()
     val entryList = viewModel.entryListState.collectAsState()
     val focusedCategory = viewModel.focusedCategoryState.collectAsState()
-    val totalSpendBudget = viewModel.spendBudgetOnCurrentCategory.collectAsState()
     val olderEntries = viewModel.oldEntriesMapState.collectAsState()
     val loadingState = remember { mutableStateOf(false) }
     val scaffoldState = rememberScaffoldState()
@@ -67,7 +66,7 @@ fun DashboardComponent() {
             Icon(Icons.Default.Add, contentDescription = null)
         }
     }, topBar = {
-        BudgetBinderTopBar(navigationIcon = { TopBarMenuIcon(scaffoldState = scaffoldState) })
+        BudgetBinderTopBar(navigationIcon = { TopBarMenuIcon(drawerState = scaffoldState.drawerState) })
     }) {
         BudgetBinderNavDrawer(
             scaffoldState.drawerState, gesturesEnabled = true
@@ -77,14 +76,14 @@ fun DashboardComponent() {
                     LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
                 }
                 TopDashboardSection(focusedCategory = focusedCategory.value.category,
-                    totalSpendBudget = totalSpendBudget.value.spendBudgetOnCurrentCategory,
+                    totalSpendBudget = focusedCategory.value.spendBudget,
                     totalBudget = focusedCategory.value.category.budget,
                     hasPrev = focusedCategory.value.hasPrev,
                     hasNext = focusedCategory.value.hasNext,
                     onPrevClicked = { viewModel.onEvent(DashboardEvent.OnPrevCategory) },
                     onNextClicked = { viewModel.onEvent(DashboardEvent.OnNextCategory) })
                 Column {
-                    EntryList(entryList = entryList.value.entryList,
+                    EntryList(entryList = entryList.value,
                         oldEntries = olderEntries.value,
                         onItemClicked = { viewModel.onEvent(DashboardEvent.OnEntry(it)) },
                         onLoadMore = { viewModel.onEvent(DashboardEvent.OnLoadMore) },

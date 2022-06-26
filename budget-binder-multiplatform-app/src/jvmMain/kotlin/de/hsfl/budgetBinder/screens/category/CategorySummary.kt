@@ -55,7 +55,7 @@ fun CategorySummary() {
         },
         topBar = {
             BudgetBinderTopBar(
-                navigationIcon = { TopBarMenuIcon(scaffoldState = scaffoldState) }
+                navigationIcon = { TopBarMenuIcon(drawerState = scaffoldState.drawerState) }
             )
         }
     ) {
