@@ -1,10 +1,10 @@
 package de.hsfl.budgetBinder.presentation.viewmodel.settings
 
-import de.hsfl.budgetBinder.common.DataResponse
 import de.hsfl.budgetBinder.common.User
 import de.hsfl.budgetBinder.domain.usecase.SettingsUseCases
 import de.hsfl.budgetBinder.presentation.Screen
 import de.hsfl.budgetBinder.presentation.event.UiEvent
+import de.hsfl.budgetBinder.presentation.flow.DarkModeFlow
 import de.hsfl.budgetBinder.presentation.flow.DataFlow
 import de.hsfl.budgetBinder.presentation.flow.RouterFlow
 import de.hsfl.budgetBinder.presentation.flow.UiEventSharedFlow
@@ -17,9 +17,10 @@ class SettingsEditUserViewModel(
     private val settingsUseCases: SettingsUseCases,
     private val dataFlow: DataFlow,
     private val routerFlow: RouterFlow,
-    private val scope: CoroutineScope
+    private val scope: CoroutineScope,
+    darkModeFlow: DarkModeFlow
 ) : SettingsViewModel(
-    _settingsUseCases = settingsUseCases, _routerFlow = routerFlow, _scope = scope
+    _settingsUseCases = settingsUseCases, _routerFlow = routerFlow, _scope = scope, _darkModeFlow = darkModeFlow
 ) {
     private val _firstNameText = MutableStateFlow(EditUserState())
     val firstNameText: StateFlow<EditUserState> = _firstNameText

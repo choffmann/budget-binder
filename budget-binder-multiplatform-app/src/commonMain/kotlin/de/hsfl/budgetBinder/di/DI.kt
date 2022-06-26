@@ -7,6 +7,7 @@ import de.hsfl.budgetBinder.domain.usecase.*
 import de.hsfl.budgetBinder.domain.usecase.storage.StoreDarkModeUseCase
 import de.hsfl.budgetBinder.domain.usecase.storage.StoreServerUrlUseCase
 import de.hsfl.budgetBinder.domain.usecase.storage.StoreUserStateUseCase
+import de.hsfl.budgetBinder.presentation.flow.DarkModeFlow
 import de.hsfl.budgetBinder.presentation.flow.DataFlow
 import de.hsfl.budgetBinder.presentation.flow.RouterFlow
 import de.hsfl.budgetBinder.presentation.flow.UiEventSharedFlow
@@ -87,7 +88,7 @@ fun kodein(ktorEngine: HttpClientEngine) = DI {
     bindSingleton { StoreServerUrlUseCase() }
     bindSingleton { StoreDarkModeUseCase() }
     bindSingleton { ToggleServerUrlDialogUseCase() }
-    bindSingleton { ToggleDarkModeUseCase(instance(), instance()) }
+    bindSingleton { ToggleDarkModeUseCase(instance(), instance(), instance()) }
     bindSingleton { EntryUseCases(instance(), instance(), instance(), instance(), instance(), instance()) }
     bindSingleton { CategoriesUseCases(instance(), instance(), instance(), instance(), instance(), instance()) }
     bindSingleton { SettingsUseCases(instance(), instance(), instance(), instance(), instance()) }
@@ -97,6 +98,7 @@ fun kodein(ktorEngine: HttpClientEngine) = DI {
 
     // Flows
     bindSingleton { DataFlow(instance(), instance()) }
+    bindSingleton { DarkModeFlow(instance()) }
     bindSingleton { RouterFlow(instance(), instance(), instance()) }
     bindSingleton { UiEventSharedFlow }
 
@@ -104,8 +106,8 @@ fun kodein(ktorEngine: HttpClientEngine) = DI {
     bindSingleton { WelcomeViewModel(instance(), instance()) }
     bindSingleton { LoginViewModel(instance(), instance(), instance(), instance()) }
     bindSingleton { RegisterViewModel(instance(), instance(), instance(), instance()) }
-    bindSingleton { SettingsViewModel(instance(), instance(), instance()) }
-    bindSingleton { SettingsEditUserViewModel(instance(), instance(), instance(), instance()) }
+    bindSingleton { SettingsViewModel(instance(), instance(), instance(), instance()) }
+    bindSingleton { SettingsEditUserViewModel(instance(), instance(), instance(), instance(), instance()) }
     bindSingleton { SettingsEditServerUrlViewModel(instance(), instance(), instance()) }
     bindSingleton { _CategoryViewModel(instance(), instance()) }
     bindSingleton { CategorySummaryViewModel(instance(), instance(), instance()) }
@@ -114,6 +116,6 @@ fun kodein(ktorEngine: HttpClientEngine) = DI {
     bindSingleton { CategoryCreateViewModel(instance(), instance(), instance()) }
     bindSingleton { EntryViewModel(instance(), instance(), instance()) }
     bindSingleton { DashboardViewModel(instance(), instance(), instance()) }
-    bindSingleton { NavDrawerViewModel(instance(), instance(), instance(), instance(), instance(), instance()) }
-    bindSingleton { RootViewModel(instance(), instance(), instance(), instance(), instance()) }
+    bindSingleton { NavDrawerViewModel(instance(), instance(), instance(), instance(), instance(), instance(), instance()) }
+    bindSingleton { RootViewModel(instance(), instance(), instance(), instance(), instance(), instance()) }
 }

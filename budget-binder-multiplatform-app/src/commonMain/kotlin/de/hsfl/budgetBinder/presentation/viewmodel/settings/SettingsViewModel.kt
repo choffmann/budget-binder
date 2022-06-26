@@ -6,7 +6,7 @@ import de.hsfl.budgetBinder.domain.usecase.*
 import de.hsfl.budgetBinder.presentation.Screen
 import de.hsfl.budgetBinder.presentation.event.UiEvent
 import de.hsfl.budgetBinder.presentation.UiState
-import de.hsfl.budgetBinder.presentation.flow.DataFlow
+import de.hsfl.budgetBinder.presentation.flow.DarkModeFlow
 import de.hsfl.budgetBinder.presentation.flow.RouterFlow
 import de.hsfl.budgetBinder.presentation.flow.UiEventSharedFlow
 import kotlinx.coroutines.CoroutineScope
@@ -14,10 +14,11 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 open class SettingsViewModel(
-    _settingsUseCases: SettingsUseCases, _routerFlow: RouterFlow, _scope: CoroutineScope
+    _settingsUseCases: SettingsUseCases, _routerFlow: RouterFlow, _darkModeFlow: DarkModeFlow, _scope: CoroutineScope
 ) {
     private val settingsUseCases: SettingsUseCases = _settingsUseCases
     private val routerFlow: RouterFlow = _routerFlow
+    private val darkModeFlow: DarkModeFlow = _darkModeFlow
     private val scope: CoroutineScope = _scope
 
     private val _dialogState = MutableStateFlow(false)
@@ -31,7 +32,7 @@ open class SettingsViewModel(
 
     init {
         scope.launch {
-            settingsUseCases.toggleDarkModeUseCase.darkThemeState.collect { _darkModeState.value = it }
+            darkModeFlow.darkThemeState.collect { _darkModeState.value = it }
         }
     }
 
