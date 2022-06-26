@@ -28,7 +28,7 @@ class SettingsEditUserViewModel(
     val lastNameText: StateFlow<EditUserState> = _lastNameText
 
     // Can't access password, so I check if the password placeholder was changed
-    private val passwordPlaceholder = "........."
+    private val passwordPlaceholder = ""
     private val _passwordText = MutableStateFlow(EditUserState())
     val passwordText: StateFlow<EditUserState> = _passwordText
 
