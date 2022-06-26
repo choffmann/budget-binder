@@ -90,7 +90,7 @@ fun kodein(ktorEngine: HttpClientEngine) = DI {
     bindSingleton { ToggleDarkModeUseCase(instance(), instance()) }
     bindSingleton { EntryUseCases(instance(), instance(), instance(), instance(), instance(), instance()) }
     bindSingleton { CategoriesUseCases(instance(), instance(), instance(), instance(), instance(), instance()) }
-    bindSingleton { SettingsUseCases(instance(), instance(), instance()) }
+    bindSingleton { SettingsUseCases(instance(), instance(), instance(), instance(), instance()) }
     bindSingleton { AuthUseCases(instance(), instance(), instance(), instance(), instance(), instance(), instance()) }
     bindSingleton { DashboardUseCases(instance(), instance(), instance(), instance()) }
     bindSingleton { DataFlowUseCases(instance(), instance(), instance()) }
@@ -104,7 +104,7 @@ fun kodein(ktorEngine: HttpClientEngine) = DI {
     bindSingleton { WelcomeViewModel(instance(), instance()) }
     bindSingleton { LoginViewModel(instance(), instance(), instance(), instance()) }
     bindSingleton { RegisterViewModel(instance(), instance(), instance(), instance()) }
-    bindSingleton { SettingsViewModel(instance(), instance(), instance(), instance()) }
+    bindSingleton { SettingsViewModel(instance(), instance(), instance()) }
     bindSingleton { SettingsEditUserViewModel(instance(), instance(), instance(), instance()) }
     bindSingleton { SettingsEditServerUrlViewModel(instance(), instance(), instance()) }
     bindSingleton { _CategoryViewModel(instance(), instance()) }
