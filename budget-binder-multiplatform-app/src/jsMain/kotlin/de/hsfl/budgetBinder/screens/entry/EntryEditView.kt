@@ -2,6 +2,7 @@ package de.hsfl.budgetBinder.screens.entry
 
 import androidx.compose.runtime.*
 import de.hsfl.budgetBinder.compose.ChooseCategoryMenu
+import de.hsfl.budgetBinder.compose.DefaultText
 import de.hsfl.budgetBinder.compose.theme.AppStylesheet
 import de.hsfl.budgetBinder.presentation.event.LifecycleEvent
 import de.hsfl.budgetBinder.presentation.viewmodel.entry.EntryEvent
@@ -209,7 +210,7 @@ fun EntryEditView(
                         classes(AppStylesheet.margin)
                     }
                 ) {
-                    Text("Category: ")
+                    DefaultText("Category: ")
                     ChooseCategoryMenu(categoryList, entryCategoryIDTextField) { id ->
                         viewModel.onEvent(EntryEvent.EnteredCategoryID(id))
                     }
