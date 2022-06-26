@@ -1,5 +1,6 @@
 package de.hsfl.budgetBinder
 
+import androidx.compose.animation.*
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
