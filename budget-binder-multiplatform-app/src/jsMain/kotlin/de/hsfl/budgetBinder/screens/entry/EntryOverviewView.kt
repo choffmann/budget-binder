@@ -100,7 +100,7 @@ fun EntryOverview(
                             }
                         }
                         Text("Category: $categoryName")
-                        Div (attrs={classes(AppStylesheet.flexContainer)}){
+                        Div(attrs = { classes(AppStylesheet.flexContainer) }) {
                             CategoryImageToIcon(categoryIcon)
                             ColorCircle(categoryColor)
                         }

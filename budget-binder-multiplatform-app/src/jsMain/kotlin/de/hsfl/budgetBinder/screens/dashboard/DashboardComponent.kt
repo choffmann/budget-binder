@@ -24,20 +24,13 @@ fun DashboardComponent() {
     val entryList = viewModel.entryListState.collectAsState()
     val focusedCategory = viewModel.focusedCategoryState.collectAsState()
     val olderEntries = viewModel.oldEntriesMapState.collectAsState()
-    val loadingState = remember { mutableStateOf(false) }
 
 
     //LifeCycle
     LaunchedEffect(key1 = true) {
         viewModel.onEvent(DashboardEvent.LifeCycle(LifecycleEvent.OnLaunch))
-        viewModel.eventFlow.collectLatest { event ->
-            when (event) {
-                is UiEvent.ShowLoading -> loadingState.value = true
-                is UiEvent.HideSuccess -> loadingState.value = false
-                else -> loadingState.value = false
-            }
-        }
     }
+
     DisposableEffect(Unit) {
         onDispose {
             viewModel.onEvent(DashboardEvent.LifeCycle(LifecycleEvent.OnDispose))
