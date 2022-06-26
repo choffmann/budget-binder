@@ -40,7 +40,7 @@ fun EmailTextField(
     }
     if (isError) {
         Text(
-            text = "Please enter a valide email address",
+            text = "Please enter a valid email address",
             color = MaterialTheme.colors.error,
             style = MaterialTheme.typography.caption
         )
