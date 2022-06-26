@@ -9,6 +9,7 @@ import de.hsfl.budgetBinder.presentation.flow.UiEventSharedFlow
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 open class AuthViewModel(
@@ -22,7 +23,18 @@ open class AuthViewModel(
     private val dataFlow = _dataFlow
     private val authUseCases = _authUseCases
 
+    private val _dialogState = MutableStateFlow(false)
+    val dialogState: StateFlow<Boolean> = _dialogState
+
     val eventFlow = UiEventSharedFlow.eventFlow
+
+    init {
+        scope.launch {
+            authUseCases.toggleServerUrlDialogUseCase.dialogState.collect {
+                _dialogState.value = it
+            }
+        }
+    }
 
     protected fun register(user: User.In, serverUrl: String) = scope.launch {
         authUseCases.registerUseCase(user)
@@ -52,5 +64,9 @@ open class AuthViewModel(
                 routerFlow.navigateTo(Screen.Dashboard)
             })
         }
+    }
+
+    fun toggleDialog() = scope.launch {
+        authUseCases.toggleServerUrlDialogUseCase()
     }
 }

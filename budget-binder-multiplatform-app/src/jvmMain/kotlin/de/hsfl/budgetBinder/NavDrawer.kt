@@ -42,6 +42,7 @@ fun TopBarMenuIcon(drawerState: DrawerState) {
 @Composable
 fun BudgetBinderAuthNavDrawer(drawerState: DrawerState, content: @Composable () -> Unit) {
     val scope = rememberCoroutineScope()
+    val viewModel: NavDrawerViewModel by di.instance()
     ModalDrawer(drawerState = drawerState, gesturesEnabled = true, content = content, drawerContent = {
         ListItem(icon = { AppIcon(modifier = Modifier.size(64.dp)) }, text = { Text("Budget Binder") })
         Divider()
@@ -49,6 +50,7 @@ fun BudgetBinderAuthNavDrawer(drawerState: DrawerState, content: @Composable () 
             scope.launch {
                 drawerState.close()
             }
+            viewModel.onEvent(NavDrawerEvent.OnChangeServerUrl)
         })
     })
 }
