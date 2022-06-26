@@ -41,7 +41,7 @@ class CategoryEditViewModel(
             is CategoryEditEvent.EnteredCategoryBudget -> _categoryBudgetState.value = event.value
             is CategoryEditEvent.OnSave -> super.change(
                 id = currentCategoryId,
-                category = createCategoryPathFromState(),
+                category = createCategoryPatchFromState(),
                 onSuccess = { routerFlow.navigateTo(Screen.Category.Detail(it.id)) }
             )
             is CategoryEditEvent.OnCancel -> routerFlow.navigateTo(Screen.Category.Detail(currentCategoryId))
@@ -75,7 +75,7 @@ class CategoryEditViewModel(
         _categoryBudgetState.value = 0f
     }
 
-    private fun createCategoryPathFromState(): Category.Patch {
+    private fun createCategoryPatchFromState(): Category.Patch {
         return Category.Patch(
             name = categoryNameState.value,
             color = categoryColorState.value,
