@@ -34,7 +34,16 @@ actual fun ServerUrlDialog(
                 }
             },
             text = {
-
+                Column {
+                    TextField(
+                        value = value,
+                        onValueChange = onValueChange,
+                        label = { Text("Server URL") },
+                        leadingIcon = { Icon(Icons.Filled.Dns, contentDescription = null) },
+                        singleLine = true
+                    )
+                    Text("Please enter the server url from your own budget binder server here", style = MaterialTheme.typography.caption)
+                }
             }
         )
     }
