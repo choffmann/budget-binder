@@ -65,30 +65,24 @@ fun DashboardComponent() {
         FloatingActionButton(onClick = { viewModel.onEvent(DashboardEvent.OnEntryCreate) }) {
             Icon(Icons.Default.Add, contentDescription = null)
         }
-    }, topBar = {
-        BudgetBinderTopBar(navigationIcon = { TopBarMenuIcon(drawerState = scaffoldState.drawerState) })
     }) {
-        BudgetBinderNavDrawer(
-            scaffoldState.drawerState, gesturesEnabled = true
-        ) {
+        Column {
+            if (loadingState.value) {
+                LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+            }
+            TopDashboardSection(focusedCategory = focusedCategory.value.category,
+                totalSpendBudget = focusedCategory.value.spendBudget,
+                totalBudget = focusedCategory.value.category.budget,
+                hasPrev = focusedCategory.value.hasPrev,
+                hasNext = focusedCategory.value.hasNext,
+                onPrevClicked = { viewModel.onEvent(DashboardEvent.OnPrevCategory) },
+                onNextClicked = { viewModel.onEvent(DashboardEvent.OnNextCategory) })
             Column {
-                if (loadingState.value) {
-                    LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
-                }
-                TopDashboardSection(focusedCategory = focusedCategory.value.category,
-                    totalSpendBudget = focusedCategory.value.spendBudget,
-                    totalBudget = focusedCategory.value.category.budget,
-                    hasPrev = focusedCategory.value.hasPrev,
-                    hasNext = focusedCategory.value.hasNext,
-                    onPrevClicked = { viewModel.onEvent(DashboardEvent.OnPrevCategory) },
-                    onNextClicked = { viewModel.onEvent(DashboardEvent.OnNextCategory) })
-                Column {
-                    EntryList(entryList = entryList.value,
-                        oldEntries = olderEntries.value,
-                        onItemClicked = { viewModel.onEvent(DashboardEvent.OnEntry(it)) },
-                        onLoadMore = { viewModel.onEvent(DashboardEvent.OnLoadMore) },
-                        onEntryDelete = { viewModel.onEvent(DashboardEvent.OnEntryDelete(it)) })
-                }
+                EntryList(entryList = entryList.value,
+                    oldEntries = olderEntries.value,
+                    onItemClicked = { viewModel.onEvent(DashboardEvent.OnEntry(it)) },
+                    onLoadMore = { viewModel.onEvent(DashboardEvent.OnLoadMore) },
+                    onEntryDelete = { viewModel.onEvent(DashboardEvent.OnEntryDelete(it)) })
             }
         }
     }

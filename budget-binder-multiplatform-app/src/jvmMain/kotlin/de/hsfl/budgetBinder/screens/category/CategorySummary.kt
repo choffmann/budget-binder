@@ -46,37 +46,25 @@ fun CategorySummary() {
         }
     }
 
-    Scaffold(scaffoldState = scaffoldState,
-        floatingActionButtonPosition = FabPosition.End,
-        floatingActionButton = {
-            FloatingActionButton(onClick = { viewModel.onEvent(CategorySummaryEvent.OnCategoryCreate) }) {
-                Icon(Icons.Default.Add, contentDescription = null)
-            }
-        },
-        topBar = {
-            BudgetBinderTopBar(
-                navigationIcon = { TopBarMenuIcon(drawerState = scaffoldState.drawerState) }
-            )
+    Scaffold(scaffoldState = scaffoldState, floatingActionButtonPosition = FabPosition.End, floatingActionButton = {
+        FloatingActionButton(onClick = { viewModel.onEvent(CategorySummaryEvent.OnCategoryCreate) }) {
+            Icon(Icons.Default.Add, contentDescription = null)
         }
-    ) {
-        BudgetBinderNavDrawer(
-            drawerState = scaffoldState.drawerState,
-            gesturesEnabled = true
-        ) {
-            LazyColumn {
-                items(categoryList.value) { category ->
-                    CategoryListItem(
-                        modifier = Modifier.clickable { viewModel.onEvent(CategorySummaryEvent.OnCategory(category.id)) },
-                        name = category.name,
-                        budget = category.budget.toString(),
-                        icon = category.image,
-                        color = category.color.toColor("af")
-                    )
-                }
+    }) {
+        LazyColumn {
+            items(categoryList.value) { category ->
+                CategoryListItem(
+                    modifier = Modifier.clickable { viewModel.onEvent(CategorySummaryEvent.OnCategory(category.id)) },
+                    name = category.name,
+                    budget = category.budget.toString(),
+                    icon = category.image,
+                    color = category.color.toColor("af")
+                )
             }
         }
     }
 }
+
 
 fun String.toColor(alpha: String): Color {
     return Color("$alpha$this".toLong(16))
@@ -85,22 +73,13 @@ fun String.toColor(alpha: String): Color {
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun CategoryListItem(
-    modifier: Modifier = Modifier,
-    name: String,
-    budget: String,
-    icon: Category.Image,
-    color: Color
+    modifier: Modifier = Modifier, name: String, budget: String, icon: Category.Image, color: Color
 ) {
-    ListItem(
-        modifier = modifier,
-        text = { Text(name) },
-        secondaryText = { Text("Budget: $budget") },
-        icon = {
-            Box(modifier = Modifier.shadow(15.dp, CircleShape).clip(CircleShape).background(color)) {
-                Box(modifier = Modifier.align(Alignment.Center).padding(12.dp)) {
-                    CategoryImageToIcon(icon)
-                }
+    ListItem(modifier = modifier, text = { Text(name) }, secondaryText = { Text("Budget: $budget") }, icon = {
+        Box(modifier = Modifier.shadow(15.dp, CircleShape).clip(CircleShape).background(color)) {
+            Box(modifier = Modifier.align(Alignment.Center).padding(12.dp)) {
+                CategoryImageToIcon(icon)
             }
         }
-    )
+    })
 }

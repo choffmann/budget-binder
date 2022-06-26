@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import de.hsfl.budgetBinder.compose.icon.*
 import de.hsfl.budgetBinder.presentation.flow.DataFlow
+import de.hsfl.budgetBinder.presentation.viewmodel.auth.AuthViewModel
 import de.hsfl.budgetBinder.presentation.viewmodel.navdrawer.NavDrawerEvent
 import de.hsfl.budgetBinder.presentation.viewmodel.navdrawer.NavDrawerViewModel
 import kotlinx.coroutines.launch
@@ -39,21 +40,29 @@ fun TopBarMenuIcon(drawerState: DrawerState) {
     }
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun RowScope.TopBarDeleteIcon(onDelete: () -> Unit) {
-    IconButton(onClick = onDelete) {
-        Icon(Icons.Default.Delete, contentDescription = null)
-    }
+fun BudgetBinderAuthNavDrawer(drawerState: DrawerState, content: @Composable () -> Unit) {
+    val scope = rememberCoroutineScope()
+    ModalDrawer(drawerState = drawerState, gesturesEnabled = true, content = content, drawerContent = {
+        ListItem(icon = { AppIcon(modifier = Modifier.size(64.dp)) }, text = { Text("Budget Binder") })
+        Divider()
+        ListItem(icon = { ServerIcon() }, text = { Text("Change Server URL") }, modifier = Modifier.clickable {
+            scope.launch {
+                drawerState.close()
+            }
+        })
+    })
 }
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun BudgetBinderNavDrawer(
-    drawerState: DrawerState, gesturesEnabled: Boolean = true, content: @Composable () -> Unit
+    drawerState: DrawerState, content: @Composable () -> Unit
 ) {
     val scope = rememberCoroutineScope()
     val viewModel: NavDrawerViewModel by di.instance()
-    ModalDrawer(drawerState = drawerState, gesturesEnabled = gesturesEnabled, content = content, drawerContent = {
+    ModalDrawer(drawerState = drawerState, gesturesEnabled = true, content = content, drawerContent = {
         UserData()
         ListItem(icon = { DashboardIcon() }, text = { Text("Dashboard") }, modifier = Modifier.clickable(onClick = {
             scope.launch {
