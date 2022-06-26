@@ -36,9 +36,6 @@ class LoginViewModel(
     private val _serverUrlText = MutableStateFlow(LoginTextFieldState())
     val serverUrlText: StateFlow<LoginTextFieldState> = _serverUrlText
 
-    private val _dialogState = MutableStateFlow(false)
-    val dialogState: StateFlow<Boolean> = _dialogState
-
     fun onEvent(event: LoginEvent) {
         when (event) {
             is LoginEvent.EnteredEmail -> _emailText.value =
@@ -61,6 +58,7 @@ class LoginViewModel(
             is LoginEvent.OnServerUrlDialogConfirm -> validateInput { onServerUrlDialogConfirm() }
             is LoginEvent.OnServerUrlDialogDismiss -> toggleDialog()
             is LoginEvent.LifeCycle -> event.value.handleLifeCycle(onLaunch = {
+                _serverUrlText.value = serverUrlText.value.copy(serverAddress = authUseCases.getServerUrlUseCase())
                 if (authUseCases.isServerUrlStoredUseCase()) {
                     tryToLoginUserOnStart()
                 }
@@ -97,10 +95,6 @@ class LoginViewModel(
 
     private fun storeUser(user: User) {
         dataFlow.storeUserState(user)
-    }
-
-    private fun toggleDialog() {
-        _dialogState.value = !dialogState.value
     }
 
     private fun clearStateFlows() {

@@ -10,9 +10,6 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
-import de.hsfl.budgetBinder.BudgetBinderNavDrawer
-import de.hsfl.budgetBinder.BudgetBinderTopBar
-import de.hsfl.budgetBinder.TopBarMenuIcon
 import de.hsfl.budgetBinder.di
 import de.hsfl.budgetBinder.compose.dialog.ServerUrlDialog
 import de.hsfl.budgetBinder.compose.icon.AppIcon
@@ -26,12 +23,11 @@ import org.kodein.di.instance
 
 @Composable
 fun LoginComponent() {
-    val scope = rememberCoroutineScope()
     val viewModel: LoginViewModel by di.instance()
-    val emailTextState = viewModel.emailText.collectAsState(scope.coroutineContext)
-    val passwordTextState = viewModel.passwordText.collectAsState(scope.coroutineContext)
-    val serverUrlState = viewModel.serverUrlText.collectAsState(scope.coroutineContext)
-    val openDialog = viewModel.dialogState.collectAsState(scope.coroutineContext)
+    val emailTextState = viewModel.emailText.collectAsState()
+    val passwordTextState = viewModel.passwordText.collectAsState()
+    val serverUrlState = viewModel.serverUrlText.collectAsState()
+    val openDialog = viewModel.dialogState.collectAsState()
     val localFocusManager = LocalFocusManager.current
     val loadingState = remember { mutableStateOf(false) }
     val scaffoldState = rememberScaffoldState()

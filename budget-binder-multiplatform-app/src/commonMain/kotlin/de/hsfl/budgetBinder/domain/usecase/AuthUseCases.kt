@@ -6,5 +6,6 @@ data class AuthUseCases(
     val registerUseCase: RegisterUseCase,
     val isServerUrlStoredUseCase: IsServerUrlStoredUseCase,
     val getServerUrlUseCase: GetServerUrlUseCase,
-    val storeServerUrlUseCase: StoreServerUrlUseCase
+    val storeServerUrlUseCase: StoreServerUrlUseCase,
+    val toggleServerUrlDialogUseCase: ToggleServerUrlDialogUseCase
 )

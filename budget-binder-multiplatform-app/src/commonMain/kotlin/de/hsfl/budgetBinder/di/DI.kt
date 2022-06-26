@@ -84,10 +84,11 @@ fun kodein(ktorEngine: HttpClientEngine) = DI {
     bindSingleton { StoreUserStateUseCase() }
     bindSingleton { StoreServerUrlUseCase() }
     bindSingleton { StoreDarkModeUseCase() }
+    bindSingleton { ToggleServerUrlDialogUseCase() }
     bindSingleton { EntryUseCases(instance(), instance(), instance(), instance(), instance(), instance()) }
     bindSingleton { CategoriesUseCases(instance(), instance(), instance(), instance(), instance(), instance()) }
     bindSingleton { SettingsUseCases(instance(), instance(), instance()) }
-    bindSingleton { AuthUseCases(instance(), instance(), instance(), instance(), instance(), instance()) }
+    bindSingleton { AuthUseCases(instance(), instance(), instance(), instance(), instance(), instance(), instance()) }
     bindSingleton { DashboardUseCases(instance(), instance(), instance(), instance()) }
     bindSingleton { DataFlowUseCases(instance(), instance(), instance()) }
 
@@ -110,5 +111,5 @@ fun kodein(ktorEngine: HttpClientEngine) = DI {
     bindSingleton { CategoryCreateViewModel(instance(), instance(), instance()) }
     bindSingleton { EntryViewModel(instance(), instance(), instance()) }
     bindSingleton { DashboardViewModel(instance(), instance(), instance()) }
-    bindSingleton { NavDrawerViewModel(instance(), instance(), instance()) }
+    bindSingleton { NavDrawerViewModel(instance(), instance(), instance(), instance()) }
 }
