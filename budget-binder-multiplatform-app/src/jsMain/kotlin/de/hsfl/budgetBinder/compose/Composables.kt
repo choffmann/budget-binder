@@ -33,45 +33,6 @@ fun MainFlexContainer(content: @Composable () -> Unit) {
     }
 }
 
-@Deprecated("Use new NavBar instead! just write NavBar{} over your MainFlexContainer!")
-@Composable
-fun topBarMain(logoButton: @Composable () -> Unit, navButtons: @Composable () -> Unit) {
-    Header(
-        attrs = {
-            classes("mdc-top-app-bar")
-        }
-    ) {
-        Div(
-            attrs = {
-                classes("mdc-top-app-bar__row")
-            }
-        ) {
-            Section(
-                attrs = {
-                    classes("mdc-top-app-bar__section", "mdc-top-app-bar__section--align-start")
-                }
-            ) {
-                logoButton()
-                Span(
-                    attrs = {
-                        classes("mdc-top-app-bar__title")
-                    }
-                ) {
-                    Text("Budget-Binder")
-                }
-            }
-            Section(
-                attrs = {
-                    classes("mdc-top-app-bar__section", "mdc-top-app-bar__section--align-end")
-                }
-            ) {
-                navButtons()
-            }
-        }
-    }
-}
-
-
 ///* Gives a material icon based on the icon name*///
 @Composable
 fun Icon(icon_name: String) {
@@ -130,52 +91,6 @@ fun FeedbackSnackbar(msg: String, hidden: Boolean = false, onDismiss: () -> Unit
         }
     }
 }
-
-
-@Composable
-fun CategoryImagesToImageList(
-    inputImage: Category.Image,
-    onClick: (Category.Image) -> Unit
-) {
-    Div(
-        attrs = {
-            classes("mdc-card", AppStylesheet.card)
-        }
-    ) {
-        Ul(
-            attrs = {
-                classes("mdc-image-list", AppStylesheet.categoryImageList)
-            }
-        ) {
-            for (image in Category.Image.values()) {
-                Li(
-                    attrs = {
-                        classes("mdc-image-list__item")
-                    }
-                ) {
-                    Div(
-                        attrs = {
-                            if (inputImage == image)
-                                classes(
-                                    "mdc-image-list__image-aspect-container",
-                                    "mdc-icon-button",
-                                    "mdc-button--raised"
-                                )
-                            else classes(
-                                "mdc-image-list__image-aspect-container",
-                                "mdc-icon-button"
-                            )
-                            onClick { onClick(image) }
-                        }
-                    ) {
-                        CategoryImageToIcon(image)
-                    }
-                }
-            }
-        }
-    }
-}
-
 
 @Composable
 fun DeleteDialog(
@@ -283,67 +198,16 @@ fun DeleteDialog(
         }
     }
 }
-
 @Composable
-fun ChooseCategoryMenu(
-    categoryList: List<Category>,
-    selectedCategory: Int?,
-    getCategoryId: (Int?) -> Unit
-) {
-    var categoryListWN = listOf(Category.Nullable(null, "No Category", "ffffff", Category.Image.DEFAULT, 0f))
-    for (category in categoryList) {
-        categoryListWN = categoryListWN + (Category.Nullable(category.id, category.name, category.color, category.image, category.budget))
-    }
-    console.log(categoryList)
-    var choseCat = categoryListWN[0]
-
-    for (category in categoryListWN) {
-        if (category.id == selectedCategory) {
-            choseCat = category
-            break
+fun DefaultText(text:String, style: (StyleScope.() -> Unit)? = null){
+    Div(attrs ={
+        classes("mdc-typography--body1")
+        if (style != null) {
+            style (style)
         }
-    }
-
-    var chosenCategory by remember {
-        mutableStateOf(choseCat)
-    }
-    console.log(chosenCategory)
-
-
-    var showList by remember { mutableStateOf(false) }
-
-    Button(attrs = {
-        classes("mdc-button", "mdc-dialog__button")
-        onClick { showList = !showList }
-        type(ButtonType.Button)
-    }) {
-        Div(attrs = {
-            when (showList) {
-                true -> classes("mdc-menu", "mdc-menu-surface", "mdc-menu-surface--open")
-                false -> classes("mdc-menu", "mdc-menu-surface")
-            }
-        }) {
-            Ul(attrs = {
-                classes("mdc-list")
-                attr("role", "menu")
-                attr("aria-hidden", "true")
-                attr("aria-orientation", "vertical")
-                attr("tabindex", "-1")
-            }) {
-                for (category in categoryListWN) {
-                    Li(attrs = {
-                        classes("mdc-list-item")
-                        attr("role", "menuitem")
-                        onClick { chosenCategory = category; getCategoryId(category.id) }
-                    }) {
-                        Span(attrs = { classes("mdc-list-item__ripple") }) { }
-                        Span(attrs = { classes(AppStylesheet.moneyText) }) { Text(category.name) }
-                    }
-                }
-            }
-        }
-        Text(chosenCategory.name)
-    }
+    }){ Text(text)}
 }
+
+
 
 

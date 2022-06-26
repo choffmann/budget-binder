@@ -24,21 +24,11 @@ fun RegisterComponent() {
     val emailTextState = viewModel.emailText.collectAsState()
     val passwordTextState = viewModel.passwordText.collectAsState()
     val confirmedPasswordTextState = viewModel.confirmedPasswordText.collectAsState()
-    val loadingState = remember { mutableStateOf(false) }
 
 
     //LifeCycle
     LaunchedEffect(key1 = true) {
         viewModel.onEvent(RegisterEvent.LifeCycle(LifecycleEvent.OnLaunch))
-        viewModel.eventFlow.collectLatest { event ->
-            when (event) {
-                is UiEvent.ShowLoading -> {
-                    // TODO: Refactor this, it's working but ahh
-                    loadingState.value = true
-                }
-                else -> loadingState.value = false
-            }
-        }
     }
     DisposableEffect(Unit) {
         onDispose {

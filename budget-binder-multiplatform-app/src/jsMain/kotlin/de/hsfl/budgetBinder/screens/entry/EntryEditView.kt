@@ -228,8 +228,7 @@ fun EntryEditView(
                     onClick { viewModel.onEvent(EntryEvent.OnCancel) }
                 }
             ) {
-                Span(attrs = { classes("mdc-button__label") }
-                ) { Text("Cancel") }
+                Text("Cancel")
             }
             SubmitInput(
                 attrs = {

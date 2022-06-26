@@ -1,7 +1,6 @@
 package de.hsfl.budgetBinder.screens.settings
 
 import androidx.compose.runtime.*
-import de.hsfl.budgetBinder.compose.FeedbackSnackbar
 import de.hsfl.budgetBinder.compose.MainFlexContainer
 import de.hsfl.budgetBinder.compose.NavBar
 import de.hsfl.budgetBinder.compose.theme.AppStylesheet
@@ -12,8 +11,8 @@ import di
 import kotlinx.coroutines.flow.collectLatest
 import org.jetbrains.compose.web.attributes.InputType
 import org.jetbrains.compose.web.attributes.required
-import org.jetbrains.compose.web.css.percent
-import org.jetbrains.compose.web.css.width
+import org.jetbrains.compose.web.css.Color
+import org.jetbrains.compose.web.css.color
 import org.jetbrains.compose.web.dom.*
 import org.kodein.di.instance
 
@@ -26,7 +25,6 @@ fun SettingsChangeUserDataView() {
     val lastNameText = viewModel.lastNameText.collectAsState()
     val passwordText = viewModel.passwordText.collectAsState()
     val confirmedPasswordText = viewModel.confirmedPassword.collectAsState()
-    var openSnackbar by remember { mutableStateOf(false) }
 
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->
@@ -42,9 +40,6 @@ fun SettingsChangeUserDataView() {
         H1(attrs = { classes(AppStylesheet.h1) }) { Text("Change User Data") }
         Form(attrs = {
             this.addEventListener("submit") {
-                if (!confirmedPasswordText.value.confirmedPasswordIsValid) {
-                    openSnackbar = true
-                }
                 viewModel.onEvent(EditUserEvent.OnUpdate)
                 it.preventDefault()
             }
@@ -193,6 +188,11 @@ fun SettingsChangeUserDataView() {
                         }
                     ) { }
                 }
+                if (!confirmedPasswordText.value.confirmedPasswordIsValid) {
+                    Div(attrs = {style { color(Color.red) }}) {
+                        Text("Passwords do not match")
+                    }
+                }
             }
             Div(
                 attrs = {
@@ -206,8 +206,5 @@ fun SettingsChangeUserDataView() {
                     })
             }
         }
-    }
-    if (openSnackbar) {
-        FeedbackSnackbar("Passwords do not match") { openSnackbar = false }
     }
 }

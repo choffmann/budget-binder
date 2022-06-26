@@ -12,7 +12,6 @@ import de.hsfl.budgetBinder.presentation.viewmodel.entry.EntryEvent
 import de.hsfl.budgetBinder.presentation.viewmodel.entry.EntryViewModel
 import di
 import org.jetbrains.compose.web.css.*
-import org.jetbrains.compose.web.css.keywords.auto
 import org.jetbrains.compose.web.dom.*
 import org.kodein.di.instance
 
@@ -100,7 +99,7 @@ fun EntryOverview(
                             }
                         }
                         Text("Category: $categoryName")
-                        Div (attrs={classes(AppStylesheet.flexContainer)}){
+                        Div(attrs = { classes(AppStylesheet.flexContainer) }) {
                             CategoryImageToIcon(categoryIcon)
                             ColorCircle(categoryColor)
                         }
@@ -133,8 +132,7 @@ fun EntryOverview(
             onClick { onCancel() }
         }
         ) {
-            Span(attrs = { classes("mdc-button__label") }
-            ) { Text("Cancel") }
+            Text("Go back")
         }
         Button(attrs = {
             classes("mdc-button", "mdc-button--raised", AppStylesheet.buttonOverview)
