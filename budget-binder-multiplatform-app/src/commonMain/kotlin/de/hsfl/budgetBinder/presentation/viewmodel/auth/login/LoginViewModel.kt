@@ -26,7 +26,10 @@ class LoginViewModel(
     _userFlow = userFlow
 ) {
     private val screenAfterSuccess = Screen.Dashboard
-
+    /*Variables should be refactored ->
+    private val _emailText = MutableStateFlow(LoginTextFieldState().email)
+    val emailText: StateFlow<String> = _emailText
+     */
     private val _emailText = MutableStateFlow(LoginTextFieldState())
     val emailText: StateFlow<LoginTextFieldState> = _emailText
 
