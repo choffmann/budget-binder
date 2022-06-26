@@ -1,22 +1,13 @@
 package de.hsfl.budgetBinder.screens.dashboard
 
 import androidx.compose.runtime.*
-import de.hsfl.budgetBinder.common.Category
 import de.hsfl.budgetBinder.compose.*
-import de.hsfl.budgetBinder.compose.theme.AppStylesheet
-import de.hsfl.budgetBinder.presentation.CategoryImageToIcon
 import de.hsfl.budgetBinder.presentation.event.LifecycleEvent
-import de.hsfl.budgetBinder.presentation.event.UiEvent
-import de.hsfl.budgetBinder.presentation.viewmodel.dashboard.DashboardEntryState
 import de.hsfl.budgetBinder.presentation.viewmodel.dashboard.DashboardEvent
-import de.hsfl.budgetBinder.presentation.viewmodel.dashboard.DashboardState
 import de.hsfl.budgetBinder.presentation.viewmodel.dashboard.DashboardViewModel
 import di
-import kotlinx.coroutines.flow.collectLatest
-import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
 import org.kodein.di.instance
-import kotlin.math.absoluteValue
 
 @Composable
 fun DashboardComponent() {
