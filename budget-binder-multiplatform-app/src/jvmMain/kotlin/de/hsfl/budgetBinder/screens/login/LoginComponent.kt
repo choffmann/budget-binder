@@ -54,43 +54,41 @@ fun LoginComponent() {
         openDialog = openDialog.value,
         onConfirm = { viewModel.onEvent(LoginEvent.OnServerUrlDialogConfirm) },
         onDismiss = { viewModel.onEvent(LoginEvent.OnServerUrlDialogDismiss) })
-    Scaffold(scaffoldState = scaffoldState,
-        topBar = { BudgetBinderTopBar() }) {
-        BudgetBinderNavDrawer(drawerState = scaffoldState.drawerState, gesturesEnabled = false) {
-            Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
-                AppIcon(modifier = Modifier.size(128.dp).padding(8.dp))
-                Text(text = "Welcome back to Budget Binder 💸", style = MaterialTheme.typography.h5)
-                Spacer(modifier = Modifier.height(8.dp))
-                EmailTextField(
-                    value = emailTextState.value.email,
-                    onValueChange = { viewModel.onEvent(LoginEvent.EnteredEmail(it)) },
-                    label = { Text("Email") },
-                    isError = !emailTextState.value.emailValid,
-                    enabled = !loadingState.value
-                )
-                OutlinedTextField(
-                    value = passwordTextState.value.password,
-                    onValueChange = { viewModel.onEvent(LoginEvent.EnteredPassword(it)) },
-                    label = { Text("Password") },
-                    visualTransformation = PasswordVisualTransformation(),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                    singleLine = true
-                )
-                Button(onClick = {
+    Scaffold(scaffoldState = scaffoldState) {
+        Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
+            AppIcon(modifier = Modifier.size(128.dp).padding(8.dp))
+            Text(text = "Welcome back to Budget Binder 💸", style = MaterialTheme.typography.h5)
+            Spacer(modifier = Modifier.height(8.dp))
+            EmailTextField(
+                value = emailTextState.value.email,
+                onValueChange = { viewModel.onEvent(LoginEvent.EnteredEmail(it)) },
+                label = { Text("Email") },
+                isError = !emailTextState.value.emailValid,
+                enabled = !loadingState.value
+            )
+            OutlinedTextField(
+                value = passwordTextState.value.password,
+                onValueChange = { viewModel.onEvent(LoginEvent.EnteredPassword(it)) },
+                label = { Text("Password") },
+                visualTransformation = PasswordVisualTransformation(),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                singleLine = true
+            )
+            Button(onClick = {
+                localFocusManager.clearFocus()
+                viewModel.onEvent(LoginEvent.OnLogin)
+            }) {
+                Text("Login")
+            }
+            Box(modifier = Modifier.fillMaxSize()) {
+                TextButton(modifier = Modifier.align(Alignment.BottomCenter), onClick = {
                     localFocusManager.clearFocus()
-                    viewModel.onEvent(LoginEvent.OnLogin)
+                    viewModel.onEvent(LoginEvent.OnRegisterScreen)
                 }) {
-                    Text("Login")
-                }
-                Box(modifier = Modifier.fillMaxSize()) {
-                    TextButton(modifier = Modifier.align(Alignment.BottomCenter), onClick = {
-                        localFocusManager.clearFocus()
-                        viewModel.onEvent(LoginEvent.OnRegisterScreen)
-                    }) {
-                        Text("Or Register your Account here")
-                    }
+                    Text("Or Register your Account here")
                 }
             }
         }
     }
 }
+
