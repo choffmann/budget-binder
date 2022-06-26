@@ -4,7 +4,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -12,7 +11,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import de.hsfl.budgetBinder.compose.icon.*
 import de.hsfl.budgetBinder.presentation.flow.DataFlow
-import de.hsfl.budgetBinder.presentation.viewmodel.auth.AuthViewModel
 import de.hsfl.budgetBinder.presentation.viewmodel.navdrawer.NavDrawerEvent
 import de.hsfl.budgetBinder.presentation.viewmodel.navdrawer.NavDrawerViewModel
 import kotlinx.coroutines.launch
@@ -24,7 +22,7 @@ fun BudgetBinderTopBar(
     navigationIcon: @Composable () -> Unit = {},
     actions: @Composable RowScope.() -> Unit = {}
 ) {
-    TopAppBar(title = { Text("Budget Binder") }, navigationIcon = navigationIcon, actions = actions)
+    TopAppBar(title = { Text(text) }, navigationIcon = navigationIcon, actions = actions)
 }
 
 @Composable
