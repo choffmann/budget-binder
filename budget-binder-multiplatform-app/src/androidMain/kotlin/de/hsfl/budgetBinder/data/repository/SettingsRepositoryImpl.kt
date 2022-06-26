@@ -18,8 +18,12 @@ actual object SettingsRepositoryImpl: SettingsRepository {
         settings.putBoolean("is_dark_mode", isDarkMode)
     }
 
+    override fun checkHasDarkModeKey(): Boolean {
+        return settings.hasKey("is_dark_mode")
+    }
+
     actual override fun getDarkMode(): Boolean {
-        return settings.getBoolean("is_dark_mode")
+        return settings.getBoolean("is_dark_mode", defaultValue = false)
     }
 
     actual override fun storeServerUrl(url: String) {

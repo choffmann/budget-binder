@@ -10,6 +10,7 @@ import de.hsfl.budgetBinder.domain.usecase.storage.StoreUserStateUseCase
 import de.hsfl.budgetBinder.presentation.flow.DataFlow
 import de.hsfl.budgetBinder.presentation.flow.RouterFlow
 import de.hsfl.budgetBinder.presentation.flow.UiEventSharedFlow
+import de.hsfl.budgetBinder.presentation.viewmodel.RootViewModel
 import de.hsfl.budgetBinder.presentation.viewmodel.auth.login.LoginViewModel
 import de.hsfl.budgetBinder.presentation.viewmodel.auth.register.RegisterViewModel
 import de.hsfl.budgetBinder.presentation.viewmodel.category.summary.CategorySummaryViewModel
@@ -51,6 +52,7 @@ fun kodein(ktorEngine: HttpClientEngine) = DI {
     bindSingleton { IsFirstTimeUseCase(instance()) }
     bindSingleton { StoreDarkThemeUseCase(instance()) }
     bindSingleton { IsDarkThemeUseCase(instance()) }
+    bindSingleton { IsDarkThemeStoredUseCase(instance()) }
     bindSingleton { IsServerUrlStoredUseCase(instance()) }
     bindSingleton { GetServerUrlUseCase(instance()) }
     bindSingleton { StoreServerUrlUseCase(instance()) }
@@ -85,6 +87,7 @@ fun kodein(ktorEngine: HttpClientEngine) = DI {
     bindSingleton { StoreServerUrlUseCase() }
     bindSingleton { StoreDarkModeUseCase() }
     bindSingleton { ToggleServerUrlDialogUseCase() }
+    bindSingleton { ToggleDarkModeUseCase(instance(), instance()) }
     bindSingleton { EntryUseCases(instance(), instance(), instance(), instance(), instance(), instance()) }
     bindSingleton { CategoriesUseCases(instance(), instance(), instance(), instance(), instance(), instance()) }
     bindSingleton { SettingsUseCases(instance(), instance(), instance()) }
@@ -112,4 +115,5 @@ fun kodein(ktorEngine: HttpClientEngine) = DI {
     bindSingleton { EntryViewModel(instance(), instance(), instance()) }
     bindSingleton { DashboardViewModel(instance(), instance(), instance()) }
     bindSingleton { NavDrawerViewModel(instance(), instance(), instance(), instance()) }
+    bindSingleton { RootViewModel(instance(), instance(), instance(), instance(), instance()) }
 }
