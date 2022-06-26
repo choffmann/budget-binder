@@ -10,6 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import de.hsfl.budgetBinder.compose.icon.*
+import de.hsfl.budgetBinder.domain.usecase.ToggleDarkModeUseCase
 import de.hsfl.budgetBinder.presentation.flow.DataFlow
 import de.hsfl.budgetBinder.presentation.viewmodel.navdrawer.NavDrawerEvent
 import de.hsfl.budgetBinder.presentation.viewmodel.navdrawer.NavDrawerViewModel
@@ -43,6 +44,7 @@ fun TopBarMenuIcon(drawerState: DrawerState) {
 fun BudgetBinderAuthNavDrawer(drawerState: DrawerState, content: @Composable () -> Unit) {
     val scope = rememberCoroutineScope()
     val viewModel: NavDrawerViewModel by di.instance()
+    val darkMode = viewModel.darkModeState.collectAsState()
     ModalDrawer(drawerState = drawerState, gesturesEnabled = true, content = content, drawerContent = {
         ListItem(icon = { AppIcon(modifier = Modifier.size(64.dp)) }, text = { Text("Budget Binder") })
         Divider()
@@ -52,6 +54,12 @@ fun BudgetBinderAuthNavDrawer(drawerState: DrawerState, content: @Composable () 
             }
             viewModel.onEvent(NavDrawerEvent.OnChangeServerUrl)
         })
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Switch(modifier = Modifier.padding(start = 8.dp),
+                checked = darkMode.value,
+                onCheckedChange = { viewModel.onEvent(NavDrawerEvent.OnToggleDarkMode) })
+            Text(modifier = Modifier.padding(start = 16.dp), text = "Darkmode")
+        }
     })
 }
 

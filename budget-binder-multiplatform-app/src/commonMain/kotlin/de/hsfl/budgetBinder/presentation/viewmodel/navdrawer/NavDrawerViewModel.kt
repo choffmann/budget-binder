@@ -1,7 +1,9 @@
 package de.hsfl.budgetBinder.presentation.viewmodel.navdrawer
 
 import de.hsfl.budgetBinder.common.DataResponse
+import de.hsfl.budgetBinder.domain.usecase.IsDarkThemeUseCase
 import de.hsfl.budgetBinder.domain.usecase.LogoutUseCase
+import de.hsfl.budgetBinder.domain.usecase.ToggleDarkModeUseCase
 import de.hsfl.budgetBinder.domain.usecase.ToggleServerUrlDialogUseCase
 import de.hsfl.budgetBinder.presentation.Screen
 import de.hsfl.budgetBinder.presentation.UiState
@@ -14,14 +16,26 @@ import kotlinx.coroutines.launch
 class NavDrawerViewModel(
     private val logoutUseCase: LogoutUseCase,
     private val toggleServerUrlDialogUseCase: ToggleServerUrlDialogUseCase,
+    private val toggleDarkModeUseCase: ToggleDarkModeUseCase,
+    private val isDarkThemeUseCase: IsDarkThemeUseCase,
     private val routerFlow: RouterFlow,
     private val scope: CoroutineScope,
 ) {
     val eventFlow = UiEventSharedFlow.eventFlow
 
+    private val _darkModeState = MutableStateFlow(isDarkThemeUseCase())
+    val darkModeState: StateFlow<Boolean> = _darkModeState
+
+    init {
+        scope.launch {
+            toggleDarkModeUseCase.darkThemeState.collect { _darkModeState.value = it }
+        }
+    }
+
     fun onEvent(event: NavDrawerEvent) {
         when (event) {
             is NavDrawerEvent.OnChangeServerUrl -> scope.launch { toggleServerUrlDialogUseCase() }
+            is NavDrawerEvent.OnToggleDarkMode -> scope.launch { toggleDarkModeUseCase() }
             is NavDrawerEvent.OnDashboard -> routerFlow.navigateTo(Screen.Dashboard)
             is NavDrawerEvent.OnCreateEntry -> routerFlow.navigateTo(Screen.Entry.Create)
             is NavDrawerEvent.OnCategory -> routerFlow.navigateTo(Screen.Category.Summary)

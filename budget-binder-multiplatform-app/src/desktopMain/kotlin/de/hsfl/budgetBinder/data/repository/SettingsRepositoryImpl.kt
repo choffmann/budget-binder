@@ -7,10 +7,6 @@ actual object SettingsRepositoryImpl: SettingsRepository {
     @OptIn(ExperimentalSettingsImplementation::class)
     private val settings: Settings = Settings()
 
-    init {
-        settings.clear()
-    }
-
     actual override fun storeFirstTimeUse() {
         settings.putBoolean("after_first_time_use", true)
     }
