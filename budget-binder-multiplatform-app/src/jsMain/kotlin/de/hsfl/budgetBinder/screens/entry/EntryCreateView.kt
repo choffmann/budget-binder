@@ -207,7 +207,7 @@ fun EntryCreateView(
                         classes(AppStylesheet.margin)
                     }
                 ) {
-                    Text("Category: ")
+                    DefaultText("Category: ")
                     ChooseCategoryMenu(categoryList, entryCategoryIDTextField) { id ->
                         viewModel.onEvent(EntryEvent.EnteredCategoryID(id))
                     }
