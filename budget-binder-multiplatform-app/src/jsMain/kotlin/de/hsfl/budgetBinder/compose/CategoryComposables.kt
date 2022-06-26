@@ -5,6 +5,8 @@ import de.hsfl.budgetBinder.common.Category
 import de.hsfl.budgetBinder.compose.theme.AppStylesheet
 import de.hsfl.budgetBinder.presentation.CategoryImageToIcon
 import org.jetbrains.compose.web.ExperimentalComposeWebSvgApi
+import org.jetbrains.compose.web.attributes.ButtonType
+import org.jetbrains.compose.web.attributes.type
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
 import org.jetbrains.compose.web.svg.Circle
@@ -137,7 +139,7 @@ fun CategoryElement(category: Category, onClicked: (Int) -> Unit) {
 
 @OptIn(ExperimentalComposeWebSvgApi::class)
 @Composable
-fun ColorCircle(color:String){
+fun ColorCircle(color: String) {
     Div(attrs = {
         classes(AppStylesheet.colorFlexContainer)
     }
@@ -235,3 +237,117 @@ fun CategoryDetailed(
         }
     }
 }
+
+@Composable
+fun ChooseCategoryMenu(
+    categoryList: List<Category>,
+    selectedCategory: Int?,
+    getCategoryId: (Int?) -> Unit
+) {
+    var categoryListWN =
+        listOf(Category.Nullable(null, "No Category", "ffffff", Category.Image.DEFAULT, 0f))
+    for (category in categoryList) {
+        categoryListWN = categoryListWN + (Category.Nullable(
+            category.id,
+            category.name,
+            category.color,
+            category.image,
+            category.budget
+        ))
+    }
+    console.log(categoryList)
+    var choseCat = categoryListWN[0]
+
+    for (category in categoryListWN) {
+        if (category.id == selectedCategory) {
+            choseCat = category
+            break
+        }
+    }
+
+    var chosenCategory by remember {
+        mutableStateOf(choseCat)
+    }
+    console.log(chosenCategory)
+
+
+    var showList by remember { mutableStateOf(false) }
+
+    Button(attrs = {
+        classes("mdc-button", "mdc-dialog__button")
+        onClick { showList = !showList }
+        type(ButtonType.Button)
+    }) {
+        Div(attrs = {
+            when (showList) {
+                true -> classes("mdc-menu", "mdc-menu-surface", "mdc-menu-surface--open")
+                false -> classes("mdc-menu", "mdc-menu-surface")
+            }
+        }) {
+            Ul(attrs = {
+                classes("mdc-list")
+                attr("role", "menu")
+                attr("aria-hidden", "true")
+                attr("aria-orientation", "vertical")
+                attr("tabindex", "-1")
+            }) {
+                for (category in categoryListWN) {
+                    Li(attrs = {
+                        classes("mdc-list-item")
+                        attr("role", "menuitem")
+                        onClick { chosenCategory = category; getCategoryId(category.id) }
+                    }) {
+                        Span(attrs = { classes("mdc-list-item__ripple") }) { }
+                        Span(attrs = { classes(AppStylesheet.moneyText) }) { Text(category.name) }
+                    }
+                }
+            }
+        }
+        Text(chosenCategory.name)
+    }
+}
+
+@Composable
+fun CategoryImagesToImageList(
+    inputImage: Category.Image,
+    onClick: (Category.Image) -> Unit
+) {
+    Div(
+        attrs = {
+            classes("mdc-card", AppStylesheet.card)
+        }
+    ) {
+        Ul(
+            attrs = {
+                classes("mdc-image-list", AppStylesheet.categoryImageList)
+            }
+        ) {
+            for (image in Category.Image.values()) {
+                Li(
+                    attrs = {
+                        classes("mdc-image-list__item")
+                    }
+                ) {
+                    Div(
+                        attrs = {
+                            if (inputImage == image)
+                                classes(
+                                    "mdc-image-list__image-aspect-container",
+                                    "mdc-icon-button",
+                                    "mdc-button--raised"
+                                )
+                            else classes(
+                                "mdc-image-list__image-aspect-container",
+                                "mdc-icon-button"
+                            )
+                            onClick { onClick(image) }
+                        }
+                    ) {
+                        CategoryImageToIcon(image)
+                    }
+                }
+            }
+        }
+    }
+}
+

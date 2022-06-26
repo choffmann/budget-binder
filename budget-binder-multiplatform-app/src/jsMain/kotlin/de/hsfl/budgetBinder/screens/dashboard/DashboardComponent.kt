@@ -175,7 +175,6 @@ fun EntryList(
         }
     }
     Text("Older entries...")
-    console.log("Old Entries: "+oldEntries)
     for ((date, dashboardState) in oldEntries) {
         Text(date) //TODO-WEB: Sticky?
         for (entry in dashboardState.entryList) {
