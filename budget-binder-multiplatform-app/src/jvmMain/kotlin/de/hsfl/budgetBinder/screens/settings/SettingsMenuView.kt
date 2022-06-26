@@ -17,7 +17,6 @@ import androidx.compose.ui.unit.dp
 import de.hsfl.budgetBinder.compose.dialog.DeleteUserDialog
 import de.hsfl.budgetBinder.compose.icon.*
 import de.hsfl.budgetBinder.di
-import de.hsfl.budgetBinder.presentation.flow.DataFlow
 import de.hsfl.budgetBinder.presentation.viewmodel.settings.SettingsEvent
 import de.hsfl.budgetBinder.presentation.viewmodel.settings.SettingsViewModel
 import org.kodein.di.instance
@@ -27,8 +26,7 @@ import org.kodein.di.instance
 fun SettingsMenuView(modifier: Modifier = Modifier) {
     val scope = rememberCoroutineScope()
     val viewModel: SettingsViewModel by di.instance()
-    val dataFlow: DataFlow by di.instance()
-    val darkMode = dataFlow.darkModeState.collectAsState(scope.coroutineContext)
+    val darkMode = viewModel.darkModeState.collectAsState(scope.coroutineContext)
     val dialogState = viewModel.dialogState.collectAsState()
 
     Column(modifier = modifier) {
@@ -63,6 +61,9 @@ fun SettingsMenuView(modifier: Modifier = Modifier) {
             style = MaterialTheme.typography.subtitle2
         )
         Divider()
+        ListItem(modifier = Modifier.clickable(onClick = { viewModel.onEvent(SettingsEvent.OnResetSettings) }),
+            text = { Text("Reset the App") },
+            icon = { ResetIcon() })
         ListItem(modifier = Modifier.clickable(onClick = { viewModel.onEvent(SettingsEvent.OnDeleteUser) }),
             text = { Text("Delete my User") },
             icon = { DeleteForeverIcon() })

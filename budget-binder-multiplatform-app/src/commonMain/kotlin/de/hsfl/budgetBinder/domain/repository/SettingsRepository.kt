@@ -7,10 +7,13 @@ interface SettingsRepository {
 
     // Dark Mode
     fun storeDarkTheme(isDarkMode: Boolean)
+    fun checkHasDarkModeKey(): Boolean
     fun getDarkMode(): Boolean
 
     // Server URL
     fun storeServerUrl(url: String)
     fun checkHasServerUrlKey(): Boolean
     fun getServerUrl(): String
+
+    fun reset()
 }

@@ -8,4 +8,5 @@ sealed class SettingsEvent {
     object OnDeleteUser: SettingsEvent()
     object OnDeleteDialogConfirm: SettingsEvent()
     object OnDeleteDialogDismiss: SettingsEvent()
+    object OnResetSettings: SettingsEvent()
 }

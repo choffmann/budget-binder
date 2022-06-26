@@ -1,6 +1,5 @@
 package de.hsfl.budgetBinder.domain.usecase
 
-import de.hsfl.budgetBinder.data.repository.SettingsRepositoryImpl
 import de.hsfl.budgetBinder.domain.repository.SettingsRepository
 
 class StoreIsFirstTimeUseCase(private val repository: SettingsRepository) {
@@ -13,6 +12,10 @@ class IsFirstTimeUseCase(private val repository: SettingsRepository) {
 
 class StoreDarkThemeUseCase(private val repository: SettingsRepository) {
     operator fun invoke(isDarkTheme: Boolean) = repository.storeDarkTheme(isDarkTheme)
+}
+
+class IsDarkThemeStoredUseCase(private val repository: SettingsRepository) {
+    operator fun invoke(): Boolean = repository.checkHasDarkModeKey()
 }
 
 class IsDarkThemeUseCase(private val repository: SettingsRepository) {
@@ -29,4 +32,8 @@ class IsServerUrlStoredUseCase(private val repository: SettingsRepository) {
 
 class GetServerUrlUseCase(private val repository: SettingsRepository) {
     operator fun invoke(): String = repository.getServerUrl()
+}
+
+class ResetAllSettings(private val repository: SettingsRepository) {
+    operator fun invoke() = repository.reset()
 }

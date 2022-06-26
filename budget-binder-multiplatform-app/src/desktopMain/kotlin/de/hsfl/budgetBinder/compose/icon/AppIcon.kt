@@ -92,3 +92,7 @@ actual fun SavingsImage(modifier: Modifier) {
 actual fun GetStartedImage(modifier: Modifier) {
     Image(modifier = modifier, painter = painterResource("undraw_awesome_rlvy.svg"), contentDescription = null)
 }
+@Composable
+actual fun ResetIcon() {
+    Icon(imageVector = Icons.Default.RestartAlt, contentDescription = null)
+}

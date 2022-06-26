@@ -3,7 +3,7 @@ package de.hsfl.budgetBinder.presentation.viewmodel.auth
 import de.hsfl.budgetBinder.common.User
 import de.hsfl.budgetBinder.domain.usecase.AuthUseCases
 import de.hsfl.budgetBinder.presentation.Screen
-import de.hsfl.budgetBinder.presentation.flow.DataFlow
+import de.hsfl.budgetBinder.presentation.flow.UserFlow
 import de.hsfl.budgetBinder.presentation.flow.RouterFlow
 import de.hsfl.budgetBinder.presentation.flow.UiEventSharedFlow
 import kotlinx.coroutines.CoroutineScope
@@ -15,12 +15,12 @@ import kotlinx.coroutines.launch
 open class AuthViewModel(
     _scope: CoroutineScope = CoroutineScope(Dispatchers.Unconfined + SupervisorJob()),
     _routerFlow: RouterFlow,
-    _dataFlow: DataFlow,
+    _userFlow: UserFlow,
     _authUseCases: AuthUseCases,
 ) {
     private val scope = _scope
     private val routerFlow = _routerFlow
-    private val dataFlow = _dataFlow
+    private val dataFlow = _userFlow
     private val authUseCases = _authUseCases
 
     private val _dialogState = MutableStateFlow(false)

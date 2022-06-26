@@ -53,3 +53,6 @@ expect fun ForwardIcon()
 
 @Composable
 expect fun EuroIcon()
+
+@Composable
+expect fun ResetIcon()

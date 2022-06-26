@@ -1,21 +1,19 @@
 package de.hsfl.budgetBinder
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.*
-import androidx.compose.material.Icon
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import de.hsfl.budgetBinder.di.kodein
 import de.hsfl.budgetBinder.presentation.Screen
 import de.hsfl.budgetBinder.presentation.event.UiEvent
-import de.hsfl.budgetBinder.presentation.flow.DataFlow
 import de.hsfl.budgetBinder.presentation.flow.RouterFlow
 import de.hsfl.budgetBinder.presentation.flow.UiEventSharedFlow
+import de.hsfl.budgetBinder.presentation.viewmodel.RootEvent
+import de.hsfl.budgetBinder.presentation.viewmodel.RootViewModel
 import io.ktor.client.engine.cio.*
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import org.kodein.di.compose.withDI
 import org.kodein.di.instance
 
@@ -23,16 +21,18 @@ val di = kodein(ktorEngine = CIO.create())
 
 @Composable
 fun App() = withDI(di) {
-    val scope = rememberCoroutineScope()
-    val dataFlow: DataFlow by di.instance()
+    val viewModel: RootViewModel by di.instance()
     val uiEventFlow: UiEventSharedFlow by di.instance()
     val routerFlow: RouterFlow by di.instance()
     val screenState = routerFlow.state.collectAsState()
-    val darkTheme = dataFlow.darkModeState.collectAsState(scope.coroutineContext)
+    val darkTheme = viewModel.darkModeState.collectAsState()
     val scaffoldState = rememberScaffoldState()
     val loadingState = remember { mutableStateOf(false) }
+    val showTopBarMenuIcon = remember { mutableStateOf(false) }
+    val initDarkMode = isSystemInDarkTheme()
 
     LaunchedEffect(key1 = true) {
+        viewModel.onEvent(RootEvent.InitDarkMode(initDarkMode))
         uiEventFlow.eventFlow.collectLatest { event ->
             when (event) {
                 is UiEvent.ShowLoading -> loadingState.value = true
@@ -62,14 +62,20 @@ fun App() = withDI(di) {
             LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
         }
         Scaffold(scaffoldState = scaffoldState,
-        topBar = { BudgetBinderTopBar(navigationIcon = { TopBarMenuIcon(drawerState = scaffoldState.drawerState) }) }) {
+            topBar = { BudgetBinderTopBar(navigationIcon = { if (showTopBarMenuIcon.value) TopBarMenuIcon(drawerState = scaffoldState.drawerState) }) }) {
             when (screenState.value) {
+                is Screen.Welcome -> {
+                    showTopBarMenuIcon.value = false
+                    Router()
+                }
                 is Screen.Login, is Screen.Register -> {
+                    showTopBarMenuIcon.value = true
                     BudgetBinderAuthNavDrawer(scaffoldState.drawerState) {
                         Router()
                     }
                 }
                 else -> {
+                    showTopBarMenuIcon.value = true
                     BudgetBinderNavDrawer(scaffoldState.drawerState) {
                         Router()
                     }

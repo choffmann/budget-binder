@@ -1,11 +1,11 @@
 package de.hsfl.budgetBinder.presentation.viewmodel.settings
 
-import de.hsfl.budgetBinder.common.DataResponse
 import de.hsfl.budgetBinder.common.User
 import de.hsfl.budgetBinder.domain.usecase.SettingsUseCases
 import de.hsfl.budgetBinder.presentation.Screen
 import de.hsfl.budgetBinder.presentation.event.UiEvent
-import de.hsfl.budgetBinder.presentation.flow.DataFlow
+import de.hsfl.budgetBinder.presentation.flow.DarkModeFlow
+import de.hsfl.budgetBinder.presentation.flow.UserFlow
 import de.hsfl.budgetBinder.presentation.flow.RouterFlow
 import de.hsfl.budgetBinder.presentation.flow.UiEventSharedFlow
 import kotlinx.coroutines.CoroutineScope
@@ -15,11 +15,12 @@ import kotlinx.coroutines.launch
 
 class SettingsEditUserViewModel(
     private val settingsUseCases: SettingsUseCases,
-    private val dataFlow: DataFlow,
+    private val userFlow: UserFlow,
     private val routerFlow: RouterFlow,
-    private val scope: CoroutineScope
+    private val scope: CoroutineScope,
+    darkModeFlow: DarkModeFlow
 ) : SettingsViewModel(
-    _settingsUseCases = settingsUseCases, _dataFlow = dataFlow, _routerFlow = routerFlow, _scope = scope
+    _settingsUseCases = settingsUseCases, _routerFlow = routerFlow, _scope = scope, _darkModeFlow = darkModeFlow
 ) {
     private val _firstNameText = MutableStateFlow(EditUserState())
     val firstNameText: StateFlow<EditUserState> = _firstNameText
@@ -35,14 +36,14 @@ class SettingsEditUserViewModel(
     private val _confirmedPasswordText = MutableStateFlow(EditUserState())
     val confirmedPassword: StateFlow<EditUserState> = _confirmedPasswordText
 
-    val emailText: StateFlow<String> = MutableStateFlow(dataFlow.userState.value.email)
+    val emailText: StateFlow<String> = MutableStateFlow(userFlow.userState.value.email)
 
     private val _eventFlow = UiEventSharedFlow.mutableEventFlow
 
     init {
         _firstNameText.value =
-            firstNameText.value.copy(firstName = dataFlow.userState.value.firstName, firstNameIsValid = true)
-        _lastNameText.value = lastNameText.value.copy(lastName = dataFlow.userState.value.name, lastNameIsValid = true)
+            firstNameText.value.copy(firstName = userFlow.userState.value.firstName, firstNameIsValid = true)
+        _lastNameText.value = lastNameText.value.copy(lastName = userFlow.userState.value.name, lastNameIsValid = true)
         _passwordText.value = passwordText.value.copy(password = passwordPlaceholder, passwordIsValid = true)
         _confirmedPasswordText.value =
             confirmedPassword.value.copy(confirmedPassword = passwordPlaceholder, confirmedPasswordIsValid = true)
@@ -123,7 +124,7 @@ class SettingsEditUserViewModel(
                     logOutOnAllDevices("Your password was updated. Please sign in again")
                 } else {
                     _eventFlow.emit(UiEvent.ShowSuccess("User update successfully"))
-                    dataFlow.storeUserState(it)
+                    userFlow.storeUserState(it)
                     routerFlow.navigateTo(Screen.Settings.Menu)
                 }
             })
@@ -144,8 +145,8 @@ class SettingsEditUserViewModel(
 
     private fun resetFlows() {
         _firstNameText.value =
-            firstNameText.value.copy(firstName = dataFlow.userState.value.firstName, firstNameIsValid = true)
-        _lastNameText.value = lastNameText.value.copy(lastName = dataFlow.userState.value.name, lastNameIsValid = true)
+            firstNameText.value.copy(firstName = userFlow.userState.value.firstName, firstNameIsValid = true)
+        _lastNameText.value = lastNameText.value.copy(lastName = userFlow.userState.value.name, lastNameIsValid = true)
         _passwordText.value = passwordText.value.copy(password = passwordPlaceholder, passwordIsValid = true)
     }
 }
