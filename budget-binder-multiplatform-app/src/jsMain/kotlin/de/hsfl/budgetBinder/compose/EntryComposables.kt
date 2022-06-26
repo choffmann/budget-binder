@@ -5,10 +5,7 @@ import de.hsfl.budgetBinder.compose.theme.AppStylesheet
 import de.hsfl.budgetBinder.presentation.CategoryImageToIcon
 import de.hsfl.budgetBinder.presentation.viewmodel.dashboard.DashboardEntryState
 import de.hsfl.budgetBinder.presentation.viewmodel.dashboard.DashboardState
-import org.jetbrains.compose.web.css.DisplayStyle
-import org.jetbrains.compose.web.css.JustifyContent
-import org.jetbrains.compose.web.css.display
-import org.jetbrains.compose.web.css.justifyContent
+import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.Button
 import org.jetbrains.compose.web.dom.Div
 import org.jetbrains.compose.web.dom.Span
@@ -40,9 +37,10 @@ fun EntryList(
             EntryListElement(entry, onItemClicked, onEntryDelete)
         }
     }
-    Text("Older entries...")
+
+    DefaultText("Older entries...") { flex(100.percent) }
     for ((date, dashboardState) in oldEntries) {
-        Text(date) //TODO-WEB: Sticky?
+        DefaultText(date) { flex(100.percent) }
         for (entry in dashboardState.entryList) {
             EntryListElement(entry, onItemClicked, onEntryDelete)
         }
