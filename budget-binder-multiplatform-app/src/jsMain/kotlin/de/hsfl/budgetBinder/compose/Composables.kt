@@ -198,6 +198,15 @@ fun DeleteDialog(
         }
     }
 }
+@Composable
+fun DefaultText(text:String, style: (StyleScope.() -> Unit)? = null){
+    Div(attrs ={
+        classes("mdc-typography--body1")
+        if (style != null) {
+            style (style)
+        }
+    }){ Text(text)}
+}
 
 
 
