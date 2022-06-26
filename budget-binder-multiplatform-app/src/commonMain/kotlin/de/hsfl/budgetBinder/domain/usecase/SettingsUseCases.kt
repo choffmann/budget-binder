@@ -5,5 +5,6 @@ data class SettingsUseCases(
     val deleteMyUserUseCase: DeleteMyUserUseCase,
     val logoutUseCase: LogoutUseCase,
     val toggleDarkModeUseCase: ToggleDarkModeUseCase,
-    val isDarkThemeUseCase: IsDarkThemeUseCase
+    val isDarkThemeUseCase: IsDarkThemeUseCase,
+    val resetAllSettings: ResetAllSettings,
 )
