@@ -14,4 +14,6 @@ interface SettingsRepository {
     fun storeServerUrl(url: String)
     fun checkHasServerUrlKey(): Boolean
     fun getServerUrl(): String
+
+    fun reset()
 }

@@ -3,7 +3,7 @@ package de.hsfl.budgetBinder.data.repository
 import com.russhwolf.settings.*
 import de.hsfl.budgetBinder.domain.repository.SettingsRepository
 
-actual object SettingsRepositoryImpl: SettingsRepository {
+actual object SettingsRepositoryImpl : SettingsRepository {
     @OptIn(ExperimentalSettingsImplementation::class)
     private val settings: Settings = Settings()
 
@@ -37,5 +37,9 @@ actual object SettingsRepositoryImpl: SettingsRepository {
 
     actual override fun getServerUrl(): String {
         return settings.getString("server_url", defaultValue = "http://localhost")
+    }
+
+    override fun reset() {
+        settings.clear()
     }
 }
