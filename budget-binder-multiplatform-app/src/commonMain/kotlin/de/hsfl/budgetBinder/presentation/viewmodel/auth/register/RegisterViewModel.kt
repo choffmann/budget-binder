@@ -7,7 +7,7 @@ import de.hsfl.budgetBinder.domain.usecase.AuthUseCases
 import de.hsfl.budgetBinder.presentation.Screen
 import de.hsfl.budgetBinder.presentation.UiState
 import de.hsfl.budgetBinder.presentation.event.handleLifeCycle
-import de.hsfl.budgetBinder.presentation.flow.DataFlow
+import de.hsfl.budgetBinder.presentation.flow.UserFlow
 import de.hsfl.budgetBinder.presentation.flow.RouterFlow
 import de.hsfl.budgetBinder.presentation.viewmodel.auth.AuthViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -17,11 +17,11 @@ class RegisterViewModel(
     private val authUseCases: AuthUseCases,
     private val routerFlow: RouterFlow,
     private val scope: CoroutineScope,
-    dataFlow: DataFlow,
+    userFlow: UserFlow,
 ) : AuthViewModel(
     _scope = scope,
     _authUseCases = authUseCases,
-    _dataFlow = dataFlow,
+    _userFlow = userFlow,
     _routerFlow = routerFlow,
 ) {
     private val _firstNameText = MutableStateFlow(RegisterTextFieldState())

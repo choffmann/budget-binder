@@ -3,7 +3,7 @@ package de.hsfl.budgetBinder.screens.settings
 import androidx.compose.runtime.*
 import de.hsfl.budgetBinder.presentation.Screen
 import de.hsfl.budgetBinder.presentation.event.UiEvent
-import de.hsfl.budgetBinder.presentation.flow.DataFlow
+import de.hsfl.budgetBinder.presentation.flow.UserFlow
 import de.hsfl.budgetBinder.presentation.flow.RouterFlow
 import de.hsfl.budgetBinder.presentation.viewmodel.settings.SettingsViewModel
 import di
@@ -13,9 +13,7 @@ import org.kodein.di.instance
 @Composable
 fun SettingsComponent() {
     val viewModel: SettingsViewModel by di.instance()
-    val dataFlow: DataFlow by di.instance()
     val routerFlow: RouterFlow by di.instance()
-    val userState = dataFlow.userState.collectAsState()
     val screenState = routerFlow.state.collectAsState()
     val loadingState = remember { mutableStateOf(false) }
 

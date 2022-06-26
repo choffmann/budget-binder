@@ -7,7 +7,7 @@ import de.hsfl.budgetBinder.presentation.flow.RouterFlow
 import de.hsfl.budgetBinder.presentation.Screen
 import de.hsfl.budgetBinder.presentation.event.UiEvent
 import de.hsfl.budgetBinder.presentation.event.handleLifeCycle
-import de.hsfl.budgetBinder.presentation.flow.DataFlow
+import de.hsfl.budgetBinder.presentation.flow.UserFlow
 import de.hsfl.budgetBinder.presentation.flow.UiEventSharedFlow
 import de.hsfl.budgetBinder.presentation.viewmodel.auth.AuthViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -18,12 +18,12 @@ class LoginViewModel(
     private val authUseCases: AuthUseCases,
     private val routerFlow: RouterFlow,
     private val scope: CoroutineScope,
-    private val dataFlow: DataFlow
+    private val userFlow: UserFlow
 ) : AuthViewModel(
     _scope = scope,
     _routerFlow = routerFlow,
     _authUseCases = authUseCases,
-    _dataFlow = dataFlow
+    _userFlow = userFlow
 ) {
     private val screenAfterSuccess = Screen.Dashboard
 
@@ -94,7 +94,7 @@ class LoginViewModel(
     }
 
     private fun storeUser(user: User) {
-        dataFlow.storeUserState(user)
+        userFlow.storeUserState(user)
     }
 
     private fun clearStateFlows() {

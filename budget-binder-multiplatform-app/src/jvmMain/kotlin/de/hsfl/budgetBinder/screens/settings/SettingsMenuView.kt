@@ -17,7 +17,6 @@ import androidx.compose.ui.unit.dp
 import de.hsfl.budgetBinder.compose.dialog.DeleteUserDialog
 import de.hsfl.budgetBinder.compose.icon.*
 import de.hsfl.budgetBinder.di
-import de.hsfl.budgetBinder.presentation.flow.DataFlow
 import de.hsfl.budgetBinder.presentation.viewmodel.settings.SettingsEvent
 import de.hsfl.budgetBinder.presentation.viewmodel.settings.SettingsViewModel
 import org.kodein.di.instance
