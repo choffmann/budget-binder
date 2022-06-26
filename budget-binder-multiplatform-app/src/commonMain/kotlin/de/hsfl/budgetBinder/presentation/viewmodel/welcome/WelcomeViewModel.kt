@@ -2,6 +2,7 @@ package de.hsfl.budgetBinder.presentation.viewmodel.welcome
 
 import de.hsfl.budgetBinder.domain.usecase.StoreIsFirstTimeUseCase
 import de.hsfl.budgetBinder.presentation.Screen
+import de.hsfl.budgetBinder.presentation.event.handleLifeCycle
 import de.hsfl.budgetBinder.presentation.flow.RouterFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -24,7 +25,16 @@ class WelcomeViewModel(
             is WelcomeEvent.OnSkip -> onSkip()
             is WelcomeEvent.OnLogin -> onLogin()
             is WelcomeEvent.OnRegister -> onRegister()
+            is WelcomeEvent.Lifecycle -> event.lifecycle.handleLifeCycle(
+                onLaunch = {},
+                onDispose = { resetFlows() }
+            )
         }
+    }
+
+    private fun resetFlows() {
+        _totalWelcomeScreen.value = 3
+        _currentScreen.value = 0
     }
 
     private fun onLogin() {
