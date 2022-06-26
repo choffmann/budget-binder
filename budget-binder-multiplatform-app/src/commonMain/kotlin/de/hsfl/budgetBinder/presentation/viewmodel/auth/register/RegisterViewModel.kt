@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.*
 class RegisterViewModel(
     private val authUseCases: AuthUseCases,
     private val routerFlow: RouterFlow,
-    private val scope: CoroutineScope,
+    scope: CoroutineScope,
     userFlow: UserFlow,
 ) : AuthViewModel(
     _scope = scope,
@@ -24,6 +24,10 @@ class RegisterViewModel(
     _userFlow = userFlow,
     _routerFlow = routerFlow,
 ) {
+    /*Variables should be refactored ->
+    private val _firstNameText = MutableStateFlow(RegisterTextFieldState().firstName)
+    val firstNameText: StateFlow<String> = _firstNameText
+     */
     private val _firstNameText = MutableStateFlow(RegisterTextFieldState())
     val firstNameText: StateFlow<RegisterTextFieldState> = _firstNameText
 
@@ -122,50 +126,5 @@ class RegisterViewModel(
         _emailText.value = emailText.value.copy(email = "")
         _passwordText.value = passwordText.value.copy(password = "")
         _confirmedPasswordText.value = _confirmedPasswordText.value.copy(confirmedPassword = "")
-    }
-
-
-
-    // OLD!!!
-    private val _state = MutableStateFlow<UiState>(UiState.Empty)
-
-    @Deprecated(message = "Old ViewModel, use the new State")
-    val state: StateFlow<UiState> = _state
-
-
-    @Deprecated(message = "Use ViewModel function onEvent()")
-    fun _register(user: User.In) {
-        authUseCases.registerUseCase(user).onEach {
-            when (it) {
-                is DataResponse.Success -> _login(user.email, user.password)
-                is DataResponse.Error -> _state.value = UiState.Error(it.error!!.message)
-                is DataResponse.Loading -> _state.value = UiState.Loading
-                is DataResponse.Unauthorized -> _state.value = UiState.Unauthorized
-            }
-        }.launchIn(scope)
-    }
-
-    @Deprecated(message = "This is Deprecated")
-    private fun _login(email: String, password: String) {
-        authUseCases.loginUseCase(email, password).onEach {
-            when (it) {
-                is DataResponse.Success -> _getMyUser()
-                is DataResponse.Error -> _state.value = UiState.Error(it.error!!.message)
-                is DataResponse.Loading -> _state.value = UiState.Loading
-                is DataResponse.Unauthorized -> _state.value = UiState.Unauthorized
-            }
-        }.launchIn(scope)
-    }
-
-    @Deprecated(message = "This is Deprecated")
-    private fun _getMyUser() {
-        authUseCases.getMyUserUseCase().onEach {
-            when (it) {
-                is DataResponse.Success -> _state.value = UiState.Success(it.data)
-                is DataResponse.Error -> _state.value = UiState.Error(it.error!!.message)
-                is DataResponse.Loading -> _state.value = UiState.Loading
-                is DataResponse.Unauthorized -> _state.value = UiState.Unauthorized
-            }
-        }.launchIn(scope)
     }
 }
