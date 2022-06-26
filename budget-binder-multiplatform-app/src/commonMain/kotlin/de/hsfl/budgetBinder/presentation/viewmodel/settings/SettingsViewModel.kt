@@ -14,18 +14,26 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 open class SettingsViewModel(
-    _settingsUseCases: SettingsUseCases, _dataFlow: DataFlow, _routerFlow: RouterFlow, _scope: CoroutineScope
+    _settingsUseCases: SettingsUseCases, _routerFlow: RouterFlow, _scope: CoroutineScope
 ) {
     private val settingsUseCases: SettingsUseCases = _settingsUseCases
-    private val dataFlow: DataFlow = _dataFlow
     private val routerFlow: RouterFlow = _routerFlow
     private val scope: CoroutineScope = _scope
 
     private val _dialogState = MutableStateFlow(false)
     val dialogState: StateFlow<Boolean> = _dialogState
 
+    private val _darkModeState = MutableStateFlow(settingsUseCases.isDarkThemeUseCase())
+    val darkModeState: StateFlow<Boolean> = _darkModeState
+
     private val _eventFlow = UiEventSharedFlow.mutableEventFlow
     val eventFlow = UiEventSharedFlow.eventFlow
+
+    init {
+        scope.launch {
+            settingsUseCases.toggleDarkModeUseCase.darkThemeState.collect { _darkModeState.value = it }
+        }
+    }
 
     fun onEvent(event: SettingsEvent) {
         when (event) {
@@ -38,7 +46,9 @@ open class SettingsViewModel(
                 deleteUser()
             }
             is SettingsEvent.OnDeleteDialogDismiss -> _dialogState.value = false
-            is SettingsEvent.OnToggleDarkMode -> dataFlow.toggleDarkMode()
+            is SettingsEvent.OnToggleDarkMode -> {
+                scope.launch { settingsUseCases.toggleDarkModeUseCase() }
+            }
         }
     }
 

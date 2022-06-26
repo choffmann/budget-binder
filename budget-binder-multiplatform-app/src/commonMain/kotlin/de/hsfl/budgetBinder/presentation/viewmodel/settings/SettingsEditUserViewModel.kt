@@ -19,7 +19,7 @@ class SettingsEditUserViewModel(
     private val routerFlow: RouterFlow,
     private val scope: CoroutineScope
 ) : SettingsViewModel(
-    _settingsUseCases = settingsUseCases, _dataFlow = dataFlow, _routerFlow = routerFlow, _scope = scope
+    _settingsUseCases = settingsUseCases, _routerFlow = routerFlow, _scope = scope
 ) {
     private val _firstNameText = MutableStateFlow(EditUserState())
     val firstNameText: StateFlow<EditUserState> = _firstNameText

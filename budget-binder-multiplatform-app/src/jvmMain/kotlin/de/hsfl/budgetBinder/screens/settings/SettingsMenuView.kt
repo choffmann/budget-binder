@@ -27,8 +27,7 @@ import org.kodein.di.instance
 fun SettingsMenuView(modifier: Modifier = Modifier) {
     val scope = rememberCoroutineScope()
     val viewModel: SettingsViewModel by di.instance()
-    val dataFlow: DataFlow by di.instance()
-    val darkMode = dataFlow.darkModeState.collectAsState(scope.coroutineContext)
+    val darkMode = viewModel.darkModeState.collectAsState(scope.coroutineContext)
     val dialogState = viewModel.dialogState.collectAsState()
 
     Column(modifier = modifier) {
