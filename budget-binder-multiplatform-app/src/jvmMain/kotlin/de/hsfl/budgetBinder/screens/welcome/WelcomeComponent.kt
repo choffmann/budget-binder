@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -18,6 +20,7 @@ import de.hsfl.budgetBinder.compose.icon.SavingsImage
 import de.hsfl.budgetBinder.compose.icon.WelcomeImage
 import de.hsfl.budgetBinder.di
 import de.hsfl.budgetBinder.presentation.Screen
+import de.hsfl.budgetBinder.presentation.event.LifecycleEvent
 import de.hsfl.budgetBinder.presentation.flow.RouterFlow
 import de.hsfl.budgetBinder.presentation.viewmodel.welcome.WelcomeEvent
 import de.hsfl.budgetBinder.presentation.viewmodel.welcome.WelcomeViewModel
@@ -31,6 +34,16 @@ fun WelcomeComponent() {
     val screenState = routerFlow.state.collectAsState()
     val totalScreens = viewModel.totalWelcomeScreen.collectAsState()
     val currentScreen = viewModel.currentScreen.collectAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.onEvent(WelcomeEvent.Lifecycle(LifecycleEvent.OnLaunch))
+    }
+    DisposableEffect(Unit) {
+        onDispose {
+            viewModel.onEvent(WelcomeEvent.Lifecycle(LifecycleEvent.OnDispose))
+        }
+    }
+
     Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
         AnimatedContent(targetState = screenState.value, transitionSpec = {
             slideInHorizontally { fullWidth -> fullWidth } + fadeIn() with slideOutHorizontally { fullWidth -> -fullWidth }
