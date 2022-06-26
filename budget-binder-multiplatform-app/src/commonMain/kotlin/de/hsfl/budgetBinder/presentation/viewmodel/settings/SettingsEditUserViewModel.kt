@@ -1,6 +1,5 @@
 package de.hsfl.budgetBinder.presentation.viewmodel.settings
 
-import de.hsfl.budgetBinder.common.DataResponse
 import de.hsfl.budgetBinder.common.User
 import de.hsfl.budgetBinder.domain.usecase.SettingsUseCases
 import de.hsfl.budgetBinder.presentation.Screen
