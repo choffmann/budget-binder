@@ -16,6 +16,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import de.hsfl.budgetBinder.BudgetBinderNavDrawer
+import de.hsfl.budgetBinder.BudgetBinderTopBar
+import de.hsfl.budgetBinder.TopBarMenuIcon
 import de.hsfl.budgetBinder.common.Category
 import de.hsfl.budgetBinder.di
 import de.hsfl.budgetBinder.presentation.CategoryImageToIcon
@@ -43,15 +46,11 @@ fun CategorySummary() {
         }
     }
 
-    Scaffold(scaffoldState = scaffoldState,
-        floatingActionButtonPosition = FabPosition.End,
-        floatingActionButton = {
-            FloatingActionButton(onClick = { viewModel.onEvent(CategorySummaryEvent.OnCategoryCreate) }) {
-                Icon(Icons.Default.Add, contentDescription = null)
-            }
+    Scaffold(scaffoldState = scaffoldState, floatingActionButtonPosition = FabPosition.End, floatingActionButton = {
+        FloatingActionButton(onClick = { viewModel.onEvent(CategorySummaryEvent.OnCategoryCreate) }) {
+            Icon(Icons.Default.Add, contentDescription = null)
         }
-    ) {
-        if (loadingState.value) LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+    }) {
         LazyColumn {
             items(categoryList.value) { category ->
                 CategoryListItem(
@@ -66,6 +65,7 @@ fun CategorySummary() {
     }
 }
 
+
 fun String.toColor(alpha: String): Color {
     return Color("$alpha$this".toLong(16))
 }
@@ -73,22 +73,13 @@ fun String.toColor(alpha: String): Color {
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun CategoryListItem(
-    modifier: Modifier = Modifier,
-    name: String,
-    budget: String,
-    icon: Category.Image,
-    color: Color
+    modifier: Modifier = Modifier, name: String, budget: String, icon: Category.Image, color: Color
 ) {
-    ListItem(
-        modifier = modifier,
-        text = { Text(name) },
-        secondaryText = { Text("Budget: $budget") },
-        icon = {
-            Box(modifier = Modifier.shadow(15.dp, CircleShape).clip(CircleShape).background(color)) {
-                Box(modifier = Modifier.align(Alignment.Center).padding(12.dp)) {
-                    CategoryImageToIcon(icon)
-                }
+    ListItem(modifier = modifier, text = { Text(name) }, secondaryText = { Text("Budget: $budget") }, icon = {
+        Box(modifier = Modifier.shadow(15.dp, CircleShape).clip(CircleShape).background(color)) {
+            Box(modifier = Modifier.align(Alignment.Center).padding(12.dp)) {
+                CategoryImageToIcon(icon)
             }
         }
-    )
+    })
 }

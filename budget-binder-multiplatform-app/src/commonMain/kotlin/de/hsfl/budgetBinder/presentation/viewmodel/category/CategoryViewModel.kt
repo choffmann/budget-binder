@@ -8,6 +8,8 @@ import de.hsfl.budgetBinder.presentation.flow.UiEventSharedFlow
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 open class CategoryViewModel(
@@ -18,6 +20,14 @@ open class CategoryViewModel(
     private val scope: CoroutineScope = _scope
     private val categoriesUseCases: CategoriesUseCases = _categoriesUseCases
     private val routerFlow: RouterFlow = _routerFlow
+
+    /**
+     * Screen ID to Animate Content
+     * 0 means base layer (Category Summary)
+     * 1 means the next Layer (Category Deatil)
+     */
+    protected val _screenId = MutableStateFlow(0)
+    val screenId: StateFlow<Int> = _screenId
 
     val eventFlow = UiEventSharedFlow.mutableEventFlow
 

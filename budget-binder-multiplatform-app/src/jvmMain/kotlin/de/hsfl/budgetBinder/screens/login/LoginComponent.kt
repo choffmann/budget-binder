@@ -23,15 +23,14 @@ import org.kodein.di.instance
 
 @Composable
 fun LoginComponent() {
-    val scope = rememberCoroutineScope()
     val viewModel: LoginViewModel by di.instance()
-    val emailTextState = viewModel.emailText.collectAsState(scope.coroutineContext)
-    val passwordTextState = viewModel.passwordText.collectAsState(scope.coroutineContext)
-    val serverUrlState = viewModel.serverUrlText.collectAsState(scope.coroutineContext)
-    val openDialog = viewModel.dialogState.collectAsState(scope.coroutineContext)
+    val emailTextState = viewModel.emailText.collectAsState()
+    val passwordTextState = viewModel.passwordText.collectAsState()
+    val serverUrlState = viewModel.serverUrlText.collectAsState()
+    val openDialog = viewModel.dialogState.collectAsState()
     val localFocusManager = LocalFocusManager.current
     val loadingState = remember { mutableStateOf(false) }
-
+    val scaffoldState = rememberScaffoldState()
 
     LaunchedEffect(key1 = true) {
         viewModel.onEvent(LoginEvent.LifeCycle(LifecycleEvent.OnLaunch))
@@ -46,45 +45,46 @@ fun LoginComponent() {
     if (loadingState.value) {
         LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
     }
-    ServerUrlDialog(
-        value = serverUrlState.value.serverAddress,
+    ServerUrlDialog(value = serverUrlState.value.serverAddress,
         onValueChange = { viewModel.onEvent(LoginEvent.EnteredServerUrl(it)) },
         openDialog = openDialog.value,
         onConfirm = { viewModel.onEvent(LoginEvent.OnServerUrlDialogConfirm) },
-        onDismiss = { viewModel.onEvent(LoginEvent.OnServerUrlDialogDismiss) }
-    )
-    Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
-        AppIcon(modifier = Modifier.size(128.dp).padding(8.dp))
-        Text(text = "Welcome back to Budget Binder 💸", style = MaterialTheme.typography.h5)
-        Spacer(modifier = Modifier.height(8.dp))
-        EmailTextField(
-            value = emailTextState.value.email,
-            onValueChange = { viewModel.onEvent(LoginEvent.EnteredEmail(it)) },
-            label = { Text("Email") },
-            isError = !emailTextState.value.emailValid,
-            enabled = !loadingState.value
-        )
-        OutlinedTextField(
-            value = passwordTextState.value.password,
-            onValueChange = { viewModel.onEvent(LoginEvent.EnteredPassword(it)) },
-            label = { Text("Password") },
-            visualTransformation = PasswordVisualTransformation(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            singleLine = true
-        )
-        Button(onClick = {
-            localFocusManager.clearFocus()
-            viewModel.onEvent(LoginEvent.OnLogin)
-        }) {
-            Text("Login")
-        }
-        Box(modifier = Modifier.fillMaxSize()) {
-            TextButton(modifier = Modifier.align(Alignment.BottomCenter), onClick = {
+        onDismiss = { viewModel.onEvent(LoginEvent.OnServerUrlDialogDismiss) })
+    Scaffold(scaffoldState = scaffoldState) {
+        Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
+            AppIcon(modifier = Modifier.size(128.dp).padding(8.dp))
+            Text(text = "Welcome back to Budget Binder 💸", style = MaterialTheme.typography.h5)
+            Spacer(modifier = Modifier.height(8.dp))
+            EmailTextField(
+                value = emailTextState.value.email,
+                onValueChange = { viewModel.onEvent(LoginEvent.EnteredEmail(it)) },
+                label = { Text("Email") },
+                isError = !emailTextState.value.emailValid,
+                enabled = !loadingState.value
+            )
+            OutlinedTextField(
+                value = passwordTextState.value.password,
+                onValueChange = { viewModel.onEvent(LoginEvent.EnteredPassword(it)) },
+                label = { Text("Password") },
+                visualTransformation = PasswordVisualTransformation(),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                singleLine = true
+            )
+            Button(onClick = {
                 localFocusManager.clearFocus()
-                viewModel.onEvent(LoginEvent.OnRegisterScreen)
+                viewModel.onEvent(LoginEvent.OnLogin)
             }) {
-                Text("Or Register your Account here")
+                Text("Login")
+            }
+            Box(modifier = Modifier.fillMaxSize()) {
+                TextButton(modifier = Modifier.align(Alignment.BottomCenter), onClick = {
+                    localFocusManager.clearFocus()
+                    viewModel.onEvent(LoginEvent.OnRegisterScreen)
+                }) {
+                    Text("Or Register your Account here")
+                }
             }
         }
     }
 }
+

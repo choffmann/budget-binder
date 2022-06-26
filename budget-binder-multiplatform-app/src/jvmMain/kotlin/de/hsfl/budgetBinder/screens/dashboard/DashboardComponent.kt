@@ -17,6 +17,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import de.hsfl.budgetBinder.BudgetBinderNavDrawer
+import de.hsfl.budgetBinder.BudgetBinderTopBar
+import de.hsfl.budgetBinder.TopBarMenuIcon
 import de.hsfl.budgetBinder.common.Category
 import de.hsfl.budgetBinder.compose.BudgetBar
 import de.hsfl.budgetBinder.di
@@ -36,7 +39,6 @@ fun DashboardComponent() {
     val viewModel: DashboardViewModel by di.instance()
     val entryList = viewModel.entryListState.collectAsState()
     val focusedCategory = viewModel.focusedCategoryState.collectAsState()
-    val totalSpendBudget = viewModel.spendBudgetOnCurrentCategory.collectAsState()
     val olderEntries = viewModel.oldEntriesMapState.collectAsState()
     val loadingState = remember { mutableStateOf(false) }
     val scaffoldState = rememberScaffoldState()
@@ -69,19 +71,18 @@ fun DashboardComponent() {
                 LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
             }
             TopDashboardSection(focusedCategory = focusedCategory.value.category,
-                totalSpendBudget = totalSpendBudget.value.spendBudgetOnCurrentCategory,
+                totalSpendBudget = focusedCategory.value.spendBudget,
                 totalBudget = focusedCategory.value.category.budget,
                 hasPrev = focusedCategory.value.hasPrev,
                 hasNext = focusedCategory.value.hasNext,
                 onPrevClicked = { viewModel.onEvent(DashboardEvent.OnPrevCategory) },
                 onNextClicked = { viewModel.onEvent(DashboardEvent.OnNextCategory) })
             Column {
-                EntryList(entryList = entryList.value.entryList,
+                EntryList(entryList = entryList.value,
                     oldEntries = olderEntries.value,
                     onItemClicked = { viewModel.onEvent(DashboardEvent.OnEntry(it)) },
                     onLoadMore = { viewModel.onEvent(DashboardEvent.OnLoadMore) },
-                    onEntryDelete = { viewModel.onEvent(DashboardEvent.OnEntryDelete(it)) }
-                )
+                    onEntryDelete = { viewModel.onEvent(DashboardEvent.OnEntryDelete(it)) })
             }
         }
     }
@@ -214,11 +215,7 @@ fun SwipeToDelete(dismissState: DismissState, content: @Composable RowScope.() -
             }
             val scale by animateFloatAsState(targetValue = if (dismissState.targetValue == DismissValue.Default) 0.75f else 1f)
             Box(
-                Modifier
-                    .fillMaxSize()
-                    .background(color)
-                    .padding(horizontal = 20.dp),
-                contentAlignment = alignment
+                Modifier.fillMaxSize().background(color).padding(horizontal = 20.dp), contentAlignment = alignment
             ) {
                 if (direction == DismissDirection.EndToStart) {
                     Icon(Icons.Default.Delete, contentDescription = null, modifier = Modifier.scale(scale))

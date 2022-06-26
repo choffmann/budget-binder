@@ -3,6 +3,8 @@ package de.hsfl.budgetBinder
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -14,63 +16,83 @@ import de.hsfl.budgetBinder.presentation.viewmodel.navdrawer.NavDrawerViewModel
 import kotlinx.coroutines.launch
 import org.kodein.di.instance
 
+@Composable
+fun BudgetBinderTopBar(
+    text: String = "Budget Binder",
+    navigationIcon: @Composable () -> Unit = {},
+    actions: @Composable RowScope.() -> Unit = {}
+) {
+    TopAppBar(title = { Text(text) }, navigationIcon = navigationIcon, actions = actions)
+}
+
+@Composable
+fun TopBarMenuIcon(drawerState: DrawerState) {
+    val scope = rememberCoroutineScope()
+    IconButton(onClick = {
+        scope.launch {
+            if (drawerState.isOpen) drawerState.close()
+            else drawerState.open()
+        }
+    }) {
+        Icon(Icons.Default.Menu, contentDescription = null)
+    }
+}
+
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun NavDrawer(
-    drawerState: DrawerState,
-    gesturesEnabled: Boolean = true,
-    content: @Composable () -> Unit
+fun BudgetBinderAuthNavDrawer(drawerState: DrawerState, content: @Composable () -> Unit) {
+    val scope = rememberCoroutineScope()
+    val viewModel: NavDrawerViewModel by di.instance()
+    ModalDrawer(drawerState = drawerState, gesturesEnabled = true, content = content, drawerContent = {
+        ListItem(icon = { AppIcon(modifier = Modifier.size(64.dp)) }, text = { Text("Budget Binder") })
+        Divider()
+        ListItem(icon = { ServerIcon() }, text = { Text("Change Server URL") }, modifier = Modifier.clickable {
+            scope.launch {
+                drawerState.close()
+            }
+            viewModel.onEvent(NavDrawerEvent.OnChangeServerUrl)
+        })
+    })
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun BudgetBinderNavDrawer(
+    drawerState: DrawerState, content: @Composable () -> Unit
 ) {
     val scope = rememberCoroutineScope()
     val viewModel: NavDrawerViewModel by di.instance()
-    ModalDrawer(
-        drawerState = drawerState,
-        gesturesEnabled = gesturesEnabled,
-        content = content,
-        drawerContent = {
-            UserData()
-            ListItem(
-                icon = { DashboardIcon() },
-                text = { Text("Dashboard") },
-                modifier = Modifier.clickable(onClick = {
-                    scope.launch {
-                        drawerState.close()
-                        viewModel.onEvent(NavDrawerEvent.OnDashboard)
-                    }
-                })
-            )
-            ListItem(
-                icon = { CategoryIcon() },
-                text = { Text("Categories") },
-                modifier = Modifier.clickable(onClick = {
-                    scope.launch {
-                        drawerState.close()
-                        viewModel.onEvent(NavDrawerEvent.OnCategory)
-                    }
-                })
-            )
-            ListItem(
-                icon = { SettingsIcon() },
-                text = { Text("Settings") },
-                modifier = Modifier.clickable(onClick = {
-                    scope.launch {
-                        drawerState.close()
-                        viewModel.onEvent(NavDrawerEvent.OnSettings)
-                    }
-                })
-            )
-            ListItem(
-                icon = { LogoutIcon() },
-                text = { Text("Logout") },
-                modifier = Modifier.clickable(onClick = {
-                    scope.launch {
-                        drawerState.close()
-                        viewModel.onEvent(NavDrawerEvent.OnLogout)
-                    }
-                })
-            )
-        }
-    )
+    ModalDrawer(drawerState = drawerState, gesturesEnabled = true, content = content, drawerContent = {
+        UserData()
+        ListItem(icon = { DashboardIcon() }, text = { Text("Dashboard") }, modifier = Modifier.clickable(onClick = {
+            scope.launch {
+                drawerState.close()
+                viewModel.onEvent(NavDrawerEvent.OnDashboard)
+            }
+        })
+        )
+        ListItem(icon = { CategoryIcon() }, text = { Text("Categories") }, modifier = Modifier.clickable(onClick = {
+            scope.launch {
+                drawerState.close()
+                viewModel.onEvent(NavDrawerEvent.OnCategory)
+            }
+        })
+        )
+        ListItem(icon = { SettingsIcon() }, text = { Text("Settings") }, modifier = Modifier.clickable(onClick = {
+            scope.launch {
+                drawerState.close()
+                viewModel.onEvent(NavDrawerEvent.OnSettings)
+            }
+        })
+        )
+        ListItem(icon = { LogoutIcon() }, text = { Text("Logout") }, modifier = Modifier.clickable(onClick = {
+            scope.launch {
+                drawerState.close()
+                viewModel.onEvent(NavDrawerEvent.OnLogout)
+            }
+        })
+        )
+    })
 }
 
 @Composable
@@ -79,7 +101,7 @@ fun UserData() {
     val userData = dataFlow.userState.collectAsState()
 
     Column {
-        Row(modifier = Modifier.padding(8.dp),verticalAlignment = Alignment.CenterVertically) {
+        Row(modifier = Modifier.padding(8.dp), verticalAlignment = Alignment.CenterVertically) {
             AvatarImage(modifier = Modifier.size(64.dp))
             Spacer(modifier = Modifier.width(16.dp))
             Column(verticalArrangement = Arrangement.Center) {

@@ -42,9 +42,6 @@ class RegisterViewModel(
     private val _serverUrlText = MutableStateFlow(RegisterTextFieldState())
     val serverUrlText: StateFlow<RegisterTextFieldState> = _serverUrlText
 
-    private val _dialogState = MutableStateFlow(false)
-    val dialogState: StateFlow<Boolean> = _dialogState
-
     fun onEvent(event: RegisterEvent) {
         when (event) {
             is RegisterEvent.EnteredFirstname -> _firstNameText.value =
@@ -127,9 +124,7 @@ class RegisterViewModel(
         _confirmedPasswordText.value = _confirmedPasswordText.value.copy(confirmedPassword = "")
     }
 
-    private fun toggleDialog() {
-        _dialogState.value = !dialogState.value
-    }
+
 
     // OLD!!!
     private val _state = MutableStateFlow<UiState>(UiState.Empty)

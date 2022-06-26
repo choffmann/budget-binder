@@ -2,26 +2,26 @@ package de.hsfl.budgetBinder.presentation.viewmodel.navdrawer
 
 import de.hsfl.budgetBinder.common.DataResponse
 import de.hsfl.budgetBinder.domain.usecase.LogoutUseCase
+import de.hsfl.budgetBinder.domain.usecase.ToggleServerUrlDialogUseCase
 import de.hsfl.budgetBinder.presentation.Screen
 import de.hsfl.budgetBinder.presentation.UiState
 import de.hsfl.budgetBinder.presentation.flow.RouterFlow
 import de.hsfl.budgetBinder.presentation.flow.UiEventSharedFlow
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class NavDrawerViewModel(
     private val logoutUseCase: LogoutUseCase,
+    private val toggleServerUrlDialogUseCase: ToggleServerUrlDialogUseCase,
     private val routerFlow: RouterFlow,
-    private val scope: CoroutineScope = CoroutineScope(Dispatchers.Unconfined + SupervisorJob()),
+    private val scope: CoroutineScope,
 ) {
-
     val eventFlow = UiEventSharedFlow.eventFlow
 
     fun onEvent(event: NavDrawerEvent) {
         when (event) {
+            is NavDrawerEvent.OnChangeServerUrl -> scope.launch { toggleServerUrlDialogUseCase() }
             is NavDrawerEvent.OnDashboard -> routerFlow.navigateTo(Screen.Dashboard)
             is NavDrawerEvent.OnCreateEntry -> routerFlow.navigateTo(Screen.Entry.Create)
             is NavDrawerEvent.OnCategory -> routerFlow.navigateTo(Screen.Category.Summary)
@@ -32,9 +32,8 @@ class NavDrawerViewModel(
 
     private fun logout() = scope.launch {
         logoutUseCase(onAllDevices = false).collect {
-                it.handleDataResponse<Nothing>(routerFlow = routerFlow,
-                    onSuccess = { routerFlow.navigateTo(Screen.Login) })
-            }
+            it.handleDataResponse<Nothing>(routerFlow = routerFlow, onSuccess = { routerFlow.navigateTo(Screen.Login) })
+        }
     }
 
     // Old

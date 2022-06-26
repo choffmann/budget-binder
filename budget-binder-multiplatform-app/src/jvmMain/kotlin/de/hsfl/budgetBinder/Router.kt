@@ -1,5 +1,6 @@
 package de.hsfl.budgetBinder
 
+import androidx.compose.animation.*
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -27,10 +28,7 @@ fun Router() {
         is Screen.Settings.Menu, Screen.Settings.User, Screen.Settings.Server -> SettingsView()
         is Screen.Entry.Overview -> Text(text = "Entry Click with id: ${(screenState.value as Screen.Entry.Overview).id}")
         is Screen.Entry.Create -> Text(text = "Entry Create")
-        is Screen.Category.Summary -> CategoryComponent()
-        is Screen.Category.Detail -> CategoryComponent()
-        is Screen.Category.Edit -> CategoryComponent()
-        is Screen.Category.Create -> CategoryComponent()
+        is Screen.Category.Summary, is Screen.Category.Detail, is Screen.Category.Edit, is Screen.Category.Create  -> CategoryComponent()
         else -> {}
     }
 }

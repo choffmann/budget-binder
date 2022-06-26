@@ -7,6 +7,7 @@ import androidx.compose.material.icons.filled.Dns
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -20,7 +21,7 @@ actual fun ServerUrlDialog(
 ) {
     if (openDialog) {
         AlertDialog(
-            title = { Text(text = "Please Enter Server URL", style = MaterialTheme.typography.body2) },
+            title = { Text(text = "Please enter server url", style = MaterialTheme.typography.body2, fontWeight = FontWeight.Bold) },
             onDismissRequest = onDismiss,
             buttons = {
                 Box(modifier = Modifier.fillMaxWidth()) {
@@ -33,13 +34,7 @@ actual fun ServerUrlDialog(
                 }
             },
             text = {
-                TextField(
-                    value = value,
-                    onValueChange = onValueChange,
-                    label = { Text("Server URL") },
-                    leadingIcon = { Icon(Icons.Filled.Dns, contentDescription = null) },
-                    singleLine = true
-                )
+
             }
         )
     }
