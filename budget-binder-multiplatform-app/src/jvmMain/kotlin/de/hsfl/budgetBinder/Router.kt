@@ -27,13 +27,8 @@ fun Router() {
         is Screen.Login -> LoginComponent()
         is Screen.Dashboard -> DashboardComponent()
         is Screen.Settings.Menu, Screen.Settings.User, Screen.Settings.Server -> SettingsView()
-        is Screen.Entry.Overview -> EntryComponent()
-        is Screen.Entry.Create -> EntryComponent()
-        is Screen.Entry.Edit -> EntryComponent()
-        is Screen.Category.Summary -> CategoryComponent()
-        is Screen.Category.Detail -> CategoryComponent()
-        is Screen.Category.Edit -> CategoryComponent()
-        is Screen.Category.Create -> CategoryComponent()
+        is Screen.Entry -> EntryComponent()
+        is Screen.Category.Summary, is Screen.Category.Detail, is Screen.Category.Edit, is Screen.Category.Create  -> CategoryComponent()
         else -> {}
     }
 }

@@ -3,6 +3,7 @@ package de.hsfl.budgetBinder.screens.entry
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import de.hsfl.budgetBinder.compose.icon.SaveIcon
@@ -25,6 +26,11 @@ fun EntryCreateView() {
 
     LaunchedEffect(Unit) {
         viewModel.onEvent(EntryEvent.LifeCycle(LifecycleEvent.OnLaunch))
+    }
+    DisposableEffect(Unit) {
+        onDispose {
+            viewModel.onEvent(EntryEvent.LifeCycle(LifecycleEvent.OnDispose))
+        }
     }
 
     Scaffold(scaffoldState = scaffoldState, floatingActionButtonPosition = FabPosition.End, floatingActionButton = {

@@ -41,7 +41,10 @@ fun EntryFormular(
     onCategoryIdChanged: (Int?) -> Unit,
     onCancel: () -> Unit
 ) {
-    val category = categoryList.first { it.id == categoryId }
+    val category = categoryId?.let {
+        categoryList.first { it.id == categoryId }
+    } ?: Category(-1, "Default", "111111", Category.Image.DEFAULT, 0f)
+
     Card(modifier = Modifier.defaultMinSize(minWidth = 200.dp).fillMaxWidth().padding(16.dp), elevation = 15.dp) {
         BoxWithConstraints {
             if (minWidth >= 500.dp) {
