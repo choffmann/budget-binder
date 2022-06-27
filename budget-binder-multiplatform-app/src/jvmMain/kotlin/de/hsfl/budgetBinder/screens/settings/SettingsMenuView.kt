@@ -64,6 +64,10 @@ fun SettingsMenuView(modifier: Modifier = Modifier) {
         ListItem(modifier = Modifier.clickable(onClick = { viewModel.onEvent(SettingsEvent.OnResetSettings) }),
             text = { Text("Reset the App") },
             icon = { ResetIcon() })
+        Divider()
+        ListItem(modifier = Modifier.clickable(onClick = { viewModel.onEvent(SettingsEvent.OnResetSettings) }),
+            text = { Text("Reset the App") },
+            icon = { ResetIcon() })
         ListItem(modifier = Modifier.clickable(onClick = { viewModel.onEvent(SettingsEvent.OnDeleteUser) }),
             text = { Text("Delete my User") },
             icon = { DeleteForeverIcon() })
