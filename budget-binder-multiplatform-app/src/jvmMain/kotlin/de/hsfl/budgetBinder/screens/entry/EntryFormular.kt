@@ -3,13 +3,8 @@ package de.hsfl.budgetBinder.screens.entry
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -20,7 +15,6 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import de.hsfl.budgetBinder.common.Category
-import de.hsfl.budgetBinder.common.Entry
 import de.hsfl.budgetBinder.compose.icon.EuroIcon
 import de.hsfl.budgetBinder.presentation.CategoryImageToIcon
 import de.hsfl.budgetBinder.screens.category.toColor
@@ -43,47 +37,28 @@ fun EntryFormular(
 ) {
     val category = categoryId?.let {
         categoryList.first { it.id == categoryId }
-    } ?: Category(-1, "Default", "111111", Category.Image.DEFAULT, 0f)
+    } ?: categoryList.first()
 
     Card(modifier = Modifier.defaultMinSize(minWidth = 200.dp).fillMaxWidth().padding(16.dp), elevation = 15.dp) {
-        BoxWithConstraints {
-            if (minWidth >= 500.dp) {
-                EntryEditOnLarge(
-                    entryName = entryName,
-                    entryAmount = entryAmount,
-                    entryAmountSign = entryAmountSign,
-                    entryRepeat = entryRepeat,
-                    category = category,
-                    categoryList = categoryList,
-                    onCancel = onCancel,
-                    onNameChanged = onNameChanged,
-                    onAmountChanged = onAmountChanged,
-                    onCategoryIdChanged = onCategoryIdChanged,
-                    onRepeatChanged = onRepeatChanged,
-                    onAmountSignChanged = onAmountSignChanged
-                )
-            } else {
-                EntryEditOnSmall(
-                    entryName = entryName,
-                    entryAmount = entryAmount,
-                    entryRepeat = entryRepeat,
-                    entryAmountSign = entryAmountSign,
-                    category = category,
-                    categoryList = categoryList,
-                    onCancel = onCancel,
-                    onNameChanged = onNameChanged,
-                    onAmountChanged = onAmountChanged,
-                    onCategoryIdChanged = onCategoryIdChanged,
-                    onRepeatChanged = onRepeatChanged,
-                    onAmountSignChanged = onAmountSignChanged
-                )
-            }
-        }
+        EntryEdit(
+            entryName = entryName,
+            entryAmount = entryAmount,
+            entryAmountSign = entryAmountSign,
+            entryRepeat = entryRepeat,
+            category = category,
+            categoryList = categoryList,
+            onCancel = onCancel,
+            onNameChanged = onNameChanged,
+            onAmountChanged = onAmountChanged,
+            onCategoryIdChanged = onCategoryIdChanged,
+            onRepeatChanged = onRepeatChanged,
+            onAmountSignChanged = onAmountSignChanged
+        )
     }
 }
 
 @Composable
-fun EntryEditOnLarge(
+fun EntryEdit(
     entryName: String,
     entryAmount: Float,
     entryAmountSign: Boolean,
@@ -97,21 +72,13 @@ fun EntryEditOnLarge(
     onRepeatChanged: (Boolean) -> Unit,
     onAmountSignChanged: (Boolean) -> Unit
 ) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        EntryEditName(entryName = entryName, onNameChanged = onNameChanged)
+    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.defaultMinSize(minWidth = 200.dp)) {
         Spacer(modifier = Modifier.height(16.dp))
         Row(
             verticalAlignment = Alignment.Top,
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            EntryEditAmount(
-                modifier = Modifier.weight(1f),
-                amount = entryAmount,
-                amountSign = entryAmountSign,
-                onAmountChanged = onAmountChanged,
-                onAmountSignChanged = onAmountSignChanged
-            )
             EntryEditCategory(
                 modifier = Modifier.weight(1f),
                 category = category,
@@ -121,51 +88,14 @@ fun EntryEditOnLarge(
             EntryEditRepeat(modifier = Modifier.weight(1f), repeat = entryRepeat, onRepeatChanged = onRepeatChanged)
         }
         Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = onCancel) {
-            Text("Go Back")
-        }
-    }
-}
-
-@Composable
-fun EntryEditOnSmall(
-    entryName: String,
-    entryAmount: Float,
-    entryRepeat: Boolean,
-    entryAmountSign: Boolean,
-    category: Category,
-    categoryList: List<Category>,
-    onCancel: () -> Unit,
-    onNameChanged: (String) -> Unit,
-    onAmountChanged: (Float) -> Unit,
-    onCategoryIdChanged: (Int?) -> Unit,
-    onRepeatChanged: (Boolean) -> Unit,
-    onAmountSignChanged: (Boolean) -> Unit
-) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
         EntryEditName(entryName = entryName, onNameChanged = onNameChanged)
         Spacer(modifier = Modifier.height(16.dp))
-        Row(
-            verticalAlignment = Alignment.Top,
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            EntryEditAmount(
-                modifier = Modifier.weight(1f),
-                amount = entryAmount,
-                amountSign = entryAmountSign,
-                onAmountChanged = onAmountChanged,
-                onAmountSignChanged = onAmountSignChanged
-            )
-            EntryEditRepeat(modifier = Modifier.weight(1f), repeat = entryRepeat, onRepeatChanged = onRepeatChanged)
-        }
-        EntryEditCategory(
-            modifier = Modifier.weight(1f),
-            category = category,
-            categoryList = categoryList,
-            onCategoryChoose = onCategoryIdChanged
+        EntryEditAmount(
+            amount = entryAmount,
+            amountSign = entryAmountSign,
+            onAmountChanged = onAmountChanged,
+            onAmountSignChanged = onAmountSignChanged
         )
-        Spacer(modifier = Modifier.height(16.dp))
         Button(onClick = onCancel) {
             Text("Go Back")
         }
@@ -217,20 +147,21 @@ fun EntryEditAmount(
     onAmountSignChanged: (Boolean) -> Unit
 ) {
     Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
-        Row {
-            Text("Income")
-            Switch(checked = amountSign, onCheckedChange = onAmountSignChanged)
-            Text("Output")
-        }
-        TextField(value = if (amountSign) "+ $amount" else "- $amount",
+        TextField(value = amount.toString(),
             onValueChange = { onAmountChanged(it.toFloat()) },
             label = { Text("Entry Amount") },
             leadingIcon = {
-                if (amountSign) Icon(Icons.Default.Add, contentDescription = null)
+                if (amountSign) Text("+") else Text("-")
             },
             trailingIcon = {
                 EuroIcon()
             })
+        Spacer(modifier = Modifier.height(8.dp))
+        Row {
+            Text("Spending")
+            Switch(checked = amountSign, onCheckedChange = onAmountSignChanged)
+            Text("Income")
+        }
     }
 }
 
