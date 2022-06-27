@@ -59,22 +59,22 @@ fun Route.refreshCookie() {
         val userService: UserService by closestDI().instance()
 
         val response = call.request.cookies["jwt"]?.let { tokenToCheck ->
-            val token = jwtService.refreshTokenVerifier.verify(tokenToCheck)
-            val id = token.getClaim("userid").asInt()
-            val tokenVersion = token.getClaim("token_version").asInt()
-            userService.getUserPrincipalByIDAndTokenVersion(id, tokenVersion)?.let { userPrincipal ->
-                val accessToken = jwtService.createAccessToken(userPrincipal.getUserID(), tokenVersion)
-                call.response.cookies.append(
-                    jwtService.createRefreshCookie(
-                        userPrincipal.getUserID(),
-                        userPrincipal.getUserTokenVersion(),
-                        call.request.origin.scheme == "https"
+            jwtService.verifyRefreshToken(tokenToCheck)?.let {
+                val id = it.getClaim("userid").asInt()
+                val tokenVersion = it.getClaim("token_version").asInt()
+                userService.getUserPrincipalByIDAndTokenVersion(id, tokenVersion)?.let { userPrincipal ->
+                    val accessToken = jwtService.createAccessToken(userPrincipal.getUserID(), tokenVersion)
+                    call.response.cookies.append(
+                        jwtService.createRefreshCookie(
+                            userPrincipal.getUserID(),
+                            userPrincipal.getUserTokenVersion(),
+                            call.request.origin.scheme == "https"
+                        )
                     )
-                )
-                APIResponse(data = AuthToken(token = accessToken), success = true)
+                    APIResponse(data = AuthToken(token = accessToken), success = true)
+                }
             } ?: throw UnauthorizedException("Your refreshToken does not match.")
         } ?: throw UnauthorizedException("Your refreshToken is absent.")
-
         call.respond(response)
     }
 }
