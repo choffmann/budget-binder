@@ -1,11 +1,8 @@
 package de.hsfl.budgetBinder.presentation.viewmodel.settings
 
-import de.hsfl.budgetBinder.common.DataResponse
-import de.hsfl.budgetBinder.common.User
 import de.hsfl.budgetBinder.domain.usecase.*
 import de.hsfl.budgetBinder.presentation.Screen
 import de.hsfl.budgetBinder.presentation.event.UiEvent
-import de.hsfl.budgetBinder.presentation.UiState
 import de.hsfl.budgetBinder.presentation.flow.DarkModeFlow
 import de.hsfl.budgetBinder.presentation.flow.RouterFlow
 import de.hsfl.budgetBinder.presentation.flow.UiEventSharedFlow
@@ -14,7 +11,10 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 open class SettingsViewModel(
-    _settingsUseCases: SettingsUseCases, _routerFlow: RouterFlow, _darkModeFlow: DarkModeFlow, _scope: CoroutineScope
+    _settingsUseCases: SettingsUseCases,
+    _routerFlow: RouterFlow,
+    _darkModeFlow: DarkModeFlow,
+    _scope: CoroutineScope
 ) {
     private val settingsUseCases: SettingsUseCases = _settingsUseCases
     private val routerFlow: RouterFlow = _routerFlow
@@ -57,7 +57,7 @@ open class SettingsViewModel(
     private fun resetApp() {
         scope.launch {
             settingsUseCases.logoutUseCase(onAllDevices = false).collect { response ->
-                response.handleDataResponse<Nothing>(routerFlow = routerFlow, onSuccess = { _ ->
+                response.handleDataResponse<Nothing>(routerFlow = routerFlow, onSuccess = {
                     settingsUseCases.resetAllSettings()
                     _eventFlow.emit(UiEvent.ShowSuccess("Reset the App successfully"))
                     routerFlow.navigateTo(Screen.Welcome.Screen1)
@@ -83,35 +83,5 @@ open class SettingsViewModel(
                 routerFlow.navigateTo(Screen.Login)
             })
         }
-    }
-
-    // OLD
-    private val _state = MutableStateFlow<UiState>(UiState.Empty)
-
-    @Deprecated(message = "Use events")
-    val state: StateFlow<UiState> = _state
-
-    @Deprecated(message = "Use events")
-    fun changeMyUser(user: User.Patch) {
-        settingsUseCases.changeMyUserUseCase(user).onEach {
-            when (it) {
-                is DataResponse.Success -> _state.value = UiState.Success(it.data)
-                is DataResponse.Error -> _state.value = UiState.Error(it.error!!.message)
-                is DataResponse.Loading -> _state.value = UiState.Loading
-                is DataResponse.Unauthorized -> _state.value = UiState.Unauthorized
-            }
-        }.launchIn(scope)
-    }
-
-    @Deprecated(message = "Use events")
-    fun deleteMyUser() {
-        settingsUseCases.deleteMyUserUseCase().onEach {
-            when (it) {
-                is DataResponse.Success -> _state.value = UiState.Success(it.data)
-                is DataResponse.Error -> _state.value = UiState.Error(it.error!!.message)
-                is DataResponse.Loading -> _state.value = UiState.Loading
-                is DataResponse.Unauthorized -> _state.value = UiState.Unauthorized
-            }
-        }.launchIn(scope)
     }
 }
