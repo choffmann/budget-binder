@@ -16,7 +16,7 @@ actual fun CategoryImageToIcon(icon: Category.Image) {
         Category.Image.WRONG -> Icon(imageVector = Icons.Default.Dangerous, contentDescription = null)
         Category.Image.HOME -> Icon(imageVector = Icons.Default.Home, contentDescription = null)
         Category.Image.FOOD -> Icon(imageVector = Icons.Default.BakeryDining, contentDescription = null)
-        Category.Image.FASTFOOD -> Icon(imageVector = Icons.Default.BakeryDining, contentDescription = null)
+        Category.Image.FASTFOOD -> Icon(imageVector = Icons.Default.Fastfood, contentDescription = null)
         Category.Image.RESTAURANT -> Icon(imageVector = Icons.Default.Restaurant, contentDescription = null)
         Category.Image.FAMILY -> Icon(imageVector = Icons.Default.People, contentDescription = null)
         Category.Image.MONEY -> Icon(imageVector = Icons.Default.Payments, contentDescription = null)
@@ -50,7 +50,7 @@ actual fun CategoryImageToIcon(icon: Category.Image) {
         Category.Image.PHONE -> Icon(imageVector = Icons.Default.PermPhoneMsg, contentDescription = null)
         Category.Image.STORE -> Icon(imageVector = Icons.Default.StoreMallDirectory, contentDescription = null)
         Category.Image.BAR -> Icon(imageVector = Icons.Default.Nightlife, contentDescription = null)
-        Category.Image.FOREST -> Icon(imageVector = Icons.Default.Redeem, contentDescription = null)
+        Category.Image.FOREST -> Icon(imageVector = Icons.Default.Forest, contentDescription = null)
         Category.Image.HARDWARE -> Icon(imageVector = Icons.Default.Hardware, contentDescription = null)
         Category.Image.PEST -> Icon(imageVector = Icons.Default.PestControl, contentDescription = null)
         else -> {

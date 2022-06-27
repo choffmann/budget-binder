@@ -50,7 +50,7 @@ actual fun CategoryImageToIcon(icon: Category.Image) {
         Category.Image.PHONE -> Icon(imageVector = Icons.Default.PermPhoneMsg, contentDescription = null)
         Category.Image.STORE -> Icon(imageVector = Icons.Default.StoreMallDirectory, contentDescription = null)
         Category.Image.BAR -> Icon(imageVector = Icons.Default.Nightlife, contentDescription = null)
-        Category.Image.FOREST -> Icon(imageVector = Icons.Default.Redeem, contentDescription = null)
+        Category.Image.FOREST -> Icon(imageVector = Icons.Default.Nature, contentDescription = null)
         Category.Image.HARDWARE -> Icon(imageVector = Icons.Default.Hardware, contentDescription = null)
         Category.Image.PEST -> Icon(imageVector = Icons.Default.PestControl, contentDescription = null)
         else -> {
