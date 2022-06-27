@@ -161,7 +161,7 @@ compose.desktop {
                 )
             }
             includeAllModules = true
-            packageName = "budget-binder"
+            packageName = "Budget-Binder"
             version = "1.0-SNAPSHOT"
             packageVersion = "1.0.0"
             macOS {
