@@ -73,7 +73,7 @@ fun WelcomeScreen1View(modifier: Modifier = Modifier) {
         WelcomeText(
             modifier = Modifier.padding(start = 16.dp, end = 16.dp),
             title = "Welcome to Budget Binder",
-            subtitle = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At"
+            subtitle = "You have made a great choice! Use Budget Binder to manage your money, easily. Simply track your monthly spending. Write down your recurring income and expenses and set a budget, you would like to save. The App is available on all of your favorite devices."
         )
     }
 }
@@ -86,7 +86,7 @@ fun WelcomeScreen2View(modifier: Modifier = Modifier) {
         WelcomeText(
             modifier = Modifier.padding(start = 16.dp, end = 16.dp),
             title = "How you can save your money",
-            subtitle = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At"
+            subtitle = "With budget Binder, you can keep your spending organized. Create categories with a budget, icons and colors. You can make a entry with your spending or income and organized these in your categories"
         )
     }
 }
@@ -99,7 +99,7 @@ fun WelcomeGetStartedView(modifier: Modifier = Modifier) {
         WelcomeText(
             modifier = Modifier.padding(start = 16.dp, end = 16.dp),
             title = "So, let's get started",
-            subtitle = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At"
+            subtitle = "Register an account and create your first category or log in with a previous made account and continue where you left off!"
         )
     }
 }
