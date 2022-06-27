@@ -1,12 +1,10 @@
 package de.hsfl.budgetBinder.presentation.viewmodel.navdrawer
 
-import de.hsfl.budgetBinder.common.DataResponse
 import de.hsfl.budgetBinder.domain.usecase.IsDarkThemeUseCase
 import de.hsfl.budgetBinder.domain.usecase.LogoutUseCase
 import de.hsfl.budgetBinder.domain.usecase.ToggleDarkModeUseCase
 import de.hsfl.budgetBinder.domain.usecase.ToggleServerUrlDialogUseCase
 import de.hsfl.budgetBinder.presentation.Screen
-import de.hsfl.budgetBinder.presentation.UiState
 import de.hsfl.budgetBinder.presentation.flow.DarkModeFlow
 import de.hsfl.budgetBinder.presentation.flow.RouterFlow
 import de.hsfl.budgetBinder.presentation.flow.UiEventSharedFlow
@@ -50,20 +48,5 @@ class NavDrawerViewModel(
         logoutUseCase(onAllDevices = false).collect {
             it.handleDataResponse<Nothing>(routerFlow = routerFlow, onSuccess = { routerFlow.navigateTo(Screen.Login) })
         }
-    }
-
-    // Old
-    private val _state = MutableStateFlow<UiState>(UiState.Empty)
-    val state: StateFlow<UiState> = _state
-
-    fun logOut(onAllDevices: Boolean) {
-        logoutUseCase(onAllDevices).onEach {
-            when (it) {
-                is DataResponse.Success -> _state.value = UiState.Success(it.data)
-                is DataResponse.Error -> _state.value = UiState.Error(error = it.error!!.message)
-                is DataResponse.Loading -> _state.value = UiState.Loading
-                is DataResponse.Unauthorized -> _state.value = UiState.Unauthorized
-            }
-        }.launchIn(scope)
     }
 }
