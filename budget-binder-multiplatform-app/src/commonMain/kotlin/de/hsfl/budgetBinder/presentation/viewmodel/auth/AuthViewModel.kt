@@ -24,6 +24,7 @@ open class AuthViewModel(
     private val authUseCases = _authUseCases
 
     private val _dialogState = MutableStateFlow(false)
+    val dialogState: StateFlow<Boolean> = _dialogState
 
     val eventFlow = UiEventSharedFlow.eventFlow
 
