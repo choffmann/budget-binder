@@ -157,11 +157,11 @@ fun EntryEditAmount(
         Spacer(modifier = Modifier.height(8.dp))
         Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
             Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.weight(1f)) {
-                Text("Spending")
+                Text("Income")
                 Checkbox(checked = amountSign, onAmountSignChanged)
             }
             Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.weight(1f)) {
-                Text("Income")
+                Text("Spending")
                 Checkbox(checked = !amountSign, onAmountSignChanged)
             }
         }
