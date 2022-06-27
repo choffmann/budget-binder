@@ -44,13 +44,13 @@ fun EntryEditView() {
                 entryAmount = entryAmount.value,
                 entryRepeat = entryRepeat.value,
                 entryAmountSign = amountSign.value,
-                categoryId = categoryId.value,
+                category = categoryList.value.first { it.id == categoryId.value },
                 categoryList = categoryList.value,
                 onNameChanged = { viewModel.onEvent(EntryEvent.EnteredName(it)) },
                 onAmountChanged = { viewModel.onEvent(EntryEvent.EnteredAmount(it)) },
                 onRepeatChanged = { viewModel.onEvent(EntryEvent.EnteredRepeat) },
                 onAmountSignChanged = { viewModel.onEvent(EntryEvent.EnteredAmountSign) },
-                onCategoryIdChanged = {},
+                onCategoryIdChanged = { viewModel.onEvent(EntryEvent.EnteredCategoryID(it)) },
                 onCancel = { viewModel.onEvent(EntryEvent.OnCancel) }
             )
         }

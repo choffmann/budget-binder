@@ -19,14 +19,13 @@ import de.hsfl.budgetBinder.compose.icon.EuroIcon
 import de.hsfl.budgetBinder.presentation.CategoryImageToIcon
 import de.hsfl.budgetBinder.screens.category.toColor
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun EntryFormular(
     entryName: String,
     entryAmount: Float,
     entryRepeat: Boolean,
     entryAmountSign: Boolean,
-    categoryId: Int?,
+    category: Category,
     categoryList: List<Category>,
     onNameChanged: (String) -> Unit,
     onAmountChanged: (Float) -> Unit,
@@ -35,10 +34,7 @@ fun EntryFormular(
     onCategoryIdChanged: (Int?) -> Unit,
     onCancel: () -> Unit
 ) {
-    val category = categoryId?.let {
-        categoryList.first { it.id == categoryId }
-    } ?: categoryList.first()
-
+    //val rememberCategory = remember { mutableStateOf(category) }
     Card(modifier = Modifier.defaultMinSize(minWidth = 200.dp).fillMaxWidth().padding(16.dp), elevation = 15.dp) {
         EntryEdit(
             entryName = entryName,
@@ -132,8 +128,10 @@ fun EntryEditCategory(
                 expand = expandCategory.value,
                 categoryList = categoryList,
                 onDismiss = { expandCategory.value = false },
-                onItemClicked = onCategoryChoose
-            )
+                onItemClicked = {
+                    expandCategory.value = false
+                    onCategoryChoose(it)
+                })
         }
     }
 }
@@ -157,10 +155,15 @@ fun EntryEditAmount(
                 EuroIcon()
             })
         Spacer(modifier = Modifier.height(8.dp))
-        Row {
-            Text("Spending")
-            Switch(checked = amountSign, onCheckedChange = onAmountSignChanged)
-            Text("Income")
+        Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.weight(1f)) {
+                Text("Spending")
+                Checkbox(checked = amountSign, onAmountSignChanged)
+            }
+            Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.weight(1f)) {
+                Text("Income")
+                Checkbox(checked = !amountSign, onAmountSignChanged)
+            }
         }
     }
 }

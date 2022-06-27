@@ -19,7 +19,7 @@ actual fun EntryDropDownCategory(
     DropdownMenu(expanded = expand, onDismissRequest = onDismiss) {
         categoryList.forEachIndexed { index, category ->
             DropdownMenuItem(onClick = {
-                onItemClicked(index)
+                onItemClicked(categoryList[index].id)
             }) {
                 CategoryListItem(
                     name = category.name,
