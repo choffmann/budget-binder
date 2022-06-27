@@ -92,7 +92,7 @@ fun EntryEdit(
             onAmountChanged = onAmountChanged,
             onAmountSignChanged = onAmountSignChanged
         )
-        Button(onClick = onCancel) {
+        TextButton(onClick = onCancel) {
             Text("Go Back")
         }
     }
