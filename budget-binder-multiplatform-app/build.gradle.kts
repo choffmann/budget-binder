@@ -162,7 +162,6 @@ compose.desktop {
             }
             includeAllModules = true
             packageName = "Budget-Binder"
-            version = "1.0-SNAPSHOT"
             packageVersion = "1.0.0"
             macOS {
                 iconFile.set(project.file("src/desktopMain/resources/icon.icns"))
