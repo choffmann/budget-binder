@@ -22,6 +22,10 @@ class SettingsEditUserViewModel(
 ) : SettingsViewModel(
     _settingsUseCases = settingsUseCases, _routerFlow = routerFlow, _scope = scope, _darkModeFlow = darkModeFlow
 ) {
+    /*Variables should be refactored ->
+    private val _firstNameText = MutableStateFlow(EditUserState().firstName)
+    val firstNameText: StateFlow<String> = _firstNameText
+     */
     private val _firstNameText = MutableStateFlow(EditUserState())
     val firstNameText: StateFlow<EditUserState> = _firstNameText
 
@@ -128,18 +132,6 @@ class SettingsEditUserViewModel(
                     routerFlow.navigateTo(Screen.Settings.Menu)
                 }
             })
-            /* when (response) {
-                 is DataResponse.Loading -> _eventFlow.emit(UiEvent.ShowLoading)
-                 is DataResponse.Error -> _eventFlow.emit(UiEvent.ShowError(response.error!!.message))
-                 is DataResponse.Success -> {
-                     // If user has changed his password, he needs to sign in again
-
-                 }
-                 is DataResponse.Unauthorized -> {
-                     _eventFlow.emit(UiEvent.ShowError(response.error!!.message))
-                     routerFlow.navigateTo(Screen.Login)
-                 }
-             }*/
         }
     }
 

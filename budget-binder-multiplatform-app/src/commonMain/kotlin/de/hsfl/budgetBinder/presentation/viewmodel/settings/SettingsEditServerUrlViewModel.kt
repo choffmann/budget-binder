@@ -11,7 +11,7 @@ import kotlinx.coroutines.launch
 class SettingsEditServerUrlViewModel(
     private val routerFlow: RouterFlow,
     private val scope: CoroutineScope,
-    private val getServerUrlUseCase: GetServerUrlUseCase
+    getServerUrlUseCase: GetServerUrlUseCase
 ) {
     private val _serverUrl = MutableStateFlow(getServerUrlUseCase())
     val serverUrl: StateFlow<String> = _serverUrl
