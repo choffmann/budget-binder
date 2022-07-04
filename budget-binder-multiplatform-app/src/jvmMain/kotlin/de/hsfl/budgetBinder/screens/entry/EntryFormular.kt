@@ -124,8 +124,7 @@ fun EntryEditCategory(
             }
             Spacer(modifier = Modifier.width(8.dp))
             Text(text = category.name)
-            EntryDropDownCategory(
-                expand = expandCategory.value,
+            EntryDropDownCategory(expand = expandCategory.value,
                 categoryList = categoryList,
                 onDismiss = { expandCategory.value = false },
                 onItemClicked = {
@@ -145,15 +144,18 @@ fun EntryEditAmount(
     onAmountSignChanged: (Boolean) -> Unit
 ) {
     Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
-        TextField(value = amount.toString(),
-            onValueChange = { onAmountChanged(it.toFloat()) },
-            label = { Text("Entry Amount") },
-            leadingIcon = {
-                if (amountSign) Text("+") else Text("-")
-            },
-            trailingIcon = {
-                EuroIcon()
-            })
+        TextField(value = amount.toString(), onValueChange = {
+            onAmountChanged(
+                when (it.toFloatOrNull()) {
+                    null -> amount
+                    else -> it.toFloat()
+                }
+            )
+        }, label = { Text("Entry Amount") }, leadingIcon = {
+            if (amountSign) Text("+") else Text("-")
+        }, trailingIcon = {
+            EuroIcon()
+        })
         Spacer(modifier = Modifier.height(8.dp))
         Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
             Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.weight(1f)) {

@@ -21,6 +21,8 @@ class EntryViewModel(
     /* *** Variables *** */
 
     // ---- Data Input Variables ----
+    private val noCategory = Category(0, "No category", "ffffff", Category.Image.DEFAULT, 0f)
+
     private val _nameText = MutableStateFlow(EntryInputState().name)
     val nameText: StateFlow<String> = _nameText
 
@@ -122,7 +124,9 @@ class EntryViewModel(
     private fun getCategoryList() = scope.launch {
         entryUseCases.getCategoryListUseCase().collect {
             it.handleDataResponse<List<Category>>(
-                routerFlow = routerFlow, onSuccess = { cl -> _categoryListState.value = cl })
+                routerFlow = routerFlow, onSuccess = { cl ->
+                    _categoryListState.value = cl.toMutableList().apply { add(index = 0, element = noCategory) }
+                })
         }
     }
 

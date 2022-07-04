@@ -129,7 +129,14 @@ fun CategoryFormular(
         Spacer(modifier = Modifier.height(8.dp))
         TextField(value = categoryBudgetState.toString(),
             singleLine = true,
-            onValueChange = { onEnteredCategoryBudget(it.toFloat()) },
+            onValueChange = {
+                onEnteredCategoryBudget(
+                    when (it.toFloatOrNull()) {
+                        null -> categoryBudgetState
+                        else -> it.toFloat()
+                    }
+                )
+            },
             label = { Text("Category Budget") },
             trailingIcon = { EuroIcon() })
         Spacer(modifier = Modifier.height(16.dp))

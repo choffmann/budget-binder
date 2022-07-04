@@ -86,7 +86,7 @@ fun WelcomeScreen2View(modifier: Modifier = Modifier) {
         WelcomeText(
             modifier = Modifier.padding(start = 16.dp, end = 16.dp),
             title = "How you can save your money",
-            subtitle = "With budget Binder, you can keep your spending organized. Create categories with a budget, icons and colors. You can make a entry with your spending or income and organized these in your categories"
+            subtitle = "With budget Binder, you can keep your spending organized. Create categories with a budget, icons and colors. You can make an entry with your spending or income and organized these in your categories"
         )
     }
 }
