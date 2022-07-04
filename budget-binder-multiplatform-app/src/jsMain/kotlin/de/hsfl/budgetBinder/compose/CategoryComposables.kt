@@ -198,7 +198,7 @@ fun CategoryDetailed(
                 }
             }
             Div(attrs = {
-                classes(AppStylesheet.imageFlexContainer)
+                classes(AppStylesheet.colorFlexContainer)
             }
             ) {
                 Svg(viewBox = "0 0 1 1") {//For aspect ratio - tries to fill out wherever it is in
