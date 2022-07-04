@@ -110,7 +110,7 @@ android {
         minSdk = 21
         targetSdk = 31
         versionCode = 1
-        versionName = "1.0"
+        versionName = "1.0.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -162,7 +162,7 @@ compose.desktop {
             }
             includeAllModules = true
             packageName = "Budget-Binder"
-            packageVersion = "1.0.0"
+            packageVersion = "1.0.1"
             macOS {
                 iconFile.set(project.file("src/desktopMain/resources/icon.icns"))
             }
