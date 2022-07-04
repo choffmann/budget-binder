@@ -7,6 +7,16 @@ In addition, it uses `Kodein` for DI and bcrypt as Password Hashing Algorithm.
 
 The server can also be used to deploy the JS-Client. 
 
+With Docker you can deploy this Server very easy.
+You only need to copy the [config-sample.yaml](https://github.com/choffmann/budget-binder/blob/main/budget-binder-server/data/config_sample.yaml) as config.yaml and edit accessSecret and refreshSecret. Then deploy it like:
+```bash
+docker run -dit --restart unless-stopped -p 8080:8080 \
+-v $(pwd)/config.yaml:/app/config.yaml \
+akatranlp/budget-binder-server:1.0.0 -conf config.yaml
+```
+
+This will start the Server on Port 8080 and save the data in a SQLITE Database which is saved in a docker volume.
+
 ## Config
 
 You can config this server in 2 ways:
@@ -25,7 +35,6 @@ SSL_HOST=0.0.0.0
 SSL_PORT=8443
 KEYSTORE_PASSWORD=secret
 KEYSTORE_PATH="data/keystore.jks"
-FRONTEND_ADDRESSES="http://localhost:8080, http://localhost:8081"
 NO_FORWARDED_HEADER=False
 DB_TYPE="MYSQL | POSTGRESQL | SQLITE"
 SQLITE_PATH="data/data.db"
@@ -45,22 +54,28 @@ JWT_AUDIENCE="http://0.0.0.0:8080"
 
 ## Development Setup
 
-First set up your env-variables to your system or for each individual gradle Task if you use an IDEA like IntelliJ IDEA for example:
+First copy the config-sample.yaml to config.yaml and configure it (the standard should be enough).
+
+Then create tasks to create the JS-Client
+```bash
+./gradlew :budget-binder-multiplatform-app:jsBrowserDistribution
 ```
-DEV=True
-JWT_ACCESS_SECRET=secret
-JWT_REFRESH_SECRET=secret2
-DB_TYPE=SQLITE
+Copy it with the CopyScript into the public-Folder
+```bash
+./CopyScriptJsMain.sh
 ```
-
-use the gradleTasks:
-- :budget-binder-common:build -t
-- :budget-binder-server:build -t
-- :budget-binder-server:run
-
-with IntelliJ IDEA or use them with gradlew/gradlew.bat in the Terminal
-
-with this setup budget-binder-common and budget-binder-server are recompiled if you change the code and budget-binder-server with the env-variable DEV=True auto-reloads when new classes are built.
+And set the ENV DEV=True and run the server with the created configFile 
+```bash
+export DEV=True && \
+./gradlew :budget-binder-server:run --args"-conf data/config.yaml"
+```
+All the previous steps can be configured in your IDE like Intellij-IDEA or with a separate script like
+```bash
+export DEV=True && \
+./gradlew :budget-binder-multiplatform-app:jsBrowserDistribution && \
+./CopyScriptJsMain.sh && \
+./gradlew :budget-binder-server:run --args"-conf data/config.yaml"
+```
 
 ## Build and Deploy
 
@@ -82,8 +97,8 @@ budget-binder-server
 Or you build the jar and JS-Client on your machine:
 - with :budget-binder-server:shadowJar :budget-binder-multiplatform-app:jsBrowserDistribution
 - copy the `budget-binder-server/build/libs/budget-binder-server-1.0-SNAPSHOT-all.jar` on the server
-- create a subfolder `files` in the directory of the server-jar
-- copy `budget-binder-multiplatform-app/build/distributions/{index.html, style.css, budget-binder-multiplatform-app.js}` into it
+- create a subfolder `public` in the directory of the server-jar
+- copy `budget-binder-multiplatform-app/build/distributions/*` into it
 - set up the config
 - run it with `java -jar budget-binder-server-1.0-SNAPSHOT-all.jar (-conf config.yaml)`
 

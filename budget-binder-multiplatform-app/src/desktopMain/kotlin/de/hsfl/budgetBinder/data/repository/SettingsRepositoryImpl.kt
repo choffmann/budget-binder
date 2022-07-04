@@ -36,7 +36,7 @@ actual object SettingsRepositoryImpl : SettingsRepository {
     }
 
     actual override fun getServerUrl(): String {
-        return settings.getString("server_url", defaultValue = "http://localhost")
+        return settings.getString("server_url", defaultValue = "https://bb-server.fpcloud.de")
     }
 
     override fun reset() {

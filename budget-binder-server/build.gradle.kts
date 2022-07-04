@@ -10,9 +10,6 @@ plugins {
     id("com.github.johnrengelman.shadow") version "7.0.0"
 }
 
-group = "de.hsfl.budgetBinder"
-version = "1.0-SNAPSHOT"
-
 application {
     mainClass.set("de.hsfl.budgetBinder.server.MainKt")
 

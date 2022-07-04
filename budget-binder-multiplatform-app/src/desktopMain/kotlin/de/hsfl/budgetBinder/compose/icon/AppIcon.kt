@@ -20,62 +20,63 @@ actual fun AvatarImage(modifier: Modifier) {
 
 @Composable
 actual fun DashboardIcon() {
-    Icon(imageVector = Icons.Default.Dashboard, contentDescription = null)
+    //Icon(imageVector = Icons.Default.Dashboard, contentDescription = null)
+    Icon(painter = painterResource("dashboard_FILL1_wght400_GRAD0_opsz24.svg"), contentDescription = null)
 }
 
 @Composable
 actual fun CategoryIcon() {
-    Icon(imageVector = Icons.Default.Category, contentDescription = null)
+    Icon(painter = painterResource("category_FILL1_wght400_GRAD0_opsz24.svg"), contentDescription = null)
 }
 
 @Composable
 actual fun SettingsIcon() {
-    Icon(imageVector = Icons.Default.Settings, contentDescription = null)
+    Icon(painter = painterResource("settings_FILL1_wght400_GRAD0_opsz24.svg"), contentDescription = null)
 }
 
 @Composable
 actual fun LogoutIcon() {
-    Icon(imageVector = Icons.Default.Logout, contentDescription = null)
+    Icon(painter = painterResource("logout_FILL1_wght400_GRAD0_opsz24.svg"), contentDescription = null)
 }
 
 @Composable
 actual fun DarkModeIcon() {
-    Icon(imageVector = Icons.Default.DarkMode, contentDescription = null)
+    Icon(painter = painterResource("dark_mode_FILL1_wght400_GRAD0_opsz24.svg"), contentDescription = null)
 }
 
 @Composable
 actual fun ServerIcon() {
-    Icon(imageVector = Icons.Default.Dns, contentDescription = null)
+    Icon(painter = painterResource("dns_FILL1_wght400_GRAD0_opsz24.svg"), contentDescription = null)
 }
 
 @Composable
 actual fun AccountIcon() {
-    Icon(imageVector = Icons.Default.ManageAccounts, contentDescription = null)
+    Icon(painter = painterResource("account_circle_FILL1_wght400_GRAD0_opsz24.svg"), contentDescription = null)
 }
 
 @Composable
 actual fun DeleteForeverIcon() {
-    Icon(imageVector = Icons.Default.DeleteForever, contentDescription = null)
+    Icon(painter = painterResource("delete_FILL1_wght400_GRAD0_opsz24.svg"), contentDescription = null)
 }
 
 @Composable
 actual fun SaveIcon() {
-    Icon(imageVector = Icons.Default.Save, contentDescription = null)
+    Icon(painter = painterResource("save_FILL1_wght400_GRAD0_opsz24.svg"), contentDescription = null)
 }
 
 @Composable
 actual fun ReplyIcon() {
-    Icon(imageVector = Icons.Default.Reply, contentDescription = null)
+    Icon(painter = painterResource("reply_FILL1_wght400_GRAD0_opsz24.svg"), contentDescription = null)
 }
 
 @Composable
 actual fun ForwardIcon() {
-    Icon(imageVector = Icons.Default.Forward, contentDescription = null)
+    Icon(painter = painterResource("forward_FILL1_wght400_GRAD0_opsz24.svg"), contentDescription = null)
 }
 
 @Composable
 actual fun EuroIcon() {
-    Icon(imageVector = Icons.Default.Euro, contentDescription = null)
+    Icon(painter = painterResource("euro_FILL1_wght400_GRAD0_opsz24.svg"), contentDescription = null)
 }
 
 @Composable
@@ -94,5 +95,5 @@ actual fun GetStartedImage(modifier: Modifier) {
 }
 @Composable
 actual fun ResetIcon() {
-    Icon(imageVector = Icons.Default.RestartAlt, contentDescription = null)
+    Icon(painter = painterResource("device_reset_FILL1_wght400_GRAD0_opsz24.svg"), contentDescription = null)
 }

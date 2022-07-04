@@ -58,65 +58,65 @@ actual fun GetStartedImage(modifier: Modifier) {
 
 @Composable
 actual fun DashboardIcon() {
-    Icon(imageVector = Icons.Default.Dashboard, contentDescription = null)
+    Icon(imageVector = ImageVector.vectorResource(id = R.drawable.ic_baseline_dashboard_24), contentDescription = null)
 }
 
 @Composable
 actual fun CategoryIcon() {
-    Icon(imageVector = Icons.Default.Category, contentDescription = null)
+    Icon(imageVector = ImageVector.vectorResource(id = R.drawable.ic_baseline_category_24), contentDescription = null)
 }
 
 @Composable
 actual fun SettingsIcon() {
-    Icon(imageVector = Icons.Default.Settings, contentDescription = null)
+    Icon(imageVector = ImageVector.vectorResource(id = R.drawable.ic_baseline_settings_24), contentDescription = null)
 }
 
 @Composable
 actual fun LogoutIcon() {
-    Icon(imageVector = Icons.Default.Logout, contentDescription = null)
+    Icon(imageVector = ImageVector.vectorResource(id = R.drawable.ic_logout_fill1_wght400_grad0_opsz24__1_), contentDescription = null)
 }
 
 @Composable
 actual fun DarkModeIcon() {
-    Icon(imageVector = Icons.Default.DarkMode, contentDescription = null)
+    Icon(imageVector = ImageVector.vectorResource(id = R.drawable.ic_dark_mode_fill1_wght400_grad0_opsz24), contentDescription = null)
 }
 
 @Composable
 actual fun ServerIcon() {
-    Icon(imageVector = Icons.Default.Dns, contentDescription = null)
+    Icon(imageVector = ImageVector.vectorResource(id = R.drawable.ic_baseline_dns_24), contentDescription = null)
 }
 
 @Composable
 actual fun AccountIcon() {
-    Icon(imageVector = Icons.Default.ManageAccounts, contentDescription = null)
+    Icon(imageVector = ImageVector.vectorResource(id = R.drawable.ic_baseline_account_circle_24), contentDescription = null)
 }
 
 @Composable
 actual fun DeleteForeverIcon() {
-    Icon(imageVector = Icons.Default.DeleteForever, contentDescription = null)
+    Icon(imageVector = ImageVector.vectorResource(id = R.drawable.ic_baseline_delete_forever_24), contentDescription = null)
 }
 
 @Composable
 actual fun SaveIcon() {
-    Icon(imageVector = Icons.Default.Save, contentDescription = null)
+    Icon(imageVector = ImageVector.vectorResource(id = R.drawable.ic_baseline_save_24), contentDescription = null)
 }
 
 @Composable
 actual fun ReplyIcon() {
-    Icon(imageVector = Icons.Default.Reply, contentDescription = null)
+    Icon(imageVector = ImageVector.vectorResource(id = R.drawable.ic_reply_fill1_wght400_grad0_opsz24__1_), contentDescription = null)
 }
 
 @Composable
 actual fun ForwardIcon() {
-    Icon(imageVector = Icons.Default.Forward, contentDescription = null)
+    Icon(imageVector = ImageVector.vectorResource(id = R.drawable.ic_forward_fill1_wght400_grad0_opsz24), contentDescription = null)
 }
 
 @Composable
 actual fun EuroIcon() {
-    Icon(imageVector = Icons.Default.Euro, contentDescription = null)
+    Icon(imageVector = ImageVector.vectorResource(id = R.drawable.ic_baseline_euro_24), contentDescription = null)
 }
 
 @Composable
 actual fun ResetIcon() {
-    Icon(imageVector = Icons.Default.RestartAlt, contentDescription = null)
+    Icon(imageVector = ImageVector.vectorResource(id = R.drawable.ic_device_reset_fill1_wght400_grad0_opsz24), contentDescription = null)
 }
