@@ -2,7 +2,6 @@ package de.hsfl.budgetBinder.screens.entry
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -44,7 +43,8 @@ fun EntryEditView() {
                 entryAmount = entryAmount.value,
                 entryRepeat = entryRepeat.value,
                 entryAmountSign = amountSign.value,
-                category = categoryList.value.first { it.id == categoryId.value },
+                category = categoryId.value?.let { categoryList.value.first { it.id == categoryId.value } }
+                    ?: categoryList.value.first(),
                 categoryList = categoryList.value,
                 onNameChanged = { viewModel.onEvent(EntryEvent.EnteredName(it)) },
                 onAmountChanged = { viewModel.onEvent(EntryEvent.EnteredAmount(it)) },
